@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.03.00">
+	<object class="AudioFile" id="{1e7e3235-cd43-4c3d-9383-712ada20f5f6}">
+		<property name="assetPath">
+			<value>oak_cue.wav</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>44.0999985</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>2.3928117913832199</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{ebca4182-9fac-49cd-93d1-bfbca4c66617}</destination>
+		</relationship>
+	</object>
+</objects>

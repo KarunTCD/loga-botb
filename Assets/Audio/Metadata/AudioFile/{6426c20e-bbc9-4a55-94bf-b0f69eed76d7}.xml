@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.03.00">
+	<object class="AudioFile" id="{6426c20e-bbc9-4a55-94bf-b0f69eed76d7}">
+		<property name="assetPath">
+			<value>Voice Narration/fox_narration.wav</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>44.0999985</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>3.3320634920634919</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{ebca4182-9fac-49cd-93d1-bfbca4c66617}</destination>
+		</relationship>
+	</object>
+</objects>

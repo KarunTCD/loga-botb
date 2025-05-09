@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.03.00">
+	<object class="ParameterPreset" id="{c464830b-dd48-4fdc-bbb2-d21398b674c2}">
+		<property name="name">
+			<value>Narration_Reset</value>
+		</property>
+		<relationship name="folder">
+			<destination>{bbd5e19f-f0cc-4564-b4bd-46d7ab57ec7e}</destination>
+		</relationship>
+		<relationship name="parameter">
+			<destination>{2f16f010-1451-43ca-bcab-1f977e722f77}</destination>
+		</relationship>
+	</object>
+	<object class="GameParameter" id="{2f16f010-1451-43ca-bcab-1f977e722f77}">
+		<property name="parameterType">
+			<value>1</value>
+		</property>
+		<property name="maximum">
+			<value>2</value>
+		</property>
+		<property name="initialValue">
+			<value>0</value>
+		</property>
+	</object>
+</objects>

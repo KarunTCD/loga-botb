@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.03.00">
+	<object class="ParameterPreset" id="{b58af0e5-bfde-4fac-9079-334347da163a}">
+		<property name="name">
+			<value>Character_ID</value>
+		</property>
+		<relationship name="folder">
+			<destination>{bbd5e19f-f0cc-4564-b4bd-46d7ab57ec7e}</destination>
+		</relationship>
+		<relationship name="parameter">
+			<destination>{a2925c88-94aa-4023-a91e-f48b2221d3ff}</destination>
+		</relationship>
+	</object>
+	<object class="GameParameter" id="{a2925c88-94aa-4023-a91e-f48b2221d3ff}">
+		<property name="parameterType">
+			<value>2</value>
+		</property>
+		<property name="maximum">
+			<value>13</value>
+		</property>
+		<property name="enumerationLabels">
+			<value>None</value>
+			<value>William</value>
+			<value>Oak</value>
+			<value>Salmon</value>
+			<value>Raven</value>
+			<value>Fox</value>
+			<value>Louis</value>
+			<value>James</value>
+			<value>Sergeant Major</value>
+			<value>Grenadier</value>
+			<value>Farmer</value>
+			<value>Child</value>
+			<value>Barber Surgeon</value>
+		</property>
+		<property name="initialValue">
+			<value>0</value>
+		</property>
+	</object>
+</objects>
