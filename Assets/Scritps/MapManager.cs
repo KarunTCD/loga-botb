@@ -100,6 +100,17 @@ public class MapManager : MonoBehaviour
 
     private void OnDestroy()
     {
-        LocationService.LocationUpdated -= OnLocationUpdated;
+        try
+        {
+            var locationService = ServiceLocator.GetService<ILocationService>();
+            if (locationService != null) // Since GetService returns default, need null check
+            {
+                locationService.LocationUpdated -= OnLocationUpdated;
+            }
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogWarning($"Error during MapManager cleanup: {e.Message}");
+        }
     }
 }

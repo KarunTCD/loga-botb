@@ -38,7 +38,6 @@ public class HeadTrackingService : MonoBehaviour, IHeadTrackingService
 
     // Compass tracking
     private float lastCompassHeading = 0f;
-    private bool hasValidCompassReading = false;
     private float calibrationLerpFactor = 1f; // 0 to 1
 
     // Sensor fusion variables
@@ -111,7 +110,6 @@ public class HeadTrackingService : MonoBehaviour, IHeadTrackingService
         {
             // Initial calibration
             lastCompassHeading = compassHeading;
-            hasValidCompassReading = true;
             trueNorthOffset = compassHeading - currentAngle;
             targetTrueNorthOffset = trueNorthOffset;
             isCalibrated = true;

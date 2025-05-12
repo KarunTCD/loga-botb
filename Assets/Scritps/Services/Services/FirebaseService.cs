@@ -11,6 +11,7 @@ public class FirebaseService : MonoBehaviour, IFirebaseService
     private DatabaseReference dbReference;
     private Dictionary<string, EventHandler<ValueChangedEventArgs>> sessionListeners =
     new Dictionary<string, EventHandler<ValueChangedEventArgs>>();
+    private IConfigEnvService ConfigEnvService => ServiceLocator.GetService<IConfigEnvService>();
 
     public async Task<bool> Initialize()
     {
@@ -39,7 +40,7 @@ public class FirebaseService : MonoBehaviour, IFirebaseService
                 {
                     Debug.Log("Getting database instance...");
                     // Initialize database
-                    var dbUrl = "https://battleofboyne-default-rtdb.europe-west1.firebasedatabase.app";
+                    var dbUrl = ConfigEnvService.GetApiKey("FIREBASE_DB_URL");
                     var database = FirebaseDatabase.GetInstance(FirebaseApp.DefaultInstance, dbUrl);
                     dbReference = database.RootReference;
                     IsInitialized = true;

@@ -6,6 +6,7 @@ public class ServiceManager : MonoBehaviour
     private static ServiceManager instance;
 
     // Service prefabs or references
+    [SerializeField] private ConfigEnvService configServicePrefab;
     [SerializeField] private PermissionService permissionServicePrefab;
     [SerializeField] private LocationService locationServicePrefab;
     [SerializeField] private HeadTrackingService headTrackingServicePrefab;
@@ -30,8 +31,9 @@ public class ServiceManager : MonoBehaviour
 
     private void InitializeServices()
     {
-        // Permission service first
+        // Initialise Config and Permission services first
         InitializePermissionService();
+        InitializeConfigService();
 
         // Then the others
         InitializeLocationService();
@@ -44,6 +46,12 @@ public class ServiceManager : MonoBehaviour
     {
         var service = CreateService<IPermissionService, PermissionService>(permissionServicePrefab);
         service.CheckLocationPermission();
+    }
+
+    private void InitializeConfigService()
+    {
+        var service = CreateService<IConfigEnvService, ConfigEnvService>(configServicePrefab);
+        service.Initialize();
     }
 
     private void InitializeLocationService()

@@ -588,6 +588,50 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 24a3ecf5e4fa3419d9f252643e38323c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &220635953
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 220635955}
+  - component: {fileID: 220635954}
+  m_Layer: 0
+  m_Name: ConfigEnvService
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &220635954
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 220635953}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d6b7326fa86134401add3825815c896b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &220635955
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 220635953}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1621503797}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &248729285
 GameObject:
   m_ObjectHideFlags: 0
@@ -723,6 +767,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 89500557}
     m_Modifications:
+    - target: {fileID: 2512387469002778311, guid: 48cb3fb68c91eb94999fd99957eb0cae,
+        type: 3}
+      propertyPath: m_IgnoreTrackingState
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2512387470319625105, guid: 48cb3fb68c91eb94999fd99957eb0cae,
         type: 3}
       propertyPath: m_OccludeARHitsWith2DObjects
@@ -1431,7 +1480,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &702413257
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4042,6 +4091,7 @@ Transform:
   - {fileID: 1104314506}
   - {fileID: 47513194}
   - {fileID: 1031775466}
+  - {fileID: 220635955}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1621503798
@@ -4056,6 +4106,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 631bc0cff6c7c483c8056160eee3ad50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  configServicePrefab: {fileID: 220635954}
   permissionServicePrefab: {fileID: 1031775465}
   locationServicePrefab: {fileID: 47513193}
   headTrackingServicePrefab: {fileID: 1104314505}
