@@ -1,13 +1,12 @@
 using System;
-using UnityEngine;
-#if PLATFORM_ANDROID
-using UnityEngine.Android;
-#endif
 
-public interface IPermissionService
+namespace LoGa.LudoEngine.Services
 {
-    event Action<bool> LocationPermissionResult;
-    bool HasLocationPermission { get; }
-    void CheckLocationPermission();
-    void RequestLocationPermission();
+    public interface IPermissionService : IService
+    {
+        event Action<bool> LocationPermissionResult;
+        bool HasLocationPermission { get; }
+        void CheckLocationPermission();
+        void RequestLocationPermission();
+    }
 }

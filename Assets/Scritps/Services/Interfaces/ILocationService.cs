@@ -1,18 +1,16 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 
-public interface ILocationService
+namespace LoGa.LudoEngine.Services
 {
-    event Action<float, float> LocationUpdated;
-    bool IsInitialized { get; }
-    bool IsRunning { get; }
-    Task<bool> Initialize();
-    void StartLocationUpdates();
-    void StopLocationUpdates();
-    Vector2 GetLastKnownLocation();
-    float GetPositionAccuracy();
+    public interface ILocationService : IService
+    {
+        event Action<float, float> LocationUpdated;
+        bool IsRunning { get; }
+        void StartLocationUpdates();
+        void StopLocationUpdates();
+        Vector2 GetLastKnownLocation();
+        float GetPositionAccuracy();
+    }
 }
-

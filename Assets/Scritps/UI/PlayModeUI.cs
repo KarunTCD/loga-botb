@@ -2,30 +2,33 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class PlayModeUI : MonoBehaviour
+namespace LoGa.LudoEngine.UI
 {
-    [SerializeField] private TextMeshProUGUI sessionIdText;
-    [SerializeField] private Button copyButton;
-
-    private void Start()
+    public class PlayModeUI : MonoBehaviour
     {
-        copyButton.onClick.AddListener(HandleCopyButton);
-    }
+        [SerializeField] private TextMeshProUGUI sessionIdText;
+        [SerializeField] private Button copyButton;
 
-    public void UpdateSessionId(string sessionId)
-    {
-        sessionIdText.text = $"Session ID: {sessionId}";
-    }
+        private void Start()
+        {
+            copyButton.onClick.AddListener(HandleCopyButton);
+        }
 
-    private void HandleCopyButton()
-    {
-        string sessionId = sessionIdText.text.Split(':')[1].Trim();
-        GUIUtility.systemCopyBuffer = sessionId;
-        Debug.Log("Session ID copied to clipboard");
-    }
+        public void UpdateSessionId(string sessionId)
+        {
+            sessionIdText.text = $"Session ID: {sessionId}";
+        }
 
-    private void OnDestroy()
-    {
-        copyButton.onClick.RemoveListener(HandleCopyButton);
+        private void HandleCopyButton()
+        {
+            string sessionId = sessionIdText.text.Split(':')[1].Trim();
+            GUIUtility.systemCopyBuffer = sessionId;
+            Debug.Log("Session ID copied to clipboard");
+        }
+
+        private void OnDestroy()
+        {
+            copyButton.onClick.RemoveListener(HandleCopyButton);
+        }
     }
 }

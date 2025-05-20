@@ -1,8 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public interface ILoggingService
+namespace LoGa.LudoEngine.Services
 {
-    void Initialize();
+    public interface ILoggingService : IService
+    {
+    }
 }
