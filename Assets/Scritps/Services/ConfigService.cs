@@ -11,7 +11,6 @@ namespace LoGa.LudoEngine.Services
     public class ConfigService : MonoBehaviour, IConfigService
     {
         public bool IsInitialized { get; private set; }
-        private bool isInitializing = false;
 
         // Event for config changes
         public event Action<string> ConfigChanged;
@@ -25,13 +24,11 @@ namespace LoGa.LudoEngine.Services
             try
             {
                 //LoadConfig();
-                isInitializing = true;
                 return Task.FromResult(true);
             }
             catch (Exception e)
             {
                 Debug.LogError($"Failed to initialize config service: {e.Message}");
-                isInitializing = false;
                 return Task.FromResult(false);
             }
         }

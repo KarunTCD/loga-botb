@@ -9,13 +9,18 @@ namespace LoGa.LudoEngine.Game
     [System.Serializable]
     public class POI
     {
-        // Basic POI data (unchanged)
+        // Basic POI data
         public string id;
         public string characterName;
         public float latitude;
         public float longitude;
         public RectTransform marker;
         public int characterId;
+
+        [Header("Distance Thresholds")]
+        public float proximityRadius = 20f;   // Distance to start hearing character audio
+        public float dialogueRadius = 10f;    // Distance to start hearing dialogue
+
         private bool isTargeted = false;
         public bool IsTargeted => isTargeted;
 
@@ -54,6 +59,69 @@ namespace LoGa.LudoEngine.Game
             sharedCueInstance = instance;
         }
 
+        // NEW: Main proximity update method
+        public void UpdateProximity(float distance, Vector3 audioPosition)
+        {
+            if (!isInitialized) return;
+
+            bool wasInProximity = isInProximity;
+            isInProximity = (distance <= proximityRadius);
+
+            if (isInProximity && !wasInProximity)
+            {
+                // Just entered proximity - start character audio
+                AudioService.PlayAudio(characterAudioInstance, audioPosition);
+                Debug.Log($"Entered proximity of {characterName}");
+            }
+            else if (!isInProximity && wasInProximity)
+            {
+                // Just left proximity - stop character audio completely
+                AudioService.StopAudio(characterAudioInstance, true);
+                Debug.Log($"Exited proximity of {characterName}");
+            }
+
+            if (isInProximity)
+            {
+                // Update audio position and zone continuously while in proximity
+                AudioService.Update3DAttributes(characterAudioInstance, audioPosition);
+                UpdateAudioBasedOnDistance(distance);
+            }
+        }
+
+        // NEW: Calculate zone from distance
+        private void UpdateAudioBasedOnDistance(float distance)
+        {
+            if (!isInitialized) return;
+
+            // Calculate continuous zone value based on distance
+            float zoneValue = CalculateZoneFromDistance(distance);
+
+            // Single parameter update - smooth transitions
+            AudioService.SetParameter(characterAudioInstance, ZONE_PARAMETER, zoneValue);
+
+            Debug.Log($"{characterName} - Distance: {distance:F1}m → Zone: {zoneValue:F2}");
+        }
+
+        // NEW: Convert distance to zone value
+        private float CalculateZoneFromDistance(float distance)
+        {
+            if (distance > proximityRadius)
+            {
+                return 0.0f; // Outside proximity - silent
+            }
+            else if (distance > dialogueRadius)
+            {
+                // Smooth transition from outer zone (1.0) to dialogue zone (2.0)
+                float t = 1.0f - ((distance - dialogueRadius) / (proximityRadius - dialogueRadius));
+                return Mathf.Lerp(1.0f, 2.0f, t);
+            }
+            else
+            {
+                return 2.0f; // Full dialogue zone
+            }
+        }
+
+        // Navigation cue methods (for wander mode)
         public void PlayNavigationCue(Vector3 position, float distance)
         {
             if (!isInitialized || isInProximity) return;
@@ -61,116 +129,11 @@ namespace LoGa.LudoEngine.Game
             AudioService.PlayNavigationCue(sharedCueInstance, position, characterId, distance, isTargeted);
         }
 
-        public void EnterProximity(Vector3 position)
-        {
-            if (!isInitialized || isInProximity) return;
-
-            // When entering proximity of a POI stop the cue
-            AudioService.StopNavigationCue(sharedCueInstance);
-
-            // Start character audio in outer zone (Zone = 1)
-            AudioService.PlayAudio(characterAudioInstance, position);
-            AudioService.SetParameter(characterAudioInstance, ZONE_PARAMETER, 1.0f);
-
-            isInProximity = true;
-
-            Debug.Log($"Entered proximity of {characterName} (Outer Zone - Music)");
-        }
-
-        public void ExitProximity()
-        {
-            if (!isInitialized || !isInProximity) return;
-
-            // Set to Zone 0 (outside range) which should fade out audio
-            AudioService.SetParameter(characterAudioInstance, ZONE_PARAMETER, 0.0f);
-
-            // Allow time for the fade out from Zone 1 to Zone 0
-            // This requires a MonoBehaviour, will need to handle differently
-            DelayedAudioStop(1.0f);
-
-            isInProximity = false;
-
-            Debug.Log($"Exited proximity of {characterName}");
-        }
-
-        // Since POI isn't a MonoBehaviour, we need a different way to handle delays
-        private void DelayedAudioStop(float delay)
-        {
-            // Use a static coroutine runner or request through AudioService
-            AudioService.StopAudioDelayed(characterAudioInstance, delay);
-        }
-
-        public void StartDialogue()
-        {
-            if (!isInitialized || !isInProximity) return;
-
-            // Check if dialogue is already playing using parameter value
-            if (AudioService.IsTrackPlaying(characterAudioInstance, ZONE_PARAMETER, 2.0f))
-            {
-                Debug.Log($"Dialogue already playing for {characterName}, not restarting");
-                return;
-            }
-
-            // Check current playback state
-            PLAYBACK_STATE playbackState;
-            FMOD.RESULT result = characterAudioInstance.getPlaybackState(out playbackState);
-
-            if (result != FMOD.RESULT.OK || playbackState == PLAYBACK_STATE.STOPPING)
-            {
-                Debug.Log($"Cannot start dialogue with {characterName} - invalid state: {playbackState}");
-                return;
-            }
-
-            // Set to inner zone (Zone = 2) - this triggers music ducking and activates dialogue
-            AudioService.SetParameter(characterAudioInstance, ZONE_PARAMETER, 2.0f);
-
-            Debug.Log($"Started dialogue with {characterName} (Inner Zone - Dialogue Active)");
-        }
-
-        public void StopDialogue()
-        {
-            if (!isInitialized || !isInProximity) return;
-
-            // Check if dialogue is playing using parameter check
-            if (!AudioService.IsTrackPlaying(characterAudioInstance, ZONE_PARAMETER, 2.0f))
-            {
-                // Not in dialogue mode, nothing to stop
-                return;
-            }
-
-            // Check playback state
-            FMOD.Studio.PLAYBACK_STATE playbackState;
-            FMOD.RESULT result = characterAudioInstance.getPlaybackState(out playbackState);
-
-            // Only stop dialogue if not in a transitional state
-            if (result == FMOD.RESULT.OK &&
-                playbackState != FMOD.Studio.PLAYBACK_STATE.STARTING &&
-                playbackState != FMOD.Studio.PLAYBACK_STATE.STOPPING)
-            {
-                // Return to outer zone (Zone = 1) - music returns to full volume, dialogue stops
-                AudioService.SetParameter(characterAudioInstance, ZONE_PARAMETER, 1.0f);
-
-                Debug.Log($"Stopped dialogue with {characterName} (Returned to Outer Zone - Music Only)");
-            }
-            else
-            {
-                Debug.Log($"Not stopping dialogue with {characterName} - transitional state: {playbackState}");
-            }
-        }
-
-        public void UpdateAudio(Vector3 position)
-        {
-            if (!isInitialized) return;
-
-            AudioService.Update3DAttributes(characterAudioInstance, position);
-        }
-
+        // Targeting methods (for wander mode)
         public void SetAsTarget(Vector3 position)
         {
             isTargeted = true;
-            AudioService.SetParameter(sharedCueInstance, "Is_Target", 1.0f);
-
-            // Visual feedback could be added here
+            // Visual feedback
             if (marker != null)
             {
                 marker.transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
@@ -180,8 +143,6 @@ namespace LoGa.LudoEngine.Game
         public void ClearAsTarget()
         {
             isTargeted = false;
-            AudioService.SetParameter(sharedCueInstance, "Is_Target", 0.0f);
-
             // Reset visual feedback
             if (marker != null)
             {
@@ -189,6 +150,7 @@ namespace LoGa.LudoEngine.Game
             }
         }
 
+        // Discovery and unlock methods
         public void SetDiscovered(bool discovered)
         {
             isDiscovered = discovered;
@@ -207,6 +169,7 @@ namespace LoGa.LudoEngine.Game
             }
         }
 
+        // Cleanup
         public void Cleanup()
         {
             if (!isInitialized) return;

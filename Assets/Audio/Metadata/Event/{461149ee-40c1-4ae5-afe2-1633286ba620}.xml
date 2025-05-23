@@ -94,7 +94,7 @@
 			<destination>{1708d3bb-3119-49dd-ba2c-4c49f6489555}</destination>
 		</relationship>
 		<relationship name="modules">
-			<destination>{d3acb899-1d08-45a4-848a-4baf84aede7a}</destination>
+			<destination>{8c83dea4-376f-4fab-b581-8ab2f98db8c1}</destination>
 		</relationship>
 		<relationship name="mixerGroup">
 			<destination>{ea1116e2-3798-4819-91ff-2544dcb31c03}</destination>
@@ -107,9 +107,9 @@
 	</object>
 	<object class="ParameterProxy" id="{57232c00-6e33-48cf-b9b2-9824498aad45}">
 		<relationship name="modules">
-			<destination>{d3acb899-1d08-45a4-848a-4baf84aede7a}</destination>
 			<destination>{40a280ab-7906-47e4-a6a2-9f6b63a1a026}</destination>
 			<destination>{c3a62108-6eec-4b1a-8193-98dbf436d086}</destination>
+			<destination>{8c83dea4-376f-4fab-b581-8ab2f98db8c1}</destination>
 		</relationship>
 		<relationship name="preset">
 			<destination>{3b6a0b80-71ac-46ea-8522-0e7817b2c47c}</destination>
@@ -212,15 +212,24 @@
 			<destination>{63466437-99f2-4c98-bb70-71faba33343a}</destination>
 		</relationship>
 	</object>
-	<object class="EventSound" id="{d3acb899-1d08-45a4-848a-4baf84aede7a}">
+	<object class="SingleSound" id="{8c83dea4-376f-4fab-b581-8ab2f98db8c1}">
 		<property name="start">
 			<value>2</value>
 		</property>
-		<relationship name="parameters">
-			<destination>{631a5186-8537-455f-8458-2eda181ca0f2}</destination>
-		</relationship>
-		<relationship name="event">
-			<destination>{1b2d49ee-f36f-43fd-8a72-156c684ba041}</destination>
+		<property name="length">
+			<value>0.20000000000000001</value>
+		</property>
+		<property name="voiceStealing">
+			<value>3</value>
+		</property>
+		<property name="maxVoices">
+			<value>1</value>
+		</property>
+		<property name="looping">
+			<value>true</value>
+		</property>
+		<relationship name="audioFile">
+			<destination>{e526a6fa-f5e2-40f6-bf22-5252e7f0fd0d}</destination>
 		</relationship>
 	</object>
 	<object class="EventMixerGroup" id="{ea1116e2-3798-4819-91ff-2544dcb31c03}">
@@ -276,11 +285,6 @@
 		</relationship>
 	</object>
 	<object class="MixerBusPanner" id="{99bd02cd-32ce-4fb4-9ff6-7a9bd00e32b2}" />
-	<object class="ParameterProperty" id="{631a5186-8537-455f-8458-2eda181ca0f2}">
-		<relationship name="parameter">
-			<destination>{18f4009d-93a2-494e-acbd-3debc43da384}</destination>
-		</relationship>
-	</object>
 	<object class="Automator" id="{63466437-99f2-4c98-bb70-71faba33343a}">
 		<property name="nameOfPropertyBeingAutomated">
 			<value>volume</value>

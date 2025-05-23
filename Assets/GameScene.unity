@@ -1232,6 +1232,81 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 560394669}
   m_CullTransparentMesh: 1
+--- !u!1 &632247703
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 632247704}
+  - component: {fileID: 632247706}
+  - component: {fileID: 632247705}
+  m_Layer: 5
+  m_Name: James Marker
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &632247704
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 632247703}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 815688570}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 20, y: 20}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &632247705
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 632247703}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.24007656, g: 0.7830189, b: 0.6959697, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &632247706
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 632247703}
+  m_CullTransparentMesh: 1
 --- !u!1 &653355817
 GameObject:
   m_ObjectHideFlags: 0
@@ -1837,6 +1912,9 @@ RectTransform:
   - {fileID: 1553759305}
   - {fileID: 2127153680}
   - {fileID: 906921090}
+  - {fileID: 1545574668}
+  - {fileID: 632247704}
+  - {fileID: 1413553337}
   m_Father: {fileID: 84431459}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -2487,10 +2565,12 @@ MonoBehaviour:
   pois:
   - id: william_orange
     characterName: William of Orange
-    latitude: 53.34857
-    longitude: -6.249998
+    latitude: 53.34811
+    longitude: -6.250078
     marker: {fileID: 2099162380}
     characterId: 1
+    proximityRadius: 20
+    dialogueRadius: 10
     characterAudioEvent:
       Guid:
         Data1: 1175538158
@@ -2504,6 +2584,8 @@ MonoBehaviour:
     longitude: -6.24997
     marker: {fileID: 2127153680}
     characterId: 2
+    proximityRadius: 20
+    dialogueRadius: 10
     characterAudioEvent:
       Guid:
         Data1: -573735400
@@ -2517,6 +2599,8 @@ MonoBehaviour:
     longitude: -6.249067
     marker: {fileID: 1553759305}
     characterId: 3
+    proximityRadius: 20
+    dialogueRadius: 10
     characterAudioEvent:
       Guid:
         Data1: -1794321705
@@ -2526,36 +2610,88 @@ MonoBehaviour:
       Path: event:/salmon_music
   - id: raven
     characterName: Raven
-    latitude: 53.34839
-    longitude: -6.250178
+    latitude: 53.35011
+    longitude: -6.248604
     marker: {fileID: 906921090}
     characterId: 4
+    proximityRadius: 20
+    dialogueRadius: 10
     characterAudioEvent:
       Guid:
-        Data1: -1794321705
-        Data2: 1155231689
-        Data3: -816275816
-        Data4: -1405444301
-      Path: event:/salmon_music
+        Data1: -17476983
+        Data2: 1197733990
+        Data3: 1956351362
+        Data4: -540070583
+      Path: event:/raven_music
+  - id: louis
+    characterName: Louis
+    latitude: 53.34956
+    longitude: -6.246275
+    marker: {fileID: 1545574668}
+    characterId: 5
+    proximityRadius: 20
+    dialogueRadius: 10
+    characterAudioEvent:
+      Guid:
+        Data1: 536625850
+        Data2: 1251709943
+        Data3: -913172600
+        Data4: -836348760
+      Path: event:/louis_music
+  - id: james
+    characterName: James
+    latitude: 53.34813
+    longitude: -6.246093
+    marker: {fileID: 632247704}
+    characterId: 6
+    proximityRadius: 20
+    dialogueRadius: 10
+    characterAudioEvent:
+      Guid:
+        Data1: -1406718307
+        Data2: 1317937260
+        Data3: 1653865350
+        Data4: -1378154026
+      Path: event:/james_music
+  - id: barber_surgeon
+    characterName: Barber Surgeon
+    latitude: 53.3476
+    longitude: -6.247952
+    marker: {fileID: 1413553337}
+    characterId: 7
+    proximityRadius: 20
+    dialogueRadius: 10
+    characterAudioEvent:
+      Guid:
+        Data1: -254515590
+        Data2: 1318876954
+        Data3: 511570084
+        Data4: -896650416
+      Path: event:/barber_surgeon_music
   mapManager: {fileID: 1421694614}
   debugText: {fileID: 560394671}
   sharedCueEvent:
     Guid:
-      Data1: 0
-      Data2: 0
-      Data3: 0
-      Data4: 0
-    Path: 
-  maxActiveCues: 2
-  cueStagingDelay: 6
+      Data1: -1631769890
+      Data2: 1211054242
+      Data3: -949885777
+      Data4: 691049561
+    Path: event:/nav_cue
+  cueStagingDelay: 2
+  cyclePauseDelay: 6
+  maxActiveCues: 3
   proximityRadius: 20
   dialogueRadius: 10
-  maxCueRadius: 500000
+  maxCueRadius: 1000
+  discoveryDistance: 20
   targetLockTime: 5
-  targetLockAngle: 15
-  targetBreakAngle: 30
+  targetLockAngle: 30
+  targetBreakAngle: 45
   targetingIndicator: {fileID: 0}
-  targetingText: {fileID: 0}
+  targetingText: {fileID: 962164252}
+  minCueInterval: 0.8
+  maxCueInterval: 8
+  maxTargetingDistance: 300
 --- !u!1 &1222155844
 GameObject:
   m_ObjectHideFlags: 0
@@ -3253,7 +3389,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -3277,6 +3413,81 @@ CanvasRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1396736833}
+  m_CullTransparentMesh: 1
+--- !u!1 &1413553336
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1413553337}
+  - component: {fileID: 1413553339}
+  - component: {fileID: 1413553338}
+  m_Layer: 5
+  m_Name: BarberSurgeon Marker
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1413553337
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1413553336}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 815688570}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 20, y: 20}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1413553338
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1413553336}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.8490566, g: 0.13714722, b: 0.10012458, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1413553339
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1413553336}
   m_CullTransparentMesh: 1
 --- !u!1 &1421051784
 GameObject:
@@ -3470,6 +3681,81 @@ MonoBehaviour:
   southLatitude: 53.34
   eastLongitude: -6.24
   westLongitude: -6.26
+--- !u!1 &1545574667
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1545574668}
+  - component: {fileID: 1545574670}
+  - component: {fileID: 1545574669}
+  m_Layer: 5
+  m_Name: Louis Marker
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1545574668
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1545574667}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 815688570}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 20, y: 20}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1545574669
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1545574667}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.28019932, g: 0.15690638, b: 0.7735849, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1545574670
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1545574667}
+  m_CullTransparentMesh: 1
 --- !u!1 &1553759304
 GameObject:
   m_ObjectHideFlags: 0

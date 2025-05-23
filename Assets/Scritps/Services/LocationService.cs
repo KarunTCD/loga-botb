@@ -16,12 +16,15 @@ namespace LoGa.LudoEngine.Services
 
         [Header("EKF Settings")]
         [SerializeField] private bool useEKF = true;
-        [SerializeField] private float processNoisePosition = 0.01f;
-        [SerializeField] private float processNoiseVelocity = 1.0f;
+        [SerializeField] private float processNoisePosition = 0.1f;
+        [SerializeField] private float processNoiseVelocity = 0.1f;
         [SerializeField] private float measurementNoiseGPS = 5.0f;
-        [SerializeField] private float measurementNoiseAccel = 0.5f;
-        [SerializeField] private float gpsAccuracyThreshold = 20f;
-        [SerializeField] private float accelThreshold = 0.1f;
+        [SerializeField] private float measurementNoiseAccel = 0.05f;
+        [SerializeField] private float accelThreshold = 0.03f;
+        // GPS accuracy thresholds for trust levels (tune these)
+        float gpsAccuracyTrustThreshold = 5; // your original good accuracy threshold
+        float gpsAccuracyPoorThreshold =  15f; // beyond this, GPS is very poor
+        float accelScaleFactor = 0.000001f;
 
         // Current location data
         private float currentLat;
@@ -39,11 +42,6 @@ namespace LoGa.LudoEngine.Services
         private bool ekfInitialized = false;
 
         private IPermissionService PermissionService => ServiceLocator.GetService<IPermissionService>();
-
-        public void Initialize()
-        {
-            
-        }
 
         public async Task<bool> InitializeAsync()
         {
@@ -293,16 +291,32 @@ namespace LoGa.LudoEngine.Services
 
             // ==================== UPDATE STEP ====================
 
-            // Handle GPS update if available
-            if (hasNewGPS && positionAccuracy < gpsAccuracyThreshold)
+            if (hasNewGPS)
             {
-                // Measurement matrix H for GPS (directly observes position)
+                // Determine GPS noise covariance based on accuracy:
+                float gpsNoise;
+                if (positionAccuracy <= gpsAccuracyTrustThreshold)
+                {
+                    // Good accuracy, trust GPS fully
+                    gpsNoise = Mathf.Max(measurementNoiseGPS, positionAccuracy);
+                }
+                else if (positionAccuracy <= gpsAccuracyPoorThreshold)
+                {
+                    // Moderate accuracy, inflate noise moderately (e.g., 5x)
+                    gpsNoise = Mathf.Max(measurementNoiseGPS * 5f, positionAccuracy * 5f);
+                }
+                else
+                {
+                    // Very poor accuracy, inflate noise heavily (e.g., 50x)
+                    gpsNoise = Mathf.Max(measurementNoiseGPS * 50f, positionAccuracy * 50f);
+                }
+
+                // Measurement matrix H for GPS (observes position)
                 Matrix4x4 H_gps = Matrix4x4.zero;
-                H_gps[0, 0] = 1; // Observe position.x
-                H_gps[1, 1] = 1; // Observe position.y
+                H_gps[0, 0] = 1;
+                H_gps[1, 1] = 1;
 
                 // Measurement noise covariance R for GPS
-                float gpsNoise = Mathf.Max(measurementNoiseGPS, positionAccuracy);
                 Matrix4x4 R_gps = Matrix4x4.zero;
                 R_gps[0, 0] = gpsNoise;
                 R_gps[1, 1] = gpsNoise;
@@ -328,51 +342,36 @@ namespace LoGa.LudoEngine.Services
                 predictedCovariance = MultiplyMatrix(SubtractMatrix(I, MultiplyMatrix(K, H_gps)), predictedCovariance);
             }
 
-            // Handle accelerometer update
+            // ==================== ACCELEROMETER UPDATE ====================
+
             if (SystemInfo.supportsAccelerometer)
             {
-                // Convert acceleration from device frame to world frame
-                // This is a simplified approach - for more accuracy, use device orientation
                 Vector2 worldAccel = new Vector2(rawAcceleration.x, rawAcceleration.z);
 
-                // Only use accelerometer if there's significant movement
                 if (worldAccel.magnitude > accelThreshold)
                 {
-                    // Scale accelerometer data to correct units (degrees/second²)
-                    // This scaling factor needs calibration for your specific device and location
-                    float accelScaleFactor = 0.000001f; // Very small since we're using degrees
                     Vector2 accelDegrees = worldAccel * accelScaleFactor;
 
-                    // Measurement matrix H for accelerometer (observes acceleration ≈ velocity change)
                     Matrix4x4 H_accel = Matrix4x4.zero;
-                    H_accel[0, 2] = 1; // Observe velocity.x
-                    H_accel[1, 3] = 1; // Observe velocity.y
+                    H_accel[0, 2] = 1;
+                    H_accel[1, 3] = 1;
 
-                    // Measurement noise covariance R for accelerometer
                     Matrix4x4 R_accel = Matrix4x4.zero;
                     R_accel[0, 0] = measurementNoiseAccel;
                     R_accel[1, 1] = measurementNoiseAccel;
 
-                    // Expected acceleration is current velocity since we don't model acceleration in state
                     Vector2 expectedVelocity = predictedVelocity;
-
-                    // Innovation: difference between expected and observed velocity
                     Vector2 velocityInnovation = accelDegrees - expectedVelocity;
 
-                    // Innovation covariance
                     Matrix4x4 S_accel = AddMatrix(MultiplyMatrix(MultiplyMatrix(H_accel, predictedCovariance), TransposeMatrix(H_accel)), R_accel);
-
-                    // Kalman gain
                     Matrix4x4 K_accel = MultiplyMatrix(MultiplyMatrix(predictedCovariance, TransposeMatrix(H_accel)), InverseMatrix(S_accel));
 
-                    // Update state
                     Vector4 accelCorrection = MultiplyMatrixVector(K_accel, new Vector4(velocityInnovation.x, velocityInnovation.y, 0, 0));
                     predictedPosition.x += accelCorrection.x;
                     predictedPosition.y += accelCorrection.y;
                     predictedVelocity.x += accelCorrection.z;
                     predictedVelocity.y += accelCorrection.w;
 
-                    // Update covariance
                     Matrix4x4 I = Matrix4x4.identity;
                     predictedCovariance = MultiplyMatrix(SubtractMatrix(I, MultiplyMatrix(K_accel, H_accel)), predictedCovariance);
                 }

@@ -29,7 +29,6 @@ namespace LoGa.LudoEngine.Core
         [SerializeField] private POIManager poiManager;
         [SerializeField] private UIManager uiManager;
 
-        private bool isGameRunning;
         private GameMode currentMode = GameMode.Inactive;
         private string currentSessionId;
         public GameState gameState = GameState.Suspended;
@@ -80,7 +79,6 @@ namespace LoGa.LudoEngine.Core
 
         private async void SuspendGame()
         {
-            isGameRunning = false;
             currentMode = GameMode.Inactive;
 
             // Get required services (with initialization)
@@ -106,7 +104,6 @@ namespace LoGa.LudoEngine.Core
 
         private async void StartGameAsPlayer()
         {
-            isGameRunning = true;
             currentMode = GameMode.Player;
 
             // Get required services (with initialization)
@@ -140,7 +137,6 @@ namespace LoGa.LudoEngine.Core
 
         private async void StartGameAsSpectator()
         {
-            isGameRunning = true;
             currentMode = GameMode.Spectator;
 
             // Get location service (with initialization)

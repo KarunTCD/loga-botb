@@ -78,8 +78,11 @@
 		</relationship>
 	</object>
 	<object class="GroupTrack" id="{10e0fac5-22c5-4dc8-954b-15def4f65dc6}">
+		<relationship name="automationTracks">
+			<destination>{8aebd51b-b867-443b-b7c7-a2fdc2a0de4e}</destination>
+		</relationship>
 		<relationship name="modules">
-			<destination>{5441517d-22c3-4340-a23e-8fb84784d3e0}</destination>
+			<destination>{de50fe66-5360-4de0-985d-b0bdbf22d5c9}</destination>
 		</relationship>
 		<relationship name="mixerGroup">
 			<destination>{7dfbb059-81f7-4d51-9b78-80789eca72b3}</destination>
@@ -92,8 +95,8 @@
 	</object>
 	<object class="ParameterProxy" id="{892f9699-ca5b-4f05-ae88-77d39e16163f}">
 		<relationship name="modules">
-			<destination>{5441517d-22c3-4340-a23e-8fb84784d3e0}</destination>
 			<destination>{e5322588-ac71-4175-98ad-6022420bdca6}</destination>
+			<destination>{de50fe66-5360-4de0-985d-b0bdbf22d5c9}</destination>
 		</relationship>
 		<relationship name="preset">
 			<destination>{3b6a0b80-71ac-46ea-8522-0e7817b2c47c}</destination>
@@ -152,18 +155,29 @@
 			<destination>{e2fcb4c3-0eb6-46a7-a99e-ad9f16a7252c}</destination>
 		</relationship>
 	</object>
-	<object class="EventSound" id="{5441517d-22c3-4340-a23e-8fb84784d3e0}">
+	<object class="AutomationTrack" id="{8aebd51b-b867-443b-b7c7-a2fdc2a0de4e}">
+		<relationship name="automator">
+			<destination>{a1dc4188-b442-4854-b0c0-239fd3adb781}</destination>
+		</relationship>
+	</object>
+	<object class="SingleSound" id="{de50fe66-5360-4de0-985d-b0bdbf22d5c9}">
 		<property name="start">
 			<value>2.0000000000000009</value>
 		</property>
 		<property name="length">
-			<value>0.99999999999999911</value>
+			<value>0.20000000000000001</value>
 		</property>
-		<relationship name="parameters">
-			<destination>{79cd5178-3b41-460e-8ef5-c2e7e5119cc0}</destination>
-		</relationship>
-		<relationship name="event">
-			<destination>{0555d540-cdc5-4b6a-881a-4045ceaebda1}</destination>
+		<property name="voiceStealing">
+			<value>3</value>
+		</property>
+		<property name="maxVoices">
+			<value>1</value>
+		</property>
+		<property name="looping">
+			<value>true</value>
+		</property>
+		<relationship name="audioFile">
+			<destination>{07202a6a-c110-48e5-851a-6ca5e52828b3}</destination>
 		</relationship>
 	</object>
 	<object class="EventMixerGroup" id="{7dfbb059-81f7-4d51-9b78-80789eca72b3}">
@@ -205,11 +219,6 @@
 		</relationship>
 	</object>
 	<object class="MixerBusPanner" id="{51ca48f0-0842-45d4-b502-e9157af891a8}" />
-	<object class="ParameterProperty" id="{79cd5178-3b41-460e-8ef5-c2e7e5119cc0}">
-		<relationship name="parameter">
-			<destination>{db48c5b7-4750-4957-bde0-4ff8151bea5a}</destination>
-		</relationship>
-	</object>
 	<object class="Automator" id="{a1dc4188-b442-4854-b0c0-239fd3adb781}">
 		<property name="nameOfPropertyBeingAutomated">
 			<value>volume</value>

@@ -13,8 +13,6 @@ namespace LoGa.LudoEngine.Services
     {
         public bool IsInitialized { get; private set; }
 
-        private EventInstance navigationCueInstance;
-
         public Task<bool> InitializeAsync()
         {
             try
@@ -52,10 +50,13 @@ namespace LoGa.LudoEngine.Services
             // Update 3D position
             Update3DAttributes(instance, position);
 
-            // Set parameters
+            // Set existing parameters
             instance.setParameterByName("Character_ID", characterId);
-            instance.setParameterByName("Distance", distance);
             instance.setParameterByName("Is_Target", isTargeted ? 1.0f : 0.0f);
+
+            Debug.Log($"Distance: {distance}");
+            // NEW: Set distance bands for volume control
+            UpdateDistanceBanding(instance, distance);
 
             // Set trigger parameter
             instance.setParameterByName("Trigger", 1.0f);
@@ -132,7 +133,22 @@ namespace LoGa.LudoEngine.Services
             instance.set3DAttributes(RuntimeUtils.To3DAttributes(position));
         }
 
-        // Set parameters on audio instance
+        // Method to handle distance bands 
+        public void UpdateDistanceBanding(EventInstance instance, float distance)
+        {
+            if (!IsInstanceValid(instance)) return;
+
+            // Normalize distance to 0-1 range
+            float maxDistance = 200f;
+            float normalizedDistance = Mathf.Clamp01(distance / maxDistance);
+
+            // Set single distance parameter with linear interpolation preserved
+            instance.setParameterByName("NormalizedDistance", normalizedDistance);
+
+            Debug.Log($"Distance: {distance:F1}m → Normalized: {normalizedDistance:F3}");
+        }
+
+        // Set parameters on audio instance(for external use)
         public void SetParameter(EventInstance instance, string paramName, float value)
         {
             if (!IsInstanceValid(instance)) return;

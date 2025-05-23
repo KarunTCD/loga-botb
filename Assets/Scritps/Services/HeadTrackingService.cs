@@ -2,32 +2,26 @@ using System;
 using System.Collections;
 using UnityEngine;
 using LoGa.LudoEngine.Core;
+using LoGa.LudoEngine.Utilities;
+using System.Threading.Tasks;
 
 namespace LoGa.LudoEngine.Services
 {
-    using System;
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
-    using UnityEngine;
-    using LoGa.LudoEngine.Utilities;
-
     public class HeadTrackingService : MonoBehaviour, IHeadTrackingService
     {
         public event Action<float> HeadingUpdated;
 
         // All your existing configuration parameters
         [Header("Calibration Settings")]
-        [SerializeField] private float calibrationThreshold = 15f;
+        [SerializeField] private float calibrationThreshold = 5f;
         [SerializeField] private float calibrationLerpSpeed = 0.05f;
-        [SerializeField] private int calibrationCheckInterval = 900;
+        [SerializeField] private int calibrationCheckInterval = 300;
         [SerializeField] private bool enablePeriodicCalibration = true;
         [SerializeField] private float compassStartupDelay = 3f;
 
         [Header("Sensor Fusion")]
         [SerializeField] private bool enableSensorFusion = true;
         [SerializeField] private float magneticDeclination = 3.5f;
-        [SerializeField] private float headingSmoothingFactor = 0.1f;
         [SerializeField] private float headingNoiseThreshold = 2.0f;
         [SerializeField] private float stationaryNoiseThreshold = 0.5f; // Stricter threshold when stationary
         [SerializeField] private float minSmoothingFactor = 0.01f; // Faster response
@@ -47,7 +41,6 @@ namespace LoGa.LudoEngine.Services
 
         // Compass tracking
         private float lastCompassHeading = 0f;
-        private bool hasValidCompassReading = false;
         private float calibrationLerpFactor = 1f; // 0 to 1
 
         // Sensor fusion variables
@@ -131,7 +124,6 @@ namespace LoGa.LudoEngine.Services
             {
                 // Initial calibration
                 lastCompassHeading = compassHeading;
-                hasValidCompassReading = true;
                 trueNorthOffset = compassHeading - currentAngle;
                 targetTrueNorthOffset = trueNorthOffset;
                 isCalibrated = true;
@@ -282,7 +274,7 @@ namespace LoGa.LudoEngine.Services
 
                 // Small compass correction to prevent drift (using adjusted compass heading)
                 float adjustedCompassHeading = (Input.compass.trueHeading + magneticDeclination + 360f) % 360f;
-                targetHeading = BlendAngles(currentAngle, adjustedCompassHeading, 0.02f);
+                targetHeading = BlendAngles(currentAngle, adjustedCompassHeading, 0.05f);
             }
 
             // Calculate rotation speed (absolute value)

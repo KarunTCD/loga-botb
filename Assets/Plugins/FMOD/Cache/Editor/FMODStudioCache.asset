@@ -19,7 +19,7 @@ MonoBehaviour:
     Data3: 367639432
     Data4: 595799489
   Banks:
-  - {fileID: 475433022984825464}
+  - {fileID: -2072804872322699232}
   IsStream: 1
   Is3D: 1
   IsOneShot: 0
@@ -71,7 +71,7 @@ MonoBehaviour:
     Data3: -816275816
     Data4: -1405444301
   Banks:
-  - {fileID: 475433022984825464}
+  - {fileID: -2072804872322699232}
   IsStream: 1
   Is3D: 1
   IsOneShot: 0
@@ -99,7 +99,7 @@ MonoBehaviour:
     Data3: -949885777
     Data4: 691049561
   Banks:
-  - {fileID: 475433022984825464}
+  - {fileID: -2072804872322699232}
   IsStream: 0
   Is3D: 1
   IsOneShot: 1
@@ -107,9 +107,30 @@ MonoBehaviour:
   - {fileID: 2780631306687666076}
   - {fileID: 5936930666857625517}
   - {fileID: 1454568001461815812}
+  - {fileID: -5182846159611491900}
   MinDistance: 1
   MaxDistance: 90
   Length: 0
+--- !u!114 &-6443719217133375580
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
+  m_Name: bank:/william.bank
+  m_EditorClassIdentifier: 
+  Path: Assets/Audio/Build/Desktop/william.bank
+  Name: william
+  StudioPath: bank:/william
+  lastModified: 638815112790590550
+  FileSizes:
+  - Name: Desktop
+    Value: 506
+  Exists: 1
 --- !u!114 &-6396744452905360095
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -129,7 +150,7 @@ MonoBehaviour:
     Data3: 511570084
     Data4: -896650416
   Banks:
-  - {fileID: 475433022984825464}
+  - {fileID: -2072804872322699232}
   IsStream: 1
   Is3D: 1
   IsOneShot: 0
@@ -157,7 +178,7 @@ MonoBehaviour:
     Data3: 445860019
     Data4: 1260604156
   Banks:
-  - {fileID: 475433022984825464}
+  - {fileID: -2072804872322699232}
   IsStream: 1
   Is3D: 1
   IsOneShot: 0
@@ -166,6 +187,30 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 0
+--- !u!114 &-5182846159611491900
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/nav_cue/NormalizedDistance
+  m_EditorClassIdentifier: 
+  Name: NormalizedDistance
+  StudioPath: 
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 4032946360
+    data2: 2700767552
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
 --- !u!114 &-5079036026759060588
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -185,7 +230,7 @@ MonoBehaviour:
     Data3: 803607699
     Data4: -1636424172
   Banks:
-  - {fileID: 475433022984825464}
+  - {fileID: -2072804872322699232}
   IsStream: 1
   Is3D: 1
   IsOneShot: 0
@@ -290,26 +335,6 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
---- !u!114 &-3562035416340265291
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
-  m_Name: bank:/william.bank
-  m_EditorClassIdentifier: 
-  Path: ../botb_audio/Build/Desktop/william.bank
-  Name: william
-  StudioPath: bank:/william
-  lastModified: 638815112790590550
-  FileSizes:
-  - Name: Desktop
-    Value: 506
-  Exists: 1
 --- !u!114 &-3175786135929215258
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -334,6 +359,26 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
+--- !u!114 &-3071137849130329491
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
+  m_Name: bank:/salmon.bank
+  m_EditorClassIdentifier: 
+  Path: Assets/Audio/Build/Desktop/salmon.bank
+  Name: salmon
+  StudioPath: bank:/salmon
+  lastModified: 638815112790493999
+  FileSizes:
+  - Name: Desktop
+    Value: 506
+  Exists: 1
 --- !u!114 &-2758959240324335570
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -353,7 +398,7 @@ MonoBehaviour:
     Data3: -913172600
     Data4: -836348760
   Banks:
-  - {fileID: 475433022984825464}
+  - {fileID: -2072804872322699232}
   IsStream: 1
   Is3D: 1
   IsOneShot: 0
@@ -381,7 +426,7 @@ MonoBehaviour:
     Data3: 1396483752
     Data4: -1934053682
   Banks:
-  - {fileID: 475433022984825464}
+  - {fileID: -2072804872322699232}
   IsStream: 1
   Is3D: 1
   IsOneShot: 0
@@ -390,7 +435,7 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 0
---- !u!114 &-1983056582854859993
+--- !u!114 &-2072804872322699232
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -400,15 +445,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
-  m_Name: bank:/raven.bank
+  m_Name: bank:/Master.bank
   m_EditorClassIdentifier: 
-  Path: ../botb_audio/Build/Desktop/raven.bank
-  Name: raven
-  StudioPath: bank:/raven
-  lastModified: 638815112790447787
+  Path: Assets/Audio/Build/Desktop/Master.bank
+  Name: Master
+  StudioPath: bank:/Master
+  lastModified: 638836070213235658
   FileSizes:
   - Name: Desktop
-    Value: 506
+    Value: 18842944
   Exists: 1
 --- !u!114 &11400000
 MonoBehaviour:
@@ -423,13 +468,13 @@ MonoBehaviour:
   m_Name: FMODStudioCache
   m_EditorClassIdentifier: 
   EditorBanks:
-  - {fileID: 3734448589506621639}
-  - {fileID: 475433022984825464}
-  - {fileID: 983840691038700470}
-  - {fileID: -1983056582854859993}
-  - {fileID: 4574816341471768166}
-  - {fileID: 3334330868651275838}
-  - {fileID: -3562035416340265291}
+  - {fileID: 7937843521026953583}
+  - {fileID: -2072804872322699232}
+  - {fileID: 3727765447631376544}
+  - {fileID: 4657716592082696483}
+  - {fileID: -3071137849130329491}
+  - {fileID: 3838825471777141232}
+  - {fileID: -6443719217133375580}
   EditorEvents:
   - {fileID: -5079036026759060588}
   - {fileID: -6988506570469834057}
@@ -446,11 +491,11 @@ MonoBehaviour:
   - {fileID: -8896982725069540227}
   EditorParameters: []
   MasterBanks:
-  - {fileID: 475433022984825464}
+  - {fileID: -2072804872322699232}
   StringsBanks:
-  - {fileID: 3734448589506621639}
+  - {fileID: 7937843521026953583}
   cacheVersion: 131847
-  cacheTime: 638815131478318439
+  cacheTime: 638836070213294001
   SerializableEventsDict:
   - key: event:/battle_oak_music
     index: 0
@@ -497,7 +542,7 @@ MonoBehaviour:
     Data3: 857137839
     Data4: 547777320
   Banks:
-  - {fileID: 475433022984825464}
+  - {fileID: -2072804872322699232}
   IsStream: 1
   Is3D: 1
   IsOneShot: 0
@@ -525,7 +570,7 @@ MonoBehaviour:
     Data3: 1653865350
     Data4: -1378154026
   Banks:
-  - {fileID: 475433022984825464}
+  - {fileID: -2072804872322699232}
   IsStream: 1
   Is3D: 1
   IsOneShot: 0
@@ -534,26 +579,6 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 0
---- !u!114 &475433022984825464
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
-  m_Name: bank:/Master.bank
-  m_EditorClassIdentifier: 
-  Path: ../botb_audio/Build/Desktop/Master.bank
-  Name: Master
-  StudioPath: bank:/Master
-  lastModified: 638815131478241733
-  FileSizes:
-  - Name: Desktop
-    Value: 18868224
-  Exists: 1
 --- !u!114 &734669121534230631
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -577,26 +602,6 @@ MonoBehaviour:
   Type: 0
   IsGlobal: 0
   Labels: []
-  Exists: 1
---- !u!114 &983840691038700470
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
-  m_Name: bank:/oak.bank
-  m_EditorClassIdentifier: 
-  Path: ../botb_audio/Build/Desktop/oak.bank
-  Name: oak
-  StudioPath: bank:/oak
-  lastModified: 638815112790396294
-  FileSizes:
-  - Name: Desktop
-    Value: 506
   Exists: 1
 --- !u!114 &1454568001461815812
 MonoBehaviour:
@@ -670,26 +675,6 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
---- !u!114 &3334330868651275838
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
-  m_Name: bank:/surgeon.bank
-  m_EditorClassIdentifier: 
-  Path: ../botb_audio/Build/Desktop/surgeon.bank
-  Name: surgeon
-  StudioPath: bank:/surgeon
-  lastModified: 638815112790547021
-  FileSizes:
-  - Name: Desktop
-    Value: 506
-  Exists: 1
 --- !u!114 &3673994394913638975
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -714,7 +699,7 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
---- !u!114 &3734448589506621639
+--- !u!114 &3727765447631376544
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -724,15 +709,35 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
-  m_Name: bank:/Master.strings.bank
+  m_Name: bank:/oak.bank
   m_EditorClassIdentifier: 
-  Path: ../botb_audio/Build/Desktop/Master.strings.bank
-  Name: Master.strings
-  StudioPath: bank:/Master.strings
-  lastModified: 638815131478318439
+  Path: Assets/Audio/Build/Desktop/oak.bank
+  Name: oak
+  StudioPath: bank:/oak
+  lastModified: 638815112790396294
   FileSizes:
   - Name: Desktop
-    Value: 1730
+    Value: 506
+  Exists: 1
+--- !u!114 &3838825471777141232
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
+  m_Name: bank:/surgeon.bank
+  m_EditorClassIdentifier: 
+  Path: Assets/Audio/Build/Desktop/surgeon.bank
+  Name: surgeon
+  StudioPath: bank:/surgeon
+  lastModified: 638815112790547021
+  FileSizes:
+  - Name: Desktop
+    Value: 506
   Exists: 1
 --- !u!114 &4200576759228821341
 MonoBehaviour:
@@ -753,7 +758,7 @@ MonoBehaviour:
     Data3: 1116406153
     Data4: 981486305
   Banks:
-  - {fileID: 475433022984825464}
+  - {fileID: -2072804872322699232}
   IsStream: 1
   Is3D: 1
   IsOneShot: 0
@@ -762,7 +767,7 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 0
---- !u!114 &4574816341471768166
+--- !u!114 &4657716592082696483
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -772,12 +777,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
-  m_Name: bank:/salmon.bank
+  m_Name: bank:/raven.bank
   m_EditorClassIdentifier: 
-  Path: ../botb_audio/Build/Desktop/salmon.bank
-  Name: salmon
-  StudioPath: bank:/salmon
-  lastModified: 638815112790493999
+  Path: Assets/Audio/Build/Desktop/raven.bank
+  Name: raven
+  StudioPath: bank:/raven
+  lastModified: 638815112790447787
   FileSizes:
   - Name: Desktop
     Value: 506
@@ -801,7 +806,7 @@ MonoBehaviour:
     Data3: 2102118808
     Data4: -1994431221
   Banks:
-  - {fileID: 475433022984825464}
+  - {fileID: -2072804872322699232}
   IsStream: 1
   Is3D: 1
   IsOneShot: 0
@@ -866,7 +871,7 @@ MonoBehaviour:
     Data3: 1956351362
     Data4: -540070583
   Banks:
-  - {fileID: 475433022984825464}
+  - {fileID: -2072804872322699232}
   IsStream: 1
   Is3D: 1
   IsOneShot: 0
@@ -922,6 +927,26 @@ MonoBehaviour:
   Type: 0
   IsGlobal: 0
   Labels: []
+  Exists: 1
+--- !u!114 &7937843521026953583
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
+  m_Name: bank:/Master.strings.bank
+  m_EditorClassIdentifier: 
+  Path: Assets/Audio/Build/Desktop/Master.strings.bank
+  Name: Master.strings
+  StudioPath: bank:/Master.strings
+  lastModified: 638836070213294001
+  FileSizes:
+  - Name: Desktop
+    Value: 1780
   Exists: 1
 --- !u!114 &9086228000994981006
 MonoBehaviour:

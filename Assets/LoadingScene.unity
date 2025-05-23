@@ -501,13 +501,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e5c165eb86494c77a5365354dbffc1b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  useEKF: 1
+  useKalmanFilter: 1
   processNoisePosition: 0.01
   processNoiseVelocity: 1
   measurementNoiseGPS: 5
   measurementNoiseAccel: 0.5
   gpsAccuracyThreshold: 20
   accelThreshold: 0.1
+  smoothingFactor: 5
 --- !u!4 &600280647
 Transform:
   m_ObjectHideFlags: 0

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.03.00">
+	<object class="ParameterPreset" id="{44d67372-e433-44d7-9874-d7b47d85ab72}">
+		<property name="name">
+			<value>NormalizedDistance</value>
+		</property>
+		<relationship name="folder">
+			<destination>{bbd5e19f-f0cc-4564-b4bd-46d7ab57ec7e}</destination>
+		</relationship>
+		<relationship name="parameter">
+			<destination>{d2751481-c21a-4edf-960f-bf5066017fd2}</destination>
+		</relationship>
+	</object>
+	<object class="GameParameter" id="{d2751481-c21a-4edf-960f-bf5066017fd2}">
+		<property name="initialValue">
+			<value>0</value>
+		</property>
+	</object>
+</objects>

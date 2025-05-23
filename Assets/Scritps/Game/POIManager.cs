@@ -17,24 +17,32 @@ namespace LoGa.LudoEngine.Game
 
         [Header("Navigation System")]
         [SerializeField] private EventReference sharedCueEvent;
-        [SerializeField] private int maxActiveCues = 2;
-        [SerializeField] private float cueStagingDelay = 6f;
+        [SerializeField] private float cueStagingDelay = 2f; // Short delay between cues in cycle
+        [SerializeField] private float cyclePauseDelay = 6f;   // Longer pause between cycles
+        [SerializeField] private int maxActiveCues = 3;
         [SerializeField] private float proximityRadius = 20f;
         [SerializeField] private float dialogueRadius = 10f;
         [SerializeField] private float maxCueRadius = 500000f;
+        [SerializeField] private float discoveryDistance = 20f; // Discovery distance for character to be considered unlocked
 
         [Header("Target Locking")]
-        [SerializeField] private float targetLockTime = 5.0f;
+        [SerializeField] private float targetLockTime = 3.0f;
         [SerializeField] private float targetLockAngle = 15.0f;
         [SerializeField] private float targetBreakAngle = 30.0f;
         [SerializeField] private GameObject targetingIndicator;
         [SerializeField] private TextMeshProUGUI targetingText;
 
+        [Header("Frequency Control")]
+        [SerializeField] private float minCueInterval = 1.0f;   // Very frequent when very close
+        [SerializeField] private float maxCueInterval = 5.0f;   // Slow when far away
+        [SerializeField] private float maxTargetingDistance = 200f; // Same as volume max distance
+
         private EventInstance sharedCueInstance;
         private List<POI> activeCuePOIs = new List<POI>();
-        private POI currentProximityPOI = null;
         private float cueTimer = 0f;
         private int currentCueIndex = 0;
+        private bool isInCyclePause = false;
+        private float cyclePauseTimer = 0f;
 
         // Target tracking fields
         private POI potentialTargetPOI = null;
@@ -83,6 +91,22 @@ namespace LoGa.LudoEngine.Game
             }
         }
 
+        // NEW: Calculate aggressive distance-based cue interval
+        private float CalculateTargetCueInterval(float distance)
+        {
+            // Normalize distance (0-1 range)
+            float normalizedDistance = Mathf.Clamp01(distance / maxTargetingDistance);
+
+            // Use exponential curve for more aggressive frequency changes
+            // Same pattern as volume: front-loaded changes where they matter most
+            float frequencyFactor = Mathf.Pow(normalizedDistance, 1.5f);
+
+            // Calculate interval (closer = shorter interval = more frequent)
+            float interval = Mathf.Lerp(minCueInterval, maxCueInterval, frequencyFactor);
+
+            return interval;
+        }
+
         public void UpdateUnlockedPOIs(List<string> unlockedPOIs)
         {
             foreach (var poi in pois)
@@ -107,70 +131,47 @@ namespace LoGa.LudoEngine.Game
                 poiDistances.Add(poi, distance);
 
                 // Check for discovery
-                if (distance <= dialogueRadius && !poi.IsDiscovered)
+                if (distance <= discoveryDistance && !poi.IsDiscovered)
                 {
                     poi.SetDiscovered(true);
                     FirebaseService.SaveDiscoveredPOI(GameManager.Instance.CurrentSessionId, poi.id);
                     Debug.Log($"Discovered POI: {poi.characterName}");
                 }
 
-                // Calculate audio position
+                // Calculate audio position for each POI
                 Vector3 audioPosition = CalculateAudioPosition(poi, currentLat, currentLon, headingAngle);
-                poi.UpdateAudio(audioPosition);
+
+                // NEW: Let each POI handle its own character audio based on distance
+                poi.UpdateProximity(distance, audioPosition);
             }
 
-            // Check for POI proximity
+            // Check if any POI is in proximity for wander mode management
             var proximityPOI = poiDistances
                 .Where(p => p.Value <= proximityRadius)
                 .OrderBy(p => p.Value)
                 .Select(p => p.Key)
                 .FirstOrDefault();
 
-            // Handle mode transitions
             if (proximityPOI != null)
             {
-                // We're close to a POI - interaction mode
-                if (currentProximityPOI != proximityPOI)
-                {
-                    // Exit previous proximity
-                    if (currentProximityPOI != null)
-                    {
-                        currentProximityPOI.ExitProximity();
-                    }
+                // We're in INTERACT MODE - character audio is handled by POI.UpdateProximity()
+                // Clear any active navigation cues
+                activeCuePOIs.Clear();
 
-                    // Enter new proximity
-                    Vector3 position = CalculateAudioPosition(
-                        proximityPOI, currentLat, currentLon, HeadTrackingService.CurrentHeading);
-                    proximityPOI.EnterProximity(position);
-                    currentProximityPOI = proximityPOI;
-                }
-
-                // Check for dialogue distance
-                float dialogueDistance = poiDistances[proximityPOI];
-                if (dialogueDistance <= dialogueRadius)
+                // Clear targeting if we had one
+                if (targetedPOI != null)
                 {
-                    proximityPOI.StartDialogue();
-                }
-                else
-                {
-                    proximityPOI.StopDialogue();
+                    ClearTargetedPOI();
                 }
             }
             else
             {
-                // No POI in proximity - wander mode
-                if (currentProximityPOI != null)
-                {
-                    currentProximityPOI.ExitProximity();
-                    currentProximityPOI = null;
-                }
-
-                // Update navigation cues
+                // We're in WANDER MODE - run navigation cues
                 UpdateNavigationCues(poiDistances, currentLat, currentLon);
             }
         }
 
-        //function that manages navigation cues
+        //function that manages navigation cues (WANDER MODE)
         private void UpdateNavigationCues(Dictionary<POI, float> poiDistances, float currentLat, float currentLon)
         {
             // Find eligible POIs as before
@@ -202,14 +203,9 @@ namespace LoGa.LudoEngine.Game
                     else
                     {
                         // Still targeting this POI
-                        // Calculate distance-based cue interval - CLOSER = MORE FREQUENT
+                        // UPDATED: Calculate aggressive distance-based cue interval
                         float distance = poiDistances[targetedPOI];
-                        float normalizedDistance = Mathf.Clamp01(distance / maxCueRadius);
-
-                        // Example: map 0-maxCueRadius distance to 2-6 second intervals
-                        // When very close (near 0), cues play every 2 seconds
-                        // When far away (near maxCueRadius), cues play every 6 seconds
-                        float targetCueInterval = Mathf.Lerp(2f, 6f, normalizedDistance);
+                        float targetCueInterval = CalculateTargetCueInterval(distance);
 
                         // Update timer
                         cueTimer += Time.deltaTime;
@@ -223,10 +219,11 @@ namespace LoGa.LudoEngine.Game
                             Vector3 position = CalculateAudioPosition(targetedPOI, currentLat, currentLon, HeadTrackingService.CurrentHeading);
                             targetedPOI.PlayNavigationCue(position, distance);
 
-                            // Update debug text
+                            // Update debug text with improved frequency info
                             if (debugText != null)
                             {
-                                debugText.text = $"Targeted: {targetedPOI.characterName}\nDistance: {distance:F0}m\nInterval: {targetCueInterval:F1}s";
+                                float frequency = 1.0f / targetCueInterval;
+                                debugText.text = $"Targeted: {targetedPOI.characterName}\nDistance: {distance:F0}m\nInterval: {targetCueInterval:F2}s ({frequency:F1} Hz)";
                             }
                         }
 
@@ -293,20 +290,38 @@ namespace LoGa.LudoEngine.Game
                 }
             }
 
-            // STANDARD ALTERNATING CUES(if no target)
+            // STANDARD ALTERNATING CUES WITH CYCLE (if no target)
             activeCuePOIs = eligiblePOIs;
 
             if (activeCuePOIs.Count > 0)
             {
-                // Update debug text
-                if (debugText != null && activeCuePOIs.Count >= 2)
-                {
-                    debugText.text = $"Nearby: {string.Join(", ", activeCuePOIs.Select(p => p.characterName))}";
-                }
-
                 cueTimer += Time.deltaTime;
 
-                // Use fixed interval for alternating cues in non-targeted mode
+                // Check if we're in a cycle pause
+                if (isInCyclePause)
+                {
+                    cyclePauseTimer += Time.deltaTime;
+
+                    if (cyclePauseTimer >= cyclePauseDelay)
+                    {
+                        // End cycle pause, reset for new cycle
+                        isInCyclePause = false;
+                        cyclePauseTimer = 0f;
+                        currentCueIndex = 0; // Start new cycle from first POI
+                        cueTimer = cueStagingDelay; // Trigger immediate play
+                    }
+
+                    // Update debug text during pause
+                    if (debugText != null)
+                    {
+                        float remainingPause = cyclePauseDelay - cyclePauseTimer;
+                        debugText.text = $"Cycle pause: {remainingPause:F1}s remaining";
+                    }
+
+                    return; // Don't play cues during pause
+                }
+
+                // Normal cue playing logic
                 if (cueTimer >= cueStagingDelay)
                 {
                     cueTimer = 0f;
@@ -317,16 +332,31 @@ namespace LoGa.LudoEngine.Game
                         Vector3 position = CalculateAudioPosition(poi, currentLat, currentLon, HeadTrackingService.CurrentHeading);
                         float distance = poiDistances[poi];
 
-                        // Play standard navigation cue
+                        // Play cue
                         poi.PlayNavigationCue(position, distance);
 
+                        // Update debug text
+                        if (debugText != null)
+                        {
+                            debugText.text = $"Playing: {poi.characterName} ({currentCueIndex + 1}/{activeCuePOIs.Count})";
+                        }
+
                         // Move to next POI
-                        currentCueIndex = (currentCueIndex + 1) % activeCuePOIs.Count;
+                        currentCueIndex++;
+
+                        // Check if we've completed a full cycle
+                        if (currentCueIndex >= activeCuePOIs.Count)
+                        {
+                            // Start cycle pause
+                            isInCyclePause = true;
+                            cyclePauseTimer = 0f;
+
+                            Debug.Log($"Completed cycle of {activeCuePOIs.Count} cues, starting {cyclePauseDelay}s pause");
+                        }
                     }
                 }
             }
         }
-
 
         // Add these helper methods for targeting
         private void SetTargetedPOI(POI poi)
