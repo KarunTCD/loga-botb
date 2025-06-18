@@ -11,19 +11,22 @@ namespace LoGa.LudoEngine.Game
 {
     public class POIManager : MonoBehaviour
     {
-        [SerializeField] private List<POI> pois;
+        [Header("Time Layer Configuration")]
         [SerializeField] private MapManager mapManager;
         [SerializeField] private TextMeshProUGUI debugText;
 
-        [Header("Navigation System")]
+        [Header("Audio System")]
         [SerializeField] private EventReference sharedCueEvent;
-        [SerializeField] private float cueStagingDelay = 2f; // Short delay between cues in cycle
-        [SerializeField] private float cyclePauseDelay = 6f;   // Longer pause between cycles
+        [SerializeField] private EventReference mainAmbientEvent; // Single ambient event with layer parameter
+
+        [Header("Navigation System")]
+        [SerializeField] private float cueStagingDelay = 2f;
+        [SerializeField] private float cyclePauseDelay = 6f;
         [SerializeField] private int maxActiveCues = 3;
         [SerializeField] private float proximityRadius = 20f;
         [SerializeField] private float dialogueRadius = 10f;
         [SerializeField] private float maxCueRadius = 500000f;
-        [SerializeField] private float discoveryDistance = 20f; // Discovery distance for character to be considered unlocked
+        [SerializeField] private float discoveryDistance = 20f;
 
         [Header("Target Locking")]
         [SerializeField] private float targetLockTime = 3.0f;
@@ -33,10 +36,18 @@ namespace LoGa.LudoEngine.Game
         [SerializeField] private TextMeshProUGUI targetingText;
 
         [Header("Frequency Control")]
-        [SerializeField] private float minCueInterval = 1.0f;   // Very frequent when very close
-        [SerializeField] private float maxCueInterval = 5.0f;   // Slow when far away
-        [SerializeField] private float maxTargetingDistance = 200f; // Same as volume max distance
+        [SerializeField] private float minCueInterval = 1.0f;
+        [SerializeField] private float maxCueInterval = 5.0f;
+        [SerializeField] private float maxTargetingDistance = 200f;
 
+        // Current layer data
+        private TimeLayer currentLayer;
+        private List<POI> activePOIs = new List<POI>();
+
+        // Single ambient music instance for all layers
+        private EventInstance ambientMusicInstance;
+
+        // Navigation cue system
         private EventInstance sharedCueInstance;
         private List<POI> activeCuePOIs = new List<POI>();
         private float cueTimer = 0f;
@@ -57,20 +68,166 @@ namespace LoGa.LudoEngine.Game
 
         private void Start()
         {
-            // Create the shared cue instance once
+            // Initialize the single ambient music system
+            InitializeAmbientMusic();
+
+            // Subscribe to time layer changes
+            TimeLayerManager.Instance.TimeLayerChanging += OnTimeLayerChanging;
+            TimeLayerManager.Instance.TimeLayerChanged += OnTimeLayerChanged;
+
+            // Subscribe to location updates
+            LocationService.LocationUpdated += OnLocationUpdated;
+
+            // Initialize with current layer
+            OnTimeLayerChanged(TimeLayerManager.Instance.CurrentLayer);
+        }
+
+        private void InitializeAmbientMusic()
+        {
+            if (!mainAmbientEvent.IsNull)
+            {
+                ambientMusicInstance = AudioService.CreateAudioInstance(mainAmbientEvent);
+                AudioService.PlayAudio(ambientMusicInstance, Vector3.zero);
+                Debug.Log("Started main ambient music system");
+            }
+            else
+            {
+                Debug.LogError("Main ambient event not assigned!");
+            }
+        }
+
+        /// <summary>
+        /// Called BEFORE time layer transition starts - handles cleanup
+        /// </summary>
+        private void OnTimeLayerChanging(TimeLayer from, TimeLayer to)
+        {
+            Debug.Log($"POIManager: Preparing transition from {from.layerName} to {to.layerName}");
+
+            // Clear targeting state
+            ClearTargetedPOI();
+            ClearPotentialTargetPOI();
+
+            // Stop navigation cues
+            activeCuePOIs.Clear();
+            isInCyclePause = false;
+            cyclePauseTimer = 0f;
+            currentCueIndex = 0;
+            cueTimer = 0f;
+
+            // Clean up current POIs (but NOT ambient music)
+            CleanupCurrentLayerPOIs();
+
+            // Update debug display
+            if (debugText != null)
+            {
+                debugText.text = $"Transitioning: {from.layerName} → {to.layerName}";
+            }
+        }
+
+        /// <summary>
+        /// Called AFTER time layer transition completes - handles loading new layer
+        /// </summary>
+        private void OnTimeLayerChanged(TimeLayer newLayer)
+        {
+            Debug.Log($"POIManager: Loading {newLayer.layerName} layer");
+
+            currentLayer = newLayer;
+
+            // Load POIs for the new layer
+            LoadLayerPOIs(newLayer);
+
+            // Switch ambient music via FMOD parameter
+            SwitchLayerAmbientMusic(newLayer);
+
+            // Update debug display
+            if (debugText != null)
+            {
+                debugText.text = $"Layer: {newLayer.layerName}\nPOIs: {activePOIs.Count}";
+            }
+        }
+
+        private void LoadLayerPOIs(TimeLayer layer)
+        {
+            activePOIs.Clear();
+
+            // Load all POIs for this layer
+            if (layer.pois != null)
+            {
+                activePOIs.AddRange(layer.pois);
+            }
+
+            // Initialize all POIs
+            InitializePOIs();
+
+            Debug.Log($"Loaded {activePOIs.Count} POIs for {layer.layerName}");
+        }
+
+        private void InitializePOIs()
+        {
+            // Create the shared cue instance for this layer
             try
             {
+                if (sharedCueInstance.isValid())
+                {
+                    AudioService.ReleaseAudio(sharedCueInstance);
+                }
                 sharedCueInstance = AudioService.CreateAudioInstance(sharedCueEvent);
             }
             catch (System.Exception e)
             {
-                Debug.Log("Error " + e.Message);
+                Debug.LogError("Error creating shared cue instance: " + e.Message);
             }
 
-            InitializePOIs();
+            // Initialize each POI
+            foreach (var poi in activePOIs)
+            {
+                Debug.Log($"Initializing {poi.characterName} in {currentLayer.layerName}");
+                poi.Initialize();
+                Vector2 poiPosition = mapManager.GetScreenPosition(poi.latitude, poi.longitude);
+                poi.marker.anchoredPosition = poiPosition;
+                poi.SetSharedCueInstance(sharedCueInstance);
+            }
+        }
 
-            // Subscribe to location updates
-            LocationService.LocationUpdated += OnLocationUpdated;
+        /// <summary>
+        /// Switch ambient music using FMOD parameter instead of separate events
+        /// </summary>
+        private void SwitchLayerAmbientMusic(TimeLayer layer)
+        {
+            if (ambientMusicInstance.isValid())
+            {
+                // Set layer parameter - FMOD handles the switching internally
+                AudioService.SetParameter(ambientMusicInstance, "TimeLayer", layer.layerIndex);
+                Debug.Log($"Switched ambient music to layer {layer.layerIndex} ({layer.layerName})");
+            }
+            else
+            {
+                Debug.LogError("Ambient music instance is not valid!");
+            }
+        }
+
+        /// <summary>
+        /// Clean up POIs only, not ambient music
+        /// </summary>
+        private void CleanupCurrentLayerPOIs()
+        {
+            // Clean up POIs
+            foreach (var poi in activePOIs)
+            {
+                poi.Cleanup();
+            }
+
+            activePOIs.Clear();
+            activeCuePOIs.Clear();
+
+            // Clean up shared cue instance
+            if (sharedCueInstance.isValid())
+            {
+                AudioService.StopAudio(sharedCueInstance, false);
+                AudioService.ReleaseAudio(sharedCueInstance);
+            }
+
+            // Note: We do NOT stop ambientMusicInstance here - it continues playing
         }
 
         private void OnLocationUpdated(float latitude, float longitude)
@@ -78,38 +235,17 @@ namespace LoGa.LudoEngine.Game
             UpdateProximity(latitude, longitude);
         }
 
-        private void InitializePOIs()
-        {
-            foreach (var poi in pois)
-            {
-                Debug.Log($"Initializing {poi.characterName}");
-                poi.Initialize();
-                Vector2 poiPosition = mapManager.GetScreenPosition(poi.latitude, poi.longitude);
-                poi.marker.anchoredPosition = poiPosition;
-                // Distribute to all POIs
-                poi.SetSharedCueInstance(sharedCueInstance);
-            }
-        }
-
-        // NEW: Calculate aggressive distance-based cue interval
         private float CalculateTargetCueInterval(float distance)
         {
-            // Normalize distance (0-1 range)
             float normalizedDistance = Mathf.Clamp01(distance / maxTargetingDistance);
-
-            // Use exponential curve for more aggressive frequency changes
-            // Same pattern as volume: front-loaded changes where they matter most
             float frequencyFactor = Mathf.Pow(normalizedDistance, 1.5f);
-
-            // Calculate interval (closer = shorter interval = more frequent)
             float interval = Mathf.Lerp(minCueInterval, maxCueInterval, frequencyFactor);
-
             return interval;
         }
 
         public void UpdateUnlockedPOIs(List<string> unlockedPOIs)
         {
-            foreach (var poi in pois)
+            foreach (var poi in activePOIs)
             {
                 bool isUnlocked = unlockedPOIs.Contains(poi.id);
                 poi.SetUnlocked(isUnlocked);
@@ -118,15 +254,28 @@ namespace LoGa.LudoEngine.Game
 
         public void UpdateProximity(float currentLat, float currentLon)
         {
-            // Skip if not in player mode
+            // Skip if not in player mode or transitioning
             if (GameManager.Instance != null && GameManager.Instance.CurrentMode != GameManager.GameMode.Player)
                 return;
+
+            if (TimeLayerManager.Instance.IsTransitioning)
+                return;
+
+            // 🔧 FIX: Create a copy of the POI list for safe iteration
+            var poisToUpdate = new List<POI>(activePOIs);
 
             Dictionary<POI, float> poiDistances = new Dictionary<POI, float>();
             float headingAngle = HeadTrackingService.CurrentHeading;
 
-            foreach (var poi in pois)
+            // Now iterate over the copy, not the original list
+            foreach (var poi in poisToUpdate)
             {
+                // Double-check POI is still in active list (in case it was removed during transition)
+                if (!activePOIs.Contains(poi))
+                {
+                    continue; // Skip POIs that are no longer active
+                }
+
                 float distance = CalculateDistance(currentLat, currentLon, poi.latitude, poi.longitude);
                 poiDistances.Add(poi, distance);
 
@@ -138,14 +287,28 @@ namespace LoGa.LudoEngine.Game
                     Debug.Log($"Discovered POI: {poi.characterName}");
                 }
 
-                // Calculate audio position for each POI
+                // Calculate audio position
                 Vector3 audioPosition = CalculateAudioPosition(poi, currentLat, currentLon, headingAngle);
 
-                // NEW: Let each POI handle its own character audio based on distance
+                // Update POI proximity - this might trigger portal activation
                 poi.UpdateProximity(distance, audioPosition);
+
+                // If a transition started during this update, exit early
+                if (TimeLayerManager.Instance.IsTransitioning)
+                {
+                    Debug.Log("Time transition started during proximity update - exiting early");
+                    return;
+                }
             }
 
-            // Check if any POI is in proximity for wander mode management
+            // Only continue with navigation logic if we have valid active POIs
+            if (activePOIs.Count == 0)
+            {
+                Debug.Log("No active POIs after proximity update");
+                return;
+            }
+
+            // Check for interact mode
             var proximityPOI = poiDistances
                 .Where(p => p.Value <= proximityRadius)
                 .OrderBy(p => p.Value)
@@ -154,11 +317,8 @@ namespace LoGa.LudoEngine.Game
 
             if (proximityPOI != null)
             {
-                // We're in INTERACT MODE - character audio is handled by POI.UpdateProximity()
-                // Clear any active navigation cues
+                // INTERACT MODE
                 activeCuePOIs.Clear();
-
-                // Clear targeting if we had one
                 if (targetedPOI != null)
                 {
                     ClearTargetedPOI();
@@ -166,15 +326,15 @@ namespace LoGa.LudoEngine.Game
             }
             else
             {
-                // We're in WANDER MODE - run navigation cues
+                // WANDER MODE
                 UpdateNavigationCues(poiDistances, currentLat, currentLon);
             }
         }
 
-        //function that manages navigation cues (WANDER MODE)
+        // Function that manages navigation cues (WANDER MODE)
         private void UpdateNavigationCues(Dictionary<POI, float> poiDistances, float currentLat, float currentLon)
         {
-            // Find eligible POIs as before
+            // Find eligible POIs from current time layer
             var eligiblePOIs = poiDistances
                 .Where(p => p.Value > proximityRadius && p.Value <= maxCueRadius)
                 .OrderBy(p => p.Value)
@@ -203,7 +363,7 @@ namespace LoGa.LudoEngine.Game
                     else
                     {
                         // Still targeting this POI
-                        // UPDATED: Calculate aggressive distance-based cue interval
+                        // Calculate aggressive distance-based cue interval
                         float distance = poiDistances[targetedPOI];
                         float targetCueInterval = CalculateTargetCueInterval(distance);
 
@@ -223,7 +383,8 @@ namespace LoGa.LudoEngine.Game
                             if (debugText != null)
                             {
                                 float frequency = 1.0f / targetCueInterval;
-                                debugText.text = $"Targeted: {targetedPOI.characterName}\nDistance: {distance:F0}m\nInterval: {targetCueInterval:F2}s ({frequency:F1} Hz)";
+                                var currentLayer = TimeLayerManager.Instance.CurrentLayer;
+                                debugText.text = $"Layer: {currentLayer.layerName}\nTargeted: {targetedPOI.characterName}\nDistance: {distance:F0}m\nInterval: {targetCueInterval:F2}s ({frequency:F1} Hz)";
                             }
                         }
 
@@ -314,8 +475,9 @@ namespace LoGa.LudoEngine.Game
                     // Update debug text during pause
                     if (debugText != null)
                     {
+                        var currentLayer = TimeLayerManager.Instance.CurrentLayer;
                         float remainingPause = cyclePauseDelay - cyclePauseTimer;
-                        debugText.text = $"Cycle pause: {remainingPause:F1}s remaining";
+                        debugText.text = $"Layer: {currentLayer.layerName}\nCycle pause: {remainingPause:F1}s remaining";
                     }
 
                     return; // Don't play cues during pause
@@ -338,7 +500,8 @@ namespace LoGa.LudoEngine.Game
                         // Update debug text
                         if (debugText != null)
                         {
-                            debugText.text = $"Playing: {poi.characterName} ({currentCueIndex + 1}/{activeCuePOIs.Count})";
+                            var currentLayer = TimeLayerManager.Instance.CurrentLayer;
+                            debugText.text = $"Layer: {currentLayer.layerName}\nPlaying: {poi.characterName} ({currentCueIndex + 1}/{activeCuePOIs.Count})";
                         }
 
                         // Move to next POI
@@ -358,7 +521,7 @@ namespace LoGa.LudoEngine.Game
             }
         }
 
-        // Add these helper methods for targeting
+        // Helper methods for targeting
         private void SetTargetedPOI(POI poi)
         {
             targetedPOI = poi;
@@ -380,9 +543,6 @@ namespace LoGa.LudoEngine.Game
             {
                 targetingText.text = $"Locked onto {poi.characterName}";
             }
-
-            // Play a sound to indicate successful targeting
-            // You could add this to SoundManager
         }
 
         private void ClearTargetedPOI()
@@ -433,19 +593,6 @@ namespace LoGa.LudoEngine.Game
         {
             // Unsubscribe from events
             LocationService.LocationUpdated -= OnLocationUpdated;
-
-            // Clean up all POIs
-            foreach (var poi in pois)
-            {
-                poi.Cleanup();
-            }
-
-            // Clean up shared cue instance
-            if (sharedCueInstance.isValid())
-            {
-                AudioService.StopAudio(sharedCueInstance, false);
-                AudioService.ReleaseAudio(sharedCueInstance);
-            }
         }
 
         // Distance calculation function

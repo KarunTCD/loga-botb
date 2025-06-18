@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.03.00">
+	<object class="EncodableAsset" id="{8c68c5b5-8248-474e-9d0a-45dbd7f7a512}">
+		<property name="assetPath">
+			<value>Irish Contemporary classic/</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{ebca4182-9fac-49cd-93d1-bfbca4c66617}</destination>
+		</relationship>
+	</object>
+</objects>

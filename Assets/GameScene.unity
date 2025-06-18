@@ -1876,6 +1876,81 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 783845745}
   m_CullTransparentMesh: 1
+--- !u!1 &812127814
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 812127815}
+  - component: {fileID: 812127817}
+  - component: {fileID: 812127816}
+  m_Layer: 5
+  m_Name: Fox Marker
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &812127815
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 812127814}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 815688570}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 20, y: 20}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &812127816
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 812127814}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.4433962, g: 0.3494138, b: 0.26561943, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &812127817
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 812127814}
+  m_CullTransparentMesh: 1
 --- !u!1 &815688569
 GameObject:
   m_ObjectHideFlags: 0
@@ -1912,6 +1987,7 @@ RectTransform:
   - {fileID: 1553759305}
   - {fileID: 2127153680}
   - {fileID: 906921090}
+  - {fileID: 812127815}
   - {fileID: 1545574668}
   - {fileID: 632247704}
   - {fileID: 1413553337}
@@ -2171,6 +2247,221 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 906921089}
   m_CullTransparentMesh: 1
+--- !u!1 &915376440
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 915376442}
+  - component: {fileID: 915376441}
+  m_Layer: 0
+  m_Name: TimeLayerManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &915376441
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 915376440}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b67ec250c3fdd4c6692d9fa1d5dd09fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  timeLayers:
+  - layerName: Neolithic
+    layerDescription: Neolithic Time Layer
+    layerIndex: 0
+    ambientSound:
+      Guid:
+        Data1: -642792527
+        Data2: 1157833136
+        Data3: 2146350997
+        Data4: 841210949
+      Path: event:/ambient_sounds
+    pois:
+    - id: fox
+      characterName: Fox
+      latitude: 53.35017
+      longitude: -6.24862
+      marker: {fileID: 812127815}
+      characterId: 5
+      proximityRadius: 30
+      dialogueRadius: 10
+      portalType: 1
+      characterAudioEvent:
+        Guid:
+          Data1: 1409366747
+          Data2: 1253460628
+          Data3: 367639432
+          Data4: 595799489
+        Path: event:/fox_music
+    - id: salmon_knowledge
+      characterName: Salmon Of Knowledge
+      latitude: 53.3485
+      longitude: -6.249034
+      marker: {fileID: 1553759305}
+      characterId: 3
+      proximityRadius: 30
+      dialogueRadius: 10
+      portalType: 0
+      characterAudioEvent:
+        Guid:
+          Data1: -1794321705
+          Data2: 1155231689
+          Data3: -816275816
+          Data4: -1405444301
+        Path: event:/salmon_music
+  - layerName: Battle1690
+    layerDescription: Time Layer when Battle of Boyne took place - 1690
+    layerIndex: 1
+    ambientSound:
+      Guid:
+        Data1: -642792527
+        Data2: 1157833136
+        Data3: 2146350997
+        Data4: 841210949
+      Path: event:/ambient_sounds
+    pois:
+    - id: raven
+      characterName: Raven
+      latitude: 53.34851
+      longitude: -6.250009
+      marker: {fileID: 906921090}
+      characterId: 4
+      proximityRadius: 30
+      dialogueRadius: 10
+      portalType: 2
+      characterAudioEvent:
+        Guid:
+          Data1: -17476983
+          Data2: 1197733990
+          Data3: 1956351362
+          Data4: -540070583
+        Path: event:/raven_music
+    - id: battle_oak
+      characterName: Battle Oak
+      latitude: 53.34907
+      longitude: -6.249854
+      marker: {fileID: 2127153680}
+      characterId: 2
+      proximityRadius: 30
+      dialogueRadius: 10
+      portalType: 0
+      characterAudioEvent:
+        Guid:
+          Data1: -573735400
+          Data2: 1164887914
+          Data3: 803607699
+          Data4: -1636424172
+        Path: event:/battle_oak_music
+    - id: william_orange
+      characterName: William of Orange
+      latitude: 53.34808
+      longitude: -6.249983
+      marker: {fileID: 2099162380}
+      characterId: 1
+      proximityRadius: 30
+      dialogueRadius: 10
+      portalType: 0
+      characterAudioEvent:
+        Guid:
+          Data1: 1175538158
+          Data2: 1256538305
+          Data3: 857137839
+          Data4: 547777320
+        Path: event:/william_music
+  - layerName: Modern
+    layerDescription: Modern Time Layer
+    layerIndex: 3
+    ambientSound:
+      Guid:
+        Data1: -642792527
+        Data2: 1157833136
+        Data3: 2146350997
+        Data4: 841210949
+      Path: event:/ambient_sounds
+    pois:
+    - id: raven
+      characterName: Raven
+      latitude: 53.349022
+      longitude: -6.248459
+      marker: {fileID: 906921090}
+      characterId: 4
+      proximityRadius: 30
+      dialogueRadius: 10
+      portalType: 2
+      characterAudioEvent:
+        Guid:
+          Data1: -17476983
+          Data2: 1197733990
+          Data3: 1956351362
+          Data4: -540070583
+        Path: event:/raven_music
+    - id: farmer
+      characterName: Farmer
+      latitude: 53.349762
+      longitude: -6.249733
+      marker: {fileID: 1545574668}
+      characterId: 10
+      proximityRadius: 30
+      dialogueRadius: 10
+      portalType: 0
+      characterAudioEvent:
+        Guid:
+          Data1: 670137374
+          Data2: 1227847142
+          Data3: 445860019
+          Data4: 1260604156
+        Path: event:/farmer_music
+    - id: child
+      characterName: Child
+      latitude: 53.348297
+      longitude: -6.250306
+      marker: {fileID: 632247704}
+      characterId: 11
+      proximityRadius: 30
+      dialogueRadius: 10
+      portalType: 0
+      characterAudioEvent:
+        Guid:
+          Data1: -1568402162
+          Data2: 1290817365
+          Data3: 2102118808
+          Data4: -1994431221
+        Path: event:/child_music
+  defaultLayerIndex: 1
+  transitionDuration: 3
+  timePortalAudio:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+--- !u!4 &915376442
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 915376440}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &962164250
 GameObject:
   m_ObjectHideFlags: 0
@@ -2562,112 +2853,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ab1a9ac34cca4b1b8333139d0033e2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pois:
-  - id: william_orange
-    characterName: William of Orange
-    latitude: 53.34811
-    longitude: -6.250078
-    marker: {fileID: 2099162380}
-    characterId: 1
-    proximityRadius: 20
-    dialogueRadius: 10
-    characterAudioEvent:
-      Guid:
-        Data1: 1175538158
-        Data2: 1256538305
-        Data3: 857137839
-        Data4: 547777320
-      Path: event:/william_music
-  - id: battle_oak
-    characterName: Battle Oak
-    latitude: 53.3491
-    longitude: -6.24997
-    marker: {fileID: 2127153680}
-    characterId: 2
-    proximityRadius: 20
-    dialogueRadius: 10
-    characterAudioEvent:
-      Guid:
-        Data1: -573735400
-        Data2: 1164887914
-        Data3: 803607699
-        Data4: -1636424172
-      Path: event:/battle_oak_music
-  - id: salmon_knowledge
-    characterName: Salmon Of Knowledge
-    latitude: 53.34848
-    longitude: -6.249067
-    marker: {fileID: 1553759305}
-    characterId: 3
-    proximityRadius: 20
-    dialogueRadius: 10
-    characterAudioEvent:
-      Guid:
-        Data1: -1794321705
-        Data2: 1155231689
-        Data3: -816275816
-        Data4: -1405444301
-      Path: event:/salmon_music
-  - id: raven
-    characterName: Raven
-    latitude: 53.35011
-    longitude: -6.248604
-    marker: {fileID: 906921090}
-    characterId: 4
-    proximityRadius: 20
-    dialogueRadius: 10
-    characterAudioEvent:
-      Guid:
-        Data1: -17476983
-        Data2: 1197733990
-        Data3: 1956351362
-        Data4: -540070583
-      Path: event:/raven_music
-  - id: louis
-    characterName: Louis
-    latitude: 53.34956
-    longitude: -6.246275
-    marker: {fileID: 1545574668}
-    characterId: 5
-    proximityRadius: 20
-    dialogueRadius: 10
-    characterAudioEvent:
-      Guid:
-        Data1: 536625850
-        Data2: 1251709943
-        Data3: -913172600
-        Data4: -836348760
-      Path: event:/louis_music
-  - id: james
-    characterName: James
-    latitude: 53.34813
-    longitude: -6.246093
-    marker: {fileID: 632247704}
-    characterId: 6
-    proximityRadius: 20
-    dialogueRadius: 10
-    characterAudioEvent:
-      Guid:
-        Data1: -1406718307
-        Data2: 1317937260
-        Data3: 1653865350
-        Data4: -1378154026
-      Path: event:/james_music
-  - id: barber_surgeon
-    characterName: Barber Surgeon
-    latitude: 53.3476
-    longitude: -6.247952
-    marker: {fileID: 1413553337}
-    characterId: 7
-    proximityRadius: 20
-    dialogueRadius: 10
-    characterAudioEvent:
-      Guid:
-        Data1: -254515590
-        Data2: 1318876954
-        Data3: 511570084
-        Data4: -896650416
-      Path: event:/barber_surgeon_music
   mapManager: {fileID: 1421694614}
   debugText: {fileID: 560394671}
   sharedCueEvent:
@@ -2677,6 +2862,13 @@ MonoBehaviour:
       Data3: -949885777
       Data4: 691049561
     Path: event:/nav_cue
+  mainAmbientEvent:
+    Guid:
+      Data1: -642792527
+      Data2: 1157833136
+      Data3: 2146350997
+      Data4: 841210949
+    Path: event:/ambient_sounds
   cueStagingDelay: 2
   cyclePauseDelay: 6
   maxActiveCues: 3
@@ -3677,10 +3869,10 @@ MonoBehaviour:
   fixPhraseManager: {fileID: 150098454}
   gameManager: {fileID: 1662718314}
   moveSpeed: 0
-  northLatitude: 53.36
-  southLatitude: 53.34
-  eastLongitude: -6.24
-  westLongitude: -6.26
+  northLatitude: 53.351818
+  southLatitude: 53.34627
+  eastLongitude: -6.245568
+  westLongitude: -6.251421
 --- !u!1 &1545574667
 GameObject:
   m_ObjectHideFlags: 0
@@ -4215,7 +4407,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -49.999756, y: 0}
+  m_AnchoredPosition: {x: -49.999542, y: 0}
   m_SizeDelta: {x: -100, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1804844433
@@ -5021,6 +5213,7 @@ SceneRoots:
   - {fileID: 84431459}
   - {fileID: 1662718313}
   - {fileID: 2044956339}
+  - {fileID: 915376442}
   - {fileID: 1082108170}
   - {fileID: 1421694613}
   - {fileID: 1323550134}

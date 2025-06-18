@@ -1,432 +1,225 @@
 using System;
-using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 using LoGa.LudoEngine.Core;
 using LoGa.LudoEngine.Utilities;
-using System.Threading.Tasks;
 
 namespace LoGa.LudoEngine.Services
 {
     public class HeadTrackingService : MonoBehaviour, IHeadTrackingService
     {
+        [Header("Provider Configuration")]
+        [SerializeField] private List<GameObject> providerPrefabs = new List<GameObject>();
+        [SerializeField] private float providerSwitchDelay = 2f;
+        [SerializeField] private bool enableAutomaticSwitching = true;
+        [SerializeField] private bool enableDebugLogging = true;
+
+        // IService Implementation
+        public bool IsInitialized { get; private set; }
+
+        // IHeadTrackingService Implementation (unchanged interface for POIManager)
         public event Action<float> HeadingUpdated;
+        public event Action<string> ActiveProviderChanged;
 
-        // All your existing configuration parameters
-        [Header("Calibration Settings")]
-        [SerializeField] private float calibrationThreshold = 5f;
-        [SerializeField] private float calibrationLerpSpeed = 0.05f;
-        [SerializeField] private int calibrationCheckInterval = 300;
-        [SerializeField] private bool enablePeriodicCalibration = true;
-        [SerializeField] private float compassStartupDelay = 3f;
+        public float CurrentHeading => activeProvider?.CurrentHeading ?? 0f;
+        public bool IsCalibrated => activeProvider?.IsCalibrated ?? false;
+        public string ActiveProviderName => activeProvider?.ProviderName ?? "None";
+        public IReadOnlyList<string> AvailableProviderNames =>
+            availableProviders.Select(p => p.ProviderName).ToList().AsReadOnly();
 
-        [Header("Sensor Fusion")]
-        [SerializeField] private bool enableSensorFusion = true;
-        [SerializeField] private float magneticDeclination = 3.5f;
-        [SerializeField] private float headingNoiseThreshold = 2.0f;
-        [SerializeField] private float stationaryNoiseThreshold = 0.5f; // Stricter threshold when stationary
-        [SerializeField] private float minSmoothingFactor = 0.01f; // Faster response
-        [SerializeField] private float maxSmoothingFactor = 0.1f;  // More smoothing
-        [SerializeField] private float rotationThreshold = 1.0f;   // Degrees/second
+        // Provider Management
+        private List<IHeadTrackingProvider> availableProviders = new List<IHeadTrackingProvider>();
+        private IHeadTrackingProvider activeProvider;
+        private Coroutine switchingCoroutine;
 
-        // Internal tracking variables
-        private bool gyroEnabled = false;
-        private bool compassEnabled = false;
-        private bool accelerometerEnabled = false;
-        private float currentAngle = 0f;
-        private float markerAngle = 0f;
-        private float trueNorthOffset = 0f;
-        private float targetTrueNorthOffset = 0f;
-        private bool isCalibrated = false;
-        private Coroutine compassInitCoroutine;
-
-        // Compass tracking
-        private float lastCompassHeading = 0f;
-        private float calibrationLerpFactor = 1f; // 0 to 1
-
-        // Sensor fusion variables
-        private Vector3 rawAcceleration;
-        private float gyroRotationRate;
-        private float headingVelocity = 0f;
-        private float headingStabilityTimer = 0f;
-
-        // Path tracking and drift correction
-        private float cumulativeRotation = 0f;
-        private float totalRotationSinceCalibration = 0f;
-        private float lastCalibrationTime = 0f;
-
-        public bool IsInitialized => gyroEnabled || compassEnabled;
-        public bool IsCalibrated => isCalibrated;
-        public float CurrentHeading => markerAngle;
-
-        public Task<bool> InitializeAsync()
+        public async Task<bool> InitializeAsync()
         {
             try
             {
-                InitializeSensors();
-                compassInitCoroutine = StartCoroutine(InitializeCompass());
-                lastCalibrationTime = Time.time;
+                Debug.Log("Initing Head Tracking Service");
 
-                // Return success based on gyro initialization
-                return Task.FromResult(gyroEnabled);
-            }
-            catch (Exception e)
-            {
-                Debug.LogError($"Failed to initialize head tracking service: {e.Message}");
-                return Task.FromResult(false);
-            }
-        }
+                await DiscoverAndInitializeProviders();
+                SelectBestProvider();
 
-        private void InitializeSensors()
-        {
-            // Initialize gyroscope
-            if (SystemInfo.supportsGyroscope)
-            {
-                Input.gyro.enabled = true;
-                gyroEnabled = true;
-                Debug.Log("Gyroscope enabled");
-            }
-            else
-            {
-                Debug.LogWarning("No gyroscope found on device");
-            }
+                IsInitialized = true;
+                Debug.Log($"Head Tracking Service initialized with {availableProviders.Count} providers");
+                Debug.Log($"Active provider: {ActiveProviderName}");
 
-            // Initialize accelerometer
-            if (SystemInfo.supportsAccelerometer)
+                return activeProvider != null;
+            }
+            catch(Exception e)
             {
-                accelerometerEnabled = true;
-                Debug.Log("Accelerometer enabled");
+                Debug.LogError($"Failed to initialize Head Tracking Servie: {e.Message}");
+                return false;
             }
         }
 
-        private IEnumerator InitializeCompass()
+        public void StartTracking() => activeProvider?.StartTracking();
+        public void StopTracking() => activeProvider?.StopTracking();
+        public void CalibrateToNorth() => activeProvider?.CalibrateToNorth();
+        public void SetDirectionDegrees(float degrees) => activeProvider?.SetDirectionDegrees(degrees);
+
+        // -----------------------------------------------
+
+        private async Task DiscoverAndInitializeProviders()
         {
-            Debug.Log("Initializing compass...");
+            Debug.Log($"Discovering providers from {providerPrefabs.Count} prefabs..");
 
-            // Enable compass
-            Input.compass.enabled = true;
-            compassEnabled = true;
-
-            // Wait for compass to start
-            for (int i = 0; i < 3; i++)
+            foreach (var prefab in providerPrefabs)
             {
-                Debug.Log($"Compass enabled: {Input.compass.enabled}, Heading: {Input.compass.trueHeading}");
-                yield return new WaitForSeconds(1f);
-            }
+                if (prefab == null) continue;
 
-            // Wait a bit longer for compass to stabilize
-            yield return new WaitForSeconds(compassStartupDelay);
-
-            // Try to get initial calibration
-            float compassHeading = Input.compass.trueHeading;
-            Debug.Log($"Initial compass heading: {compassHeading}");
-
-            if (compassHeading != 0)
-            {
-                // Initial calibration
-                lastCompassHeading = compassHeading;
-                trueNorthOffset = compassHeading - currentAngle;
-                targetTrueNorthOffset = trueNorthOffset;
-                isCalibrated = true;
-
-                Debug.Log($"Initial calibration complete. Offset: {trueNorthOffset}");
-            }
-            else
-            {
-                Debug.LogWarning("Compass not providing readings. Will need manual calibration.");
-            }
-        }
-
-        public void StartTracking()
-        {
-            // Currently empty, tracking happens in Update
-        }
-
-        public void StopTracking()
-        {
-            // Currently empty
-        }
-
-        private void Update()
-        {
-            // Skip if no gyro is available
-            if (!gyroEnabled) return;
-
-            // Update sensor readings
-            UpdateSensorData();
-
-            if (enableSensorFusion && compassEnabled)
-            {
-                // Use sensor fusion for enhanced heading
-                UpdateFusedHeading();
-            }
-            else
-            {
-                // Use standard gyro update
-                UpdateGyroHeading();
-            }
-
-            // Apply current calibration
-            markerAngle = (currentAngle + trueNorthOffset + 360f) % 360f;
-
-            // Track total rotation for drift detection
-            totalRotationSinceCalibration += Mathf.Abs(gyroRotationRate * Time.deltaTime * Mathf.Rad2Deg);
-
-            // Force calibration after extended rotation or time
-            bool shouldForceCalibrate =
-                (totalRotationSinceCalibration > 720f) ||                // >2 full rotations
-                (Time.time - lastCalibrationTime > 30f && compassEnabled); // >30 seconds
-
-            if (shouldForceCalibrate && compassEnabled && Input.compass.trueHeading != 0)
-            {
-                PerformCompassCalibration(false); // false = less aggressive
-                totalRotationSinceCalibration = 0f;
-                lastCalibrationTime = Time.time;
-            }
-
-            // Regular calibration check
-            if (enablePeriodicCalibration && Time.frameCount % calibrationCheckInterval == 0 && compassEnabled)
-            {
-                PerformCompassCalibration(true); // true = check against threshold
-            }
-
-            // Apply smooth calibration if in progress
-            if (calibrationLerpFactor < 1f)
-            {
-                calibrationLerpFactor += calibrationLerpSpeed;
-                if (calibrationLerpFactor > 1f) calibrationLerpFactor = 1f;
-
-                trueNorthOffset = Mathf.Lerp(trueNorthOffset, targetTrueNorthOffset, calibrationLerpFactor);
-            }
-
-            // Add event for heading updates
-            HeadingUpdated?.Invoke(markerAngle);
-        }
-
-        private void UpdateSensorData()
-        {
-            // Update acceleration data
-            if (accelerometerEnabled)
-            {
-                rawAcceleration = Input.acceleration;
-            }
-
-            // Update gyroscope data
-            if (gyroEnabled)
-            {
-                gyroRotationRate = Input.gyro.rotationRateUnbiased.y;
-            }
-        }
-
-        private void UpdateGyroHeading()
-        {
-            // Track cumulative rotation to prevent shortest-path issues
-            cumulativeRotation -= gyroRotationRate * Time.deltaTime * Mathf.Rad2Deg;
-
-            // Calculate new angle based on gyro rotation
-            float newAngle = currentAngle - gyroRotationRate * Time.deltaTime * Mathf.Rad2Deg;
-
-            // Use a stricter threshold when device is stationary
-            float allowedThreshold = IsDeviceStationary() ? stationaryNoiseThreshold : headingNoiseThreshold;
-
-            // Ignore minor changes (noise filtering)
-            float deltaAngle = Mathf.Abs(newAngle - currentAngle);
-            if (deltaAngle < allowedThreshold)
-            {
-                return; // Skip this update - likely just sensor noise
-            }
-
-            // Update current angle directly from cumulative rotation
-            // This preserves direction of rotation without taking shortcuts
-            currentAngle = newAngle;
-
-            // Normalize angle
-            currentAngle = (currentAngle + 360f) % 360f;
-        }
-
-        private void UpdateFusedHeading()
-        {
-            float targetHeading;
-
-            // Determine device stability state
-            bool isStationary = IsDeviceStationary();
-
-            if (isStationary)
-            {
-                // When stationary, gradually increase compass influence
-                headingStabilityTimer += Time.deltaTime;
-                float compassInfluence = Mathf.Clamp01(headingStabilityTimer / 3.0f); // Full influence after 3 seconds
-
-                // Weighted average with increasing compass weight when stationary
-                float compassWeight = Mathf.Lerp(0.05f, 0.2f, compassInfluence);
-                targetHeading = BlendAngles(currentAngle, Input.compass.trueHeading + magneticDeclination, compassWeight);
-            }
-            else
-            {
-                // Reset stability timer when moving
-                headingStabilityTimer = 0;
-
-                // Track cumulative rotation
-                cumulativeRotation -= gyroRotationRate * Time.deltaTime * Mathf.Rad2Deg;
-
-                // Update current angle
-                float newAngle = currentAngle - gyroRotationRate * Time.deltaTime * Mathf.Rad2Deg;
-                currentAngle = (newAngle + 360f) % 360f;
-
-                // Small compass correction to prevent drift (using adjusted compass heading)
-                float adjustedCompassHeading = (Input.compass.trueHeading + magneticDeclination + 360f) % 360f;
-                targetHeading = BlendAngles(currentAngle, adjustedCompassHeading, 0.05f);
-            }
-
-            // Calculate rotation speed (absolute value)
-            float rotationSpeed = Mathf.Abs(gyroRotationRate * Mathf.Rad2Deg);
-
-            // Adjust smoothing factor based on rotation speed
-            // Fast rotation = less smoothing = quicker response
-            float adaptiveSmoothingFactor = Mathf.Lerp(
-                maxSmoothingFactor,  // More smoothing when slow/still
-                minSmoothingFactor,  // Less smoothing when rotating quickly
-                Mathf.Clamp01(rotationSpeed / rotationThreshold)
-            );
-
-            // Apply smoothing to reduce jitter
-            currentAngle = Mathf.SmoothDampAngle(
-                currentAngle,
-                targetHeading,
-                ref headingVelocity,
-                adaptiveSmoothingFactor
-            );
-
-            // Normalize
-            currentAngle = (currentAngle + 360f) % 360f;
-        }
-
-        // New method to centralize calibration logic
-        private void PerformCompassCalibration(bool checkThreshold)
-        {
-            float compassHeading = Input.compass.trueHeading;
-
-            // Only consider valid readings
-            if (compassHeading != 0 && Mathf.Abs(compassHeading - lastCompassHeading) < 45f)
-            {
-                lastCompassHeading = compassHeading;
-
-                // Adjust heading for magnetic declination
-                compassHeading = (compassHeading + magneticDeclination + 360f) % 360f;
-
-                // Calculate what the offset should be
-                float newOffset = (compassHeading - currentAngle + 360f) % 360f;
-
-                // Calculate current drift
-                float currentDrift = Mathf.Abs(Mathf.DeltaAngle(markerAngle, compassHeading));
-
-                // Apply calibration if drift exceeds threshold or if forced
-                if (!checkThreshold || currentDrift > calibrationThreshold)
+                try
                 {
-                    // Begin smooth calibration
-                    targetTrueNorthOffset = newOffset;
-                    calibrationLerpFactor = 0f; // Start transition
+                    var providerObject = Instantiate(prefab, transform);
+                    var provider = providerObject.GetComponent<IHeadTrackingProvider>();
 
-                    Debug.Log($"Drift correction: {currentDrift:F1}°. " +
-                             $"Current: {markerAngle:F1}°, Compass: {compassHeading:F1}°");
+                    if (provider == null)
+                    {
+                        Debug.Log($"Prefab {prefab.name} doesn't implement IHeadTrackingProvider");
+                        Destroy(providerObject);
+                        continue;
+                    }
+
+                    if (!provider.IsAvailable)
+                    {
+                        Debug.Log($"Provider {provider.ProviderName} not available on this device");
+                        Destroy(providerObject);
+                        continue;
+                    }
+
+                    Debug.Log($"Initializing {provider.ProviderName} (Priority: {provider.Priority})...");
+                    bool initialized = await provider.InitializeAsync();
+
+                    if (initialized)
+                    {
+                        // Subscribe to provider events
+                        provider.HeadingUpdated += OnProviderHeadingUpdated;
+                        provider.ConnectionStatusChanged += OnProviderConnectionChanged;
+                        if (enableDebugLogging)
+                            provider.StatusMessage += OnProviderStatusMessage;
+
+                        availableProviders.Add(provider);
+                        Debug.Log($"{provider.ProviderName} initialized successfully");
+                    }
+                    else
+                    {
+                        Debug.Log($"Failed to initialize {provider.ProviderName}");
+                        Destroy(providerObject);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError($"Error initializing provider {prefab.name}: {e.Message}");
+                }
+            }
+
+            // Sort by priority (highest first)
+            availableProviders = availableProviders.OrderByDescending(p => p.Priority).ToList();
+
+            Debug.Log("Available providers:");
+            foreach(var provider in availableProviders)
+            {
+                Debug.Log($"{provider.ProviderName} (Priority: {provider.Priority}, Connected: {provider.IsConnected})");
+            }
+        }
+
+        // -----------------------------------------------
+
+        private void SelectBestProvider()
+        {
+            // Stop current provider
+            if (activeProvider != null)
+            {
+                activeProvider.StopTracking();
+                Debug.Log($"Stopped {activeProvider.ProviderName}");
+            }
+
+            // Find highest priority connected provider
+            var newProvider = availableProviders
+                .Where(p => p.IsConnected)
+                .OrderByDescending(p => p.Priority)
+                .FirstOrDefault();
+
+            if (newProvider != activeProvider)
+            {
+                string previousProvider = activeProvider?.ProviderName ?? "None";
+                activeProvider = newProvider;
+
+                if (activeProvider != null)
+                {
+                    activeProvider.StartTracking();
+                    Debug.Log($"Provider switch: {previousProvider} -> {activeProvider.ProviderName}");
+                    ActiveProviderChanged?.Invoke(activeProvider.ProviderName);
+                }
+                else
+                {
+                    Debug.LogWarning("No connected providers available!");
+                    ActiveProviderChanged?.Invoke("None");
                 }
             }
         }
 
-        // Helper method to blend angles properly
-        private float BlendAngles(float angle1, float angle2, float weight2)
+        // -----------------------------------------------
+
+        private void OnProviderConnectionChanged(bool isConnected)
         {
-            float weight1 = 1.0f - weight2;
+            if (!enableAutomaticSwitching) return;
 
-            float x = weight1 * Mathf.Cos(angle1 * Mathf.Deg2Rad) + weight2 * Mathf.Cos(angle2 * Mathf.Deg2Rad);
-            float y = weight1 * Mathf.Sin(angle1 * Mathf.Deg2Rad) + weight2 * Mathf.Sin(angle2 * Mathf.Deg2Rad);
+            Debug.Log($"Provider connection changed: {isConnected}");
 
-            return Mathf.Atan2(y, x) * Mathf.Rad2Deg;
+            // Debounce rapid connection changes
+            if (switchingCoroutine != null)
+                StopCoroutine(switchingCoroutine);
+
+            switchingCoroutine = StartCoroutine(DelayedProviderSwitch());
         }
 
-        private bool IsDeviceStationary()
-        {
-            if (!accelerometerEnabled) return true;
+        // -----------------------------------------------
 
-            // Check if the device is relatively still
-            float accelerationMagnitude = rawAcceleration.magnitude;
-            return Mathf.Abs(accelerationMagnitude - 1f) < 0.1f;
+        private System.Collections.IEnumerator DelayedProviderSwitch()
+        {
+            yield return new WaitForSeconds(providerSwitchDelay);
+            SelectBestProvider();
+            switchingCoroutine = null;
         }
 
-        // Public method for manual calibration
-        public void CalibrateToNorth()
+        // -----------------------------------------------
+
+        private void OnProviderHeadingUpdated(float heading)
         {
-            if (compassEnabled && Input.compass.trueHeading != 0)
-            {
-                // Use compass for calibration
-                float compassHeading = (Input.compass.trueHeading + magneticDeclination + 360f) % 360f;
-
-                targetTrueNorthOffset = (compassHeading - currentAngle + 360f) % 360f;
-
-                // Immediate transition for manual calibration
-                trueNorthOffset = targetTrueNorthOffset;
-                calibrationLerpFactor = 1f;
-                isCalibrated = true;
-
-                // Reset drift tracking
-                totalRotationSinceCalibration = 0f;
-                lastCalibrationTime = Time.time;
-
-                Debug.Log($"Manual calibration using compass. Heading: {compassHeading:F1}°, Offset: {trueNorthOffset:F1}°");
-            }
-            else
-            {
-                // Manual calibration - set current direction as north
-                currentAngle = 0f;
-                trueNorthOffset = 0f;
-                targetTrueNorthOffset = 0f;
-                calibrationLerpFactor = 1f;
-                isCalibrated = true;
-
-                // Reset drift tracking
-                totalRotationSinceCalibration = 0f;
-                lastCalibrationTime = Time.time;
-
-                Debug.Log("Manual calibration - current direction set as north");
-            }
+            HeadingUpdated?.Invoke(heading);
         }
 
-        // Utility method to manually set direction (for testing or landmarks)
-        public void SetDirectionDegrees(float degrees)
+        // -----------------------------------------------
+
+        private void OnProviderStatusMessage(string message)
         {
-            targetTrueNorthOffset = (degrees - currentAngle + 360f) % 360f;
-
-            // Apply immediately for manual calibration
-            trueNorthOffset = targetTrueNorthOffset;
-            calibrationLerpFactor = 1f;
-            isCalibrated = true;
-
-            // Reset drift tracking
-            totalRotationSinceCalibration = 0f;
-            lastCalibrationTime = Time.time;
-
-            Debug.Log($"Direction manually set to {degrees:F1}°. Offset: {trueNorthOffset:F1}°");
+            Debug.Log($"[{activeProvider?.ProviderName}] {message}");
         }
+
+        // -----------------------------------------------
 
         private void OnDisable()
         {
             if (ApplicationState.IsQuitting)
             {
-                if (compassInitCoroutine != null)
+                foreach (var provider in availableProviders)
                 {
-                    StopCoroutine(compassInitCoroutine);
+                    try
+                    {
+                        provider.Cleanup();
+                    }
+                    catch(Exception e)
+                    {
+                        Debug.LogError($"Error cleaning up {provider.ProviderName}: {e}");
+                    }
                 }
-
-                Input.gyro.enabled = false;
-                Input.compass.enabled = false;
 
                 ServiceLocator.UnregisterService<IHeadTrackingService>();
             }
-        }
-
-        // Helper methods 
-        private float NormalizeAngle(float angle)
-        {
-            return (angle + 360f) % 360f;
         }
     }
 }

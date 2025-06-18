@@ -270,6 +270,12 @@
 		<property name="start">
 			<value>1</value>
 		</property>
+		<property name="voiceStealing">
+			<value>3</value>
+		</property>
+		<property name="maxVoices">
+			<value>1</value>
+		</property>
 		<relationship name="triggerConditions">
 			<destination>{a1fa3596-5ba3-49b9-ab09-79d977e5bbae}</destination>
 		</relationship>
@@ -306,7 +312,10 @@
 		<property name="start">
 			<value>2</value>
 		</property>
-		<property name="volume">
+		<property name="voiceStealing">
+			<value>3</value>
+		</property>
+		<property name="maxVoices">
 			<value>1</value>
 		</property>
 		<relationship name="triggerConditions">
@@ -345,6 +354,12 @@
 		<property name="start">
 			<value>3</value>
 		</property>
+		<property name="voiceStealing">
+			<value>3</value>
+		</property>
+		<property name="maxVoices">
+			<value>1</value>
+		</property>
 		<relationship name="triggerConditions">
 			<destination>{69328b49-6d8b-4d81-9754-fd65d65a05bb}</destination>
 		</relationship>
@@ -380,6 +395,12 @@
 	<object class="SingleSound" id="{9d6f735c-b74f-42f1-909f-1de5d4431c2f}">
 		<property name="start">
 			<value>4</value>
+		</property>
+		<property name="voiceStealing">
+			<value>3</value>
+		</property>
+		<property name="maxVoices">
+			<value>1</value>
 		</property>
 		<relationship name="triggerConditions">
 			<destination>{08e89d89-d49a-40e0-92dc-d9b503a5174c}</destination>
@@ -417,6 +438,12 @@
 		<property name="start">
 			<value>5</value>
 		</property>
+		<property name="voiceStealing">
+			<value>3</value>
+		</property>
+		<property name="maxVoices">
+			<value>1</value>
+		</property>
 		<relationship name="triggerConditions">
 			<destination>{020b2866-45c0-42b0-a7dd-bd6005516627}</destination>
 		</relationship>
@@ -453,6 +480,12 @@
 		<property name="start">
 			<value>6</value>
 		</property>
+		<property name="voiceStealing">
+			<value>3</value>
+		</property>
+		<property name="maxVoices">
+			<value>1</value>
+		</property>
 		<relationship name="audioFile">
 			<destination>{865e01fe-63a3-473e-8384-cf3b39e209f5}</destination>
 		</relationship>
@@ -485,6 +518,12 @@
 	<object class="SingleSound" id="{bb99f166-52b3-40b4-bf34-fd57fe6fb49f}">
 		<property name="start">
 			<value>7</value>
+		</property>
+		<property name="voiceStealing">
+			<value>3</value>
+		</property>
+		<property name="maxVoices">
+			<value>1</value>
 		</property>
 		<relationship name="triggerConditions">
 			<destination>{4ddb87e3-22b1-4c7c-b484-9814f5beb7cd}</destination>
@@ -522,6 +561,12 @@
 		<property name="start">
 			<value>8</value>
 		</property>
+		<property name="voiceStealing">
+			<value>3</value>
+		</property>
+		<property name="maxVoices">
+			<value>1</value>
+		</property>
 		<relationship name="triggerConditions">
 			<destination>{cfd9069a-fa54-4c91-8a73-73e9c31a5d84}</destination>
 		</relationship>
@@ -557,6 +602,12 @@
 	<object class="SingleSound" id="{c2fafc5a-365a-4f47-892c-b5c3f6324a4a}">
 		<property name="start">
 			<value>9</value>
+		</property>
+		<property name="voiceStealing">
+			<value>3</value>
+		</property>
+		<property name="maxVoices">
+			<value>1</value>
 		</property>
 		<relationship name="triggerConditions">
 			<destination>{89b0aaaa-8d85-4fda-8f00-6957a8482101}</destination>
@@ -594,6 +645,12 @@
 		<property name="start">
 			<value>10</value>
 		</property>
+		<property name="voiceStealing">
+			<value>3</value>
+		</property>
+		<property name="maxVoices">
+			<value>1</value>
+		</property>
 		<relationship name="triggerConditions">
 			<destination>{5eb95ccc-9111-4843-855b-079523f9b37d}</destination>
 		</relationship>
@@ -630,6 +687,12 @@
 		<property name="start">
 			<value>11</value>
 		</property>
+		<property name="voiceStealing">
+			<value>3</value>
+		</property>
+		<property name="maxVoices">
+			<value>1</value>
+		</property>
 		<relationship name="triggerConditions">
 			<destination>{4d4212b7-0669-4716-b1eb-8c7c760fe87c}</destination>
 		</relationship>
@@ -665,6 +728,12 @@
 	<object class="SingleSound" id="{62f0c441-357b-438a-89ee-4bd3da0d1a02}">
 		<property name="start">
 			<value>12</value>
+		</property>
+		<property name="voiceStealing">
+			<value>3</value>
+		</property>
+		<property name="maxVoices">
+			<value>1</value>
 		</property>
 		<relationship name="triggerConditions">
 			<destination>{2bc9ed31-5939-4e4f-98d8-8720a801d78d}</destination>

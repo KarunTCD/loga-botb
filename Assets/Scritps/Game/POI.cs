@@ -6,6 +6,13 @@ using LoGa.LudoEngine.Services;
 
 namespace LoGa.LudoEngine.Game
 {
+    public enum PortalType
+    {
+        None,     // Regular POI
+        Forward,  // Takes player forward in time
+        Backward  // Takes player backward in time
+    }
+
     [System.Serializable]
     public class POI
     {
@@ -18,8 +25,11 @@ namespace LoGa.LudoEngine.Game
         public int characterId;
 
         [Header("Distance Thresholds")]
-        public float proximityRadius = 20f;   // Distance to start hearing character audio
+        public float proximityRadius = 30f;   // Distance to start hearing character audio
         public float dialogueRadius = 10f;    // Distance to start hearing dialogue
+
+        [Header("Portal Settings")]
+        public PortalType portalType = PortalType.None;
 
         private bool isTargeted = false;
         public bool IsTargeted => isTargeted;
@@ -35,8 +45,10 @@ namespace LoGa.LudoEngine.Game
         private bool isInitialized;
         private bool isDiscovered;
         private bool isInProximity;
+        private bool hasBeenTriggered = false;
 
         public bool IsDiscovered => isDiscovered;
+        public bool IsPortal => portalType != PortalType.None;
 
         // Services - accessed through ServiceLocator
         private IAudioService AudioService => ServiceLocator.GetService<IAudioService>();
@@ -50,6 +62,13 @@ namespace LoGa.LudoEngine.Game
                 AudioService.SetParameter(characterAudioInstance, ZONE_PARAMETER, 0.0f);
             }
 
+            // Show the marker if it was disabled before
+            if (marker != null)
+            {
+                marker.gameObject.SetActive(true);
+                Debug.Log($"Showing marker for {characterName}");
+            }
+
             isInitialized = true;
             Debug.Log($"Audio initialized for {characterName}");
         }
@@ -59,7 +78,7 @@ namespace LoGa.LudoEngine.Game
             sharedCueInstance = instance;
         }
 
-        // NEW: Main proximity update method
+        // Main proximity update method
         public void UpdateProximity(float distance, Vector3 audioPosition)
         {
             if (!isInitialized) return;
@@ -77,6 +96,7 @@ namespace LoGa.LudoEngine.Game
             {
                 // Just left proximity - stop character audio completely
                 AudioService.StopAudio(characterAudioInstance, true);
+                hasBeenTriggered = false; // Reset portal trigger when leaving proximity
                 Debug.Log($"Exited proximity of {characterName}");
             }
 
@@ -85,10 +105,16 @@ namespace LoGa.LudoEngine.Game
                 // Update audio position and zone continuously while in proximity
                 AudioService.Update3DAttributes(characterAudioInstance, audioPosition);
                 UpdateAudioBasedOnDistance(distance);
+
+                // Check for portal activation if this is a portal POI
+                if (IsPortal && distance <= dialogueRadius && !hasBeenTriggered)
+                {
+                    CheckPortalActivation();
+                }
             }
         }
 
-        // NEW: Calculate zone from distance
+        // Calculate zone from distance
         private void UpdateAudioBasedOnDistance(float distance)
         {
             if (!isInitialized) return;
@@ -102,7 +128,7 @@ namespace LoGa.LudoEngine.Game
             Debug.Log($"{characterName} - Distance: {distance:F1}m → Zone: {zoneValue:F2}");
         }
 
-        // NEW: Convert distance to zone value
+        // Convert distance to zone value
         private float CalculateZoneFromDistance(float distance)
         {
             if (distance > proximityRadius)
@@ -119,6 +145,55 @@ namespace LoGa.LudoEngine.Game
             {
                 return 2.0f; // Full dialogue zone
             }
+        }
+
+        private void CheckPortalActivation()
+        {
+            TimeLayer targetLayer = CalculateTargetLayer();
+
+            if (targetLayer != null && TimeLayerManager.Instance.CanTransitionTo(targetLayer))
+            {
+                ActivatePortal(targetLayer);
+            }
+            else
+            {
+                Debug.Log($"{portalType} portal: No valid transition available");
+            }
+        }
+
+        private TimeLayer CalculateTargetLayer()
+        {
+            return portalType switch
+            {
+                PortalType.Forward => TimeLayerManager.Instance.GetForwardLayer(),
+                PortalType.Backward => TimeLayerManager.Instance.GetBackwardLayer(),
+                _ => null
+            };
+        }
+
+        private void ActivatePortal(TimeLayer targetLayer)
+        {
+            hasBeenTriggered = true;
+
+            Debug.Log($"{portalType} portal ({characterName}) activated - transitioning to {targetLayer.layerName}");
+
+            // Get the shared time portal event from TimeLayerManager
+            var timePortalEvent = TimeLayerManager.Instance.GetTimePortalEvent();
+
+            if (!timePortalEvent.IsNull)
+            {
+                var portalInstance = AudioService.CreateAudioInstance(timePortalEvent);
+
+                // Set parameters for complete audio sequence
+                AudioService.SetParameter(portalInstance, "PortalType", portalType == PortalType.Forward ? 1f : 0f);
+                AudioService.SetParameter(portalInstance, "TargetLayer", targetLayer.layerIndex);
+                AudioService.SetParameter(portalInstance, "Trigger", 1f);
+
+                AudioService.PlayAudio(portalInstance, Vector3.zero);
+            }
+
+            // Trigger the time transition
+            TimeLayerManager.Instance.TransitionToLayer(targetLayer);
         }
 
         // Navigation cue methods (for wander mode)
@@ -176,6 +251,13 @@ namespace LoGa.LudoEngine.Game
 
             AudioService.StopAudio(characterAudioInstance);
             AudioService.ReleaseAudio(characterAudioInstance);
+
+            // remove the marker 
+            if (marker != null)
+            {
+                marker.gameObject.SetActive(false);
+                Debug.Log($"Hiding marker for {characterName}");
+            }
         }
     }
 }

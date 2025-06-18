@@ -450,10 +450,10 @@ MonoBehaviour:
   Path: Assets/Audio/Build/Desktop/Master.bank
   Name: Master
   StudioPath: bank:/Master
-  lastModified: 638836070213235658
+  lastModified: 638858604412204446
   FileSizes:
   - Name: Desktop
-    Value: 18842944
+    Value: 24285920
   Exists: 1
 --- !u!114 &11400000
 MonoBehaviour:
@@ -489,13 +489,14 @@ MonoBehaviour:
   - {fileID: -2758959240324335570}
   - {fileID: 4200576759228821341}
   - {fileID: -8896982725069540227}
+  - {fileID: 1811335176168539616}
   EditorParameters: []
   MasterBanks:
   - {fileID: -2072804872322699232}
   StringsBanks:
   - {fileID: 7937843521026953583}
   cacheVersion: 131847
-  cacheTime: 638836070213294001
+  cacheTime: 638858604412253438
   SerializableEventsDict:
   - key: event:/battle_oak_music
     index: 0
@@ -523,6 +524,8 @@ MonoBehaviour:
     index: 11
   - key: event:/fox_music
     index: 12
+  - key: event:/ambient_sounds
+    index: 13
 --- !u!114 &172915117340174195
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -651,6 +654,34 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
+--- !u!114 &1811335176168539616
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/ambient_sounds
+  m_EditorClassIdentifier: 
+  Path: event:/ambient_sounds
+  Guid:
+    Data1: -642792527
+    Data2: 1157833136
+    Data3: 2146350997
+    Data4: 841210949
+  Banks:
+  - {fileID: -2072804872322699232}
+  IsStream: 1
+  Is3D: 0
+  IsOneShot: 1
+  Parameters:
+  - {fileID: 6571639569566005426}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 0
 --- !u!114 &2780631306687666076
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -880,6 +911,33 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 0
+--- !u!114 &6571639569566005426
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/ambient_sounds/TimeLayer
+  m_EditorClassIdentifier: 
+  Name: TimeLayer
+  StudioPath: 
+  Min: 0
+  Max: 2
+  Default: 1
+  ID:
+    data1: 2126995294
+    data2: 1926241287
+  Type: 2
+  IsGlobal: 0
+  Labels:
+  - Neolithic
+  - Battle1690
+  - Modern
+  Exists: 1
 --- !u!114 &6883971520025283213
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -943,10 +1001,10 @@ MonoBehaviour:
   Path: Assets/Audio/Build/Desktop/Master.strings.bank
   Name: Master.strings
   StudioPath: bank:/Master.strings
-  lastModified: 638836070213294001
+  lastModified: 638858604412253438
   FileSizes:
   - Name: Desktop
-    Value: 1780
+    Value: 1876
   Exists: 1
 --- !u!114 &9086228000994981006
 MonoBehaviour:
