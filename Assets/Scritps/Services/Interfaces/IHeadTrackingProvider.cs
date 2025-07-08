@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace LoGa.LudoEngine.Services
 {
@@ -12,7 +13,6 @@ namespace LoGa.LudoEngine.Services
         // Availability & Connection
         bool IsAvailable { get; } // property to determine if provider can work on this device
         bool IsConnected { get; } // property to determine if provider currently connected/working
-        bool IsInitialized { get; }
 
         // Events
         event Action<float> HeadingUpdated;
@@ -25,12 +25,18 @@ namespace LoGa.LudoEngine.Services
         void StopTracking();
         void Cleanup();
 
-        // Calibration
-        void CalibrateToNorth();
-        void SetDirectionDegrees(float degrees);
+        // 3D Orientation (optional - only for MMRL)
+        Quaternion CurrentOrientation { get; }
+        Vector3 CurrentEulerAngles { get; }
+
+        // 3D Orientation (optional - only for MMRL)
+        //Quaternion CurrentOrientation { get; }
+        //Vector3 CurrentEulerAngles { get; }
+
+        // Advanced calibration
+        void CalibrateToHeading(float targetHeading);
 
         // Data Access
         float CurrentHeading { get; }
-        bool IsCalibrated { get; }
     }
 }

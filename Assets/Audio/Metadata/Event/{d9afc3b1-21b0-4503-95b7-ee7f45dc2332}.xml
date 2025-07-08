@@ -104,12 +104,18 @@
 	</object>
 	<object class="MixerBusPanner" id="{96f5d078-4be3-4aca-807c-a487827b9424}" />
 	<object class="EventSound" id="{6f619a52-d582-4f7e-b19e-21883b9feabc}">
+		<property name="maxVoices">
+			<value>1</value>
+		</property>
 		<relationship name="event">
 			<destination>{a7cfd31f-b957-4104-92d4-0ae734da0bdf}</destination>
 		</relationship>
 	</object>
 	<object class="EventSound" id="{d2400f88-9f36-436b-8cb3-cb1055104a4b}">
 		<property name="start">
+			<value>1</value>
+		</property>
+		<property name="maxVoices">
 			<value>1</value>
 		</property>
 		<relationship name="event">
@@ -119,6 +125,9 @@
 	<object class="EventSound" id="{844a830a-acf4-43f7-8721-663d376fed04}">
 		<property name="start">
 			<value>2</value>
+		</property>
+		<property name="maxVoices">
+			<value>1</value>
 		</property>
 		<relationship name="event">
 			<destination>{8b3c3fb0-d476-4436-8a0c-e5e274e67b65}</destination>

@@ -326,6 +326,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36e4f2a4f2bba42fb88924494e64403f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  debugPermissions: 1
 --- !u!4 &244556588
 Transform:
   m_ObjectHideFlags: 0
@@ -1331,6 +1332,59 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1443382231}
   m_CullTransparentMesh: 1
+--- !u!1 &1445387160
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1445387162}
+  - component: {fileID: 1445387161}
+  m_Layer: 0
+  m_Name: AirPodsHeadTrackingProvider
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1445387161
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1445387160}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95c693721b7994c3c8d39f28f4e0ff5b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enableConnectionMonitoring: 1
+  connectionCheckInterval: 2
+  enableCalibrationOnConnect: 1
+  calibrationTimeout: 5
+  enableSmoothing: 1
+  smoothingFactor: 0.1
+  enableDriftCorrection: 0
+  driftCorrectionThreshold: 2
+  enableDetailedLogging: 1
+--- !u!4 &1445387162
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1445387160}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1653246185}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1530788215
 GameObject:
   m_ObjectHideFlags: 0
@@ -1467,6 +1521,37 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1530788215}
   m_CullTransparentMesh: 1
+--- !u!1 &1609498275
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1609498276}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1609498276
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1609498275}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1633295515
 GameObject:
   m_ObjectHideFlags: 0
@@ -1576,9 +1661,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   providerPrefabs:
   - {fileID: 397206765}
+  - {fileID: 1445387160}
   providerSwitchDelay: 2
   enableAutomaticSwitching: 1
   enableDebugLogging: 1
+  enableProviderReliabilityTracking: 1
+  reliabilityDecayRate: 0.1
+  reliabilityBoostRate: 0.05
+  minReliabilityThreshold: 0.3
 --- !u!4 &1653246185
 Transform:
   m_ObjectHideFlags: 0
@@ -1593,6 +1683,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 397206767}
+  - {fileID: 1445387162}
   m_Father: {fileID: 419118823}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1657470496
@@ -2502,3 +2593,4 @@ SceneRoots:
   - {fileID: 776399922}
   - {fileID: 77706485}
   - {fileID: 1766879061}
+  - {fileID: 1609498276}

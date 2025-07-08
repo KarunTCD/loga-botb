@@ -11,6 +11,8 @@ namespace LoGa.LudoEngine.Services
 {
     public class PermissionService : MonoBehaviour, IPermissionService
     {
+        [Header("Bluetooth Permissions")]
+        [SerializeField] private bool debugPermissions = true;
         public event Action<bool> LocationPermissionResult;
         public bool HasLocationPermission { get; private set; }
 

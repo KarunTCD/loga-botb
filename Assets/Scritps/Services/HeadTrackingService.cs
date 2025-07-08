@@ -16,15 +16,20 @@ namespace LoGa.LudoEngine.Services
         [SerializeField] private bool enableAutomaticSwitching = true;
         [SerializeField] private bool enableDebugLogging = true;
 
+        [Header("Advanced Provider Management")]
+        [SerializeField] private bool enableProviderReliabilityTracking = true;
+        [SerializeField] private float reliabilityDecayRate = 0.1f;
+        [SerializeField] private float reliabilityBoostRate = 0.05f;
+        [SerializeField] private float minReliabilityThreshold = 0.3f;
+
         // IService Implementation
         public bool IsInitialized { get; private set; }
 
-        // IHeadTrackingService Implementation (unchanged interface for POIManager)
+        // IHeadTrackingService Implementation (unchanged interface)
         public event Action<float> HeadingUpdated;
         public event Action<string> ActiveProviderChanged;
 
         public float CurrentHeading => activeProvider?.CurrentHeading ?? 0f;
-        public bool IsCalibrated => activeProvider?.IsCalibrated ?? false;
         public string ActiveProviderName => activeProvider?.ProviderName ?? "None";
         public IReadOnlyList<string> AvailableProviderNames =>
             availableProviders.Select(p => p.ProviderName).ToList().AsReadOnly();
@@ -32,13 +37,19 @@ namespace LoGa.LudoEngine.Services
         // Provider Management
         private List<IHeadTrackingProvider> availableProviders = new List<IHeadTrackingProvider>();
         private IHeadTrackingProvider activeProvider;
+        private IHeadTrackingProvider lastWorkingProvider;
         private Coroutine switchingCoroutine;
+
+        // Enhanced provider tracking
+        private Dictionary<IHeadTrackingProvider, float> providerReliabilityScores = new Dictionary<IHeadTrackingProvider, float>();
+        private Dictionary<IHeadTrackingProvider, float> lastHeadingUpdateTime = new Dictionary<IHeadTrackingProvider, float>();
+        private Dictionary<IHeadTrackingProvider, int> connectionFailureCount = new Dictionary<IHeadTrackingProvider, int>();
 
         public async Task<bool> InitializeAsync()
         {
             try
             {
-                Debug.Log("Initing Head Tracking Service");
+                Debug.Log("Initializing Head Tracking Service with enhanced provider management...");
 
                 await DiscoverAndInitializeProviders();
                 SelectBestProvider();
@@ -49,23 +60,37 @@ namespace LoGa.LudoEngine.Services
 
                 return activeProvider != null;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                Debug.LogError($"Failed to initialize Head Tracking Servie: {e.Message}");
+                Debug.LogError($"Failed to initialize Head Tracking Service: {e.Message}");
                 return false;
             }
         }
 
-        public void StartTracking() => activeProvider?.StartTracking();
-        public void StopTracking() => activeProvider?.StopTracking();
-        public void CalibrateToNorth() => activeProvider?.CalibrateToNorth();
-        public void SetDirectionDegrees(float degrees) => activeProvider?.SetDirectionDegrees(degrees);
+        public void StartTracking()
+        {
+            if (activeProvider != null)
+            {
+                activeProvider.StartTracking();
+                if (enableDebugLogging)
+                    Debug.Log($"Started tracking with {activeProvider.ProviderName}");
+            }
+        }
 
-        // -----------------------------------------------
+        public void StopTracking()
+        {
+            if (activeProvider != null)
+            {
+                activeProvider.StopTracking();
+                if (enableDebugLogging)
+                    Debug.Log($"Stopped tracking with {activeProvider.ProviderName}");
+            }
+        }
 
+        // Enhanced provider discovery (same logic, just integrated)
         private async Task DiscoverAndInitializeProviders()
         {
-            Debug.Log($"Discovering providers from {providerPrefabs.Count} prefabs..");
+            Debug.Log($"Discovering providers from {providerPrefabs.Count} prefabs...");
 
             foreach (var prefab in providerPrefabs)
             {
@@ -102,6 +127,15 @@ namespace LoGa.LudoEngine.Services
                             provider.StatusMessage += OnProviderStatusMessage;
 
                         availableProviders.Add(provider);
+
+                        // Initialize reliability tracking
+                        if (enableProviderReliabilityTracking)
+                        {
+                            providerReliabilityScores[provider] = 1.0f;
+                            lastHeadingUpdateTime[provider] = Time.time;
+                            connectionFailureCount[provider] = 0;
+                        }
+
                         Debug.Log($"{provider.ProviderName} initialized successfully");
                     }
                     else
@@ -120,28 +154,46 @@ namespace LoGa.LudoEngine.Services
             availableProviders = availableProviders.OrderByDescending(p => p.Priority).ToList();
 
             Debug.Log("Available providers:");
-            foreach(var provider in availableProviders)
+            foreach (var provider in availableProviders)
             {
-                Debug.Log($"{provider.ProviderName} (Priority: {provider.Priority}, Connected: {provider.IsConnected})");
+                Debug.Log($"  {provider.ProviderName} (Priority: {provider.Priority}, Connected: {provider.IsConnected})");
             }
         }
 
-        // -----------------------------------------------
-
+        // Enhanced provider selection with reliability consideration
         private void SelectBestProvider()
         {
             // Stop current provider
             if (activeProvider != null)
             {
                 activeProvider.StopTracking();
-                Debug.Log($"Stopped {activeProvider.ProviderName}");
+                if (enableDebugLogging)
+                    Debug.Log($"Stopped {activeProvider.ProviderName}");
             }
 
-            // Find highest priority connected provider
-            var newProvider = availableProviders
-                .Where(p => p.IsConnected)
-                .OrderByDescending(p => p.Priority)
-                .FirstOrDefault();
+            // Store last working provider for fallback
+            if (activeProvider?.IsConnected == true)
+            {
+                lastWorkingProvider = activeProvider;
+            }
+
+            // Find best provider considering priority and reliability
+            IHeadTrackingProvider newProvider;
+
+            if (enableProviderReliabilityTracking)
+            {
+                newProvider = availableProviders
+                    .Where(p => p.IsConnected && GetProviderReliability(p) > minReliabilityThreshold)
+                    .OrderByDescending(p => p.Priority * GetProviderReliability(p))
+                    .FirstOrDefault();
+            }
+            else
+            {
+                newProvider = availableProviders
+                    .Where(p => p.IsConnected)
+                    .OrderByDescending(p => p.Priority)
+                    .FirstOrDefault();
+            }
 
             if (newProvider != activeProvider)
             {
@@ -151,24 +203,46 @@ namespace LoGa.LudoEngine.Services
                 if (activeProvider != null)
                 {
                     activeProvider.StartTracking();
-                    Debug.Log($"Provider switch: {previousProvider} -> {activeProvider.ProviderName}");
+                    if (enableDebugLogging)
+                        Debug.Log($"Provider switch: {previousProvider} -> {activeProvider.ProviderName}");
                     ActiveProviderChanged?.Invoke(activeProvider.ProviderName);
                 }
                 else
                 {
                     Debug.LogWarning("No connected providers available!");
-                    ActiveProviderChanged?.Invoke("None");
+
+                    // Try fallback to last working provider
+                    if (lastWorkingProvider?.IsConnected == true)
+                    {
+                        activeProvider = lastWorkingProvider;
+                        activeProvider.StartTracking();
+                        if (enableDebugLogging)
+                            Debug.Log($"Falling back to {activeProvider.ProviderName}");
+                        ActiveProviderChanged?.Invoke(activeProvider.ProviderName);
+                    }
+                    else
+                    {
+                        ActiveProviderChanged?.Invoke("None");
+                    }
                 }
             }
         }
 
-        // -----------------------------------------------
-
+        // Enhanced connection change handling
         private void OnProviderConnectionChanged(bool isConnected)
         {
             if (!enableAutomaticSwitching) return;
 
+            // We don't need to find which provider triggered this since all providers
+            // will eventually be re-evaluated in SelectBestProvider()
             Debug.Log($"Provider connection changed: {isConnected}");
+
+            // Update reliability for the active provider if we can identify connection changes
+            if (enableProviderReliabilityTracking && activeProvider != null)
+            {
+                // Only update reliability for the active provider's connection changes
+                UpdateProviderReliability(activeProvider, isConnected);
+            }
 
             // Debounce rapid connection changes
             if (switchingCoroutine != null)
@@ -177,8 +251,6 @@ namespace LoGa.LudoEngine.Services
             switchingCoroutine = StartCoroutine(DelayedProviderSwitch());
         }
 
-        // -----------------------------------------------
-
         private System.Collections.IEnumerator DelayedProviderSwitch()
         {
             yield return new WaitForSeconds(providerSwitchDelay);
@@ -186,21 +258,127 @@ namespace LoGa.LudoEngine.Services
             switchingCoroutine = null;
         }
 
-        // -----------------------------------------------
-
+        // This is the key method - it just passes through the heading from whatever provider is active
         private void OnProviderHeadingUpdated(float heading)
         {
+            // Update reliability tracking
+            if (enableProviderReliabilityTracking)
+            {
+                var updatingProvider = availableProviders.FirstOrDefault(p =>
+                    Mathf.Approximately(p.CurrentHeading, heading));
+
+                if (updatingProvider != null)
+                {
+                    UpdateProviderReliability(updatingProvider, true);
+                    lastHeadingUpdateTime[updatingProvider] = Time.time;
+                }
+            }
+
+            // Simply pass through the heading - no modification needed
             HeadingUpdated?.Invoke(heading);
         }
 
-        // -----------------------------------------------
-
         private void OnProviderStatusMessage(string message)
         {
-            Debug.Log($"[{activeProvider?.ProviderName}] {message}");
+            if (enableDebugLogging)
+            {
+                Debug.Log($"[{activeProvider?.ProviderName}] {message}");
+            }
         }
 
-        // -----------------------------------------------
+        // Reliability tracking methods
+        private void UpdateProviderReliability(IHeadTrackingProvider provider, bool positiveEvent)
+        {
+            if (!providerReliabilityScores.ContainsKey(provider))
+                providerReliabilityScores[provider] = 1.0f;
+
+            if (positiveEvent)
+            {
+                providerReliabilityScores[provider] = Mathf.Min(1.0f,
+                    providerReliabilityScores[provider] + reliabilityBoostRate);
+                connectionFailureCount[provider] = 0;
+            }
+            else
+            {
+                providerReliabilityScores[provider] = Mathf.Max(0.0f,
+                    providerReliabilityScores[provider] - reliabilityDecayRate);
+                connectionFailureCount[provider] = connectionFailureCount.GetValueOrDefault(provider, 0) + 1;
+            }
+        }
+
+        private float GetProviderReliability(IHeadTrackingProvider provider)
+        {
+            if (!enableProviderReliabilityTracking || !providerReliabilityScores.ContainsKey(provider))
+                return 1.0f;
+
+            float baseReliability = providerReliabilityScores[provider];
+
+            // Factor in recent activity
+            float timeSinceLastUpdate = Time.time - lastHeadingUpdateTime.GetValueOrDefault(provider, Time.time);
+            if (timeSinceLastUpdate > 5.0f) // No updates for 5 seconds
+            {
+                baseReliability *= 0.8f;
+            }
+
+            // Factor in connection failures
+            int failures = connectionFailureCount.GetValueOrDefault(provider, 0);
+            if (failures > 0)
+            {
+                baseReliability *= Mathf.Pow(0.9f, failures);
+            }
+
+            return baseReliability;
+        }
+
+        // Public methods for external access (maintaining your existing interface)
+        public void ForceProviderSwitch(string providerName)
+        {
+            var provider = availableProviders.FirstOrDefault(p => p.ProviderName == providerName);
+            if (provider != null && provider.IsConnected)
+            {
+                if (activeProvider != null)
+                {
+                    activeProvider.StopTracking();
+                }
+
+                activeProvider = provider;
+                activeProvider.StartTracking();
+                ActiveProviderChanged?.Invoke(activeProvider.ProviderName);
+
+                if (enableDebugLogging)
+                    Debug.Log($"Manually switched to provider: {providerName}");
+            }
+            else
+            {
+                Debug.LogWarning($"Cannot switch to {providerName} - provider not available or not connected");
+            }
+        }
+
+        public Dictionary<string, float> GetProviderReliabilityScores()
+        {
+            if (!enableProviderReliabilityTracking)
+                return new Dictionary<string, float>();
+
+            return availableProviders.ToDictionary(
+                p => p.ProviderName,
+                p => GetProviderReliability(p)
+            );
+        }
+
+        // Method to calibrate the active provider
+        public void CalibrateActiveProvider(float targetHeading = 0f)
+        {
+            if (activeProvider != null)
+            {
+                activeProvider.CalibrateToHeading(targetHeading);
+                if (enableDebugLogging)
+                    Debug.Log($"Calibrated {activeProvider.ProviderName} to {targetHeading}°");
+            }
+            else
+            {
+                Debug.LogWarning("No active provider to calibrate");
+            }
+        }
 
         private void OnDisable()
         {
@@ -212,13 +390,65 @@ namespace LoGa.LudoEngine.Services
                     {
                         provider.Cleanup();
                     }
-                    catch(Exception e)
+                    catch (Exception e)
                     {
                         Debug.LogError($"Error cleaning up {provider.ProviderName}: {e}");
                     }
                 }
 
                 ServiceLocator.UnregisterService<IHeadTrackingService>();
+            }
+        }
+
+        // -----------------------------------------------
+        // Public Debug Methods (Consistent with Project)
+        // -----------------------------------------------
+
+        public void ShowProviderStatus()
+        {
+            Debug.Log($"=== Head Tracking Service Status ===");
+            Debug.Log($"Initialized: {IsInitialized}");
+            Debug.Log($"Active Provider: {ActiveProviderName}");
+            Debug.Log($"Available Providers: {availableProviders.Count}");
+
+            foreach (var provider in availableProviders)
+            {
+                string status = provider.IsConnected ? "Connected" : "Disconnected";
+                string active = provider == activeProvider ? " [ACTIVE]" : "";
+                Debug.Log($"  • {provider.ProviderName} (Priority: {provider.Priority}) {status}{active}");
+            }
+
+            if (enableProviderReliabilityTracking)
+            {
+                Debug.Log("=== Reliability Scores ===");
+                foreach (var provider in availableProviders)
+                {
+                    float reliability = GetProviderReliability(provider);
+                    Debug.Log($"  • {provider.ProviderName}: {reliability:P1}");
+                }
+            }
+        }
+
+        public void ForceProviderReEvaluation()
+        {
+            Debug.Log("🔄 Forcing provider re-evaluation...");
+            SelectBestProvider();
+        }
+
+        public void ResetReliabilityScores()
+        {
+            if (enableProviderReliabilityTracking)
+            {
+                foreach (var provider in availableProviders)
+                {
+                    providerReliabilityScores[provider] = 1.0f;
+                    connectionFailureCount[provider] = 0;
+                }
+                Debug.Log("🔄 Reset all provider reliability scores to 100%");
+            }
+            else
+            {
+                Debug.Log("⚠️ Reliability tracking is disabled");
             }
         }
     }

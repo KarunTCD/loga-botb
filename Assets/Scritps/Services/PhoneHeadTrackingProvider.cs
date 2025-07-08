@@ -12,8 +12,6 @@ namespace LoGa.LudoEngine.Services
         public int Priority => 50; // A value lower than external sensors 
         public bool IsAvailable => SystemInfo.supportsGyroscope;
         public bool IsConnected { get; private set; }
-        public bool IsInitialized { get; private set; }
-        public bool IsCalibrated => isCalibrated;
         public float CurrentHeading => markerAngle;
 
         [Header("Calibration Settings")]
@@ -45,7 +43,6 @@ namespace LoGa.LudoEngine.Services
         private float markerAngle = 0f;
         private float trueNorthOffset = 0f;
         private float targetTrueNorthOffset = 0f;
-        private bool isCalibrated = false;
         private Coroutine compassInitCoroutine;
 
         // Compass tracking
@@ -64,7 +61,11 @@ namespace LoGa.LudoEngine.Services
         private float lastCalibrationTime = 0f;
         private bool isTrackingActive = false;
 
-        public async Task<bool> InitializeAsync()
+        // Enhanced 3D tracking - minimal implementation for phone
+        public Quaternion CurrentOrientation => Quaternion.Euler(0, CurrentHeading, 0);
+        public Vector3 CurrentEulerAngles => new Vector3(0, CurrentHeading, 0);
+
+        public Task<bool> InitializeAsync()
         {
             try
             {
@@ -73,7 +74,7 @@ namespace LoGa.LudoEngine.Services
                 if (!IsAvailable)
                 {
                     StatusMessage?.Invoke("Gyroscope not supported on this device");
-                    return false;
+                    return Task.FromResult(false);
                 }
 
                 // Your existing initialization logic
@@ -84,20 +85,19 @@ namespace LoGa.LudoEngine.Services
                     compassInitCoroutine = StartCoroutine(InitializeCompass());
                     lastCalibrationTime = Time.time;
 
-                    IsInitialized = true;
                     IsConnected = true;
                     ConnectionStatusChanged?.Invoke(true);
 
                     StatusMessage?.Invoke("Advanced phone sensors initialized with sensor fusion");
-                    return true;
+                    return Task.FromResult(true);
                 }
 
-                return false;
+                return Task.FromResult(false);
             }
             catch (Exception e)
             {
                 StatusMessage?.Invoke($"Failed to initialize: {e.Message}");
-                return false;
+                return Task.FromResult(false);
             }
         }
 
@@ -105,7 +105,7 @@ namespace LoGa.LudoEngine.Services
 
         public void StartTracking()
         {
-            if (!IsInitialized || !IsConnected) return;
+            if (!IsConnected) return;
 
             isTrackingActive = true;
             StatusMessage?.Invoke("Started advanced head tracking with sensor fusion");
@@ -179,6 +179,12 @@ namespace LoGa.LudoEngine.Services
 
         // ----------------------------------------------------
 
+        public void CalibrateToHeading(float targetHeading)
+        {
+        }
+
+        // ----------------------------------------------------
+
         public void Cleanup()
         {
             isTrackingActive = false;
@@ -203,63 +209,6 @@ namespace LoGa.LudoEngine.Services
 
             IsConnected = false;
             ConnectionStatusChanged?.Invoke(false);
-        }
-
-        // -------------------------------------------
-
-        public void CalibrateToNorth()
-        {
-            if (compassEnabled && Input.compass.trueHeading != 0)
-            {
-                // Use compass for calibration
-                float compassHeading = (Input.compass.trueHeading + magneticDeclination + 360f) % 360f;
-
-                targetTrueNorthOffset = (compassHeading - currentAngle + 360f) % 360f;
-
-                // Immediate transition for manual calibration
-                trueNorthOffset = targetTrueNorthOffset;
-                calibrationLerpFactor = 1f;
-                isCalibrated = true;
-
-                // Reset drift tracking
-                totalRotationSinceCalibration = 0f;
-                lastCalibrationTime = Time.time;
-
-                Debug.Log($"Manual calibration using compass. Heading: {compassHeading:F1}°, Offset: {trueNorthOffset:F1}°");
-            }
-            else
-            {
-                // Manual calibration - set current direction as north
-                currentAngle = 0f;
-                trueNorthOffset = 0f;
-                targetTrueNorthOffset = 0f;
-                calibrationLerpFactor = 1f;
-                isCalibrated = true;
-
-                // Reset drift tracking
-                totalRotationSinceCalibration = 0f;
-                lastCalibrationTime = Time.time;
-
-                Debug.Log("Manual calibration - current direction set as north");
-            }
-        }
-
-        // -----------------------------------------------
-        // Utility method to manually set direction (for testing or landmarks)
-        public void SetDirectionDegrees(float degrees)
-        {
-            targetTrueNorthOffset = (degrees - currentAngle + 360f) % 360f;
-
-            // Apply immediately for manual calibration
-            trueNorthOffset = targetTrueNorthOffset;
-            calibrationLerpFactor = 1f;
-            isCalibrated = true;
-
-            // Reset drift tracking
-            totalRotationSinceCalibration = 0f;
-            lastCalibrationTime = Time.time;
-
-            Debug.Log($"Direction manually set to {degrees:F1}°. Offset: {trueNorthOffset:F1}°");
         }
 
         // ------------------------------------------------
@@ -316,7 +265,6 @@ namespace LoGa.LudoEngine.Services
                 lastCompassHeading = compassHeading;
                 trueNorthOffset = compassHeading - currentAngle;
                 targetTrueNorthOffset = trueNorthOffset;
-                isCalibrated = true;
 
                 Debug.Log($"Initial calibration complete. Offset: {trueNorthOffset}");
             }

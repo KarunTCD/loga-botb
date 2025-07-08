@@ -8,22 +8,29 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:98554416329:android:7be1b737d5c45d8f56d118",
+        "mobilesdk_app_id": "1:98554416329:ios:8c0c4890566d578d56d118",
         "android_client_info": {
           "package_name": "com.logaculture.botb"
         }
       },
-      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCNAG1hbt1_AHzFHIzeuTYhPtTh_0cY9yE"
+          "current_key": "AIzaSyBZB4-BLmPcD1OOIxt4LV-djErkmoR6iuU"
         }
       ],
       "services": {
+        "analytics_service": {
+          "status": 0
+        },
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "status": 0
         }
-      }
+      },
+      "oauth_client": [
+        {
+          "client_id": "98554416329-placeholder.apps.googleusercontent.com"
+        }
+      ]
     }
   ],
   "configuration_version": "1"
