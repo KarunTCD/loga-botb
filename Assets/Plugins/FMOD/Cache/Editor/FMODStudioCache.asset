@@ -1,165 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-8896982725069540227
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/fox_music
-  m_EditorClassIdentifier: 
-  Path: event:/fox_music
-  Guid:
-    Data1: 1409366747
-    Data2: 1253460628
-    Data3: 367639432
-    Data4: 595799489
-  Banks:
-  - {fileID: -2072804872322699232}
-  IsStream: 1
-  Is3D: 1
-  IsOneShot: 0
-  Parameters:
-  - {fileID: -4576231690912962478}
-  MinDistance: 1
-  MaxDistance: 20
-  Length: 0
---- !u!114 &-8402153436157364751
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/james_music/Zone
-  m_EditorClassIdentifier: 
-  Name: Zone
-  StudioPath: 
-  Min: 0
-  Max: 3
-  Default: 0
-  ID:
-    data1: 1112535331
-    data2: 2309411790
-  Type: 0
-  IsGlobal: 0
-  Labels: []
-  Exists: 1
---- !u!114 &-6988506570469834057
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/salmon_music
-  m_EditorClassIdentifier: 
-  Path: event:/salmon_music
-  Guid:
-    Data1: -1794321705
-    Data2: 1155231689
-    Data3: -816275816
-    Data4: -1405444301
-  Banks:
-  - {fileID: -2072804872322699232}
-  IsStream: 1
-  Is3D: 1
-  IsOneShot: 0
-  Parameters:
-  - {fileID: 9086228000994981006}
-  MinDistance: 1
-  MaxDistance: 20
-  Length: 0
---- !u!114 &-6969205665561811409
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/nav_cue
-  m_EditorClassIdentifier: 
-  Path: event:/nav_cue
-  Guid:
-    Data1: -1631769890
-    Data2: 1211054242
-    Data3: -949885777
-    Data4: 691049561
-  Banks:
-  - {fileID: -2072804872322699232}
-  IsStream: 0
-  Is3D: 1
-  IsOneShot: 1
-  Parameters:
-  - {fileID: 2780631306687666076}
-  - {fileID: 5936930666857625517}
-  - {fileID: 1454568001461815812}
-  - {fileID: -5182846159611491900}
-  MinDistance: 1
-  MaxDistance: 90
-  Length: 0
---- !u!114 &-6443719217133375580
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
-  m_Name: bank:/william.bank
-  m_EditorClassIdentifier: 
-  Path: Assets/Audio/Build/Desktop/william.bank
-  Name: william
-  StudioPath: bank:/william
-  lastModified: 638815112790590550
-  FileSizes:
-  - Name: Desktop
-    Value: 506
-  Exists: 1
---- !u!114 &-6396744452905360095
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/barber_surgeon_music
-  m_EditorClassIdentifier: 
-  Path: event:/barber_surgeon_music
-  Guid:
-    Data1: -254515590
-    Data2: 1318876954
-    Data3: 511570084
-    Data4: -896650416
-  Banks:
-  - {fileID: -2072804872322699232}
-  IsStream: 1
-  Is3D: 1
-  IsOneShot: 0
-  Parameters:
-  - {fileID: 734669121534230631}
-  MinDistance: 1
-  MaxDistance: 20
-  Length: 0
---- !u!114 &-5485011512351636384
+--- !u!114 &-8704625382590345583
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -183,11 +24,64 @@ MonoBehaviour:
   Is3D: 1
   IsOneShot: 0
   Parameters:
-  - {fileID: -3964129489547235992}
+  - {fileID: -72112717291237577}
   MinDistance: 1
   MaxDistance: 20
   Length: 0
---- !u!114 &-5182846159611491900
+--- !u!114 &-8545971718447149477
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/time_portal
+  m_EditorClassIdentifier: 
+  Path: event:/time_portal
+  Guid:
+    Data1: -1630672160
+    Data2: 1272249977
+    Data3: 39049607
+    Data4: -699573844
+  Banks:
+  - {fileID: -2072804872322699232}
+  IsStream: 1
+  Is3D: 0
+  IsOneShot: 1
+  Parameters:
+  - {fileID: 5655664269677492689}
+  - {fileID: -17035483891437240}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 14000
+--- !u!114 &-8487181924367557180
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/child_modern_music/Zone
+  m_EditorClassIdentifier: 
+  Name: Zone
+  StudioPath: 
+  Min: 0
+  Max: 3
+  Default: 0
+  ID:
+    data1: 1112535331
+    data2: 2309411790
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &-8326130563702846123
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -211,7 +105,7 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
---- !u!114 &-5079036026759060588
+--- !u!114 &-7665875587563523758
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -221,25 +115,104 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/battle_oak_music
+  m_Name: event:/child_modern_music
   m_EditorClassIdentifier: 
-  Path: event:/battle_oak_music
+  Path: event:/child_modern_music
   Guid:
-    Data1: -573735400
-    Data2: 1164887914
-    Data3: 803607699
-    Data4: -1636424172
+    Data1: -878459424
+    Data2: 1276716403
+    Data3: -1871576394
+    Data4: 1301315179
   Banks:
   - {fileID: -2072804872322699232}
   IsStream: 1
   Is3D: 1
   IsOneShot: 0
   Parameters:
-  - {fileID: -5048208177749114871}
+  - {fileID: -8487181924367557180}
   MinDistance: 1
   MaxDistance: 20
   Length: 0
---- !u!114 &-5048208177749114871
+--- !u!114 &-7609103010726695882
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/nav_cue
+  m_EditorClassIdentifier: 
+  Path: event:/nav_cue
+  Guid:
+    Data1: -1631769890
+    Data2: 1211054242
+    Data3: -949885777
+    Data4: 691049561
+  Banks:
+  - {fileID: -2072804872322699232}
+  IsStream: 1
+  Is3D: 1
+  IsOneShot: 1
+  Parameters:
+  - {fileID: -4634650297046693860}
+  - {fileID: 8447249208792425948}
+  - {fileID: -8326130563702846123}
+  - {fileID: -4033021608061444249}
+  MinDistance: 1
+  MaxDistance: 90
+  Length: 0
+--- !u!114 &-7317307929384543602
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/james_music
+  m_EditorClassIdentifier: 
+  Path: event:/james_music
+  Guid:
+    Data1: -1406718307
+    Data2: 1317937260
+    Data3: 1653865350
+    Data4: -1378154026
+  Banks:
+  - {fileID: -2072804872322699232}
+  IsStream: 1
+  Is3D: 1
+  IsOneShot: 0
+  Parameters:
+  - {fileID: -5872659263192881469}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 0
+--- !u!114 &-6443719217133375580
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
+  m_Name: bank:/william.bank
+  m_EditorClassIdentifier: 
+  Path: Assets/Audio/Build/Desktop/william.bank
+  Name: william
+  StudioPath: bank:/william
+  lastModified: 638815112790590550
+  FileSizes:
+  - Name: Desktop
+    Value: 506
+  Exists: 1
+--- !u!114 &-5872659263192881469
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -249,7 +222,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/battle_oak_music/Zone
+  m_Name: parameter:/james_music/Zone
   m_EditorClassIdentifier: 
   Name: Zone
   StudioPath: 
@@ -263,7 +236,7 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
---- !u!114 &-4576231690912962478
+--- !u!114 &-5155890584717725837
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -273,7 +246,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/fox_music/Zone
+  m_Name: parameter:/barber_surgeon_music/Zone
   m_EditorClassIdentifier: 
   Name: Zone
   StudioPath: 
@@ -287,7 +260,7 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
---- !u!114 &-4033680130709560388
+--- !u!114 &-4634650297046693860
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -297,21 +270,49 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/child_music/Zone
+  m_Name: parameter:/nav_cue/Trigger
   m_EditorClassIdentifier: 
-  Name: Zone
+  Name: Trigger
   StudioPath: 
   Min: 0
-  Max: 3
+  Max: 1
   Default: 0
   ID:
-    data1: 1112535331
-    data2: 2309411790
+    data1: 3182214286
+    data2: 3291611135
   Type: 0
   IsGlobal: 0
   Labels: []
   Exists: 1
---- !u!114 &-3964129489547235992
+--- !u!114 &-4176406076702822943
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/louis_music
+  m_EditorClassIdentifier: 
+  Path: event:/louis_music
+  Guid:
+    Data1: 536625850
+    Data2: 1251709943
+    Data3: -913172600
+    Data4: -836348760
+  Banks:
+  - {fileID: -2072804872322699232}
+  IsStream: 1
+  Is3D: 1
+  IsOneShot: 0
+  Parameters:
+  - {fileID: 5570442341208652100}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 0
+--- !u!114 &-4033021608061444249
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -321,21 +322,49 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/farmer_music/Zone
+  m_Name: parameter:/nav_cue/Is_Target
   m_EditorClassIdentifier: 
-  Name: Zone
+  Name: Is_Target
   StudioPath: 
   Min: 0
-  Max: 3
+  Max: 1
   Default: 0
   ID:
-    data1: 1112535331
-    data2: 2309411790
-  Type: 0
+    data1: 3487212685
+    data2: 2204712610
+  Type: 1
   IsGlobal: 0
   Labels: []
   Exists: 1
---- !u!114 &-3175786135929215258
+--- !u!114 &-4027970587427831066
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/ambient_sounds
+  m_EditorClassIdentifier: 
+  Path: event:/ambient_sounds
+  Guid:
+    Data1: -642792527
+    Data2: 1157833136
+    Data3: 2146350997
+    Data4: 841210949
+  Banks:
+  - {fileID: -2072804872322699232}
+  IsStream: 1
+  Is3D: 0
+  IsOneShot: 0
+  Parameters:
+  - {fileID: -2310149781929280275}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 126000
+--- !u!114 &-3371191593901127804
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -345,7 +374,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/sergeant_major_music/Zone
+  m_Name: parameter:/salmon_music/Zone
   m_EditorClassIdentifier: 
   Name: Zone
   StudioPath: 
@@ -379,7 +408,7 @@ MonoBehaviour:
   - Name: Desktop
     Value: 506
   Exists: 1
---- !u!114 &-2758959240324335570
+--- !u!114 &-2310149781929280275
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -388,26 +417,45 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/louis_music
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/ambient_sounds/TimeLayer
   m_EditorClassIdentifier: 
-  Path: event:/louis_music
-  Guid:
-    Data1: 536625850
-    Data2: 1251709943
-    Data3: -913172600
-    Data4: -836348760
-  Banks:
-  - {fileID: -2072804872322699232}
-  IsStream: 1
-  Is3D: 1
-  IsOneShot: 0
-  Parameters:
-  - {fileID: 1644820072087199892}
-  MinDistance: 1
-  MaxDistance: 20
-  Length: 0
---- !u!114 &-2481047689808319214
+  Name: TimeLayer
+  StudioPath: 
+  Min: 0
+  Max: 2
+  Default: 1
+  ID:
+    data1: 2126995294
+    data2: 1926241287
+  Type: 2
+  IsGlobal: 0
+  Labels:
+  - Neolithic
+  - Battle1690
+  - Modern
+  Exists: 1
+--- !u!114 &-2072804872322699232
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
+  m_Name: bank:/Master.bank
+  m_EditorClassIdentifier: 
+  Path: Assets/Audio/Build/Desktop/Master.bank
+  Name: Master
+  StudioPath: bank:/Master
+  lastModified: 638890473943784960
+  FileSizes:
+  - Name: Desktop
+    Value: 28551680
+  Exists: 1
+--- !u!114 &-696626694013031420
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -431,11 +479,11 @@ MonoBehaviour:
   Is3D: 1
   IsOneShot: 0
   Parameters:
-  - {fileID: -3175786135929215258}
+  - {fileID: 4041109380873986805}
   MinDistance: 1
   MaxDistance: 20
   Length: 0
---- !u!114 &-2072804872322699232
+--- !u!114 &-645820461886399233
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -444,16 +492,127 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
-  m_Name: bank:/Master.bank
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/raven_music/Zone
   m_EditorClassIdentifier: 
-  Path: Assets/Audio/Build/Desktop/Master.bank
-  Name: Master
-  StudioPath: bank:/Master
-  lastModified: 638859422357998937
-  FileSizes:
-  - Name: Desktop
-    Value: 24285472
+  Name: Zone
+  StudioPath: 
+  Min: 0
+  Max: 3
+  Default: 0
+  ID:
+    data1: 1112535331
+    data2: 2309411790
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &-336613186091516016
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/raven_music
+  m_EditorClassIdentifier: 
+  Path: event:/raven_music
+  Guid:
+    Data1: -17476983
+    Data2: 1197733990
+    Data3: 1956351362
+    Data4: -540070583
+  Banks:
+  - {fileID: -2072804872322699232}
+  IsStream: 1
+  Is3D: 1
+  IsOneShot: 0
+  Parameters:
+  - {fileID: -645820461886399233}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 0
+--- !u!114 &-114475489008245556
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/salmon_music
+  m_EditorClassIdentifier: 
+  Path: event:/salmon_music
+  Guid:
+    Data1: -1794321705
+    Data2: 1155231689
+    Data3: -816275816
+    Data4: -1405444301
+  Banks:
+  - {fileID: -2072804872322699232}
+  IsStream: 1
+  Is3D: 1
+  IsOneShot: 0
+  Parameters:
+  - {fileID: -3371191593901127804}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 0
+--- !u!114 &-72112717291237577
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/farmer_music/Zone
+  m_EditorClassIdentifier: 
+  Name: Zone
+  StudioPath: 
+  Min: 0
+  Max: 3
+  Default: 0
+  ID:
+    data1: 1112535331
+    data2: 2309411790
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &-17035483891437240
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/time_portal/PortalType
+  m_EditorClassIdentifier: 
+  Name: PortalType
+  StudioPath: 
+  Min: 0
+  Max: 2
+  Default: 0
+  ID:
+    data1: 855394713
+    data2: 2767600512
+  Type: 2
+  IsGlobal: 0
+  Labels:
+  - None
+  - Forward
+  - Backward
   Exists: 1
 --- !u!114 &11400000
 MonoBehaviour:
@@ -476,57 +635,66 @@ MonoBehaviour:
   - {fileID: 3838825471777141232}
   - {fileID: -6443719217133375580}
   EditorEvents:
-  - {fileID: -5079036026759060588}
-  - {fileID: -6988506570469834057}
-  - {fileID: -6969205665561811409}
-  - {fileID: 172915117340174195}
-  - {fileID: 5857874538265739933}
-  - {fileID: -5485011512351636384}
-  - {fileID: -6396744452905360095}
-  - {fileID: 6510457289179303086}
-  - {fileID: 255016981653534282}
-  - {fileID: -2481047689808319214}
-  - {fileID: -2758959240324335570}
-  - {fileID: 4200576759228821341}
-  - {fileID: -8896982725069540227}
-  - {fileID: 1811335176168539616}
+  - {fileID: 825540548431408317}
+  - {fileID: -8704625382590345583}
+  - {fileID: 898744353406138437}
+  - {fileID: -336613186091516016}
+  - {fileID: -7317307929384543602}
+  - {fileID: -4027970587427831066}
+  - {fileID: -696626694013031420}
+  - {fileID: -4176406076702822943}
+  - {fileID: 4102378261553981461}
+  - {fileID: -114475489008245556}
+  - {fileID: 2206577961322073762}
+  - {fileID: -7609103010726695882}
+  - {fileID: 3440187416531342231}
+  - {fileID: -8545971718447149477}
+  - {fileID: 8529618090388666752}
+  - {fileID: 7716898382821133600}
+  - {fileID: -7665875587563523758}
   EditorParameters: []
   MasterBanks:
   - {fileID: -2072804872322699232}
   StringsBanks:
   - {fileID: 7937843521026953583}
   cacheVersion: 131847
-  cacheTime: 638859422358072133
+  cacheTime: 638890473943805897
   SerializableEventsDict:
   - key: event:/battle_oak_music
     index: 0
-  - key: event:/salmon_music
-    index: 1
-  - key: event:/nav_cue
-    index: 2
-  - key: event:/william_music
-    index: 3
-  - key: event:/child_music
-    index: 4
   - key: event:/farmer_music
-    index: 5
+    index: 1
   - key: event:/barber_surgeon_music
-    index: 6
+    index: 2
   - key: event:/raven_music
-    index: 7
+    index: 3
   - key: event:/james_music
-    index: 8
-  - key: event:/sergeant_major_music
-    index: 9
-  - key: event:/louis_music
-    index: 10
-  - key: event:/grenadier_music
-    index: 11
-  - key: event:/fox_music
-    index: 12
+    index: 4
   - key: event:/ambient_sounds
+    index: 5
+  - key: event:/sergeant_major_music
+    index: 6
+  - key: event:/louis_music
+    index: 7
+  - key: event:/grenadier_music
+    index: 8
+  - key: event:/salmon_music
+    index: 9
+  - key: event:/fox_music
+    index: 10
+  - key: event:/nav_cue
+    index: 11
+  - key: event:/william_music
+    index: 12
+  - key: event:/time_portal
     index: 13
---- !u!114 &172915117340174195
+  - key: event:/harp_girl_music
+    index: 14
+  - key: event:/child_neolithic_music
+    index: 15
+  - key: event:/child_modern_music
+    index: 16
+--- !u!114 &825540548431408317
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -536,25 +704,25 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/william_music
+  m_Name: event:/battle_oak_music
   m_EditorClassIdentifier: 
-  Path: event:/william_music
+  Path: event:/battle_oak_music
   Guid:
-    Data1: 1175538158
-    Data2: 1256538305
-    Data3: 857137839
-    Data4: 547777320
+    Data1: -573735400
+    Data2: 1164887914
+    Data3: 803607699
+    Data4: -1636424172
   Banks:
   - {fileID: -2072804872322699232}
   IsStream: 1
   Is3D: 1
   IsOneShot: 0
   Parameters:
-  - {fileID: 6883971520025283213}
+  - {fileID: 4061104573433583399}
   MinDistance: 1
   MaxDistance: 20
   Length: 0
---- !u!114 &255016981653534282
+--- !u!114 &898744353406138437
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -564,149 +732,25 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/james_music
+  m_Name: event:/barber_surgeon_music
   m_EditorClassIdentifier: 
-  Path: event:/james_music
+  Path: event:/barber_surgeon_music
   Guid:
-    Data1: -1406718307
-    Data2: 1317937260
-    Data3: 1653865350
-    Data4: -1378154026
+    Data1: -254515590
+    Data2: 1318876954
+    Data3: 511570084
+    Data4: -896650416
   Banks:
   - {fileID: -2072804872322699232}
   IsStream: 1
   Is3D: 1
   IsOneShot: 0
   Parameters:
-  - {fileID: -8402153436157364751}
+  - {fileID: -5155890584717725837}
   MinDistance: 1
   MaxDistance: 20
   Length: 0
---- !u!114 &734669121534230631
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/barber_surgeon_music/Zone
-  m_EditorClassIdentifier: 
-  Name: Zone
-  StudioPath: 
-  Min: 0
-  Max: 3
-  Default: 0
-  ID:
-    data1: 1112535331
-    data2: 2309411790
-  Type: 0
-  IsGlobal: 0
-  Labels: []
-  Exists: 1
---- !u!114 &1454568001461815812
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/nav_cue/Is_Target
-  m_EditorClassIdentifier: 
-  Name: Is_Target
-  StudioPath: 
-  Min: 0
-  Max: 1
-  Default: 0
-  ID:
-    data1: 3487212685
-    data2: 2204712610
-  Type: 1
-  IsGlobal: 0
-  Labels: []
-  Exists: 1
---- !u!114 &1644820072087199892
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/louis_music/Zone
-  m_EditorClassIdentifier: 
-  Name: Zone
-  StudioPath: 
-  Min: 0
-  Max: 3
-  Default: 0
-  ID:
-    data1: 1112535331
-    data2: 2309411790
-  Type: 0
-  IsGlobal: 0
-  Labels: []
-  Exists: 1
---- !u!114 &1811335176168539616
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/ambient_sounds
-  m_EditorClassIdentifier: 
-  Path: event:/ambient_sounds
-  Guid:
-    Data1: -642792527
-    Data2: 1157833136
-    Data3: 2146350997
-    Data4: 841210949
-  Banks:
-  - {fileID: -2072804872322699232}
-  IsStream: 1
-  Is3D: 0
-  IsOneShot: 1
-  Parameters:
-  - {fileID: 6571639569566005426}
-  MinDistance: 1
-  MaxDistance: 20
-  Length: 0
---- !u!114 &2780631306687666076
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/nav_cue/Trigger
-  m_EditorClassIdentifier: 
-  Name: Trigger
-  StudioPath: 
-  Min: 0
-  Max: 1
-  Default: 0
-  ID:
-    data1: 3182214286
-    data2: 3291611135
-  Type: 0
-  IsGlobal: 0
-  Labels: []
-  Exists: 1
---- !u!114 &3673994394913638975
+--- !u!114 &1204628863080048405
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -730,6 +774,110 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
+--- !u!114 &1256571898328974457
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/harp_girl_music/Zone
+  m_EditorClassIdentifier: 
+  Name: Zone
+  StudioPath: 
+  Min: 0
+  Max: 3
+  Default: 0
+  ID:
+    data1: 1112535331
+    data2: 2309411790
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &2206577961322073762
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/fox_music
+  m_EditorClassIdentifier: 
+  Path: event:/fox_music
+  Guid:
+    Data1: 1409366747
+    Data2: 1253460628
+    Data3: 367639432
+    Data4: 595799489
+  Banks:
+  - {fileID: -2072804872322699232}
+  IsStream: 1
+  Is3D: 1
+  IsOneShot: 0
+  Parameters:
+  - {fileID: 8573215453366634477}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 0
+--- !u!114 &2779168840276551436
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/child_neolithic_music/Zone
+  m_EditorClassIdentifier: 
+  Name: Zone
+  StudioPath: 
+  Min: 0
+  Max: 3
+  Default: 0
+  ID:
+    data1: 1112535331
+    data2: 2309411790
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &3440187416531342231
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/william_music
+  m_EditorClassIdentifier: 
+  Path: event:/william_music
+  Guid:
+    Data1: 1175538158
+    Data2: 1256538305
+    Data3: 857137839
+    Data4: 547777320
+  Banks:
+  - {fileID: -2072804872322699232}
+  IsStream: 1
+  Is3D: 1
+  IsOneShot: 0
+  Parameters:
+  - {fileID: 4879424086487916034}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 0
 --- !u!114 &3727765447631376544
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -770,7 +918,55 @@ MonoBehaviour:
   - Name: Desktop
     Value: 506
   Exists: 1
---- !u!114 &4200576759228821341
+--- !u!114 &4041109380873986805
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/sergeant_major_music/Zone
+  m_EditorClassIdentifier: 
+  Name: Zone
+  StudioPath: 
+  Min: 0
+  Max: 3
+  Default: 0
+  ID:
+    data1: 1112535331
+    data2: 2309411790
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &4061104573433583399
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/battle_oak_music/Zone
+  m_EditorClassIdentifier: 
+  Name: Zone
+  StudioPath: 
+  Min: 0
+  Max: 3
+  Default: 0
+  ID:
+    data1: 1112535331
+    data2: 2309411790
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &4102378261553981461
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -794,7 +990,7 @@ MonoBehaviour:
   Is3D: 1
   IsOneShot: 0
   Parameters:
-  - {fileID: 3673994394913638975}
+  - {fileID: 1204628863080048405}
   MinDistance: 1
   MaxDistance: 20
   Length: 0
@@ -818,127 +1014,7 @@ MonoBehaviour:
   - Name: Desktop
     Value: 506
   Exists: 1
---- !u!114 &5857874538265739933
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/child_music
-  m_EditorClassIdentifier: 
-  Path: event:/child_music
-  Guid:
-    Data1: -1568402162
-    Data2: 1290817365
-    Data3: 2102118808
-    Data4: -1994431221
-  Banks:
-  - {fileID: -2072804872322699232}
-  IsStream: 1
-  Is3D: 1
-  IsOneShot: 0
-  Parameters:
-  - {fileID: -4033680130709560388}
-  MinDistance: 1
-  MaxDistance: 20
-  Length: 0
---- !u!114 &5936930666857625517
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/nav_cue/Character_ID
-  m_EditorClassIdentifier: 
-  Name: Character_ID
-  StudioPath: 
-  Min: 0
-  Max: 12
-  Default: 0
-  ID:
-    data1: 315080306
-    data2: 373379782
-  Type: 2
-  IsGlobal: 0
-  Labels:
-  - None
-  - William
-  - Oak
-  - Salmon
-  - Raven
-  - Fox
-  - Louis
-  - James
-  - Sergeant Major
-  - Grenadier
-  - Farmer
-  - Child
-  - Barber Surgeon
-  Exists: 1
---- !u!114 &6510457289179303086
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/raven_music
-  m_EditorClassIdentifier: 
-  Path: event:/raven_music
-  Guid:
-    Data1: -17476983
-    Data2: 1197733990
-    Data3: 1956351362
-    Data4: -540070583
-  Banks:
-  - {fileID: -2072804872322699232}
-  IsStream: 1
-  Is3D: 1
-  IsOneShot: 0
-  Parameters:
-  - {fileID: 7770506246780757481}
-  MinDistance: 1
-  MaxDistance: 20
-  Length: 0
---- !u!114 &6571639569566005426
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/ambient_sounds/TimeLayer
-  m_EditorClassIdentifier: 
-  Name: TimeLayer
-  StudioPath: 
-  Min: 0
-  Max: 2
-  Default: 1
-  ID:
-    data1: 2126995294
-    data2: 1926241287
-  Type: 2
-  IsGlobal: 0
-  Labels:
-  - Neolithic
-  - Battle1690
-  - Modern
-  Exists: 1
---- !u!114 &6883971520025283213
+--- !u!114 &4879424086487916034
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -962,7 +1038,7 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
---- !u!114 &7770506246780757481
+--- !u!114 &5570442341208652100
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -972,7 +1048,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/raven_music/Zone
+  m_Name: parameter:/louis_music/Zone
   m_EditorClassIdentifier: 
   Name: Zone
   StudioPath: 
@@ -986,6 +1062,58 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
+--- !u!114 &5655664269677492689
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/time_portal/Trigger
+  m_EditorClassIdentifier: 
+  Name: Trigger
+  StudioPath: 
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 3182214286
+    data2: 3291611135
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &7716898382821133600
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/child_neolithic_music
+  m_EditorClassIdentifier: 
+  Path: event:/child_neolithic_music
+  Guid:
+    Data1: 1745561768
+    Data2: 1107027871
+    Data3: 998473345
+    Data4: 284351180
+  Banks:
+  - {fileID: -2072804872322699232}
+  IsStream: 1
+  Is3D: 1
+  IsOneShot: 0
+  Parameters:
+  - {fileID: 2779168840276551436}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 0
 --- !u!114 &7937843521026953583
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1001,12 +1129,12 @@ MonoBehaviour:
   Path: Assets/Audio/Build/Desktop/Master.strings.bank
   Name: Master.strings
   StudioPath: bank:/Master.strings
-  lastModified: 638859422358072133
+  lastModified: 638890473943805897
   FileSizes:
   - Name: Desktop
-    Value: 1876
+    Value: 2070
   Exists: 1
---- !u!114 &9086228000994981006
+--- !u!114 &8447249208792425948
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1016,7 +1144,74 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/salmon_music/Zone
+  m_Name: parameter:/nav_cue/Character_ID
+  m_EditorClassIdentifier: 
+  Name: Character_ID
+  StudioPath: 
+  Min: 0
+  Max: 14
+  Default: 0
+  ID:
+    data1: 315080306
+    data2: 373379782
+  Type: 2
+  IsGlobal: 0
+  Labels:
+  - None
+  - William
+  - Oak
+  - Salmon
+  - Raven
+  - Fox
+  - Louis
+  - James
+  - Sergeant Major
+  - Grenadier
+  - Farmer
+  - Child_Neolithic
+  - Barber Surgeon
+  - Harp_Girl
+  - Child_Modern
+  Exists: 1
+--- !u!114 &8529618090388666752
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/harp_girl_music
+  m_EditorClassIdentifier: 
+  Path: event:/harp_girl_music
+  Guid:
+    Data1: -1568402162
+    Data2: 1290817365
+    Data3: 2102118808
+    Data4: -1994431221
+  Banks:
+  - {fileID: -2072804872322699232}
+  IsStream: 1
+  Is3D: 1
+  IsOneShot: 0
+  Parameters:
+  - {fileID: 1256571898328974457}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 0
+--- !u!114 &8573215453366634477
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/fox_music/Zone
   m_EditorClassIdentifier: 
   Name: Zone
   StudioPath: 

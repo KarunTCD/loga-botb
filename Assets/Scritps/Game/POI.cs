@@ -30,6 +30,7 @@ namespace LoGa.LudoEngine.Game
 
         [Header("Portal Settings")]
         public PortalType portalType = PortalType.None;
+        public EventReference portalActivationAudio;
 
         private bool isTargeted = false;
         public bool IsTargeted => isTargeted;
@@ -171,23 +172,24 @@ namespace LoGa.LudoEngine.Game
             };
         }
 
+        // In POI.cs - modify ActivatePortal method
         private void ActivatePortal(TimeLayer targetLayer)
         {
             hasBeenTriggered = true;
 
             Debug.Log($"{portalType} portal ({characterName}) activated - transitioning to {targetLayer.layerName}");
 
-            // Get the shared time portal event from TimeLayerManager
-            var timePortalEvent = TimeLayerManager.Instance.GetTimePortalEvent();
-
-            if (!timePortalEvent.IsNull)
+            // Play portal activation audio with parameters
+            if (!portalActivationAudio.IsNull)
             {
-                var portalInstance = AudioService.CreateAudioInstance(timePortalEvent);
+                var portalInstance = AudioService.CreateAudioInstance(portalActivationAudio);
 
-                // Set parameters for complete audio sequence
-                AudioService.SetParameter(portalInstance, "PortalType", portalType == PortalType.Forward ? 1f : 0f);
-                AudioService.SetParameter(portalInstance, "TargetLayer", targetLayer.layerIndex);
-                AudioService.SetParameter(portalInstance, "Trigger", 1f);
+                // Set portal type parameter (1 = Forward/Raven, 2 = Backward/Fox)
+                int portalTypeValue = portalType == PortalType.Forward ? 1 : 2;
+                AudioService.SetParameter(portalInstance, "PortalType", portalTypeValue);
+
+                // Set trigger to activate the sound
+                AudioService.SetParameter(portalInstance, "Trigger", 1.0f);
 
                 AudioService.PlayAudio(portalInstance, Vector3.zero);
             }
@@ -197,11 +199,29 @@ namespace LoGa.LudoEngine.Game
         }
 
         // Navigation cue methods (for wander mode)
-        public void PlayNavigationCue(Vector3 position, float distance)
+        public void PlayNavigationCue(Vector3 position, float distance, float maxDistance)
         {
             if (!isInitialized || isInProximity) return;
 
-            AudioService.PlayNavigationCue(sharedCueInstance, position, characterId, distance, isTargeted);
+            // Calculate the cue variant based on normalized distance
+            int cueVariant = CalculateCueVariant(distance, maxDistance);
+
+            AudioService.PlayNavigationCue(sharedCueInstance, position, characterId, distance, isTargeted, cueVariant);
+        }
+
+        // helper funciton to determine normalized distance
+        private int CalculateCueVariant(float distance, float maxDistance)
+        {
+            float normalizedDistance = Mathf.Clamp01(distance / maxDistance);
+
+            if (normalizedDistance <= 0.25f)
+                return 1;
+            else if (normalizedDistance <= 0.50f)
+                return 2;
+            else if (normalizedDistance <= 0.75f)
+                return 3;
+            else
+                return 4;
         }
 
         // Targeting methods (for wander mode)

@@ -16,7 +16,7 @@
 			<value>2</value>
 		</property>
 		<property name="maximum">
-			<value>13</value>
+			<value>15</value>
 		</property>
 		<property name="enumerationLabels">
 			<value>None</value>
@@ -30,8 +30,10 @@
 			<value>Sergeant Major</value>
 			<value>Grenadier</value>
 			<value>Farmer</value>
-			<value>Child</value>
+			<value>Child_Neolithic</value>
 			<value>Barber Surgeon</value>
+			<value>Harp_Girl</value>
+			<value>Child_Modern</value>
 		</property>
 		<property name="initialValue">
 			<value>0</value>

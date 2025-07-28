@@ -405,8 +405,8 @@ namespace LoGa.LudoEngine.Services
                     targetTrueNorthOffset = newOffset;
                     calibrationLerpFactor = 0f; // Start transition
 
-                    Debug.Log($"Drift correction: {currentDrift:F1}°. " +
-                             $"Current: {markerAngle:F1}°, Compass: {compassHeading:F1}°");
+                    //Debug.Log($"Drift correction: {currentDrift:F1}°. " +
+                             //$"Current: {markerAngle:F1}°, Compass: {compassHeading:F1}°");
                 }
             }
         }

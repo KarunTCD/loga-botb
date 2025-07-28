@@ -377,7 +377,7 @@ namespace LoGa.LudoEngine.Game
 
                             // Play targeted navigation cue
                             Vector3 position = CalculateAudioPosition(targetedPOI, currentLat, currentLon, HeadTrackingService.CurrentHeading);
-                            targetedPOI.PlayNavigationCue(position, distance);
+                            targetedPOI.PlayNavigationCue(position, distance, maxTargetingDistance);
 
                             // Update debug text with improved frequency info
                             if (debugText != null)
@@ -495,7 +495,7 @@ namespace LoGa.LudoEngine.Game
                         float distance = poiDistances[poi];
 
                         // Play cue
-                        poi.PlayNavigationCue(position, distance);
+                        poi.PlayNavigationCue(position, distance, maxTargetingDistance);
 
                         // Update debug text
                         if (debugText != null)

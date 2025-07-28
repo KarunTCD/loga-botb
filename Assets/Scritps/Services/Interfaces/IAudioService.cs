@@ -7,7 +7,7 @@ namespace LoGa.LudoEngine.Services
     public interface IAudioService : IService
     {
         EventInstance CreateAudioInstance(EventReference eventRef);
-        void PlayNavigationCue(EventInstance instance, Vector3 position, int characterId, float distance, bool isTargeted);
+        void PlayNavigationCue(EventInstance instance, Vector3 position, int characterId, float distance, bool isTargeted, float maxDistance);
         void StopNavigationCue(EventInstance instance);
         void PlayAudio(EventInstance instance, Vector3 position);
         void StopAudio(EventInstance instance, bool allowFadeOut = true);

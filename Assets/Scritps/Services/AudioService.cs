@@ -43,7 +43,7 @@ namespace LoGa.LudoEngine.Services
         }
 
         // Play navigation cue with character ID
-        public void PlayNavigationCue(EventInstance instance, Vector3 position, int characterId, float distance, bool isTargeted)
+        public void PlayNavigationCue(EventInstance instance, Vector3 position, int characterId, float distance, bool isTargeted, float maxDistance)
         {
             if (!IsInstanceValid(instance)) return;
 
@@ -55,8 +55,8 @@ namespace LoGa.LudoEngine.Services
             instance.setParameterByName("Is_Target", isTargeted ? 1.0f : 0.0f);
 
             Debug.Log($"Distance: {distance}");
-            // NEW: Set distance bands for volume control
-            UpdateDistanceBanding(instance, distance);
+            // Use the passed maxDistance instead of hardcoded value
+            UpdateDistanceBanding(instance, distance, maxDistance);
 
             // Set trigger parameter
             instance.setParameterByName("Trigger", 1.0f);
@@ -134,18 +134,17 @@ namespace LoGa.LudoEngine.Services
         }
 
         // Method to handle distance bands 
-        public void UpdateDistanceBanding(EventInstance instance, float distance)
+        public void UpdateDistanceBanding(EventInstance instance, float distance, float maxDistance)
         {
             if (!IsInstanceValid(instance)) return;
 
-            // Normalize distance to 0-1 range
-            float maxDistance = 200f;
+            // Use the passed maxDistance instead of hardcoded value
             float normalizedDistance = Mathf.Clamp01(distance / maxDistance);
 
             // Set single distance parameter with linear interpolation preserved
             instance.setParameterByName("NormalizedDistance", normalizedDistance);
 
-            Debug.Log($"Distance: {distance:F1}m → Normalized: {normalizedDistance:F3}");
+            Debug.Log($"Distance: {distance:F1}m → Normalized: {normalizedDistance:F3} (Max: {maxDistance:F0}m)");
         }
 
         // Set parameters on audio instance(for external use)
