@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 
 namespace LoGa.LudoEngine.Services
 {
@@ -6,6 +7,7 @@ namespace LoGa.LudoEngine.Services
     {
         event Action<bool> LocationPermissionResult;
         bool HasLocationPermission { get; }
+        Task<bool> RequestBluetoothPermissions();
         void CheckLocationPermission();
         void RequestLocationPermission();
     }

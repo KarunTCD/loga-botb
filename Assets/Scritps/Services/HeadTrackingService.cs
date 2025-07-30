@@ -94,7 +94,12 @@ namespace LoGa.LudoEngine.Services
 
             foreach (var prefab in providerPrefabs)
             {
-                if (prefab == null) continue;
+                if (prefab == null)
+                {
+                    if (enableDebugLogging)
+                        Debug.Log("Null prefab found - skipping (platform-specific provider not available)");
+                    continue;
+                }
 
                 try
                 {
@@ -147,16 +152,23 @@ namespace LoGa.LudoEngine.Services
                 catch (Exception e)
                 {
                     Debug.LogError($"Error initializing provider {prefab.name}: {e.Message}");
+                    continue;// Skip this provider and continue with others
                 }
             }
 
             // Sort by priority (highest first)
             availableProviders = availableProviders.OrderByDescending(p => p.Priority).ToList();
 
-            Debug.Log("Available providers:");
+            Debug.Log($"Provider discovery complete. Available providers: {availableProviders.Count}");
             foreach (var provider in availableProviders)
             {
                 Debug.Log($"  {provider.ProviderName} (Priority: {provider.Priority}, Connected: {provider.IsConnected})");
+            }
+
+            // Handle case where no providers are available
+            if (availableProviders.Count == 0)
+            {
+                Debug.LogWarning("No head tracking providers available on this platform!");
             }
         }
 
