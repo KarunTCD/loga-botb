@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using UnityEngine;
 using LoGa.LudoEngine.Services;
 
@@ -13,8 +12,12 @@ namespace LoGa.LudoEngine.Core
         private static ServiceManager instance;
         public static ServiceManager Instance => instance;
 
+        // Events for loading screen
+        public static event Action<string> ServiceInitializationUpdate;
+        public static event Action<float> InitializationProgress;
+        public static event Action AllServicesReady;
+
         // Service prefabs
-        [SerializeField] private ConfigService configServicePrefab;
         [SerializeField] private PermissionService permissionServicePrefab;
         [SerializeField] private Services.LocationService locationServicePrefab;
         [SerializeField] private HeadTrackingService headTrackingServicePrefab;
@@ -22,12 +25,20 @@ namespace LoGa.LudoEngine.Core
         [SerializeField] private FirebaseService firebaseServicePrefab;
 
         private List<GameObject> createdServices = new List<GameObject>();
-
-        // Initialization status tracking
+        private Dictionary<Type, IService> serviceInstances = new Dictionary<Type, IService>();
         private Dictionary<Type, bool> serviceInitStatus = new Dictionary<Type, bool>();
 
-        // Track if services have been initialized
-        public bool ServicesInitialized { get; private set; } = false;
+        // Service criticality levels for locative audio game
+        private Dictionary<Type, bool> criticalServices = new Dictionary<Type, bool>
+        {
+            { typeof(IAudioService), true },         // Critical - game is audio-based
+            { typeof(IPermissionService), true },    // Critical - needed for location/bluetooth
+            { typeof(ILocationService), true },      // Critical - locative game needs GPS
+            { typeof(IHeadTrackingService), true },  // Critical - spatial audio needs head tracking
+            { typeof(IFirebaseService), false }      // Optional - offline mode available
+        };
+
+        public bool AreAllServicesReady { get; private set; } = false;
 
         private void Awake()
         {
@@ -40,22 +51,17 @@ namespace LoGa.LudoEngine.Core
             instance = this;
             DontDestroyOnLoad(gameObject);
 
-            // Create services immediately but don't initialize yet
+            // Create services immediately (synchronous)
             CreateServices();
-        }
 
-        private async void Start()
-        {
-            // Initialize services in the correct order
-            await InitializeServicesSequentially();
+            // Start initialization process
+            StartCoroutine(InitializeAllServices());
         }
 
         private void CreateServices()
         {
             Debug.Log("Creating service instances...");
 
-            // Create service instances and register them (but don't initialize yet)
-            //CreateService<IConfigService, ConfigService>(configServicePrefab);
             CreateService<IPermissionService, PermissionService>(permissionServicePrefab);
             CreateService<ILocationService, Services.LocationService>(locationServicePrefab);
             CreateService<IHeadTrackingService, HeadTrackingService>(headTrackingServicePrefab);
@@ -65,134 +71,17 @@ namespace LoGa.LudoEngine.Core
             Debug.Log($"Created {createdServices.Count} service instances");
         }
 
-        private async Task InitializeServicesSequentially()
-        {
-            Debug.Log("Starting sequential service initialization...");
-
-            try
-            {
-                // Step 1: Initialize PermissionService FIRST (critical for other services)
-                Debug.Log("📋 Initializing PermissionService...");
-                var permissionService = ServiceLocator.GetService<IPermissionService>();
-                if (permissionService != null)
-                {
-                    bool permissionSuccess = await permissionService.InitializeAsync();
-                    MarkServiceInitialized<IPermissionService>(permissionSuccess);
-
-                    if (!permissionSuccess)
-                    {
-                        Debug.LogError("PermissionService failed to initialize - location permission may be denied");
-                        // Continue with other services anyway, but warn user
-                    }
-                    else
-                    {
-                        Debug.Log("PermissionService initialized successfully");
-                    }
-                }
-
-                // Step 2: Initialize LocationService (depends on permissions)
-                Debug.Log("Initializing LocationService...");
-                var locationService = ServiceLocator.GetService<ILocationService>();
-                if (locationService != null)
-                {
-                    bool locationSuccess = await locationService.InitializeAsync();
-                    MarkServiceInitialized<ILocationService>(locationSuccess);
-
-                    if (!locationSuccess)
-                    {
-                        Debug.LogWarning("LocationService failed to initialize - GPS features may not work");
-                    }
-                    else
-                    {
-                        Debug.Log("LocationService initialized successfully");
-                    }
-                }
-
-                // Step 3: Initialize HeadTrackingService (may need Bluetooth permissions)
-                Debug.Log("🎯 Initializing HeadTrackingService...");
-                var headTrackingService = ServiceLocator.GetService<IHeadTrackingService>();
-                if (headTrackingService != null)
-                {
-                    bool headTrackingSuccess = await headTrackingService.InitializeAsync();
-                    MarkServiceInitialized<IHeadTrackingService>(headTrackingSuccess);
-
-                    if (!headTrackingSuccess)
-                    {
-                        Debug.LogWarning("HeadTrackingService failed to initialize - head tracking may not work");
-                    }
-                    else
-                    {
-                        Debug.Log("HeadTrackingService initialized successfully");
-                    }
-                }
-
-                // Step 4: Initialize remaining services (parallel is OK for these)
-                Debug.Log("🎵 Initializing AudioService...");
-                var audioService = ServiceLocator.GetService<IAudioService>();
-                if (audioService != null)
-                {
-                    bool audioSuccess = await audioService.InitializeAsync();
-                    MarkServiceInitialized<IAudioService>(audioSuccess);
-                    Debug.Log(audioSuccess ? "AudioService initialized" : "AudioService failed");
-                }
-
-                Debug.Log("Initializing FirebaseService...");
-                var firebaseService = ServiceLocator.GetService<IFirebaseService>();
-                if (firebaseService != null)
-                {
-                    bool firebaseSuccess = await firebaseService.InitializeAsync();
-                    MarkServiceInitialized<IFirebaseService>(firebaseSuccess);
-                    Debug.Log(firebaseSuccess ? "FirebaseService initialized" : "FirebaseService failed");
-                }
-
-                ServicesInitialized = true;
-
-                // Final status report
-                Debug.Log("Service initialization complete!");
-                Debug.Log($"Initialization Progress: {GetInitializationProgress():P0}");
-
-                if (AreAllServicesInitialized())
-                {
-                    Debug.Log("All services initialized successfully!");
-                }
-                else
-                {
-                    Debug.LogWarning("Some services failed to initialize - check logs above");
-                    LogFailedServices();
-                }
-
-            }
-            catch (Exception e)
-            {
-                Debug.LogError($"Service initialization failed with exception: {e.Message}");
-                ServicesInitialized = true; // Mark as done even if failed
-            }
-        }
-
-        private void LogFailedServices()
-        {
-            foreach (var kvp in serviceInitStatus)
-            {
-                if (!kvp.Value)
-                {
-                    Debug.LogWarning($"Failed service: {kvp.Key.Name}");
-                }
-            }
-        }
-
-        private T CreateService<T, U>(U prefab) where U : MonoBehaviour, T
+        private T CreateService<T, U>(U prefab) where U : MonoBehaviour, T where T : class, IService
         {
             GameObject serviceObj;
 
             if (prefab != null)
             {
-                // Instantiate from prefab
                 serviceObj = Instantiate(prefab.gameObject, transform);
-                serviceObj.name = typeof(T).Name; // Rename for clarity
+                serviceObj.name = typeof(T).Name;
             }
             else
             {
-                // Create new GameObject
                 serviceObj = new GameObject(typeof(T).Name);
                 serviceObj.transform.SetParent(transform);
                 serviceObj.AddComponent<U>();
@@ -204,61 +93,154 @@ namespace LoGa.LudoEngine.Core
             // Register with service locator
             ServiceLocator.RegisterService<T>(service);
 
-            // Initialize status tracking (false by default)
+            // Track service instance
+            serviceInstances[typeof(T)] = service;
             serviceInitStatus[typeof(T)] = false;
 
-            Debug.Log($"Created service: {typeof(T).Name}");
             return service;
         }
 
-        // Updated to accept success/failure status
-        public void MarkServiceInitialized<T>(bool success = true)
+        private IEnumerator InitializeAllServices()
         {
-            Type serviceType = typeof(T);
-            if (serviceInitStatus.ContainsKey(serviceType))
+            yield return new WaitForEndOfFrame(); // Let all Awake() methods complete
+
+            Debug.Log("Starting service initialization sequence...");
+
+            var servicesToInitialize = new List<(Type type, IService service, string name)>
             {
-                serviceInitStatus[serviceType] = success;
-                string status = success ? "SUCCESS" : "FAILED";
-                Debug.Log($"Service initialization result: {serviceType.Name} - {status}");
+                (typeof(IPermissionService), serviceInstances[typeof(IPermissionService)], "Device Permissions"),
+                (typeof(IAudioService), serviceInstances[typeof(IAudioService)], "Audio System"),
+                (typeof(ILocationService), serviceInstances[typeof(ILocationService)], "GPS Location"),
+                (typeof(IHeadTrackingService), serviceInstances[typeof(IHeadTrackingService)], "Head Tracking"),
+                (typeof(IFirebaseService), serviceInstances[typeof(IFirebaseService)], "Online Features")
+            };
+
+            for (int i = 0; i < servicesToInitialize.Count; i++)
+            {
+                var (type, service, name) = servicesToInitialize[i];
+
+                ServiceInitializationUpdate?.Invoke($"Initializing {name}...");
+
+                // Use coroutine to handle async initialization
+                yield return StartCoroutine(InitializeServiceCoroutine(service, type, name));
+
+                // Update progress
+                float progress = (float)(i + 1) / servicesToInitialize.Count;
+                InitializationProgress?.Invoke(progress);
+
+                yield return null; // Allow frame to process
+            }
+
+            AreAllServicesReady = true;
+            ServiceInitializationUpdate?.Invoke("Initialization complete!");
+            AllServicesReady?.Invoke();
+
+            Debug.Log("Service initialization complete");
+        }
+
+        private IEnumerator InitializeServiceCoroutine(IService service, Type serviceType, string serviceName)
+        {
+            bool success = false;
+            bool completed = false;
+
+            // Start the async initialization
+            var initTask = service.InitializeAsync();
+
+            // Wait for completion
+            while (!completed)
+            {
+                if (initTask.IsCompleted)
+                {
+                    success = initTask.Result;
+                    completed = true;
+                }
+                else
+                {
+                    yield return null; // Wait one frame
+                }
+            }
+
+            serviceInitStatus[serviceType] = success;
+
+            if (success)
+            {
+                Debug.Log($"Successfully initialized {serviceName}");
+            }
+            else
+            {
+                Debug.LogWarning($"Failed to initialize {serviceName}");
             }
         }
 
-        public bool IsServiceInitialized<T>()
+        // Public API for service status
+        public bool IsServiceInitialized<T>() where T : class, IService
         {
-            Type serviceType = typeof(T);
-            if (serviceInitStatus.TryGetValue(serviceType, out bool initialized))
-            {
-                return initialized;
-            }
-            return false;
+            return serviceInitStatus.TryGetValue(typeof(T), out bool initialized) && initialized;
         }
 
-        public bool AreAllServicesInitialized()
+        private bool IsServiceInitialized(Type serviceType)
         {
-            return serviceInitStatus.Values.All(initialized => initialized);
+            return serviceInitStatus.TryGetValue(serviceType, out bool initialized) && initialized;
+        }
+
+        public bool AreCriticalServicesReady()
+        {
+            foreach (var kvp in criticalServices)
+            {
+                if (kvp.Value && !IsServiceInitialized(kvp.Key))
+                    return false;
+            }
+            return true;
+        }
+
+        public List<string> GetFailedCriticalServices()
+        {
+            var failed = new List<string>();
+            foreach (var kvp in criticalServices)
+            {
+                if (kvp.Value && !IsServiceInitialized(kvp.Key))
+                    failed.Add(GetFriendlyServiceName(kvp.Key));
+            }
+            return failed;
+        }
+
+        private string GetFriendlyServiceName(Type serviceType)
+        {
+            return serviceType.Name switch
+            {
+                nameof(IAudioService) => "Audio System",
+                nameof(IPermissionService) => "Device Permissions",
+                nameof(ILocationService) => "GPS Location",
+                nameof(IHeadTrackingService) => "Head Tracking",
+                nameof(IFirebaseService) => "Online Features",
+                _ => serviceType.Name
+            };
         }
 
         public float GetInitializationProgress()
         {
-            if (serviceInitStatus.Count == 0)
-                return 0;
-
-            int initializedCount = serviceInitStatus.Values.Count(v => v);
+            if (serviceInitStatus.Count == 0) return 0;
+            int initializedCount = 0;
+            foreach (var status in serviceInitStatus.Values)
+            {
+                if (status) initializedCount++;
+            }
             return (float)initializedCount / serviceInitStatus.Count;
         }
 
-        // Public method to wait for services to be ready
-        public async Task WaitForServicesAsync()
+        // Add back the missing method for compatibility
+        public void MarkServiceInitialized<T>() where T : class, IService
         {
-            while (!ServicesInitialized)
+            Type serviceType = typeof(T);
+            if (serviceInitStatus.ContainsKey(serviceType))
             {
-                await Task.Delay(100);
+                serviceInitStatus[serviceType] = true;
+                Debug.Log($"Service marked as initialized: {serviceType.Name}");
             }
         }
 
         private void OnDestroy()
         {
-            // Clean up services
             foreach (var serviceObj in createdServices)
             {
                 if (serviceObj != null)
