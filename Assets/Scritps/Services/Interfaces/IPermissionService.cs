@@ -10,5 +10,6 @@ namespace LoGa.LudoEngine.Services
         Task<bool> RequestBluetoothPermissions();
         void CheckLocationPermission();
         void RequestLocationPermission();
+        Task<bool> RequestBluetoothPermissions();
     }
 }

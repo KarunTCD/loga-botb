@@ -42,28 +42,60 @@ namespace LoGa.LudoEngine.Services
             return RuntimeManager.CreateInstance(eventRef);
         }
 
-        // Play navigation cue with character ID
-        public void PlayNavigationCue(EventInstance instance, Vector3 position, int characterId, float distance, bool isTargeted, float maxDistance)
+        // Enhanced navigation cue method with manual cue index control
+        public void PlayNavigationCue(EventInstance instance, Vector3 position, int characterId, float distance, bool isTargeted, float maxDistance, int cueIndex = 0)
         {
             if (!IsInstanceValid(instance)) return;
 
             // Update 3D position
             Update3DAttributes(instance, position);
 
-            // Set existing parameters
+            // Set existing parameters (keep all your current logic)
             instance.setParameterByName("Character_ID", characterId);
             instance.setParameterByName("Is_Target", isTargeted ? 1.0f : 0.0f);
 
-            Debug.Log($"Distance: {distance}");
-            // Use the passed maxDistance instead of hardcoded value
+            // IMPORTANT: Always set distance for volume automation (keep your existing behavior)
             UpdateDistanceBanding(instance, distance, maxDistance);
 
-            // Set trigger parameter
+            // NEW: Always set cue index - code determines the value
+            instance.setParameterByName("CueIndex", cueIndex);
+
+            if (cueIndex > 0)
+            {
+                Debug.Log($"Sequential cue: Character {characterId}, CueIndex {cueIndex}, Distance: {distance:F1}m, Normalized: {distance / maxDistance:F3}");
+            }
+            else
+            {
+                Debug.Log($"Distance-based cue: Character {characterId}, Distance: {distance:F1}m, Normalized: {distance / maxDistance:F3}");
+            }
+
+            // Set trigger parameter (keep existing)
             instance.setParameterByName("Trigger", 1.0f);
             instance.start();
 
-            // Reset trigger parameter after a delay
+            // Reset trigger parameter after a delay (keep existing)
             StartCoroutine(ResetTriggerAfterDelay(instance, "Trigger", 0.1f));
+        }
+
+        // Original method for backward compatibility (your existing calls won't break)
+        public void PlayNavigationCue(EventInstance instance, Vector3 position, int characterId, float distance, bool isTargeted, float maxDistance)
+        {
+            // Calculate cue index based on normalized distance for distance-based mode
+            float normalizedDistance = Mathf.Clamp01(distance / maxDistance);
+            int distanceBasedCueIndex = CalculateDistanceBasedCueIndex(normalizedDistance);
+
+            // Call enhanced version with distance-based cue index
+            PlayNavigationCue(instance, position, characterId, distance, isTargeted, maxDistance, distanceBasedCueIndex);
+        }
+
+        // Helper method to calculate cue index from normalized distance
+        private int CalculateDistanceBasedCueIndex(float normalizedDistance)
+        {
+            // Map normalized distance (0-1) to cue indices (1-4)
+            if (normalizedDistance <= 0.25f) return 1;      // Close
+            else if (normalizedDistance <= 0.5f) return 2;  // Medium
+            else if (normalizedDistance <= 0.75f) return 3; // Far
+            else return 4;                                   // Very far
         }
 
         // Stop navigation cue by setting Character_ID to 0 (None)
@@ -133,7 +165,7 @@ namespace LoGa.LudoEngine.Services
             instance.set3DAttributes(RuntimeUtils.To3DAttributes(position));
         }
 
-        // Method to handle distance bands 
+        // Method to handle distance bands (KEEP EXACTLY AS IS for volume automation)
         public void UpdateDistanceBanding(EventInstance instance, float distance, float maxDistance)
         {
             if (!IsInstanceValid(instance)) return;
@@ -153,6 +185,14 @@ namespace LoGa.LudoEngine.Services
             if (!IsInstanceValid(instance)) return;
 
             instance.setParameterByName(paramName, value);
+        }
+
+        // Add SetEventProperty method (was missing from your original)
+        public void SetEventProperty(EventInstance instance, EVENT_PROPERTY property, float value)
+        {
+            if (!IsInstanceValid(instance)) return;
+
+            instance.setProperty(property, value);
         }
 
         // Reset trigger parameter after delay
@@ -202,7 +242,6 @@ namespace LoGa.LudoEngine.Services
             if (ApplicationState.IsQuitting)
             {
                 ServiceLocator.UnregisterService<IAudioService>();// Only unregister during actual application quit
-
             }
         }
     }

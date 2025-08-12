@@ -14,74 +14,26 @@ namespace LoGa.LudoEngine.Services
         [Header("Bluetooth Permissions")]
         [SerializeField] private bool debugPermissions = true;
 
-        public event Action<bool> LocationPermissionResult;
-        public event Action<bool> BluetoothPermissionResult;
-
-        public bool HasLocationPermission { get; private set; }
-        public bool HasBluetoothPermissions { get; private set; }
         public bool IsInitialized { get; private set; }
 
-        // Add method for MMRL provider to use
-        public async Task<bool> RequestBluetoothPermissions()
+#if PLATFORM_ANDROID
+        private const string BluetoothScanPermission = "android.permission.BLUETOOTH_SCAN";
+        private const string BluetoothConnectPermission = "android.permission.BLUETOOTH_CONNECT";
+        private const string BluetoothAdvertisePermission = "android.permission.BLUETOOTH_ADVERTISE";
+#endif
+
+        public Task<bool> InitializeAsync()
         {
-            if (debugPermissions)
-                Debug.Log("Requesting Bluetooth permissions for MMRL provider...");
+            CheckLocationPermission();
 
 #if PLATFORM_ANDROID
             // First check if we already have permissions
             if (HasAllBluetoothPermissions())
             {
-                if (debugPermissions)
-                    Debug.Log("All Bluetooth permissions already granted");
-                return true;
-            }
-
-            // Create TaskCompletionSource for the async result
-            var tcs = new TaskCompletionSource<bool>();
-
-            // One-time event handler
-            void BluetoothPermissionHandler(bool result)
-            {
-                BluetoothPermissionResult -= BluetoothPermissionHandler;
-                tcs.SetResult(result);
-            }
-
-            BluetoothPermissionResult += BluetoothPermissionHandler;
-
-            // Start timeout timer
-            var timeoutTimer = new System.Threading.Timer(_ =>
-            {
-                BluetoothPermissionResult -= BluetoothPermissionHandler;
-                tcs.TrySetResult(false);
-                Debug.LogWarning("Bluetooth permission request timed out");
-            }, null, 15000, System.Threading.Timeout.Infinite); // 15 second timeout for multiple permissions
-
-            tcs.Task.ContinueWith(_ => timeoutTimer.Dispose());
-
-            // Request the permissions
-            RequestBluetoothPermissionsInternal();
-
-            return await tcs.Task;
-#else
-            if (debugPermissions)
-                Debug.Log("Bluetooth permissions not required on this platform");
-            return true;
-#endif
-        }
-
-        public Task<bool> InitializeAsync()
-        {
-            // Check current permissions
-            CheckLocationPermission();
-            CheckBluetoothPermissions();
-
-            if (HasLocationPermission)
-            {
                 IsInitialized = true;
                 return Task.FromResult(true);
             }
 
-            // Same existing logic for location permission
             var tcs = new TaskCompletionSource<bool>();
 
             void PermissionResultHandler(bool result)
@@ -98,12 +50,13 @@ namespace LoGa.LudoEngine.Services
                 LocationPermissionResult -= PermissionResultHandler;
                 IsInitialized = false;
                 tcs.TrySetResult(false);
-                Debug.LogWarning("Location permission request timed out");
+                Debug.LogWarning("Permission request timed out");
             }, null, 10000, System.Threading.Timeout.Infinite);
 
             tcs.Task.ContinueWith(_ => timeoutTimer.Dispose());
 
             RequestLocationPermission();
+
             return tcs.Task;
         }
 
@@ -116,10 +69,6 @@ namespace LoGa.LudoEngine.Services
 #else
             HasLocationPermission = true;
 #endif
-
-            if (debugPermissions)
-                Debug.Log($"Location Permission: {HasLocationPermission}");
-
             LocationPermissionResult?.Invoke(HasLocationPermission);
         }
 
@@ -150,50 +99,6 @@ namespace LoGa.LudoEngine.Services
             HasLocationPermission = true;
             IsInitialized = true;
             LocationPermissionResult?.Invoke(true);
-#endif
-        }
-
-        // New Bluetooth permission methods
-        private void CheckBluetoothPermissions()
-        {
-#if PLATFORM_ANDROID
-            HasBluetoothPermissions = HasAllBluetoothPermissions();
-#else
-            HasBluetoothPermissions = true;
-#endif
-
-            if (debugPermissions)
-                Debug.Log($"Bluetooth Permissions: {HasBluetoothPermissions}");
-        }
-
-        private void RequestBluetoothPermissionsInternal()
-        {
-#if PLATFORM_ANDROID
-            if (debugPermissions)
-                Debug.Log("Requesting Bluetooth permissions...");
-
-            // Get Android API level
-            int apiLevel = GetAndroidAPILevel();
-
-            if (apiLevel >= 31) // Android 12+
-            {
-                RequestAndroid12BluetoothPermissions();
-            }
-            else
-            {
-                // For older Android versions, location permission is sufficient
-                if (HasLocationPermission)
-                {
-                    HasBluetoothPermissions = true;
-                    BluetoothPermissionResult?.Invoke(true);
-                }
-                else
-                {
-                    // Request location permission first
-                    RequestLocationPermission();
-                    // The location permission callback will handle setting Bluetooth permissions
-                }
-            }
 #endif
         }
 
@@ -316,12 +221,69 @@ namespace LoGa.LudoEngine.Services
         }
 #endif
 
+        public Task<bool> RequestBluetoothPermissions()
+        {
+            var tcs = new TaskCompletionSource<bool>();
+
+            #if PLATFORM_ANDROID
+                        var permissionsToRequest = new System.Collections.Generic.List<string>();
+                        var granted = true;
+
+                        if (!Permission.HasUserAuthorizedPermission(BluetoothScanPermission))
+                        {
+                            permissionsToRequest.Add(BluetoothScanPermission);
+                            granted = false;
+                        }
+
+                        if (!Permission.HasUserAuthorizedPermission(BluetoothConnectPermission))
+                        {
+                            permissionsToRequest.Add(BluetoothConnectPermission);
+                            granted = false;
+                        }
+
+                        if (!Permission.HasUserAuthorizedPermission(BluetoothAdvertisePermission))
+                        {
+                            permissionsToRequest.Add(BluetoothAdvertisePermission);
+                            granted = false;
+                        }
+
+                        if (permissionsToRequest.Count > 0)
+                        {
+                            PermissionCallbacks callbacks = new PermissionCallbacks();
+                            callbacks.PermissionGranted += (perm) => Debug.Log($"Bluetooth Permission Granted: {perm}");
+                            callbacks.PermissionDenied += (perm) => Debug.LogWarning($"Bluetooth Permission Denied: {perm}");
+                            callbacks.PermissionDeniedAndDontAskAgain += (perm) => Debug.LogWarning($"Bluetooth Permission Denied Forever: {perm}");
+
+                            callbacks.PermissionGranted += (_) =>
+                            {
+                                // Check again if all are granted after user response
+                                bool allGranted = Permission.HasUserAuthorizedPermission(BluetoothScanPermission) &&
+                                                  Permission.HasUserAuthorizedPermission(BluetoothConnectPermission) &&
+                                                  Permission.HasUserAuthorizedPermission(BluetoothAdvertisePermission);
+                                tcs.TrySetResult(allGranted);
+                            };
+
+                            Permission.RequestUserPermissions(permissionsToRequest.ToArray(), callbacks);
+                        }
+                        else
+                        {
+                            Debug.Log("All required Bluetooth permissions already granted.");
+                            tcs.SetResult(true);
+                        }
+            #else
+                Debug.Log("Bluetooth permission request skipped (not Android platform).");
+                tcs.SetResult(true);
+            #endif
+
+            return tcs.Task;
+        }
+
+
         private void OnApplicationFocus(bool focus)
         {
             if (focus)
             {
                 CheckLocationPermission();
-                CheckBluetoothPermissions();
                 IsInitialized = HasLocationPermission;
             }
         }

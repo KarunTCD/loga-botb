@@ -33,10 +33,18 @@ namespace LoGa.LudoEngine.Core
         private string currentSessionId;
         public GameState gameState = GameState.Suspended;
 
+        private Vector2 spectatorLocation = Vector2.zero;
+        private float spectatorHeading = 0f;
+        private bool isReceivingSpectatorData = false;
+
         // Public properties
         public GameMode CurrentMode => currentMode;
         public string CurrentSessionId => currentSessionId;
         public bool IsSpectatorMode => currentMode == GameMode.Spectator;
+
+        public Vector2 SpectatorLocation => spectatorLocation;
+        public float SpectatorHeading => spectatorHeading;
+        public bool IsReceivingSpectatorData => isReceivingSpectatorData;
 
         private void Awake()
         {
@@ -80,6 +88,7 @@ namespace LoGa.LudoEngine.Core
         private async void SuspendGame()
         {
             currentMode = GameMode.Inactive;
+            isReceivingSpectatorData = false;
 
             // Get required services (with initialization)
             var locationService = await ServiceLocator.GetInitializedService<ILocationService>();
@@ -98,13 +107,20 @@ namespace LoGa.LudoEngine.Core
             }
 
             // Disable game components
-            mapManager.enabled = false;
-            poiManager.enabled = false;
+            if (mapManager != null)
+                mapManager.enabled = false;
+            if (poiManager != null)
+                poiManager.enabled = false;
+
+            // Configure map for suspended state
+            if (mapManager != null)
+                mapManager.SetSpectatorMode(false);
         }
 
         private async void StartGameAsPlayer()
         {
             currentMode = GameMode.Player;
+            isReceivingSpectatorData = false;
 
             // Get required services (with initialization)
             var locationService = await ServiceLocator.GetInitializedService<ILocationService>();
@@ -131,26 +147,39 @@ namespace LoGa.LudoEngine.Core
             }
 
             // Enable game components
-            mapManager.enabled = true;
-            poiManager.enabled = true;
+            if (mapManager != null)
+            {
+                mapManager.enabled = true;
+                mapManager.SetSpectatorMode(false); // Disable joystick in player mode
+            }
+
+            if (poiManager != null)
+                poiManager.enabled = true;
         }
 
         private async void StartGameAsSpectator()
         {
             currentMode = GameMode.Spectator;
+            isReceivingSpectatorData = false;
 
             // Get location service (with initialization)
             var locationService = await ServiceLocator.GetInitializedService<ILocationService>();
 
-            // Stop location updates if service is running
+            // Stop location updates if service is running (spectator doesn't need GPS)
             if (locationService != null && locationService.IsRunning)
             {
                 locationService.StopLocationUpdates();
             }
 
             // Enable components needed for spectator mode
-            mapManager.enabled = true;
-            poiManager.enabled = true;
+            if (mapManager != null)
+            {
+                mapManager.enabled = true;
+                mapManager.SetSpectatorMode(true); // Enable joystick in spectator mode
+            }
+
+            if (poiManager != null)
+                poiManager.enabled = true;
         }
 
         public async Task<bool> StartPlayerMode()
@@ -217,7 +246,8 @@ namespace LoGa.LudoEngine.Core
                 }
                 else
                 {
-                    uiManager.ShowConnectionError();
+                    if (uiManager != null)
+                        uiManager.ShowConnectionError();
                     return false;
                 }
             }
@@ -231,17 +261,23 @@ namespace LoGa.LudoEngine.Core
 
         private void OnSpectatorPositionUpdated(float latitude, float longitude, float heading)
         {
-            // Update UI display
-            uiManager.UpdateLocationDisplay(latitude, longitude);
+            // Store spectator location data
+            spectatorLocation = new Vector2(latitude, longitude);
+            spectatorHeading = heading;
+            isReceivingSpectatorData = true;
 
-            // Update POI proximity
-            poiManager.UpdateProximity(latitude, longitude);
+            // Update UI display
+            if (uiManager != null)
+                uiManager.UpdateLocationDisplay(latitude, longitude);
+
+            Debug.Log($"Spectator position updated: {latitude:F6}, {longitude:F6}, heading: {heading:F1}°");
         }
 
         private void OnSpectatorPOIsUpdated(List<string> poiIds)
         {
             // Update discovered POIs
-            poiManager.UpdateUnlockedPOIs(poiIds);
+            if (poiManager != null)
+                poiManager.UpdateUnlockedPOIs(poiIds);
         }
 
         public async void ExitSpectatorMode()
@@ -258,6 +294,11 @@ namespace LoGa.LudoEngine.Core
                     currentSessionId = null;
                 }
             }
+
+            // Reset spectator data
+            isReceivingSpectatorData = false;
+            spectatorLocation = Vector2.zero;
+            spectatorHeading = 0f;
 
             // Reset game state
             SetGameMode(GameMode.Inactive);

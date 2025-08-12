@@ -127,7 +127,7 @@ MonoBehaviour:
   - {fileID: -2072804872322699232}
   IsStream: 1
   Is3D: 1
-  IsOneShot: 0
+  IsOneShot: 1
   Parameters:
   - {fileID: -8487181924367557180}
   MinDistance: 1
@@ -161,6 +161,7 @@ MonoBehaviour:
   - {fileID: 8447249208792425948}
   - {fileID: -8326130563702846123}
   - {fileID: -4033021608061444249}
+  - {fileID: -6556491914249172038}
   MinDistance: 1
   MaxDistance: 90
   Length: 0
@@ -192,6 +193,30 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 0
+--- !u!114 &-6556491914249172038
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/nav_cue/CueIndex
+  m_EditorClassIdentifier: 
+  Name: CueIndex
+  StudioPath: 
+  Min: 0
+  Max: 4
+  Default: 0
+  ID:
+    data1: 3753644876
+    data2: 2798513597
+  Type: 1
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
 --- !u!114 &-6443719217133375580
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -450,10 +475,10 @@ MonoBehaviour:
   Path: Assets/Audio/Build/Desktop/Master.bank
   Name: Master
   StudioPath: bank:/Master
-  lastModified: 638890473943784960
+  lastModified: 638905269761782306
   FileSizes:
   - Name: Desktop
-    Value: 28551680
+    Value: 28553824
   Exists: 1
 --- !u!114 &-696626694013031420
 MonoBehaviour:
@@ -658,7 +683,7 @@ MonoBehaviour:
   StringsBanks:
   - {fileID: 7937843521026953583}
   cacheVersion: 131847
-  cacheTime: 638890473943805897
+  cacheTime: 638905269761840062
   SerializableEventsDict:
   - key: event:/battle_oak_music
     index: 0
@@ -1108,7 +1133,7 @@ MonoBehaviour:
   - {fileID: -2072804872322699232}
   IsStream: 1
   Is3D: 1
-  IsOneShot: 0
+  IsOneShot: 1
   Parameters:
   - {fileID: 2779168840276551436}
   MinDistance: 1
@@ -1129,10 +1154,10 @@ MonoBehaviour:
   Path: Assets/Audio/Build/Desktop/Master.strings.bank
   Name: Master.strings
   StudioPath: bank:/Master.strings
-  lastModified: 638890473943805897
+  lastModified: 638905269761840062
   FileSizes:
   - Name: Desktop
-    Value: 2070
+    Value: 2120
   Exists: 1
 --- !u!114 &8447249208792425948
 MonoBehaviour:

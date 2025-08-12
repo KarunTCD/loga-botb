@@ -86,7 +86,7 @@ namespace LoGa.LudoEngine.Services
                 }
 
                 // Android-specific permission check
-                #if UNITY_ANDROID && !UNITY_EDITOR
+#if UNITY_ANDROID && !UNITY_EDITOR
                         StatusMessage?.Invoke("Requesting Android Bluetooth permissions...");
         
                         var permissionService = ServiceLocator.GetService<IPermissionService>();
@@ -106,7 +106,7 @@ namespace LoGa.LudoEngine.Services
                         {
                             Debug.LogWarning("PermissionService not found on Android - MMRL may not work properly");
                         }
-                #endif
+#endif
 
                 // Create TaskCompletionSource to handle the callback-based Bluetooth initialization
                 var tcs = new TaskCompletionSource<bool>();
@@ -368,7 +368,7 @@ namespace LoGa.LudoEngine.Services
             if (enableRawDataLogging)
             {
                 string bytesString = System.BitConverter.ToString(bytes);
-                Debug.Log($"RAW: [{bytesString}] Len: {bytes.Length}");
+                //Debug.Log($"RAW: [{bytesString}] Len: {bytes.Length}");
             }
 
             if (bytes.Length >= 2)

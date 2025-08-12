@@ -13,6 +13,31 @@ namespace LoGa.LudoEngine.Game
         Backward  // Takes player backward in time
     }
 
+    public enum NavigationCueType
+    {
+        DistanceBased,
+        Sequential,
+        Targeted
+    }
+
+    [System.Serializable]
+    public struct POIUpdateData
+    {
+        public float distance;
+        public float bearing;
+        public Vector3 audioPosition;
+        public float angleDifference;
+    }
+
+    [System.Serializable]
+    public struct NavigationCueConfig
+    {
+        public NavigationCueType cueType;
+        public int cueIndex;
+        public float maxDistance;
+        public bool isTargeted;
+    }
+
     [System.Serializable]
     public class POI
     {
@@ -24,16 +49,16 @@ namespace LoGa.LudoEngine.Game
         public RectTransform marker;
         public int characterId;
 
-        [Header("Distance Thresholds")]
-        public float proximityRadius = 30f;   // Distance to start hearing character audio
-        public float dialogueRadius = 10f;    // Distance to start hearing dialogue
-
         [Header("Portal Settings")]
         public PortalType portalType = PortalType.None;
         public EventReference portalActivationAudio;
 
-        private bool isTargeted = false;
-        public bool IsTargeted => isTargeted;
+        // Private state - no external access to avoid state conflicts
+        private float proximityRadius;
+        private float dialogueRadius;
+        private bool isInProximity;
+        private bool isAudioPlaying = false;
+        private bool hasBeenTriggered = false;
 
         // Audio references
         public EventReference characterAudioEvent;
@@ -45,25 +70,29 @@ namespace LoGa.LudoEngine.Game
 
         private bool isInitialized;
         private bool isDiscovered;
-        private bool isInProximity;
-        private bool hasBeenTriggered = false;
 
+        // Public properties (read-only)
         public bool IsDiscovered => isDiscovered;
         public bool IsPortal => portalType != PortalType.None;
 
-        // Services - accessed through ServiceLocator
+        // Services
         private IAudioService AudioService => ServiceLocator.GetService<IAudioService>();
 
-        public void Initialize()
+        /// <summary>
+        /// Initialize POI with proximity settings from POIManager
+        /// </summary>
+        public void Initialize(float proximityRadius, float dialogueRadius)
         {
+            this.proximityRadius = proximityRadius;
+            this.dialogueRadius = dialogueRadius;
+
             if (!characterAudioEvent.IsNull)
             {
                 characterAudioInstance = AudioService.CreateAudioInstance(characterAudioEvent);
-                // Initialize at Zone 0 (outside range)
                 AudioService.SetParameter(characterAudioInstance, ZONE_PARAMETER, 0.0f);
             }
 
-            // Show the marker if it was disabled before
+            // Show marker
             if (marker != null)
             {
                 marker.gameObject.SetActive(true);
@@ -71,7 +100,7 @@ namespace LoGa.LudoEngine.Game
             }
 
             isInitialized = true;
-            Debug.Log($"Audio initialized for {characterName}");
+            Debug.Log($"POI initialized: {characterName}");
         }
 
         public void SetSharedCueInstance(EventInstance instance)
@@ -79,72 +108,94 @@ namespace LoGa.LudoEngine.Game
             sharedCueInstance = instance;
         }
 
-        // Main proximity update method
-        public void UpdateProximity(float distance, Vector3 audioPosition)
+        /// <summary>
+        /// Update proximity state with pre-calculated data from POIManager
+        /// </summary>
+        public void UpdateProximity(POIUpdateData data, float zoneValue)
         {
             if (!isInitialized) return;
 
             bool wasInProximity = isInProximity;
-            isInProximity = (distance <= proximityRadius);
+            isInProximity = (data.distance <= proximityRadius);
 
-            if (isInProximity && !wasInProximity)
+            // Handle proximity transitions
+            if (isInProximity && !isAudioPlaying)
             {
-                // Just entered proximity - start character audio
-                AudioService.PlayAudio(characterAudioInstance, audioPosition);
-                Debug.Log($"Entered proximity of {characterName}");
+                AudioService.PlayAudio(characterAudioInstance, data.audioPosition);
+                isAudioPlaying = true;
+                Debug.Log($"Started audio for {characterName}");
             }
-            else if (!isInProximity && wasInProximity)
+            else if (!isInProximity && isAudioPlaying)
             {
-                // Just left proximity - stop character audio completely
                 AudioService.StopAudio(characterAudioInstance, true);
-                hasBeenTriggered = false; // Reset portal trigger when leaving proximity
-                Debug.Log($"Exited proximity of {characterName}");
+                isAudioPlaying = false;
+                hasBeenTriggered = false;
+                Debug.Log($"Stopped audio for {characterName}");
             }
 
             if (isInProximity)
             {
-                // Update audio position and zone continuously while in proximity
-                AudioService.Update3DAttributes(characterAudioInstance, audioPosition);
-                UpdateAudioBasedOnDistance(distance);
+                // Update 3D position and apply zone value calculated by POIManager
+                AudioService.Update3DAttributes(characterAudioInstance, data.audioPosition);
+                AudioService.SetParameter(characterAudioInstance, ZONE_PARAMETER, zoneValue);
 
-                // Check for portal activation if this is a portal POI
-                if (IsPortal && distance <= dialogueRadius && !hasBeenTriggered)
+                Debug.Log($"{characterName} - Distance: {data.distance:F1}m → Zone: {zoneValue:F2}");
+
+                // Check portal activation
+                if (IsPortal && data.distance <= dialogueRadius && !hasBeenTriggered)
                 {
                     CheckPortalActivation();
                 }
             }
         }
 
-        // Calculate zone from distance
-        private void UpdateAudioBasedOnDistance(float distance)
+        /// <summary>
+        /// Execute navigation cue with configuration determined by POIManager
+        /// </summary>
+        public void ExecuteNavigationCue(Vector3 position, NavigationCueConfig config)
         {
-            if (!isInitialized) return;
+            if (!isInitialized || isInProximity) return;
 
-            // Calculate continuous zone value based on distance
-            float zoneValue = CalculateZoneFromDistance(distance);
+            // Simple execution - all logic determined by POIManager
+            switch (config.cueType)
+            {
+                case NavigationCueType.DistanceBased:
+                    AudioService.PlayNavigationCue(sharedCueInstance, position, characterId,
+                        Vector3.Distance(Vector3.zero, position), config.isTargeted, config.maxDistance, config.cueIndex);
+                    Debug.Log($"[{characterName}] Distance-based cue: Index {config.cueIndex}");
+                    break;
 
-            // Single parameter update - smooth transitions
-            AudioService.SetParameter(characterAudioInstance, ZONE_PARAMETER, zoneValue);
+                case NavigationCueType.Sequential:
+                    AudioService.PlayNavigationCue(sharedCueInstance, position, characterId,
+                        Vector3.Distance(Vector3.zero, position), config.isTargeted, config.maxDistance, config.cueIndex);
+                    Debug.Log($"[{characterName}] Sequential cue: {config.cueIndex}/4");
+                    break;
 
-            Debug.Log($"{characterName} - Distance: {distance:F1}m → Zone: {zoneValue:F2}");
+                case NavigationCueType.Targeted:
+                    AudioService.PlayNavigationCue(sharedCueInstance, position, characterId,
+                        Vector3.Distance(Vector3.zero, position), config.isTargeted, config.maxDistance, config.cueIndex);
+                    Debug.Log($"[{characterName}] Targeted cue: Index {config.cueIndex}");
+                    break;
+            }
         }
 
-        // Convert distance to zone value
-        private float CalculateZoneFromDistance(float distance)
+        /// <summary>
+        /// Update targeting visual state (targeting logic handled by POIManager)
+        /// </summary>
+        public void UpdateTargetingState(bool isTargeted)
         {
-            if (distance > proximityRadius)
+            if (marker != null)
             {
-                return 0.0f; // Outside proximity - silent
-            }
-            else if (distance > dialogueRadius)
-            {
-                // Smooth transition from outer zone (1.0) to dialogue zone (2.0)
-                float t = 1.0f - ((distance - dialogueRadius) / (proximityRadius - dialogueRadius));
-                return Mathf.Lerp(1.0f, 2.0f, t);
-            }
-            else
-            {
-                return 2.0f; // Full dialogue zone
+                if (isTargeted)
+                {
+                    marker.transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
+                    Debug.Log($"POI {characterName} marked as target");
+                }
+                else
+                {
+                    marker.transform.localScale = Vector3.one;
+                    Debug.Log($"POI {characterName} target cleared");
+                }
             }
         }
 
@@ -172,77 +223,22 @@ namespace LoGa.LudoEngine.Game
             };
         }
 
-        // In POI.cs - modify ActivatePortal method
         private void ActivatePortal(TimeLayer targetLayer)
         {
             hasBeenTriggered = true;
 
             Debug.Log($"{portalType} portal ({characterName}) activated - transitioning to {targetLayer.layerName}");
 
-            // Play portal activation audio with parameters
             if (!portalActivationAudio.IsNull)
             {
                 var portalInstance = AudioService.CreateAudioInstance(portalActivationAudio);
-
-                // Set portal type parameter (1 = Forward/Raven, 2 = Backward/Fox)
                 int portalTypeValue = portalType == PortalType.Forward ? 1 : 2;
                 AudioService.SetParameter(portalInstance, "PortalType", portalTypeValue);
-
-                // Set trigger to activate the sound
                 AudioService.SetParameter(portalInstance, "Trigger", 1.0f);
-
                 AudioService.PlayAudio(portalInstance, Vector3.zero);
             }
 
-            // Trigger the time transition
             TimeLayerManager.Instance.TransitionToLayer(targetLayer);
-        }
-
-        // Navigation cue methods (for wander mode)
-        public void PlayNavigationCue(Vector3 position, float distance, float maxDistance)
-        {
-            if (!isInitialized || isInProximity) return;
-
-            // Calculate the cue variant based on normalized distance
-            int cueVariant = CalculateCueVariant(distance, maxDistance);
-
-            AudioService.PlayNavigationCue(sharedCueInstance, position, characterId, distance, isTargeted, cueVariant);
-        }
-
-        // helper funciton to determine normalized distance
-        private int CalculateCueVariant(float distance, float maxDistance)
-        {
-            float normalizedDistance = Mathf.Clamp01(distance / maxDistance);
-
-            if (normalizedDistance <= 0.25f)
-                return 1;
-            else if (normalizedDistance <= 0.50f)
-                return 2;
-            else if (normalizedDistance <= 0.75f)
-                return 3;
-            else
-                return 4;
-        }
-
-        // Targeting methods (for wander mode)
-        public void SetAsTarget(Vector3 position)
-        {
-            isTargeted = true;
-            // Visual feedback
-            if (marker != null)
-            {
-                marker.transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
-            }
-        }
-
-        public void ClearAsTarget()
-        {
-            isTargeted = false;
-            // Reset visual feedback
-            if (marker != null)
-            {
-                marker.transform.localScale = Vector3.one;
-            }
         }
 
         // Discovery and unlock methods
@@ -264,7 +260,9 @@ namespace LoGa.LudoEngine.Game
             }
         }
 
-        // Cleanup
+        /// <summary>
+        /// Clean up POI resources
+        /// </summary>
         public void Cleanup()
         {
             if (!isInitialized) return;
@@ -272,12 +270,15 @@ namespace LoGa.LudoEngine.Game
             AudioService.StopAudio(characterAudioInstance);
             AudioService.ReleaseAudio(characterAudioInstance);
 
-            // remove the marker 
+            // Hide marker
             if (marker != null)
             {
                 marker.gameObject.SetActive(false);
                 Debug.Log($"Hiding marker for {characterName}");
             }
+
+            isAudioPlaying = false;
+            hasBeenTriggered = false;
         }
     }
 }

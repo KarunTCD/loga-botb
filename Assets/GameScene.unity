@@ -1298,6 +1298,142 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 105325941}
   m_CullTransparentMesh: 1
+--- !u!1 &129240076
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 129240077}
+  - component: {fileID: 129240079}
+  - component: {fileID: 129240078}
+  m_Layer: 5
+  m_Name: Zone Text
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &129240077
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 129240076}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 727460359}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -250, y: 0}
+  m_SizeDelta: {x: -500, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &129240078
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 129240076}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_text: 'Zone: '
+  m_isRightToLeft: 0
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontSharedMaterials: []
+  m_fontMaterial: {fileID: 0}
+  m_fontMaterials: []
+  m_fontColor32:
+    serializedVersion: 2
+    rgba: 4278190080
+  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
+  m_enableVertexGradient: 0
+  m_colorMode: 3
+  m_fontColorGradient:
+    topLeft: {r: 1, g: 1, b: 1, a: 1}
+    topRight: {r: 1, g: 1, b: 1, a: 1}
+    bottomLeft: {r: 1, g: 1, b: 1, a: 1}
+    bottomRight: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColorGradientPreset: {fileID: 0}
+  m_spriteAsset: {fileID: 0}
+  m_tintAllSprites: 0
+  m_StyleSheet: {fileID: 0}
+  m_TextStyleHashCode: -1183493901
+  m_overrideHtmlColors: 0
+  m_faceColor:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontSize: 36
+  m_fontSizeBase: 36
+  m_fontWeight: 400
+  m_enableAutoSizing: 0
+  m_fontSizeMin: 18
+  m_fontSizeMax: 72
+  m_fontStyle: 0
+  m_HorizontalAlignment: 4
+  m_VerticalAlignment: 512
+  m_textAlignment: 65535
+  m_characterSpacing: 0
+  m_wordSpacing: 0
+  m_lineSpacing: 0
+  m_lineSpacingMax: 0
+  m_paragraphSpacing: 0
+  m_charWidthMaxAdj: 0
+  m_TextWrappingMode: 1
+  m_wordWrappingRatios: 0.4
+  m_overflowMode: 0
+  m_linkedTextComponent: {fileID: 0}
+  parentLinkedComponent: {fileID: 0}
+  m_enableKerning: 0
+  m_ActiveFontFeatures: 6e72656b
+  m_enableExtraPadding: 0
+  checkPaddingRequired: 0
+  m_isRichText: 1
+  m_EmojiFallbackSupport: 1
+  m_parseCtrlCharacters: 1
+  m_isOrthographic: 1
+  m_isCullingEnabled: 0
+  m_horizontalMapping: 0
+  m_verticalMapping: 0
+  m_uvLineOffset: 0
+  m_geometrySortingOrder: 0
+  m_IsTextObjectScaleStatic: 0
+  m_VertexBufferAutoSizeReduction: 0
+  m_useMaxVisibleDescender: 1
+  m_pageToDisplay: 1
+  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_isUsingLegacyAnimationComponent: 0
+  m_isVolumetricText: 0
+  m_hasFontAssetChanged: 0
+  m_baseMaterial: {fileID: 0}
+  m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!222 &129240079
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 129240076}
+  m_CullTransparentMesh: 1
 --- !u!1 &150098452
 GameObject:
   m_ObjectHideFlags: 0
@@ -2210,6 +2346,81 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 313557018}
   m_CullTransparentMesh: 1
+--- !u!1 &316335078
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 316335079}
+  - component: {fileID: 316335081}
+  - component: {fileID: 316335080}
+  m_Layer: 5
+  m_Name: TargetMarker
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &316335079
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 316335078}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 815688570}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 50, y: 50}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &316335080
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 316335078}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.16509432, g: 0.5070106, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: 2f8349570a152884fb6cf7ebdc8c18b3, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &316335081
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 316335078}
+  m_CullTransparentMesh: 0
 --- !u!1 &326317394
 GameObject:
   m_ObjectHideFlags: 0
@@ -5141,6 +5352,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1804844432}
+  - {fileID: 129240077}
   - {fileID: 560394670}
   m_Father: {fileID: 84431459}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -5936,6 +6148,7 @@ RectTransform:
   - {fileID: 1413553337}
   - {fileID: 1118109659}
   - {fileID: 1630744044}
+  - {fileID: 316335079}
   m_Father: {fileID: 84431459}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -7010,12 +7223,10 @@ MonoBehaviour:
     pois:
     - id: fox
       characterName: Fox
-      latitude: 53.71849
-      longitude: -6.425599
+      latitude: 53.349537
+      longitude: -6.249086
       marker: {fileID: 812127815}
       characterId: 5
-      proximityRadius: 30
-      dialogueRadius: 10
       portalType: 1
       portalActivationAudio:
         Guid:
@@ -7033,12 +7244,10 @@ MonoBehaviour:
         Path: event:/fox_music
     - id: salmon_knowledge
       characterName: Salmon Of Knowledge
-      latitude: 53.71975
-      longitude: -6.426071
+      latitude: 53.3485
+      longitude: -6.24904
       marker: {fileID: 1553759305}
       characterId: 3
-      proximityRadius: 30
-      dialogueRadius: 10
       portalType: 0
       portalActivationAudio:
         Guid:
@@ -7067,12 +7276,10 @@ MonoBehaviour:
     pois:
     - id: raven
       characterName: Raven
-      latitude: 53.71629
-      longitude: -6.416847
+      latitude: 53.349247
+      longitude: -6.246787
       marker: {fileID: 906921090}
       characterId: 4
-      proximityRadius: 30
-      dialogueRadius: 10
       portalType: 2
       portalActivationAudio:
         Guid:
@@ -7090,12 +7297,10 @@ MonoBehaviour:
         Path: event:/raven_music
     - id: battle_oak
       characterName: Battle Oak
-      latitude: 53.72275
-      longitude: -6.416516
+      latitude: 53.34908
+      longitude: -6.249959
       marker: {fileID: 2127153680}
       characterId: 2
-      proximityRadius: 30
-      dialogueRadius: 10
       portalType: 0
       portalActivationAudio:
         Guid:
@@ -7113,12 +7318,10 @@ MonoBehaviour:
         Path: event:/battle_oak_music
     - id: william_orange
       characterName: William of Orange
-      latitude: 53.72095
-      longitude: -6.415259
+      latitude: 53.348026
+      longitude: -6.250137
       marker: {fileID: 2099162380}
       characterId: 1
-      proximityRadius: 30
-      dialogueRadius: 10
       portalType: 0
       portalActivationAudio:
         Guid:
@@ -7136,12 +7339,10 @@ MonoBehaviour:
         Path: event:/william_music
     - id: louis
       characterName: Louis XIV
-      latitude: 53.71946
-      longitude: -6.415412
+      latitude: 53.350082
+      longitude: -6.247082
       marker: {fileID: 1545574668}
       characterId: 6
-      proximityRadius: 30
-      dialogueRadius: 10
       portalType: 0
       portalActivationAudio:
         Guid:
@@ -7159,12 +7360,10 @@ MonoBehaviour:
         Path: event:/louis_music
     - id: james
       characterName: Deposed King James II
-      latitude: 53.72167
-      longitude: -6.418982
+      latitude: 53.348286
+      longitude: -6.248529
       marker: {fileID: 632247704}
-      characterId: 6
-      proximityRadius: 30
-      dialogueRadius: 10
+      characterId: 7
       portalType: 0
       portalActivationAudio:
         Guid:
@@ -7182,12 +7381,10 @@ MonoBehaviour:
         Path: event:/james_music
     - id: fox
       characterName: Fox
-      latitude: 53.72072
-      longitude: -6.421055
+      latitude: 53.35015
+      longitude: -6.248601
       marker: {fileID: 812127815}
       characterId: 5
-      proximityRadius: 30
-      dialogueRadius: 10
       portalType: 1
       portalActivationAudio:
         Guid:
@@ -7205,13 +7402,11 @@ MonoBehaviour:
         Path: event:/fox_music
     - id: raven
       characterName: Raven
-      latitude: 53.350136
-      longitude: -6.248584
+      latitude: 53.348343
+      longitude: -6.250894
       marker: {fileID: 254441663}
       characterId: 4
-      proximityRadius: 30
-      dialogueRadius: 10
-      portalType: 1
+      portalType: 2
       portalActivationAudio:
         Guid:
           Data1: -1630672160
@@ -7221,11 +7416,11 @@ MonoBehaviour:
         Path: event:/time_portal
       characterAudioEvent:
         Guid:
-          Data1: 1409366747
-          Data2: 1253460628
-          Data3: 367639432
-          Data4: 595799489
-        Path: event:/fox_music
+          Data1: -17476983
+          Data2: 1197733990
+          Data3: 1956351362
+          Data4: -540070583
+        Path: event:/raven_music
   - layerName: Modern
     layerDescription: Modern Time Layer
     layerIndex: 3
@@ -7239,12 +7434,10 @@ MonoBehaviour:
     pois:
     - id: raven
       characterName: Raven
-      latitude: 53.348225
-      longitude: -6.248469
+      latitude: 53.34839
+      longitude: -6.24999
       marker: {fileID: 906921090}
       characterId: 4
-      proximityRadius: 30
-      dialogueRadius: 10
       portalType: 2
       portalActivationAudio:
         Guid:
@@ -7262,12 +7455,10 @@ MonoBehaviour:
         Path: event:/raven_music
     - id: farmer
       characterName: Farmer
-      latitude: 53.72152
-      longitude: -6.419844
+      latitude: 53.34837
+      longitude: -6.248586
       marker: {fileID: 1118109659}
       characterId: 10
-      proximityRadius: 30
-      dialogueRadius: 10
       portalType: 0
       portalActivationAudio:
         Guid:
@@ -7285,12 +7476,10 @@ MonoBehaviour:
         Path: event:/farmer_music
     - id: child
       characterName: Child
-      latitude: 53.72263
-      longitude: -6.42365
+      latitude: 53.34953
+      longitude: -6.249115
       marker: {fileID: 1630744044}
       characterId: 14
-      proximityRadius: 30
-      dialogueRadius: 10
       portalType: 0
       portalActivationAudio:
         Guid:
@@ -8935,21 +9124,22 @@ MonoBehaviour:
       Data3: 2146350997
       Data4: 841210949
     Path: event:/ambient_sounds
-  cueStagingDelay: 2
-  cyclePauseDelay: 6
-  maxActiveCues: 3
-  proximityRadius: 50
-  dialogueRadius: 25
+  proximityRadius: 40
+  dialogueRadius: 20
   maxCueRadius: 1000
   discoveryDistance: 20
-  targetLockTime: 5
+  cueStagingDelay: 3
+  cyclePauseDelay: 5
+  maxActiveCues: 3
+  targetLockTime: 2
   targetLockAngle: 30
   targetBreakAngle: 45
-  targetingIndicator: {fileID: 0}
+  targetingIndicator: {fileID: 316335078}
   targetingText: {fileID: 962164252}
-  minCueInterval: 0.8
-  maxCueInterval: 8
-  maxTargetingDistance: 300
+  zoneText: {fileID: 129240078}
+  minCueInterval: 1
+  maxCueInterval: 5
+  maxTargetingDistance: 200
 --- !u!1 &1097020648
 GameObject:
   m_ObjectHideFlags: 0
@@ -11136,11 +11326,11 @@ MonoBehaviour:
   joystick: {fileID: 98771672}
   fixPhraseManager: {fileID: 150098454}
   gameManager: {fileID: 1662718314}
-  moveSpeed: 0
-  northLatitude: 53.72644
-  southLatitude: 53.71171
-  eastLongitude: -6.395309
-  westLongitude: -6.4297
+  northLatitude: 53.35125
+  southLatitude: 53.347034
+  eastLongitude: -6.243745
+  westLongitude: -6.251336
+  joystickMoveSpeed: 0.00001
 --- !u!1 &1432207049
 GameObject:
   m_ObjectHideFlags: 0
@@ -12446,7 +12636,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1630744044
 RectTransform:
   m_ObjectHideFlags: 0
