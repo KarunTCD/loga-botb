@@ -149,6 +149,7 @@ namespace LoGa.LudoEngine.Services.Plugins.HearXR
         #endregion
         
         #region Import native class methods
+        #if UNITY_IOS && !UNITY_EDITOR
         [DllImport ("__Internal")]
         private static extern bool isHeadphoneMotionAvailable();
         
@@ -166,6 +167,7 @@ namespace LoGa.LudoEngine.Services.Plugins.HearXR
         
         [DllImport("__Internal")]
         private static extern void setRotationDelegate(HeadRotationAction callback);
+        #endif
         #endregion
         
         #region Handle native class callbacks

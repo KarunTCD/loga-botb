@@ -9,7 +9,6 @@ namespace LoGa.LudoEngine.Services
         float CurrentHeading { get; }
         void StartTracking();
         void StopTracking();
-
         // Provider management
         string ActiveProviderName { get; }
         IReadOnlyList<string> AvailableProviderNames { get; }

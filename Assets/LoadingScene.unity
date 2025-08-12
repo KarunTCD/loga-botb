@@ -2319,8 +2319,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targetDeviceName: MetaWear
-  enableDebugLogging: 1
-  enableRawDataLogging: 1
+  enableDebugLogging: 0
+  enableRawDataLogging: 0
   usePitchAsHeading: 0
   useRollAsHeading: 1
 --- !u!4 &1946644295

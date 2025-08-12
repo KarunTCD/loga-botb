@@ -6,11 +6,12 @@ namespace LoGa.LudoEngine.Services
 {
     public interface ILocationService : IService
     {
-        event Action<float, float> LocationUpdated;
         bool IsRunning { get; }
+        Vector2 CurrentLocation { get; }
+        float PositionAccuracy { get; }
+
         void StartLocationUpdates();
         void StopLocationUpdates();
-        Vector2 GetLastKnownLocation();
-        float GetPositionAccuracy();
+        Vector2 GetCurrentLocation();
     }
 }

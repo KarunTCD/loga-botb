@@ -73,7 +73,7 @@ namespace LoGa.LudoEngine.Services
             Disconnecting
         }
 
-        public Task<bool> InitializeAsync()
+        public async Task<bool> InitializeAsync()
         {
             try
             {
@@ -81,27 +81,56 @@ namespace LoGa.LudoEngine.Services
 
                 if (!IsAvailable)
                 {
-                    StatusMessage?.Invoke("Bluetooth LE not available");
-                    return Task.FromResult(false);
+                    StatusMessage?.Invoke("Bluetooth LE not available on this platform");
+                    return false;
                 }
+
+                // Android-specific permission check
+#if UNITY_ANDROID && !UNITY_EDITOR
+                        StatusMessage?.Invoke("Requesting Android Bluetooth permissions...");
+        
+                        var permissionService = ServiceLocator.GetService<IPermissionService>();
+                        if (permissionService != null)
+                        {
+                            bool permissionsGranted = await permissionService.RequestBluetoothPermissions();
+            
+                            if (!permissionsGranted)
+                            {
+                                StatusMessage?.Invoke("Bluetooth permissions denied - MMRL provider unavailable");
+                                return false;
+                            }
+            
+                            StatusMessage?.Invoke("Android Bluetooth permissions granted ✅");
+                        }
+                        else
+                        {
+                            Debug.LogWarning("PermissionService not found on Android - MMRL may not work properly");
+                        }
+#endif
+
+                // Create TaskCompletionSource to handle the callback-based Bluetooth initialization
+                var tcs = new TaskCompletionSource<bool>();
 
                 BluetoothLEHardwareInterface.Initialize(true, false, () =>
                 {
                     SetState(ConnectionState.Scanning, 0.1f);
                     isInitialized = true;
                     StatusMessage?.Invoke("MMRL fusion provider initialized");
+                    tcs.SetResult(true);
                 }, (error) =>
                 {
                     StatusMessage?.Invoke($"Bluetooth initialization failed: {error}");
+                    tcs.SetResult(false);
                 });
 
-                return Task.FromResult(true);
+                // Wait for the Bluetooth initialization to complete
+                return await tcs.Task;
             }
             catch (Exception e)
             {
                 StatusMessage?.Invoke($"MMRL initialization failed: {e.Message}");
                 Debug.LogError($"MMRL Provider Error: {e}");
-                return Task.FromResult(false);
+                return false;
             }
         }
 
@@ -339,7 +368,7 @@ namespace LoGa.LudoEngine.Services
             if (enableRawDataLogging)
             {
                 string bytesString = System.BitConverter.ToString(bytes);
-                Debug.Log($"RAW: [{bytesString}] Len: {bytes.Length}");
+                //Debug.Log($"RAW: [{bytesString}] Len: {bytes.Length}");
             }
 
             if (bytes.Length >= 2)

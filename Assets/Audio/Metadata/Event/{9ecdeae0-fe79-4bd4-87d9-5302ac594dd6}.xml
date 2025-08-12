@@ -129,6 +129,9 @@
 		</relationship>
 	</object>
 	<object class="EventMixerGroup" id="{c01938fd-7cef-445a-ad04-c907de270326}">
+		<property name="volume">
+			<value>-5</value>
+		</property>
 		<property name="name">
 			<value>fwd_transition_sound</value>
 		</property>
@@ -170,7 +173,7 @@
 	</object>
 	<object class="EventMixerGroup" id="{f5dcaf1d-e847-49ad-8ae7-849ed583713b}">
 		<property name="volume">
-			<value>5</value>
+			<value>-5</value>
 		</property>
 		<property name="name">
 			<value>bwd_transition_sound</value>

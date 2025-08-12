@@ -16,62 +16,47 @@ namespace LoGa.LudoEngine.Services
         public event Action<bool> LocationPermissionResult;
         public bool HasLocationPermission { get; private set; }
 
-        // Add IsInitialized property
         public bool IsInitialized { get; private set; }
+
+#if PLATFORM_ANDROID
+        private const string BluetoothScanPermission = "android.permission.BLUETOOTH_SCAN";
+        private const string BluetoothConnectPermission = "android.permission.BLUETOOTH_CONNECT";
+        private const string BluetoothAdvertisePermission = "android.permission.BLUETOOTH_ADVERTISE";
+#endif
 
         public Task<bool> InitializeAsync()
         {
-            // Check if already has permission
             CheckLocationPermission();
 
             if (HasLocationPermission)
             {
-                // Set initialization status to true
                 IsInitialized = true;
                 return Task.FromResult(true);
             }
 
-            // Create TaskCompletionSource for the async result
             var tcs = new TaskCompletionSource<bool>();
 
-            // One-time event handler
             void PermissionResultHandler(bool result)
             {
-                // Remove the handler once we get a result
                 LocationPermissionResult -= PermissionResultHandler;
-
-                // Update initialization status based on permission result
                 IsInitialized = result;
-
-                // Complete the task with the permission result
                 tcs.SetResult(result);
             }
 
-            // Subscribe to the permission result event
             LocationPermissionResult += PermissionResultHandler;
 
-            // Start a timeout timer
             var timeoutTimer = new System.Threading.Timer(_ =>
             {
-                // Remove the handler on timeout
                 LocationPermissionResult -= PermissionResultHandler;
-
-                // Set initialization to false since we timed out
                 IsInitialized = false;
-
-                // Complete the task with failure if not already completed
                 tcs.TrySetResult(false);
-
                 Debug.LogWarning("Permission request timed out");
-            }, null, 10000, System.Threading.Timeout.Infinite); // 10 second timeout
+            }, null, 10000, System.Threading.Timeout.Infinite);
 
-            // When the task completes (either by result or timeout), dispose the timer
             tcs.Task.ContinueWith(_ => timeoutTimer.Dispose());
 
-            // Request permission
             RequestLocationPermission();
 
-            // Return the task that will complete when permission result is received or timeout occurs
             return tcs.Task;
         }
 
@@ -80,11 +65,10 @@ namespace LoGa.LudoEngine.Services
 #if PLATFORM_ANDROID
             HasLocationPermission = Permission.HasUserAuthorizedPermission(Permission.FineLocation);
 #elif UNITY_IOS
-        HasLocationPermission = Input.location.isEnabledByUser;
+            HasLocationPermission = Input.location.isEnabledByUser;
 #else
-        HasLocationPermission = true; // Default for editor/desktop
+            HasLocationPermission = true;
 #endif
-
             LocationPermissionResult?.Invoke(HasLocationPermission);
         }
 
@@ -101,19 +85,17 @@ namespace LoGa.LudoEngine.Services
             else
             {
                 HasLocationPermission = true;
-                IsInitialized = true; // Update initialization status
+                IsInitialized = true;
                 LocationPermissionResult?.Invoke(true);
             }
 #elif UNITY_IOS
-        // iOS permissions are requested automatically when Input.location is used
-        HasLocationPermission = Input.location.isEnabledByUser;
-        IsInitialized = HasLocationPermission; // Update initialization status
-        LocationPermissionResult?.Invoke(HasLocationPermission);
+            HasLocationPermission = Input.location.isEnabledByUser;
+            IsInitialized = HasLocationPermission;
+            LocationPermissionResult?.Invoke(HasLocationPermission);
 #else
-        // For editor/desktop, we assume permission is granted
-        HasLocationPermission = true;
-        IsInitialized = true; // Update initialization status
-        LocationPermissionResult?.Invoke(true);
+            HasLocationPermission = true;
+            IsInitialized = true;
+            LocationPermissionResult?.Invoke(true);
 #endif
         }
 
@@ -123,7 +105,7 @@ namespace LoGa.LudoEngine.Services
             if (permissionName == Permission.FineLocation)
             {
                 HasLocationPermission = true;
-                IsInitialized = true; // Update initialization status
+                IsInitialized = true;
                 LocationPermissionResult?.Invoke(true);
             }
         }
@@ -133,19 +115,75 @@ namespace LoGa.LudoEngine.Services
             if (permissionName == Permission.FineLocation)
             {
                 HasLocationPermission = false;
-                IsInitialized = false; // Update initialization status
+                IsInitialized = false;
                 LocationPermissionResult?.Invoke(false);
             }
         }
 #endif
 
+        public Task<bool> RequestBluetoothPermissions()
+        {
+            var tcs = new TaskCompletionSource<bool>();
+
+            #if PLATFORM_ANDROID
+                        var permissionsToRequest = new System.Collections.Generic.List<string>();
+                        var granted = true;
+
+                        if (!Permission.HasUserAuthorizedPermission(BluetoothScanPermission))
+                        {
+                            permissionsToRequest.Add(BluetoothScanPermission);
+                            granted = false;
+                        }
+
+                        if (!Permission.HasUserAuthorizedPermission(BluetoothConnectPermission))
+                        {
+                            permissionsToRequest.Add(BluetoothConnectPermission);
+                            granted = false;
+                        }
+
+                        if (!Permission.HasUserAuthorizedPermission(BluetoothAdvertisePermission))
+                        {
+                            permissionsToRequest.Add(BluetoothAdvertisePermission);
+                            granted = false;
+                        }
+
+                        if (permissionsToRequest.Count > 0)
+                        {
+                            PermissionCallbacks callbacks = new PermissionCallbacks();
+                            callbacks.PermissionGranted += (perm) => Debug.Log($"Bluetooth Permission Granted: {perm}");
+                            callbacks.PermissionDenied += (perm) => Debug.LogWarning($"Bluetooth Permission Denied: {perm}");
+                            callbacks.PermissionDeniedAndDontAskAgain += (perm) => Debug.LogWarning($"Bluetooth Permission Denied Forever: {perm}");
+
+                            callbacks.PermissionGranted += (_) =>
+                            {
+                                // Check again if all are granted after user response
+                                bool allGranted = Permission.HasUserAuthorizedPermission(BluetoothScanPermission) &&
+                                                  Permission.HasUserAuthorizedPermission(BluetoothConnectPermission) &&
+                                                  Permission.HasUserAuthorizedPermission(BluetoothAdvertisePermission);
+                                tcs.TrySetResult(allGranted);
+                            };
+
+                            Permission.RequestUserPermissions(permissionsToRequest.ToArray(), callbacks);
+                        }
+                        else
+                        {
+                            Debug.Log("All required Bluetooth permissions already granted.");
+                            tcs.SetResult(true);
+                        }
+            #else
+                Debug.Log("Bluetooth permission request skipped (not Android platform).");
+                tcs.SetResult(true);
+            #endif
+
+            return tcs.Task;
+        }
+
+
         private void OnApplicationFocus(bool focus)
         {
-            // Check permission state when app regains focus
             if (focus)
             {
                 CheckLocationPermission();
-                // Update initialization status based on permission
                 IsInitialized = HasLocationPermission;
             }
         }
