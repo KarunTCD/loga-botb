@@ -55,8 +55,6 @@ namespace LoGa.LudoEngine.Game
         [SerializeField] private TextMeshProUGUI zoneText;
 
         [Header("Frequency Control")]
-        [SerializeField] private float minCueInterval = 1.0f;
-        [SerializeField] private float maxCueInterval = 5.0f;
         [SerializeField] private float maxTargetingDistance = 200f;
 
         // Current layer data

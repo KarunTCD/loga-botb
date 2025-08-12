@@ -11,8 +11,8 @@ namespace LoGa.LudoEngine.Services
 {
     public class PermissionService : MonoBehaviour, IPermissionService
     {
-        [Header("Bluetooth Permissions")]
-        [SerializeField] private bool debugPermissions = true;
+        public event Action<bool> LocationPermissionResult;
+        public bool HasLocationPermission { get; private set; }
 
         public bool IsInitialized { get; private set; }
 
@@ -26,9 +26,7 @@ namespace LoGa.LudoEngine.Services
         {
             CheckLocationPermission();
 
-#if PLATFORM_ANDROID
-            // First check if we already have permissions
-            if (HasAllBluetoothPermissions())
+            if (HasLocationPermission)
             {
                 IsInitialized = true;
                 return Task.FromResult(true);
@@ -77,9 +75,6 @@ namespace LoGa.LudoEngine.Services
 #if PLATFORM_ANDROID
             if (!Permission.HasUserAuthorizedPermission(Permission.FineLocation))
             {
-                if (debugPermissions)
-                    Debug.Log("Requesting location permission...");
-
                 PermissionCallbacks callbacks = new PermissionCallbacks();
                 callbacks.PermissionGranted += OnPermissionGranted;
                 callbacks.PermissionDenied += OnPermissionDenied;
@@ -103,121 +98,24 @@ namespace LoGa.LudoEngine.Services
         }
 
 #if PLATFORM_ANDROID
-        private void RequestAndroid12BluetoothPermissions()
-        {
-            // For Android 12+, we need specific Bluetooth permissions
-            string[] bluetoothPermissions = {
-                "android.permission.BLUETOOTH_SCAN",
-                "android.permission.BLUETOOTH_CONNECT",
-                "android.permission.BLUETOOTH_ADVERTISE"
-            };
-
-            PermissionCallbacks callbacks = new PermissionCallbacks();
-            callbacks.PermissionGranted += OnBluetoothPermissionGranted;
-            callbacks.PermissionDenied += OnBluetoothPermissionDenied;
-
-            // Request all Bluetooth permissions
-            foreach (string permission in bluetoothPermissions)
-            {
-                if (!Permission.HasUserAuthorizedPermission(permission))
-                {
-                    Permission.RequestUserPermission(permission, callbacks);
-                }
-            }
-
-            // Check if all are already granted
-            if (HasAllBluetoothPermissions())
-            {
-                HasBluetoothPermissions = true;
-                BluetoothPermissionResult?.Invoke(true);
-            }
-        }
-
-        private bool HasAllBluetoothPermissions()
-        {
-            int apiLevel = GetAndroidAPILevel();
-
-            if (apiLevel >= 31) // Android 12+
-            {
-                return Permission.HasUserAuthorizedPermission("android.permission.BLUETOOTH_SCAN") &&
-                       Permission.HasUserAuthorizedPermission("android.permission.BLUETOOTH_CONNECT") &&
-                       Permission.HasUserAuthorizedPermission(Permission.FineLocation);
-            }
-            else
-            {
-                // For older Android, just need location permission
-                return HasLocationPermission;
-            }
-        }
-
-        private int GetAndroidAPILevel()
-        {
-            try
-            {
-                using (var version = new AndroidJavaClass("android.os.Build$VERSION"))
-                {
-                    return version.GetStatic<int>("SDK_INT");
-                }
-            }
-            catch (Exception e)
-            {
-                Debug.LogWarning($"Failed to get Android API level: {e.Message}");
-                return 23; // Default to API 23 if we can't determine
-            }
-        }
-
         private void OnPermissionGranted(string permissionName)
         {
-            if (debugPermissions)
-                Debug.Log($"Permission granted: {permissionName}");
-
             if (permissionName == Permission.FineLocation)
             {
                 HasLocationPermission = true;
                 IsInitialized = true;
                 LocationPermissionResult?.Invoke(true);
-
-                // For older Android versions, location permission enables Bluetooth
-                if (GetAndroidAPILevel() < 31)
-                {
-                    HasBluetoothPermissions = true;
-                }
             }
         }
 
         private void OnPermissionDenied(string permissionName)
         {
-            if (debugPermissions)
-                Debug.LogWarning($"Permission denied: {permissionName}");
-
             if (permissionName == Permission.FineLocation)
             {
                 HasLocationPermission = false;
                 IsInitialized = false;
                 LocationPermissionResult?.Invoke(false);
             }
-        }
-
-        private void OnBluetoothPermissionGranted(string permissionName)
-        {
-            if (debugPermissions)
-                Debug.Log($"Bluetooth permission granted: {permissionName}");
-
-            // Check if all Bluetooth permissions are now granted
-            if (HasAllBluetoothPermissions())
-            {
-                HasBluetoothPermissions = true;
-                BluetoothPermissionResult?.Invoke(true);
-            }
-        }
-
-        private void OnBluetoothPermissionDenied(string permissionName)
-        {
-            if (debugPermissions)
-                Debug.LogWarning($"Bluetooth permission denied: {permissionName}");
-
-            HasBluetoothPermissions = false;
-            BluetoothPermissionResult?.Invoke(false);
         }
 #endif
 
