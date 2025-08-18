@@ -3,6 +3,8 @@ using FMODUnity;
 using FMOD.Studio;
 using LoGa.LudoEngine.Core;
 using LoGa.LudoEngine.Services;
+using System;
+using System.Collections.Generic;
 
 namespace LoGa.LudoEngine.Game
 {
@@ -53,20 +55,37 @@ namespace LoGa.LudoEngine.Game
         public PortalType portalType = PortalType.None;
         public EventReference portalActivationAudio;
 
+        [Header("Reward Settings")]
+        public bool hasReward = false;          // Does this POI give a reward?
+        public int rewardId = 0;               // Specific reward ID (0 = no reward)
+        public string rewardName = "";         // For debugging/display
+
+        [Header("Completion State")]
+        private bool isCompleted = false;
+        private bool shouldBeRemoved = false; // Flag for delayed removal
+        private static Dictionary<IntPtr, POI> activeInstances = new Dictionary<IntPtr, POI>();
+
+        public bool IsCompleted => isCompleted;
+        public bool ShouldBeRemoved => shouldBeRemoved;
+
         // Private state - no external access to avoid state conflicts
         private float proximityRadius;
         private float dialogueRadius;
-        private bool isInProximity;
+        public bool isInProximity { get; private set; }
         private bool isAudioPlaying = false;
         private bool hasBeenTriggered = false;
 
         // Audio references
         public EventReference characterAudioEvent;
-        private EventInstance characterAudioInstance;
+        public EventInstance characterAudioInstance;
         private EventInstance sharedCueInstance;
 
         // Character audio parameters
         private const string ZONE_PARAMETER = "Zone";
+
+        // Parameter tracking for completion detection
+        public static bool narrationJustCompleted = false;
+        public static IntPtr completedInstanceHandle = IntPtr.Zero;
 
         private bool isInitialized;
         private bool isDiscovered;
@@ -90,6 +109,12 @@ namespace LoGa.LudoEngine.Game
             {
                 characterAudioInstance = AudioService.CreateAudioInstance(characterAudioEvent);
                 AudioService.SetParameter(characterAudioInstance, ZONE_PARAMETER, 0.0f);
+
+                // Register this POI instance for callbacks
+                activeInstances[characterAudioInstance.handle] = this;
+
+                // Register for timeline marker callbacks (destination markers)
+                characterAudioInstance.setCallback(NarrationCompleteCallback, EVENT_CALLBACK_TYPE.TIMELINE_MARKER);
             }
 
             // Show marker
@@ -101,6 +126,39 @@ namespace LoGa.LudoEngine.Game
 
             isInitialized = true;
             Debug.Log($"POI initialized: {characterName}");
+        }
+
+        [AOT.MonoPInvokeCallback(typeof(EVENT_CALLBACK))]
+        static FMOD.RESULT NarrationCompleteCallback(EVENT_CALLBACK_TYPE type, IntPtr instancePtr, IntPtr parameterPtr)
+        {
+            if (type == EVENT_CALLBACK_TYPE.TIMELINE_MARKER)
+            {
+                // Find which POI this belongs to
+                if (activeInstances.TryGetValue(instancePtr, out POI poi))
+                {
+                    Debug.Log($"🎯 NARRATION COMPLETE: {poi.characterName}!");
+
+                    // Set flag for POIManager to detect
+                    narrationJustCompleted = true;
+                    completedInstanceHandle = instancePtr;
+                }
+            }
+
+            return FMOD.RESULT.OK;
+        }
+
+        public void MarkAsCompleted()
+        {
+            isCompleted = true;
+
+            if (IsPortal)
+            {
+                CheckPortalActivation();
+            }
+            else
+            {
+                shouldBeRemoved = true;
+            }
         }
 
         public void SetSharedCueInstance(EventInstance instance)
@@ -140,12 +198,6 @@ namespace LoGa.LudoEngine.Game
                 AudioService.SetParameter(characterAudioInstance, ZONE_PARAMETER, zoneValue);
 
                 Debug.Log($"{characterName} - Distance: {data.distance:F1}m → Zone: {zoneValue:F2}");
-
-                // Check portal activation
-                if (IsPortal && data.distance <= dialogueRadius && !hasBeenTriggered)
-                {
-                    CheckPortalActivation();
-                }
             }
         }
 
@@ -177,6 +229,18 @@ namespace LoGa.LudoEngine.Game
                     Debug.Log($"[{characterName}] Targeted cue: Index {config.cueIndex}");
                     break;
             }
+        }
+
+        public bool CheckNarrationCompletion()
+        {
+            if (narrationJustCompleted && completedInstanceHandle == characterAudioInstance.handle)
+            {
+                // Reset the static flags
+                narrationJustCompleted = false;
+                completedInstanceHandle = IntPtr.Zero;
+                return true;
+            }
+            return false;
         }
 
         /// <summary>
@@ -269,7 +333,6 @@ namespace LoGa.LudoEngine.Game
 
             AudioService.StopAudio(characterAudioInstance);
             AudioService.ReleaseAudio(characterAudioInstance);
-
             // Hide marker
             if (marker != null)
             {

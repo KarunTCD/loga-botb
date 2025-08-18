@@ -17,5 +17,7 @@ namespace LoGa.LudoEngine.Services
         void SetParameter(EventInstance instance, string paramName, float value);
         bool IsInstanceValid(EventInstance instance);
         bool IsTrackPlaying(EventInstance instance, string parameterName, float parameterValue);
+        float GetParameter(EventInstance instance, string paramName);
+        void ListAllParameters(EventInstance instance, string poiName);
     }
 }

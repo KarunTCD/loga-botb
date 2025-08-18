@@ -34,6 +34,7 @@ namespace LoGa.LudoEngine.Game
         [Header("Audio System")]
         [SerializeField] private EventReference sharedCueEvent;
         [SerializeField] private EventReference mainAmbientEvent;
+        [SerializeField] private EventReference rewardAnnouncementEvent;
 
         [Header("Distance Thresholds")]
         [SerializeField] private float proximityRadius = 20f;
@@ -41,10 +42,21 @@ namespace LoGa.LudoEngine.Game
         [SerializeField] private float maxCueRadius = 500000f;
         [SerializeField] private float discoveryDistance = 20f;
 
+        // Update the maxActiveCues field:
         [Header("Navigation System")]
         [SerializeField] private float cueStagingDelay = 2f;
         [SerializeField] private float cyclePauseDelay = 6f;
-        [SerializeField] private int maxActiveCues = 3;
+
+        // Add these new fields for dynamic system:
+        [Header("Progressive Navigation")]
+        [SerializeField] private int baseMaxActiveCues = 1;        // Starting value
+        [SerializeField] private int maxMaxActiveCues = 2;         // Maximum value
+        [SerializeField] private int completionsToIncrease = 2;    // Completions needed to increase
+
+        [Header("Welcome System")]
+        [SerializeField] private EventReference welcomeGreetingEvent; // Battle Oak welcome event
+        private EventInstance welcomeInstance;
+        private bool hasPlayedWelcome = false;
 
         [Header("Target Locking")]
         [SerializeField] private float targetLockTime = 2.0f;
@@ -53,9 +65,11 @@ namespace LoGa.LudoEngine.Game
         [SerializeField] private GameObject targetingIndicator;
         [SerializeField] private TextMeshProUGUI targetingText;
         [SerializeField] private TextMeshProUGUI zoneText;
+        [SerializeField] private TextMeshProUGUI completionText;
 
         [Header("Frequency Control")]
         [SerializeField] private float maxTargetingDistance = 200f;
+
 
         // Current layer data
         private TimeLayer currentLayer;
@@ -64,6 +78,14 @@ namespace LoGa.LudoEngine.Game
         // Audio instances
         private EventInstance ambientMusicInstance;
         private EventInstance sharedCueInstance;
+        private EventInstance rewardInstance;
+
+        // Add completion tracking:
+        private int totalCompletedPOIs = 0;
+        private int currentMaxActiveCues = 1; // Dynamic value
+
+        // Add this property to get current max:
+        public int CurrentMaxActiveCues => currentMaxActiveCues;
 
         // Centralized data cache - calculated once, used everywhere
         private Dictionary<POI, POIUpdateData> poiDataCache = new Dictionary<POI, POIUpdateData>();
@@ -94,12 +116,34 @@ namespace LoGa.LudoEngine.Game
         {
             InitializeAmbientMusic();
 
+            // Initialize reward system
+            if (!rewardAnnouncementEvent.IsNull)
+            {
+                rewardInstance = AudioService.CreateAudioInstance(rewardAnnouncementEvent);
+            }
+
             // Subscribe to time layer changes
             TimeLayerManager.Instance.TimeLayerChanging += OnTimeLayerChanging;
             TimeLayerManager.Instance.TimeLayerChanged += OnTimeLayerChanged;
 
             // Initialize with current layer
             OnTimeLayerChanged(TimeLayerManager.Instance.CurrentLayer);
+
+            // Initialize welcome greeting
+            if (!welcomeGreetingEvent.IsNull)
+            {
+                welcomeInstance = AudioService.CreateAudioInstance(welcomeGreetingEvent);
+            }
+        }
+
+        public void PlayWelcomeGreeting()
+        {
+            if (!hasPlayedWelcome && AudioService.IsInstanceValid(welcomeInstance))
+            {
+                AudioService.PlayAudio(welcomeInstance, Vector3.zero);
+                hasPlayedWelcome = true;
+                Debug.Log("🌳 Battle Oak welcomes player to the Battle of Boyne!");
+            }
         }
 
         private void Update()
@@ -122,6 +166,15 @@ namespace LoGa.LudoEngine.Game
 
             // EVERY FRAME - Navigation and targeting logic (responsive)
             UpdateNavigationAndTargeting(currentLocation.x, currentLocation.y);
+
+            // Check for narration completion on all active POIs
+            CheckNarrationCompletions();
+
+            // EVERY FRAME - Remove completed POIs when in wander mode
+            if (!activePOIs.Any(poi => poi.isInProximity))
+            {
+                RemoveCompletedPOIs();
+            }
 
             // OCCASIONAL - Discovery logic (1Hz)
             if (updateFrameCounter % 60 == 0)
@@ -243,7 +296,7 @@ namespace LoGa.LudoEngine.Game
             return poiDataCache
                 .Where(p => p.Value.distance > proximityRadius && p.Value.distance <= maxCueRadius)
                 .OrderBy(p => p.Value.distance)
-                .Take(maxActiveCues)
+                .Take(currentMaxActiveCues)
                 .Select(p => p.Key)
                 .ToList();
         }
@@ -407,6 +460,105 @@ namespace LoGa.LudoEngine.Game
                 {
                     isInCyclePause = true;
                     cyclePauseTimer = 0f;
+
+                    // Dynamic debug message
+                    Debug.Log($"Completed cycle of {activeCuePOIs.Count}/{currentMaxActiveCues} cues, starting {cyclePauseDelay}s pause");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Poll all POIs for narration completion parameter changes
+        /// </summary>
+        private void CheckNarrationCompletions()
+        {
+            foreach (var poi in activePOIs)
+            {
+                if (poi.isInProximity && poi.CheckNarrationCompletion())
+                {
+                    OnPOINarrationComplete(poi);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Handle POI narration completion
+        /// </summary>
+        private void OnPOINarrationComplete(POI poi)
+        {
+            Debug.Log($"🎯 NARRATION COMPLETE: {poi.characterName} has finished their dialogue!");
+
+            // Mark POI as completed
+            poi.MarkAsCompleted();
+
+            // Increment completion counter for non-portals only
+            if (!poi.IsPortal)
+            {
+                totalCompletedPOIs++;
+                UpdateMaxActiveCues();
+                Debug.Log($"📊 Total completed POIs: {totalCompletedPOIs}");
+            }
+
+            // Handle reward audio if applicable
+            if (poi.hasReward && poi.rewardId > 0)
+            {
+                PlayRewardAnnouncement(poi.rewardId);
+            }
+        }
+
+        private void UpdateMaxActiveCues()
+        {
+            int newMax = baseMaxActiveCues;
+
+            if (totalCompletedPOIs >= completionsToIncrease)
+            {
+                newMax = maxMaxActiveCues;
+            }
+
+            if (newMax != currentMaxActiveCues)
+            {
+                currentMaxActiveCues = newMax;
+                Debug.Log($"🎯 Navigation complexity increased! Max active POIs: {currentMaxActiveCues} (Completed: {totalCompletedPOIs})");
+            }
+        }
+
+        private void PlayRewardAnnouncement(int rewardId)
+        {
+            if (!AudioService.IsInstanceValid(rewardInstance)) return;
+
+            AudioService.SetParameter(rewardInstance, "RewardID", rewardId);
+            AudioService.PlayAudio(rewardInstance, Vector3.zero);
+
+            Debug.Log($"🎁 Battle Oak announces reward: ID {rewardId}");
+        }
+
+        private void RemoveCompletedPOIs()
+        {
+            var poisToRemove = activePOIs.Where(poi => poi.ShouldBeRemoved).ToList();
+
+            if (poisToRemove.Count > 0)
+            {
+                Debug.Log($"Removing {poisToRemove.Count} completed POIs from map");
+
+                foreach (var poi in poisToRemove)
+                {
+                    poi.Cleanup();
+                    activePOIs.Remove(poi);
+
+                    // Also remove from current layer's POI list
+                    if (currentLayer?.pois != null)
+                    {
+                        currentLayer.pois.Remove(poi);
+                    }
+                }
+
+                // Clear cached data for removed POIs
+                foreach (var poi in poisToRemove)
+                {
+                    if (poiDataCache.ContainsKey(poi))
+                    {
+                        poiDataCache.Remove(poi);
+                    }
                 }
             }
         }
@@ -536,8 +688,8 @@ namespace LoGa.LudoEngine.Game
                 debugText.text = $"Layer: {currentLayer.layerName}\n" +
                                $"Target: {targetingState.targetPOI.characterName}\n" +
                                $"Dist: {data.distance:F0}m | Angle: {data.angleDifference:F1}°\n" +
-                               $"Head: {HeadTrackingService.CurrentHeading:F0}°\n" +
-                               $"Provider: {HeadTrackingService.ActiveProviderName}";
+                               $"MaxCues: {currentMaxActiveCues} (Completed: {totalCompletedPOIs})\n" +
+                               $"Head: {HeadTrackingService.CurrentHeading:F0}°";
             }
             else if (targetingState.mode == TargetingMode.Potential)
             {
@@ -545,15 +697,15 @@ namespace LoGa.LudoEngine.Game
                 debugText.text = $"Layer: {currentLayer.layerName}\n" +
                                $"Targeting: {targetingState.targetPOI.characterName}\n" +
                                $"Progress: {progress:F1}%\n" +
-                               $"Timer: {targetingState.timer:F2}s / {targetLockTime:F1}s\n" +
+                               $"MaxCues: {currentMaxActiveCues} (Completed: {totalCompletedPOIs})\n" +
                                $"Head: {HeadTrackingService.CurrentHeading:F0}°";
             }
             else
             {
                 debugText.text = $"Layer: {currentLayer.layerName}\n" +
                                $"POIs: {activePOIs.Count}\n" +
+                               $"MaxCues: {currentMaxActiveCues} (Completed: {totalCompletedPOIs})\n" +
                                $"Head: {HeadTrackingService.CurrentHeading:F0}°\n" +
-                               $"Provider: {HeadTrackingService.ActiveProviderName}\n" +
                                $"Location: {location.x:F6}, {location.y:F6}";
             }
         }
@@ -773,6 +925,41 @@ namespace LoGa.LudoEngine.Game
             }
         }
 
+
+        // Add method to get progression info (for UI or other systems):
+        public ProgressionInfo GetProgressionInfo()
+        {
+            return new ProgressionInfo
+            {
+                completedPOIs = totalCompletedPOIs,
+                currentMaxCues = currentMaxActiveCues,
+                nextThreshold = completionsToIncrease,
+                maxPossible = maxMaxActiveCues,
+                progressToNext = totalCompletedPOIs < completionsToIncrease ?
+                    (float)totalCompletedPOIs / completionsToIncrease : 1.0f
+            };
+        }
+
+        // Add this struct for progression info:
+        [System.Serializable]
+        public struct ProgressionInfo
+        {
+            public int completedPOIs;
+            public int currentMaxCues;
+            public int nextThreshold;
+            public int maxPossible;
+            public float progressToNext; // 0.0 to 1.0
+        }
+
+        // Optional: Add method to manually reset progression (for testing):
+        [ContextMenu("Reset Progression")]
+        public void ResetProgression()
+        {
+            totalCompletedPOIs = 0;
+            currentMaxActiveCues = baseMaxActiveCues;
+            Debug.Log($"🔄 Progression reset. Max cues: {currentMaxActiveCues}");
+        }
+
         private void OnDestroy()
         {
             // Unsubscribe from events
@@ -789,6 +976,13 @@ namespace LoGa.LudoEngine.Game
             {
                 AudioService.StopAudio(ambientMusicInstance, true);
                 AudioService.ReleaseAudio(ambientMusicInstance);
+            }
+
+            // Cleanup reward instance
+            if (rewardInstance.isValid())
+            {
+                AudioService.StopAudio(rewardInstance, true);
+                AudioService.ReleaseAudio(rewardInstance);
             }
         }
     }

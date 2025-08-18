@@ -204,6 +204,8 @@ namespace LoGa.LudoEngine.Core
                 if (initialized)
                 {
                     SetGameMode(GameMode.Player);
+                    // Play welcome greeting
+                    poiManager.PlayWelcomeGreeting();
                     return true;
                 }
                 else
