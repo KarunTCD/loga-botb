@@ -23,23 +23,23 @@
 			<value>William</value>
 			<value>Oak</value>
 			<value>Salmon</value>
-			<value>Modern Raven</value>
-			<value>Celtic Fox</value>
+			<value>Raven</value>
+			<value>Fox</value>
 			<value>Louis</value>
 			<value>James</value>
 			<value>Sergeant Major</value>
 			<value>Grenadier</value>
 			<value>Celtic Farmer</value>
-			<value>Child_Neolithic</value>
+			<value>Child Neolithic</value>
 			<value>Barber Surgeon</value>
-			<value>Harp_Girl</value>
-			<value>Child_Modern</value>
+			<value>Harp Girl</value>
+			<value>Child Modern</value>
 			<value>Sarsfield</value>
 			<value>Schomberg</value>
 			<value>River Boyne</value>
 			<value>Battle Farmer</value>
 			<value>French Soldier</value>
-			<value>Battle Raven</value>
+			<value>Village Woman</value>
 		</property>
 		<property name="initialValue">
 			<value>0</value>

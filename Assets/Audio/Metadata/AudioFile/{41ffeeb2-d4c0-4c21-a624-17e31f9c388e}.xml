@@ -2,7 +2,7 @@
 <objects serializationModel="Studio.02.03.00">
 	<object class="AudioFile" id="{41ffeeb2-d4c0-4c21-a624-17e31f9c388e}">
 		<property name="assetPath">
-			<value>nav_cues/old_woman_cue3.wav</value>
+			<value>nav_cues/village_woman_cue3.wav</value>
 		</property>
 		<property name="frequencyInKHz">
 			<value>44.0999985</value>

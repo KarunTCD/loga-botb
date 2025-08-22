@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <objects serializationModel="Studio.02.03.00">
-	<object class="AudioFile" id="{b5fa2c3c-a580-4b7f-be9f-c46031b22946}">
+	<object class="AudioFile" id="{f874a0dc-71ad-40d2-9fff-f4219526b975}">
 		<property name="assetPath">
-			<value>nav_cues/village_woman_cue2.wav</value>
+			<value>Boyne 2 mercenaries cues snippets/French soldier folk guitar_1.wav</value>
+		</property>
+		<property name="isStreaming">
+			<value>true</value>
 		</property>
 		<property name="frequencyInKHz">
-			<value>44.0999985</value>
+			<value>48</value>
 		</property>
 		<property name="channelCount">
-			<value>1</value>
+			<value>2</value>
 		</property>
 		<property name="length">
-			<value>1.8213832199546485</value>
+			<value>36.863999999999997</value>
 		</property>
 		<relationship name="masterAssetFolder">
 			<destination>{ebca4182-9fac-49cd-93d1-bfbca4c66617}</destination>
