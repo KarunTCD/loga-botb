@@ -7315,6 +7315,8 @@ MonoBehaviour:
       hasReward: 0
       rewardId: 0
       rewardName: 
+      hasMultipleVariants: 0
+      narrationVariantCount: 1
       characterAudioEvent:
         Guid:
           Data1: 1409366747
@@ -7339,6 +7341,8 @@ MonoBehaviour:
       hasReward: 1
       rewardId: 2
       rewardName: Triskel
+      hasMultipleVariants: 0
+      narrationVariantCount: 1
       characterAudioEvent:
         Guid:
           Data1: -1794321705
@@ -7359,8 +7363,8 @@ MonoBehaviour:
     pois:
     - id: raven
       characterName: Raven
-      latitude: 53.72249
-      longitude: -6.422042
+      latitude: 53.34816
+      longitude: -6.249698
       marker: {fileID: 906921090}
       characterId: 4
       portalType: 2
@@ -7374,6 +7378,8 @@ MonoBehaviour:
       hasReward: 0
       rewardId: 0
       rewardName: 
+      hasMultipleVariants: 1
+      narrationVariantCount: 2
       characterAudioEvent:
         Guid:
           Data1: -17476983
@@ -7398,6 +7404,8 @@ MonoBehaviour:
       hasReward: 0
       rewardId: 0
       rewardName: 
+      hasMultipleVariants: 0
+      narrationVariantCount: 1
       characterAudioEvent:
         Guid:
           Data1: 1214089938
@@ -7422,6 +7430,8 @@ MonoBehaviour:
       hasReward: 1
       rewardId: 1
       rewardName: Dutch Lion Amulet
+      hasMultipleVariants: 0
+      narrationVariantCount: 1
       characterAudioEvent:
         Guid:
           Data1: 1175538158
@@ -7446,6 +7456,8 @@ MonoBehaviour:
       hasReward: 1
       rewardId: 10
       rewardName: Golden Sun
+      hasMultipleVariants: 0
+      narrationVariantCount: 1
       characterAudioEvent:
         Guid:
           Data1: 536625850
@@ -7470,6 +7482,8 @@ MonoBehaviour:
       hasReward: 1
       rewardId: 9
       rewardName: Royal Seal Ring
+      hasMultipleVariants: 0
+      narrationVariantCount: 1
       characterAudioEvent:
         Guid:
           Data1: -1406718307
@@ -7494,6 +7508,8 @@ MonoBehaviour:
       hasReward: 0
       rewardId: 0
       rewardName: 
+      hasMultipleVariants: 0
+      narrationVariantCount: 1
       characterAudioEvent:
         Guid:
           Data1: -393206063
@@ -7518,6 +7534,8 @@ MonoBehaviour:
       hasReward: 0
       rewardId: 0
       rewardName: 
+      hasMultipleVariants: 0
+      narrationVariantCount: 1
       characterAudioEvent:
         Guid:
           Data1: 239461205
@@ -7553,6 +7571,8 @@ MonoBehaviour:
       hasReward: 0
       rewardId: 0
       rewardName: 
+      hasMultipleVariants: 0
+      narrationVariantCount: 1
       characterAudioEvent:
         Guid:
           Data1: -17476983
@@ -7577,6 +7597,8 @@ MonoBehaviour:
       hasReward: 1
       rewardId: 4
       rewardName: Modern Crops
+      hasMultipleVariants: 0
+      narrationVariantCount: 1
       characterAudioEvent:
         Guid:
           Data1: 670137374
@@ -7601,6 +7623,8 @@ MonoBehaviour:
       hasReward: 0
       rewardId: 0
       rewardName: 
+      hasMultipleVariants: 0
+      narrationVariantCount: 1
       characterAudioEvent:
         Guid:
           Data1: -878459424
@@ -7625,6 +7649,8 @@ MonoBehaviour:
       hasReward: 1
       rewardId: 7
       rewardName: Acorn
+      hasMultipleVariants: 0
+      narrationVariantCount: 1
       characterAudioEvent:
         Guid:
           Data1: -573735400
@@ -7632,7 +7658,7 @@ MonoBehaviour:
           Data3: 803607699
           Data4: -1636424172
         Path: event:/battle_oak_audio
-  defaultLayerIndex: 2
+  defaultLayerIndex: 1
   transitionDuration: 3
   timePortalAudio:
     Guid:
@@ -9261,13 +9287,6 @@ MonoBehaviour:
       Data3: 2146350997
       Data4: 841210949
     Path: event:/ambient_sounds
-  rewardAnnouncementEvent:
-    Guid:
-      Data1: 1537784784
-      Data2: 1287908770
-      Data3: -161326454
-      Data4: 209117433
-    Path: event:/reward_audio
   proximityRadius: 40
   dialogueRadius: 20
   maxCueRadius: 1000
@@ -9284,6 +9303,13 @@ MonoBehaviour:
       Data3: 747145148
       Data4: -99600686
     Path: event:/oak_greeting
+  rewardAnnouncementEvent:
+    Guid:
+      Data1: 1537784784
+      Data2: 1287908770
+      Data3: -161326454
+      Data4: 209117433
+    Path: event:/reward_audio
   targetLockTime: 2
   targetLockAngle: 30
   targetBreakAngle: 45
@@ -11478,10 +11504,10 @@ MonoBehaviour:
   joystick: {fileID: 98771672}
   fixPhraseManager: {fileID: 150098454}
   gameManager: {fileID: 1662718314}
-  northLatitude: 53.72696
-  southLatitude: 53.711926
-  eastLongitude: -6.386909
-  westLongitude: -6.432235
+  northLatitude: 53.351048
+  southLatitude: 53.347187
+  eastLongitude: -6.245949
+  westLongitude: -6.251248
   joystickMoveSpeed: 0.00001
 --- !u!1 &1432207049
 GameObject:

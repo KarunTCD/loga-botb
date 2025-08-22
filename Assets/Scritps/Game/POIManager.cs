@@ -34,7 +34,6 @@ namespace LoGa.LudoEngine.Game
         [Header("Audio System")]
         [SerializeField] private EventReference sharedCueEvent;
         [SerializeField] private EventReference mainAmbientEvent;
-        [SerializeField] private EventReference rewardAnnouncementEvent;
 
         [Header("Distance Thresholds")]
         [SerializeField] private float proximityRadius = 20f;
@@ -56,7 +55,10 @@ namespace LoGa.LudoEngine.Game
         [Header("Welcome System")]
         [SerializeField] private EventReference welcomeGreetingEvent; // Battle Oak welcome event
         private EventInstance welcomeInstance;
-        private bool hasPlayedWelcome = false;
+
+        [Header("Reward System")]
+        [SerializeField] private EventReference rewardAnnouncementEvent;
+        private EventInstance rewardInstance;
 
         [Header("Target Locking")]
         [SerializeField] private float targetLockTime = 2.0f;
@@ -78,7 +80,6 @@ namespace LoGa.LudoEngine.Game
         // Audio instances
         private EventInstance ambientMusicInstance;
         private EventInstance sharedCueInstance;
-        private EventInstance rewardInstance;
 
         // Add completion tracking:
         private int totalCompletedPOIs = 0;
@@ -107,6 +108,7 @@ namespace LoGa.LudoEngine.Game
         private int updateFrameCounter = 0;
 
         // Services
+        private IStorageService StorageService => ServiceLocator.GetService<IStorageService>();
         private IAudioService AudioService => ServiceLocator.GetService<IAudioService>();
         private ILocationService LocationService => ServiceLocator.GetService<ILocationService>();
         private IHeadTrackingService HeadTrackingService => ServiceLocator.GetService<IHeadTrackingService>();
@@ -138,11 +140,14 @@ namespace LoGa.LudoEngine.Game
 
         public void PlayWelcomeGreeting()
         {
+
+
+            bool hasPlayedWelcome = StorageService.Load<bool>("HasPlayedWelcomeDialogue");
             if (!hasPlayedWelcome && AudioService.IsInstanceValid(welcomeInstance))
             {
                 AudioService.PlayAudio(welcomeInstance, Vector3.zero);
-                hasPlayedWelcome = true;
-                Debug.Log("🌳 Battle Oak welcomes player to the Battle of Boyne!");
+                StorageService.Save("HasPlayedWelcomeDialogue", true);
+                Debug.Log("Battle Oak welcomes player to the Battle of Boyne!");
             }
         }
 
@@ -486,7 +491,10 @@ namespace LoGa.LudoEngine.Game
         /// </summary>
         private void OnPOINarrationComplete(POI poi)
         {
-            Debug.Log($"🎯 NARRATION COMPLETE: {poi.characterName} has finished their dialogue!");
+            Debug.Log($" NARRATION COMPLETE: {poi.characterName} has finished their dialogue!");
+
+            string poiUnlockKey = $"POI_{poi.id}_Unlocked";
+            StorageService.Save(poiUnlockKey, true);
 
             // Mark POI as completed
             poi.MarkAsCompleted();
@@ -495,13 +503,32 @@ namespace LoGa.LudoEngine.Game
             if (!poi.IsPortal)
             {
                 totalCompletedPOIs++;
+                StorageService.Save("TotalCompletedPOIs", totalCompletedPOIs);
+
                 UpdateMaxActiveCues();
-                Debug.Log($"📊 Total completed POIs: {totalCompletedPOIs}");
+                StorageService.Save("CurrentMaxActiveCues", currentMaxActiveCues);
+                Debug.Log($" Total completed POIs: {totalCompletedPOIs}");
             }
 
             // Handle reward audio if applicable
             if (poi.hasReward && poi.rewardId > 0)
             {
+                if (poi.hasReward && poi.rewardId > 0)
+                {
+                    var inventoryItem = new InventoryItem
+                    {
+                        id = poi.id,
+                        name = poi.characterName,
+                        description = $"Character from {currentLayer.layerName}",
+                        type = ItemType.Character,
+                        audioClip = poi.characterAudioEvent,
+                        sourceTimeLayer = currentLayer.layerName,
+                        sourcePOI = poi.id
+                    };
+
+                    InventoryManager.Instance.AddItem(inventoryItem);
+                }
+
                 PlayRewardAnnouncement(poi.rewardId);
             }
         }

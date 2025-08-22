@@ -15,7 +15,7 @@ MonoBehaviour:
   Name: Zone
   StudioPath: 
   Min: 0
-  Max: 2
+  Max: 3
   Default: 0
   ID:
     data1: 1112535331
@@ -63,7 +63,7 @@ MonoBehaviour:
   Name: Zone
   StudioPath: 
   Min: 0
-  Max: 2
+  Max: 3
   Default: 0
   ID:
     data1: 1112535331
@@ -96,11 +96,10 @@ MonoBehaviour:
   Is3D: 0
   IsOneShot: 1
   Parameters:
-  - {fileID: 5655664269677492689}
-  - {fileID: -17035483891437240}
+  - {fileID: 962700134664562737}
   MinDistance: 1
   MaxDistance: 20
-  Length: 14000
+  Length: 9000
 --- !u!114 &-8501214003927083526
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -153,6 +152,30 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
+--- !u!114 &-8299403273253589408
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/battle_fox_audio/NarrationVariant
+  m_EditorClassIdentifier: 
+  Name: NarrationVariant
+  StudioPath: 
+  Min: 1
+  Max: 2
+  Default: 1
+  ID:
+    data1: 87377771
+    data2: 1171044379
+  Type: 1
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
 --- !u!114 &-7609103010726695882
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -200,7 +223,7 @@ MonoBehaviour:
   Name: Zone
   StudioPath: 
   Min: 0
-  Max: 2
+  Max: 3
   Default: 0
   ID:
     data1: 1112535331
@@ -251,7 +274,7 @@ MonoBehaviour:
   Name: Zone
   StudioPath: 
   Min: 0
-  Max: 2
+  Max: 3
   Default: 0
   ID:
     data1: 1112535331
@@ -303,7 +326,7 @@ MonoBehaviour:
   Name: Zone
   StudioPath: 
   Min: 0
-  Max: 2
+  Max: 3
   Default: 0
   ID:
     data1: 1112535331
@@ -371,7 +394,7 @@ MonoBehaviour:
   Name: Zone
   StudioPath: 
   Min: 0
-  Max: 2
+  Max: 3
   Default: 0
   ID:
     data1: 1112535331
@@ -423,7 +446,7 @@ MonoBehaviour:
   Name: Zone
   StudioPath: 
   Min: 0
-  Max: 2
+  Max: 3
   Default: 0
   ID:
     data1: 1112535331
@@ -475,7 +498,7 @@ MonoBehaviour:
   Name: Zone
   StudioPath: 
   Min: 0
-  Max: 2
+  Max: 3
   Default: 0
   ID:
     data1: 1112535331
@@ -505,6 +528,30 @@ MonoBehaviour:
     data1: 3182214286
     data2: 3291611135
   Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &-4442659610704371921
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/battle_raven_audio/NarrationVariant
+  m_EditorClassIdentifier: 
+  Name: NarrationVariant
+  StudioPath: 
+  Min: 1
+  Max: 2
+  Default: 1
+  ID:
+    data1: 87377771
+    data2: 1171044379
+  Type: 1
   IsGlobal: 0
   Labels: []
   Exists: 1
@@ -575,7 +622,7 @@ MonoBehaviour:
   Name: Zone
   StudioPath: 
   Min: 0
-  Max: 2
+  Max: 3
   Default: 0
   ID:
     data1: 1112535331
@@ -675,7 +722,7 @@ MonoBehaviour:
   Name: Zone
   StudioPath: 
   Min: 0
-  Max: 2
+  Max: 3
   Default: 0
   ID:
     data1: 1112535331
@@ -727,12 +774,36 @@ MonoBehaviour:
   Name: Zone
   StudioPath: 
   Min: 0
-  Max: 2
+  Max: 3
   Default: 0
   ID:
     data1: 1112535331
     data2: 2309411790
   Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &-2582239335087819956
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/modern_raven_audio/NarrationVariant
+  m_EditorClassIdentifier: 
+  Name: NarrationVariant
+  StudioPath: 
+  Min: 1
+  Max: 2
+  Default: 1
+  ID:
+    data1: 87377771
+    data2: 1171044379
+  Type: 1
   IsGlobal: 0
   Labels: []
   Exists: 1
@@ -788,6 +859,7 @@ MonoBehaviour:
   IsOneShot: 0
   Parameters:
   - {fileID: -5909152015201415076}
+  - {fileID: 2011927977527597038}
   MinDistance: 1
   MaxDistance: 20
   Length: 13227
@@ -806,10 +878,10 @@ MonoBehaviour:
   Path: Assets/Audio/Build/Desktop/Master.bank
   Name: Master
   StudioPath: bank:/Master
-  lastModified: 638908508588074793
+  lastModified: 638913655477325318
   FileSizes:
   - Name: Desktop
-    Value: 50212832
+    Value: 50080256
   Exists: 1
 --- !u!114 &-2052320907851671852
 MonoBehaviour:
@@ -889,7 +961,7 @@ MonoBehaviour:
   Name: Zone
   StudioPath: 
   Min: 0
-  Max: 2
+  Max: 3
   Default: 0
   ID:
     data1: 1112535331
@@ -979,36 +1051,10 @@ MonoBehaviour:
   IsOneShot: 0
   Parameters:
   - {fileID: 2510504410322664773}
+  - {fileID: -2582239335087819956}
   MinDistance: 1
   MaxDistance: 20
   Length: 35663
---- !u!114 &-17035483891437240
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/time_portal/PortalType
-  m_EditorClassIdentifier: 
-  Name: PortalType
-  StudioPath: 
-  Min: 0
-  Max: 2
-  Default: 0
-  ID:
-    data1: 855394713
-    data2: 2767600512
-  Type: 2
-  IsGlobal: 0
-  Labels:
-  - None
-  - Forward
-  - Backward
-  Exists: 1
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1066,7 +1112,7 @@ MonoBehaviour:
   StringsBanks:
   - {fileID: 7937843521026953583}
   cacheVersion: 131847
-  cacheTime: 638908508588168405
+  cacheTime: 638913655477392812
   SerializableEventsDict:
   - key: event:/ambient_sounds
     index: 0
@@ -1124,6 +1170,8 @@ MonoBehaviour:
     index: 26
   - key: event:/reward_audio
     index: 27
+  - key: event:/oak_greeting
+    index: 28
 --- !u!114 &59723176013266999
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1139,7 +1187,7 @@ MonoBehaviour:
   Name: Zone
   StudioPath: 
   Min: 0
-  Max: 2
+  Max: 3
   Default: 0
   ID:
     data1: 1112535331
@@ -1147,6 +1195,33 @@ MonoBehaviour:
   Type: 0
   IsGlobal: 0
   Labels: []
+  Exists: 1
+--- !u!114 &962700134664562737
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/time_portal/PortalType
+  m_EditorClassIdentifier: 
+  Name: PortalType
+  StudioPath: 
+  Min: 0
+  Max: 2
+  Default: 0
+  ID:
+    data1: 855394713
+    data2: 2767600512
+  Type: 2
+  IsGlobal: 0
+  Labels:
+  - None
+  - Forward
+  - Backward
   Exists: 1
 --- !u!114 &1051342063221319385
 MonoBehaviour:
@@ -1201,9 +1276,10 @@ MonoBehaviour:
   IsOneShot: 0
   Parameters:
   - {fileID: -6296752583857902836}
+  - {fileID: -8299403273253589408}
   MinDistance: 1
   MaxDistance: 20
-  Length: 7253
+  Length: 6300
 --- !u!114 &1285807649221292570
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1219,7 +1295,7 @@ MonoBehaviour:
   Name: Zone
   StudioPath: 
   Min: 0
-  Max: 2
+  Max: 3
   Default: 0
   ID:
     data1: 1112535331
@@ -1243,7 +1319,7 @@ MonoBehaviour:
   Name: Zone
   StudioPath: 
   Min: 0
-  Max: 2
+  Max: 3
   Default: 0
   ID:
     data1: 1112535331
@@ -1280,6 +1356,30 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 73330
+--- !u!114 &2011927977527597038
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/celtic_fox_audio/NarrationVariant
+  m_EditorClassIdentifier: 
+  Name: NarrationVariant
+  StudioPath: 
+  Min: 1
+  Max: 2
+  Default: 1
+  ID:
+    data1: 87377771
+    data2: 1171044379
+  Type: 1
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
 --- !u!114 &2228033022237651436
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1295,7 +1395,7 @@ MonoBehaviour:
   Name: Zone
   StudioPath: 
   Min: 0
-  Max: 2
+  Max: 3
   Default: 0
   ID:
     data1: 1112535331
@@ -1319,7 +1419,7 @@ MonoBehaviour:
   Name: Zone
   StudioPath: 
   Min: 0
-  Max: 2
+  Max: 3
   Default: 0
   ID:
     data1: 1112535331
@@ -1353,6 +1453,7 @@ MonoBehaviour:
   IsOneShot: 0
   Parameters:
   - {fileID: -6952881011818862437}
+  - {fileID: -4442659610704371921}
   MinDistance: 1
   MaxDistance: 20
   Length: 17682
@@ -1371,7 +1472,7 @@ MonoBehaviour:
   Name: Zone
   StudioPath: 
   Min: 0
-  Max: 2
+  Max: 3
   Default: 0
   ID:
     data1: 1112535331
@@ -1511,7 +1612,7 @@ MonoBehaviour:
   Name: Zone
   StudioPath: 
   Min: 0
-  Max: 2
+  Max: 3
   Default: 0
   ID:
     data1: 1112535331
@@ -1535,35 +1636,11 @@ MonoBehaviour:
   Name: Zone
   StudioPath: 
   Min: 0
-  Max: 2
+  Max: 3
   Default: 0
   ID:
     data1: 1112535331
     data2: 2309411790
-  Type: 0
-  IsGlobal: 0
-  Labels: []
-  Exists: 1
---- !u!114 &5655664269677492689
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/time_portal/Trigger
-  m_EditorClassIdentifier: 
-  Name: Trigger
-  StudioPath: 
-  Min: 0
-  Max: 1
-  Default: 0
-  ID:
-    data1: 3182214286
-    data2: 3291611135
   Type: 0
   IsGlobal: 0
   Labels: []
@@ -1583,7 +1660,7 @@ MonoBehaviour:
   Name: Zone
   StudioPath: 
   Min: 0
-  Max: 2
+  Max: 3
   Default: 0
   ID:
     data1: 1112535331
@@ -1691,7 +1768,7 @@ MonoBehaviour:
   Name: Zone
   StudioPath: 
   Min: 0
-  Max: 2
+  Max: 3
   Default: 0
   ID:
     data1: 1112535331
@@ -1715,7 +1792,7 @@ MonoBehaviour:
   Name: Zone
   StudioPath: 
   Min: 0
-  Max: 2
+  Max: 3
   Default: 0
   ID:
     data1: 1112535331
@@ -1767,10 +1844,10 @@ MonoBehaviour:
   Path: Assets/Audio/Build/Desktop/Master.strings.bank
   Name: Master.strings
   StudioPath: bank:/Master.strings
-  lastModified: 638908508588168405
+  lastModified: 638913655477392812
   FileSizes:
   - Name: Desktop
-    Value: 2806
+    Value: 2856
   Exists: 1
 --- !u!114 &8383362571895565179
 MonoBehaviour:
@@ -1815,7 +1892,7 @@ MonoBehaviour:
   Name: Character_ID
   StudioPath: 
   Min: 0
-  Max: 19
+  Max: 20
   Default: 0
   ID:
     data1: 315080306
@@ -1843,6 +1920,7 @@ MonoBehaviour:
   - River Boyne
   - Battle Farmer
   - French Soldier
+  - Battle Raven
   Exists: 1
 --- !u!114 &8565167282811094332
 MonoBehaviour:
@@ -1859,7 +1937,7 @@ MonoBehaviour:
   Name: Zone
   StudioPath: 
   Min: 0
-  Max: 2
+  Max: 3
   Default: 0
   ID:
     data1: 1112535331

@@ -18,6 +18,7 @@ namespace LoGa.LudoEngine.Core
         public static event Action AllServicesReady;
 
         // Service prefabs
+        [SerializeField] private StorageService storageServicePrefab;
         [SerializeField] private PermissionService permissionServicePrefab;
         [SerializeField] private Services.LocationService locationServicePrefab;
         [SerializeField] private HeadTrackingService headTrackingServicePrefab;
@@ -31,6 +32,7 @@ namespace LoGa.LudoEngine.Core
         // Service criticality levels for locative audio game
         private Dictionary<Type, bool> criticalServices = new Dictionary<Type, bool>
         {
+            { typeof(IStorageService), true },         // Critical - game needs storage service to determine game state
             { typeof(IAudioService), true },         // Critical - game is audio-based
             { typeof(IPermissionService), true },    // Critical - needed for location/bluetooth
             { typeof(ILocationService), true },      // Critical - locative game needs GPS
@@ -62,6 +64,7 @@ namespace LoGa.LudoEngine.Core
         {
             Debug.Log("Creating service instances...");
 
+            CreateService<IStorageService, StorageService>(storageServicePrefab);
             CreateService<IPermissionService, PermissionService>(permissionServicePrefab);
             CreateService<ILocationService, Services.LocationService>(locationServicePrefab);
             CreateService<IHeadTrackingService, HeadTrackingService>(headTrackingServicePrefab);
@@ -108,6 +111,7 @@ namespace LoGa.LudoEngine.Core
 
             var servicesToInitialize = new List<(Type type, IService service, string name)>
             {
+                (typeof(IStorageService), serviceInstances[typeof(IStorageService)], "Local Storage"),
                 (typeof(IPermissionService), serviceInstances[typeof(IPermissionService)], "Device Permissions"),
                 (typeof(IAudioService), serviceInstances[typeof(IAudioService)], "Audio System"),
                 (typeof(ILocationService), serviceInstances[typeof(ILocationService)], "GPS Location"),
@@ -208,6 +212,7 @@ namespace LoGa.LudoEngine.Core
         {
             return serviceType.Name switch
             {
+                nameof(IStorageService) => "Local Storage",
                 nameof(IAudioService) => "Audio System",
                 nameof(IPermissionService) => "Device Permissions",
                 nameof(ILocationService) => "GPS Location",
