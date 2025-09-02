@@ -95,6 +95,7 @@ namespace LoGa.LudoEngine.Game
 
         private bool isInitialized;
         private bool isDiscovered;
+        private bool wasPlayingBeforeSilence = false;
 
         // Public properties (read-only)
         public bool IsDiscovered => isDiscovered;
@@ -370,6 +371,24 @@ namespace LoGa.LudoEngine.Game
             if (marker != null)
             {
                 marker.gameObject.SetActive(unlocked);
+            }
+        }
+
+        public void SilenceAudio()
+        {
+            if (isAudioPlaying)
+            {
+                wasPlayingBeforeSilence = true;
+                AudioService.StopAudio(characterAudioInstance, true);
+            }
+        }
+
+        public void ResumeAudio(Vector3 audioPosition)
+        {
+            if (wasPlayingBeforeSilence && isInProximity)
+            {
+                AudioService.PlayAudio(characterAudioInstance, audioPosition);
+                wasPlayingBeforeSilence = false;
             }
         }
 

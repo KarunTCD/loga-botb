@@ -7300,8 +7300,8 @@ MonoBehaviour:
     pois:
     - id: fox
       characterName: Fox
-      latitude: 53.72344
-      longitude: -6.421953
+      latitude: 53.34906
+      longitude: -6.249796
       marker: {fileID: 812127815}
       characterId: 5
       portalType: 1
@@ -7326,8 +7326,8 @@ MonoBehaviour:
         Path: event:/celtic_fox_audio
     - id: salmon_knowledge
       characterName: Salmon Of Knowledge
-      latitude: 53.722927
-      longitude: -6.422833
+      latitude: 53.348495
+      longitude: -6.249042
       marker: {fileID: 1553759305}
       characterId: 3
       portalType: 0
@@ -7363,8 +7363,8 @@ MonoBehaviour:
     pois:
     - id: raven
       characterName: Raven
-      latitude: 53.34816
-      longitude: -6.249698
+      latitude: 53.3491
+      longitude: -6.250266
       marker: {fileID: 906921090}
       characterId: 4
       portalType: 2
@@ -7389,8 +7389,8 @@ MonoBehaviour:
         Path: event:/modern_raven_audio
     - id: river_boyne
       characterName: River Boyne
-      latitude: 53.721176
-      longitude: -6.423754
+      latitude: 53.3485
+      longitude: -6.249032
       marker: {fileID: 181349703}
       characterId: 2
       portalType: 0
@@ -7415,8 +7415,8 @@ MonoBehaviour:
         Path: event:/boyne_audio
     - id: william_orange
       characterName: William of Orange
-      latitude: 53.722366
-      longitude: -6.423153
+      latitude: 53.348022
+      longitude: -6.250015
       marker: {fileID: 2099162380}
       characterId: 1
       portalType: 0
@@ -7441,8 +7441,8 @@ MonoBehaviour:
         Path: event:/william_audio
     - id: louis
       characterName: Louis XIV
-      latitude: 53.7234
-      longitude: -6.422649
+      latitude: 53.350086
+      longitude: -6.24711
       marker: {fileID: 1545574668}
       characterId: 6
       portalType: 0
@@ -7467,8 +7467,8 @@ MonoBehaviour:
         Path: event:/louis_audio
     - id: james
       characterName: Deposed King James II
-      latitude: 53.723248
-      longitude: -6.421956
+      latitude: 53.348366
+      longitude: -6.248591
       marker: {fileID: 632247704}
       characterId: 7
       portalType: 0
@@ -7493,8 +7493,8 @@ MonoBehaviour:
         Path: event:/james_audio
     - id: fox
       characterName: Fox
-      latitude: 53.721966
-      longitude: -6.423062
+      latitude: 53.35015
+      longitude: -6.248593
       marker: {fileID: 812127815}
       characterId: 5
       portalType: 1
@@ -7519,8 +7519,8 @@ MonoBehaviour:
         Path: event:/battle_fox_audio
     - id: raven
       characterName: Raven
-      latitude: 53.720894
-      longitude: -6.424569
+      latitude: 53.349457
+      longitude: -6.247245
       marker: {fileID: 254441663}
       characterId: 4
       portalType: 2
@@ -7556,8 +7556,8 @@ MonoBehaviour:
     pois:
     - id: raven
       characterName: Raven
-      latitude: 53.722645
-      longitude: -6.421613
+      latitude: 53.348396
+      longitude: -6.249969
       marker: {fileID: 906921090}
       characterId: 4
       portalType: 2
@@ -7582,8 +7582,8 @@ MonoBehaviour:
         Path: event:/modern_raven_audio
     - id: farmer
       characterName: Farmer
-      latitude: 53.721672
-      longitude: -6.418992
+      latitude: 53.348362
+      longitude: -6.248631
       marker: {fileID: 1118109659}
       characterId: 10
       portalType: 0
@@ -7608,8 +7608,8 @@ MonoBehaviour:
         Path: event:/celtic_farmer_audio
     - id: child
       characterName: Child
-      latitude: 53.34953
-      longitude: -6.249115
+      latitude: 53.34952
+      longitude: -6.249068
       marker: {fileID: 1630744044}
       characterId: 14
       portalType: 0
@@ -7634,8 +7634,8 @@ MonoBehaviour:
         Path: event:/modern_child_audio
     - id: battle_oak
       characterName: Battle Oak
-      latitude: 53.723297
-      longitude: -6.42113
+      latitude: 53.34908
+      longitude: -6.249963
       marker: {fileID: 2127153680}
       characterId: 2
       portalType: 0
@@ -12983,6 +12983,62 @@ MonoBehaviour:
   mapManager: {fileID: 1421694614}
   poiManager: {fileID: 1082108171}
   uiManager: {fileID: 2044956340}
+  mercenaryEncounterEvent:
+    Guid:
+      Data1: -1263395470
+      Data2: 1272893624
+      Data3: 1061061532
+      Data4: 956329762
+    Path: event:/combat/mercenary_encounter
+  mercenaryFootstepsEvent:
+    Guid:
+      Data1: -1000586084
+      Data2: 1281804476
+      Data3: -863532887
+      Data4: -1380123222
+    Path: event:/combat/mercenary_footsteps
+  mercenaryAttackEvent:
+    Guid:
+      Data1: 1643837809
+      Data2: 1323961476
+      Data3: -526707781
+      Data4: -536056061
+    Path: event:/combat/mercenary_attack
+  attackImpactEvent:
+    Guid:
+      Data1: 799305034
+      Data2: 1269305174
+      Data3: 1265642687
+      Data4: -1737986025
+    Path: event:/combat/attack_impact
+  heartbeatEvent:
+    Guid:
+      Data1: -933501478
+      Data2: 1105982401
+      Data3: -1485982032
+      Data4: -153862852
+    Path: event:/combat/heartbeat_audio
+  berryAmbientEvent:
+    Guid:
+      Data1: 988374413
+      Data2: 1231066701
+      Data3: -1620283763
+      Data4: -935952914
+    Path: event:/combat/berries_music
+  berryCollectionEvent:
+    Guid:
+      Data1: -2015602834
+      Data2: 1312012597
+      Data3: 1408835470
+      Data4: 644009244
+    Path: event:/combat/berries_collect
+  combatTriggerCheckInterval: 2
+  approachDuration: 4
+  berrySpawnDistanceMin: 5
+  berrySpawnDistanceMax: 15
+  berryCollectionRadius: 5
+  enableTestingMode: 1
+  tapTimeWindow: 0.5
   gameState: 1
 --- !u!1 &1696069735
 GameObject:

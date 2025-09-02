@@ -82,8 +82,8 @@ namespace LoGa.LudoEngine.Game
         private EventInstance sharedCueInstance;
 
         // Add completion tracking:
-        private int totalCompletedPOIs = 0;
-        private int currentMaxActiveCues = 1; // Dynamic value
+        private int totalCompletedPOIs;
+        private int currentMaxActiveCues; // Dynamic value
 
         // Add this property to get current max:
         public int CurrentMaxActiveCues => currentMaxActiveCues;
@@ -116,6 +116,12 @@ namespace LoGa.LudoEngine.Game
 
         private void Start()
         {
+            // Load progression data
+            totalCompletedPOIs = StorageService.Load<int>("TotalCompletedPOIs");
+            currentMaxActiveCues = StorageService.Load<int>("CurrentMaxActiveCues");
+            if (currentMaxActiveCues == 0)
+                currentMaxActiveCues = baseMaxActiveCues;
+
             InitializeAmbientMusic();
 
             // Initialize reward system
@@ -158,6 +164,8 @@ namespace LoGa.LudoEngine.Game
                 GameManager.Instance?.CurrentMode != GameManager.GameMode.Player)
                 return;
 
+
+
             Vector2 currentLocation = LocationService.GetCurrentLocation();
             if (currentLocation == Vector2.zero) return;
 
@@ -169,8 +177,12 @@ namespace LoGa.LudoEngine.Game
             // EVERY FRAME - Update POI proximity (smooth audio transitions)
             UpdatePOIProximity();
 
-            // EVERY FRAME - Navigation and targeting logic (responsive)
-            UpdateNavigationAndTargeting(currentLocation.x, currentLocation.y);
+            // Navigation cues ONLY in Wander mode
+            if (GameManager.Instance.CurrentGameplayState == GameManager.GameplayState.Wander)
+            {
+                UpdateNavigationAndTargeting(currentLocation.x, currentLocation.y);
+            }
+
 
             // Check for narration completion on all active POIs
             CheckNarrationCompletions();
@@ -192,6 +204,38 @@ namespace LoGa.LudoEngine.Game
             {
                 UpdateDebugDisplay(currentLocation);
             }
+        }
+
+        public void SilenceAllPOIAudio()
+        {
+            foreach (var poi in activePOIs)
+            {
+                if (poi.isInProximity)
+                {
+                    poi.SilenceAudio();
+                }
+            }
+        }
+
+        public void ResumeAllPOIAudio()
+        {
+            foreach (var poi in activePOIs)
+            {
+                if (poi.isInProximity && poiDataCache.TryGetValue(poi, out POIUpdateData data))
+                {
+                    poi.ResumeAudio(data.audioPosition);
+                }
+            }
+        }
+
+        public void ClearAllNavigationState()
+        {
+            activeCuePOIs.Clear();
+            ClearTargeting();
+            isInCyclePause = false;
+            cyclePauseTimer = 0f;
+            currentCueIndex = 0;
+            cueTimer = 0f;
         }
 
         /// <summary>
@@ -493,9 +537,6 @@ namespace LoGa.LudoEngine.Game
         {
             Debug.Log($" NARRATION COMPLETE: {poi.characterName} has finished their dialogue!");
 
-            string poiUnlockKey = $"POI_{poi.id}_Unlocked";
-            StorageService.Save(poiUnlockKey, true);
-
             // Mark POI as completed
             poi.MarkAsCompleted();
 
@@ -513,22 +554,21 @@ namespace LoGa.LudoEngine.Game
             // Handle reward audio if applicable
             if (poi.hasReward && poi.rewardId > 0)
             {
-                if (poi.hasReward && poi.rewardId > 0)
+                string poiUnlockKey = $"POI_{poi.id}_Unlocked";
+                StorageService.Save(poiUnlockKey, true);
+                var inventoryItem = new InventoryItem
                 {
-                    var inventoryItem = new InventoryItem
-                    {
-                        id = poi.id,
-                        name = poi.characterName,
-                        description = $"Character from {currentLayer.layerName}",
-                        type = ItemType.Character,
-                        audioClip = poi.characterAudioEvent,
-                        sourceTimeLayer = currentLayer.layerName,
-                        sourcePOI = poi.id
-                    };
+                    id = poi.id,
+                    name = poi.characterName,
+                    description = $"Character from {currentLayer.layerName}",
+                    type = ItemType.Character,
+                    audioClip = poi.characterAudioEvent,
+                    sourceTimeLayer = currentLayer.layerName,
+                    sourcePOI = poi.id
+                };
 
-                    InventoryManager.Instance.AddItem(inventoryItem);
-                }
-
+                InventoryManager.Instance.AddItem(inventoryItem);
+               
                 PlayRewardAnnouncement(poi.rewardId);
             }
         }
@@ -676,16 +716,6 @@ namespace LoGa.LudoEngine.Game
 
             if (targetingText != null)
                 targetingText.text = "";
-        }
-
-        private void ClearAllNavigationState()
-        {
-            activeCuePOIs.Clear();
-            ClearTargeting();
-            isInCyclePause = false;
-            cyclePauseTimer = 0f;
-            currentCueIndex = 0;
-            cueTimer = 0f;
         }
 
         private void UpdateTargetingUI()

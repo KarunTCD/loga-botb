@@ -1108,7 +1108,6 @@
 		</property>
 		<relationship name="triggerConditions">
 			<destination>{5eb95ccc-9111-4843-855b-079523f9b37d}</destination>
-			<destination>{faef0d86-3c20-4511-9e0e-2b40281161af}</destination>
 		</relationship>
 		<relationship name="audioFile">
 			<destination>{ed9ecef1-7b85-43e4-970b-e5c58cc51837}</destination>
@@ -2665,17 +2664,6 @@
 		</property>
 		<relationship name="parameter">
 			<destination>{09df229e-e423-443f-934a-2ff6e88c291e}</destination>
-		</relationship>
-	</object>
-	<object class="ParameterCondition" id="{faef0d86-3c20-4511-9e0e-2b40281161af}">
-		<property name="minimum">
-			<value>0</value>
-		</property>
-		<property name="maximum">
-			<value>1</value>
-		</property>
-		<relationship name="parameter">
-			<destination>{d2751481-c21a-4edf-960f-bf5066017fd2}</destination>
 		</relationship>
 	</object>
 	<object class="Automator" id="{d3220d1f-5edf-435b-9bff-761484bf653e}">

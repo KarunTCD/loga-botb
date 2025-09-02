@@ -1,5 +1,25 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-9201064876068096182
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
+  m_Name: bank:/Combat.bank
+  m_EditorClassIdentifier: 
+  Path: Assets/Audio/Build/Desktop/Combat.bank
+  Name: Combat
+  StudioPath: bank:/Combat
+  lastModified: 638924029001879674
+  FileSizes:
+  - Name: Desktop
+    Value: 2691488
+  Exists: 1
 --- !u!114 &-9074572175999152312
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -311,6 +331,30 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 102270
+--- !u!114 &-6781905481941968035
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/mercenary_encounter/CombatType
+  m_EditorClassIdentifier: 
+  Name: CombatType
+  StudioPath: 
+  Min: 1
+  Max: 6
+  Default: 1
+  ID:
+    data1: 3158361182
+    data2: 3085786482
+  Type: 1
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
 --- !u!114 &-6753778266678478677
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -431,6 +475,34 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 98428
+--- !u!114 &-6136427063580899603
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/combat/heartbeat_audio
+  m_EditorClassIdentifier: 
+  Path: event:/combat/heartbeat_audio
+  Guid:
+    Data1: -933501478
+    Data2: 1105982401
+    Data3: -1485982032
+    Data4: -153862852
+  Banks:
+  - {fileID: -9201064876068096182}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 0
+  Parameters:
+  - {fileID: 6522814535592547978}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 812
 --- !u!114 &-5909152015201415076
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -483,6 +555,33 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 130388
+--- !u!114 &-5516222332430744039
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/combat/mercenary_footsteps
+  m_EditorClassIdentifier: 
+  Path: event:/combat/mercenary_footsteps
+  Guid:
+    Data1: -1000586084
+    Data2: 1281804476
+    Data3: -863532887
+    Data4: -1380123222
+  Banks:
+  - {fileID: -9201064876068096182}
+  IsStream: 0
+  Is3D: 1
+  IsOneShot: 0
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 246
 --- !u!114 &-5239665623575717730
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -507,6 +606,33 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
+--- !u!114 &-5164331480738545981
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/combat/mercenary_attack
+  m_EditorClassIdentifier: 
+  Path: event:/combat/mercenary_attack
+  Guid:
+    Data1: 1643837809
+    Data2: 1323961476
+    Data3: -526707781
+    Data4: -536056061
+  Banks:
+  - {fileID: -9201064876068096182}
+  IsStream: 0
+  Is3D: 1
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 1460
 --- !u!114 &-4634650297046693860
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -878,10 +1004,10 @@ MonoBehaviour:
   Path: Assets/Audio/Build/Desktop/Master.bank
   Name: Master
   StudioPath: bank:/Master
-  lastModified: 638914663609393045
+  lastModified: 638920780433556662
   FileSizes:
   - Name: Desktop
-    Value: 51253152
+    Value: 51253088
   Exists: 1
 --- !u!114 &-2052320907851671852
 MonoBehaviour:
@@ -970,6 +1096,34 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
+--- !u!114 &-1161597028456508719
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/combat/mercenary_encounter
+  m_EditorClassIdentifier: 
+  Path: event:/combat/mercenary_encounter
+  Guid:
+    Data1: -1263395470
+    Data2: 1272893624
+    Data3: 1061061532
+    Data4: 956329762
+  Banks:
+  - {fileID: -9201064876068096182}
+  IsStream: 1
+  Is3D: 1
+  IsOneShot: 1
+  Parameters:
+  - {fileID: -6781905481941968035}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 69632
 --- !u!114 &-1142362391883012233
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1075,6 +1229,7 @@ MonoBehaviour:
   - {fileID: -3071137849130329491}
   - {fileID: 3838825471777141232}
   - {fileID: -6443719217133375580}
+  - {fileID: -9201064876068096182}
   EditorEvents:
   - {fileID: -4027970587427831066}
   - {fileID: -7609103010726695882}
@@ -1105,6 +1260,13 @@ MonoBehaviour:
   - {fileID: 1808663676030248571}
   - {fileID: 1051342063221319385}
   - {fileID: -7526162794770875228}
+  - {fileID: -1161597028456508719}
+  - {fileID: 753020055336074534}
+  - {fileID: -5164331480738545981}
+  - {fileID: -5516222332430744039}
+  - {fileID: -6136427063580899603}
+  - {fileID: 7207487229205096975}
+  - {fileID: 592993469962140371}
   EditorParameters:
   - {fileID: -8960227262851152707}
   MasterBanks:
@@ -1112,7 +1274,7 @@ MonoBehaviour:
   StringsBanks:
   - {fileID: 7937843521026953583}
   cacheVersion: 131847
-  cacheTime: 638914663609499122
+  cacheTime: 638924029001879674
   SerializableEventsDict:
   - key: event:/ambient_sounds
     index: 0
@@ -1172,6 +1334,20 @@ MonoBehaviour:
     index: 27
   - key: event:/oak_greeting
     index: 28
+  - key: event:/combat/mercenary_encounter
+    index: 29
+  - key: event:/combat/attack_impact
+    index: 30
+  - key: event:/combat/mercenary_attack
+    index: 31
+  - key: event:/combat/mercenary_footsteps
+    index: 32
+  - key: event:/combat/heartbeat_audio
+    index: 33
+  - key: event:/combat/berries_collect
+    index: 34
+  - key: event:/combat/berries_music
+    index: 35
 --- !u!114 &59723176013266999
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1196,6 +1372,61 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
+--- !u!114 &592993469962140371
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/combat/berries_music
+  m_EditorClassIdentifier: 
+  Path: event:/combat/berries_music
+  Guid:
+    Data1: 988374413
+    Data2: 1231066701
+    Data3: -1620283763
+    Data4: -935952914
+  Banks:
+  - {fileID: -9201064876068096182}
+  IsStream: 1
+  Is3D: 1
+  IsOneShot: 0
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 45738
+--- !u!114 &753020055336074534
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/combat/attack_impact
+  m_EditorClassIdentifier: 
+  Path: event:/combat/attack_impact
+  Guid:
+    Data1: 799305034
+    Data2: 1269305174
+    Data3: 1265642687
+    Data4: -1737986025
+  Banks:
+  - {fileID: -9201064876068096182}
+  IsStream: 0
+  Is3D: 1
+  IsOneShot: 1
+  Parameters:
+  - {fileID: 3006034800040850118}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 574
 --- !u!114 &962700134664562737
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1427,6 +1658,32 @@ MonoBehaviour:
   Type: 0
   IsGlobal: 0
   Labels: []
+  Exists: 1
+--- !u!114 &3006034800040850118
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/attack_impact/HitResult
+  m_EditorClassIdentifier: 
+  Name: HitResult
+  StudioPath: 
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 1463922002
+    data2: 2738073405
+  Type: 2
+  IsGlobal: 0
+  Labels:
+  - Miss
+  - Hit
   Exists: 1
 --- !u!114 &3219049231609547031
 MonoBehaviour:
@@ -1725,6 +1982,30 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 74295
+--- !u!114 &6522814535592547978
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/heartbeat_audio/Health
+  m_EditorClassIdentifier: 
+  Name: Health
+  StudioPath: 
+  Min: 0
+  Max: 3
+  Default: 3
+  ID:
+    data1: 3804003974
+    data2: 595706749
+  Type: 1
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
 --- !u!114 &6736377213202774991
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1777,6 +2058,33 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
+--- !u!114 &7207487229205096975
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/combat/berries_collect
+  m_EditorClassIdentifier: 
+  Path: event:/combat/berries_collect
+  Guid:
+    Data1: -2015602834
+    Data2: 1312012597
+    Data3: 1408835470
+    Data4: 644009244
+  Banks:
+  - {fileID: -9201064876068096182}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 1404
 --- !u!114 &7420022013926712054
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1844,10 +2152,10 @@ MonoBehaviour:
   Path: Assets/Audio/Build/Desktop/Master.strings.bank
   Name: Master.strings
   StudioPath: bank:/Master.strings
-  lastModified: 638914663609499122
+  lastModified: 638920780433659828
   FileSizes:
   - Name: Desktop
-    Value: 2856
+    Value: 3374
   Exists: 1
 --- !u!114 &8383362571895565179
 MonoBehaviour:
