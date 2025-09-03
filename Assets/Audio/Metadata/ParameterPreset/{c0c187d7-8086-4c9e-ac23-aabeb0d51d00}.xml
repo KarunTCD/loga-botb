@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.03.00">
+	<object class="ParameterPreset" id="{c0c187d7-8086-4c9e-ac23-aabeb0d51d00}">
+		<property name="name">
+			<value>HitResult</value>
+		</property>
+		<relationship name="folder">
+			<destination>{bbd5e19f-f0cc-4564-b4bd-46d7ab57ec7e}</destination>
+		</relationship>
+		<relationship name="parameter">
+			<destination>{afd836f3-e842-4b0e-abe8-2a8eb227f251}</destination>
+		</relationship>
+	</object>
+	<object class="GameParameter" id="{afd836f3-e842-4b0e-abe8-2a8eb227f251}">
+		<property name="parameterType">
+			<value>2</value>
+		</property>
+		<property name="maximum">
+			<value>2</value>
+		</property>
+		<property name="enumerationLabels">
+			<value>Miss</value>
+			<value>Hit</value>
+		</property>
+		<property name="initialValue">
+			<value>0</value>
+		</property>
+	</object>
+</objects>

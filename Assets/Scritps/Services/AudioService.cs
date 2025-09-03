@@ -42,6 +42,47 @@ namespace LoGa.LudoEngine.Services
             return RuntimeManager.CreateInstance(eventRef);
         }
 
+        // Replace the ListAllParameters method in AudioService with this corrected version:
+        public void ListAllParameters(EventInstance instance, string poiName)
+        {
+            if (!IsInstanceValid(instance)) return;
+
+            EventDescription eventDesc;
+            FMOD.RESULT result = instance.getDescription(out eventDesc);
+
+            Debug.Log($"🔍 [{poiName}] Event description result: {result}");
+
+            if (result != FMOD.RESULT.OK)
+            {
+                Debug.LogError($"Failed to get event description: {result}");
+                return;
+            }
+
+            int paramCount;
+            result = eventDesc.getParameterDescriptionCount(out paramCount);
+
+            Debug.Log($"🔍 [{poiName}] Parameter count: {paramCount}, Result: {result}");
+
+            // Try to access your known parameters directly
+            TestParameterAccess(instance, poiName);
+        }
+
+        // Replace the test method with this corrected version:
+        public void TestParameterAccess(EventInstance instance, string poiName)
+        {
+            Debug.Log($"🧪 Testing parameter access for {poiName}:");
+
+            // Test common parameter names that might exist
+            string[] testNames = { "Zone", "NarrationComplete", "zone", "narrationcomplete", "Trigger", "trigger" };
+
+            foreach (string testName in testNames)
+            {
+                float value;
+                FMOD.RESULT result = instance.getParameterByName(testName, out value);
+                Debug.Log($"   Parameter '{testName}': Value={value}, Result={result}");
+            }
+        }
+
         // Enhanced navigation cue method with manual cue index control
         public void PlayNavigationCue(EventInstance instance, Vector3 position, int characterId, float distance, bool isTargeted, float maxDistance, int cueIndex = 0)
         {
@@ -193,6 +234,23 @@ namespace LoGa.LudoEngine.Services
             if (!IsInstanceValid(instance)) return;
 
             instance.setProperty(property, value);
+        }
+
+        // Get parameter value from FMOD event instance
+        public float GetParameter(EventInstance instance, string paramName)
+        {
+            if (!IsInstanceValid(instance)) return 0f;
+
+            float value;
+            FMOD.RESULT result = instance.getParameterByName(paramName, out value);
+
+            if (result != FMOD.RESULT.OK)
+            {
+                Debug.LogWarning($"Failed to get parameter '{paramName}': {result}");
+                return 0f;
+            }
+
+            return value;
         }
 
         // Reset trigger parameter after delay

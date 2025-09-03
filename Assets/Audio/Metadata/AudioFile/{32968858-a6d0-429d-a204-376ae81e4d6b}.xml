@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.03.00">
+	<object class="AudioFile" id="{32968858-a6d0-429d-a204-376ae81e4d6b}">
+		<property name="assetPath">
+			<value>narration/now_raven2.wav</value>
+		</property>
+		<property name="isStreaming">
+			<value>true</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>44.0999985</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>10.828072562358276</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{ebca4182-9fac-49cd-93d1-bfbca4c66617}</destination>
+		</relationship>
+	</object>
+</objects>

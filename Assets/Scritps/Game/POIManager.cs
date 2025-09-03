@@ -6,6 +6,7 @@ using FMOD.Studio;
 using TMPro;
 using LoGa.LudoEngine.Core;
 using LoGa.LudoEngine.Services;
+using System;
 
 namespace LoGa.LudoEngine.Game
 {
@@ -33,7 +34,6 @@ namespace LoGa.LudoEngine.Game
 
         [Header("Audio System")]
         [SerializeField] private EventReference sharedCueEvent;
-        [SerializeField] private EventReference mainAmbientEvent;
 
         [Header("Distance Thresholds")]
         [SerializeField] private float proximityRadius = 20f;
@@ -41,10 +41,25 @@ namespace LoGa.LudoEngine.Game
         [SerializeField] private float maxCueRadius = 500000f;
         [SerializeField] private float discoveryDistance = 20f;
 
+        // Update the maxActiveCues field:
         [Header("Navigation System")]
-        [SerializeField] private float cueStagingDelay = 2f;
+        [SerializeField] private float cueStagingDelay = 4f;
         [SerializeField] private float cyclePauseDelay = 6f;
-        [SerializeField] private int maxActiveCues = 3;
+
+        // Add these new fields for dynamic system:
+        [Header("Progressive Navigation")]
+        [SerializeField] private int baseMaxActiveCues = 1;        // Starting value
+        [SerializeField] private int maxMaxActiveCues = 2;         // Maximum value
+        [SerializeField] private int completionsToIncrease = 2;    // Completions needed to increase
+
+        [Header("Welcome System")]
+        [SerializeField] private EventReference welcomeGreetingEvent; // Battle Oak welcome event
+        private EventInstance welcomeInstance;
+
+        [Header("Reward System")]
+        [SerializeField] private EventReference rewardAnnouncementEvent;
+        private EventInstance rewardInstance;
+        private static bool isRewardAudioPlaying = false;
 
         [Header("Target Locking")]
         [SerializeField] private float targetLockTime = 2.0f;
@@ -53,17 +68,25 @@ namespace LoGa.LudoEngine.Game
         [SerializeField] private GameObject targetingIndicator;
         [SerializeField] private TextMeshProUGUI targetingText;
         [SerializeField] private TextMeshProUGUI zoneText;
+        [SerializeField] private TextMeshProUGUI completionText;
 
         [Header("Frequency Control")]
         [SerializeField] private float maxTargetingDistance = 200f;
+
 
         // Current layer data
         private TimeLayer currentLayer;
         private List<POI> activePOIs = new List<POI>();
 
         // Audio instances
-        private EventInstance ambientMusicInstance;
         private EventInstance sharedCueInstance;
+
+        // Add completion tracking:
+        private int totalCompletedPOIs;
+        private int currentMaxActiveCues; // Dynamic value
+
+        // Add this property to get current max:
+        public int CurrentMaxActiveCues => currentMaxActiveCues;
 
         // Centralized data cache - calculated once, used everywhere
         private Dictionary<POI, POIUpdateData> poiDataCache = new Dictionary<POI, POIUpdateData>();
@@ -85,6 +108,7 @@ namespace LoGa.LudoEngine.Game
         private int updateFrameCounter = 0;
 
         // Services
+        private IStorageService StorageService => ServiceLocator.GetService<IStorageService>();
         private IAudioService AudioService => ServiceLocator.GetService<IAudioService>();
         private ILocationService LocationService => ServiceLocator.GetService<ILocationService>();
         private IHeadTrackingService HeadTrackingService => ServiceLocator.GetService<IHeadTrackingService>();
@@ -92,7 +116,17 @@ namespace LoGa.LudoEngine.Game
 
         private void Start()
         {
-            InitializeAmbientMusic();
+            // Load progression data
+            totalCompletedPOIs = StorageService.Load<int>("TotalCompletedPOIs");
+            currentMaxActiveCues = StorageService.Load<int>("CurrentMaxActiveCues");
+            if (currentMaxActiveCues == 0)
+                currentMaxActiveCues = baseMaxActiveCues;
+
+            // Initialize reward system
+            if (!rewardAnnouncementEvent.IsNull)
+            {
+                rewardInstance = AudioService.CreateAudioInstance(rewardAnnouncementEvent);
+            }
 
             // Subscribe to time layer changes
             TimeLayerManager.Instance.TimeLayerChanging += OnTimeLayerChanging;
@@ -100,6 +134,23 @@ namespace LoGa.LudoEngine.Game
 
             // Initialize with current layer
             OnTimeLayerChanged(TimeLayerManager.Instance.CurrentLayer);
+
+            // Initialize welcome greeting
+            if (!welcomeGreetingEvent.IsNull)
+            {
+                welcomeInstance = AudioService.CreateAudioInstance(welcomeGreetingEvent);
+            }
+        }
+
+        public void PlayWelcomeGreeting()
+        {
+            bool hasPlayedWelcome = StorageService.Load<bool>("HasPlayedWelcomeDialogue");
+            if (!hasPlayedWelcome && AudioService.IsInstanceValid(welcomeInstance))
+            {
+                AudioService.PlayAudio(welcomeInstance, Vector3.zero);
+                StorageService.Save("HasPlayedWelcomeDialogue", true);
+                Debug.Log("Battle Oak welcomes player to the Battle of Boyne!");
+            }
         }
 
         private void Update()
@@ -108,6 +159,8 @@ namespace LoGa.LudoEngine.Game
             if (TimeLayerManager.Instance.IsTransitioning ||
                 GameManager.Instance?.CurrentMode != GameManager.GameMode.Player)
                 return;
+
+
 
             Vector2 currentLocation = LocationService.GetCurrentLocation();
             if (currentLocation == Vector2.zero) return;
@@ -120,8 +173,21 @@ namespace LoGa.LudoEngine.Game
             // EVERY FRAME - Update POI proximity (smooth audio transitions)
             UpdatePOIProximity();
 
-            // EVERY FRAME - Navigation and targeting logic (responsive)
-            UpdateNavigationAndTargeting(currentLocation.x, currentLocation.y);
+            // Navigation cues ONLY in Wander mode
+            if (GameManager.Instance.CurrentGameplayState == GameManager.GameplayState.Wander)
+            {
+                UpdateNavigationAndTargeting(currentLocation.x, currentLocation.y);
+            }
+
+
+            // Check for narration completion on all active POIs
+            CheckNarrationCompletions();
+
+            // EVERY FRAME - Remove completed POIs when in wander mode
+            if (!activePOIs.Any(poi => poi.isInProximity))
+            {
+                RemoveCompletedPOIs();
+            }
 
             // OCCASIONAL - Discovery logic (1Hz)
             if (updateFrameCounter % 60 == 0)
@@ -134,6 +200,38 @@ namespace LoGa.LudoEngine.Game
             {
                 UpdateDebugDisplay(currentLocation);
             }
+        }
+
+        public void SilenceAllPOIAudio()
+        {
+            foreach (var poi in activePOIs)
+            {
+                if (poi.isInProximity)
+                {
+                    poi.SilenceAudio();
+                }
+            }
+        }
+
+        public void ResumeAllPOIAudio()
+        {
+            foreach (var poi in activePOIs)
+            {
+                if (poi.isInProximity && poiDataCache.TryGetValue(poi, out POIUpdateData data))
+                {
+                    poi.ResumeAudio(data.audioPosition);
+                }
+            }
+        }
+
+        public void ClearAllNavigationState()
+        {
+            activeCuePOIs.Clear();
+            ClearTargeting();
+            isInCyclePause = false;
+            cyclePauseTimer = 0f;
+            currentCueIndex = 0;
+            cueTimer = 0f;
         }
 
         /// <summary>
@@ -196,7 +294,14 @@ namespace LoGa.LudoEngine.Game
         /// </summary>
         private void UpdateNavigationAndTargeting(float currentLat, float currentLon)
         {
+            // skip if no active pois left
             if (activePOIs.Count == 0) return;
+
+            // Skip navigation cues while reward audio is playing
+            if (isRewardAudioPlaying)
+            {
+                return; // Combat triggers still work, just no navigation cues
+            }
 
             // Check for proximity POI (interact mode)
             var proximityPOI = poiDataCache
@@ -243,7 +348,7 @@ namespace LoGa.LudoEngine.Game
             return poiDataCache
                 .Where(p => p.Value.distance > proximityRadius && p.Value.distance <= maxCueRadius)
                 .OrderBy(p => p.Value.distance)
-                .Take(maxActiveCues)
+                .Take(currentMaxActiveCues)
                 .Select(p => p.Key)
                 .ToList();
         }
@@ -407,6 +512,195 @@ namespace LoGa.LudoEngine.Game
                 {
                     isInCyclePause = true;
                     cyclePauseTimer = 0f;
+
+                    // Dynamic debug message
+                    Debug.Log($"Completed cycle of {activeCuePOIs.Count}/{currentMaxActiveCues} cues, starting {cyclePauseDelay}s pause");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Poll all POIs for narration completion parameter changes
+        /// </summary>
+        private void CheckNarrationCompletions()
+        {
+            foreach (var poi in activePOIs)
+            {
+                if (poi.isInProximity && poi.CheckNarrationCompletion())
+                {
+                    OnPOINarrationComplete(poi);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Handle POI narration completion
+        /// </summary>
+        private void OnPOINarrationComplete(POI poi)
+        {
+            Debug.Log($"NARRATION COMPLETE: {poi.characterName} has finished their dialogue!");
+
+            // Step 1: Mark POI as completed and handle progression
+            poi.MarkAsCompleted();
+            UpdateProgressionTracking(poi);
+
+            // Step 2: Handle rewards FIRST (while POI still exists)
+            if (poi.hasReward && poi.rewardId > 0)
+            {
+                HandlePOIReward(poi);
+            }
+
+            // Step 3: Remove POI AFTER reward audio starts
+            RemoveCompletedPOI(poi);
+
+            Debug.Log("POIManager: POI completion finished");
+        }
+
+        /// <summary>
+        /// Update progression counters - separate from rewards
+        /// </summary>
+        private void UpdateProgressionTracking(POI poi)
+        {
+            // Only count non-portals for progression
+            if (!poi.IsPortal)
+            {
+                totalCompletedPOIs++;
+                StorageService.Save("TotalCompletedPOIs", totalCompletedPOIs);
+                UpdateMaxActiveCues();
+                StorageService.Save("CurrentMaxActiveCues", currentMaxActiveCues);
+                Debug.Log($"Total completed POIs: {totalCompletedPOIs}");
+            }
+        }
+
+        /// <summary>
+        /// Handle reward logic only - no progression tracking
+        /// </summary>
+        private void HandlePOIReward(POI poi)
+        {
+            Debug.Log($"Starting reward handling for {poi.characterName}");
+
+            // Save unlock key
+            string poiUnlockKey = $"POI_{poi.id}_Unlocked";
+            StorageService.Save(poiUnlockKey, true);
+
+            // Add to inventory with try-catch
+            try
+            {
+                var inventoryItem = new InventoryItem
+                {
+                    id = poi.id,
+                    name = poi.characterName,
+                    description = $"Character from {currentLayer.layerName}",
+                    type = ItemType.Character,
+                    audioClip = poi.characterAudioEvent,
+                    sourceTimeLayer = currentLayer.layerName,
+                    sourcePOI = poi.id
+                };
+                InventoryManager.Instance.AddItem(inventoryItem);
+                Debug.Log($"Added item to inventory: {poi.characterName}");
+            }
+            catch (System.NullReferenceException)
+            {
+                Debug.LogWarning("InventoryManager not available - skipping inventory add");
+            }
+
+            // Play reward audio
+            PlayRewardAnnouncement(poi.rewardId);
+        }
+
+        /// <summary>
+        /// Remove completed POI immediately
+        /// </summary>
+        private void RemoveCompletedPOI(POI poi)
+        {
+            Debug.Log($"Immediately removing completed POI: {poi.characterName}");
+            poi.Cleanup();
+            activePOIs.Remove(poi);
+            if (currentLayer?.pois != null) currentLayer.pois.Remove(poi);
+            if (poiDataCache.ContainsKey(poi)) poiDataCache.Remove(poi);
+        }
+
+        private void UpdateMaxActiveCues()
+        {
+            int newMax = baseMaxActiveCues;
+
+            if (totalCompletedPOIs >= completionsToIncrease)
+            {
+                newMax = maxMaxActiveCues;
+            }
+
+            if (newMax != currentMaxActiveCues)
+            {
+                currentMaxActiveCues = newMax;
+                Debug.Log($"🎯 Navigation complexity increased! Max active POIs: {currentMaxActiveCues} (Completed: {totalCompletedPOIs})");
+            }
+        }
+
+        private void PlayRewardAnnouncement(int rewardId)
+        {
+            Debug.Log($"Attempting to play reward announcement for ID: {rewardId}");
+
+            if (rewardInstance.handle == IntPtr.Zero)
+            {
+                Debug.LogError("Reward instance handle is zero - not initialized properly");
+                return;
+            }
+
+            if (!AudioService.IsInstanceValid(rewardInstance))
+            {
+                Debug.LogError("Reward instance is invalid! Check rewardAnnouncementEvent assignment in inspector");
+                return;
+            }
+
+            // Set flag and register callback
+            isRewardAudioPlaying = true;
+            rewardInstance.setCallback(OnRewardAudioComplete, EVENT_CALLBACK_TYPE.TIMELINE_MARKER | EVENT_CALLBACK_TYPE.STOPPED);
+
+            AudioService.SetParameter(rewardInstance, "RewardID", rewardId);
+            AudioService.PlayAudio(rewardInstance, Vector3.zero);
+
+            Debug.Log($"Battle Oak announces reward: ID {rewardId} - navigation cues paused");
+        }
+
+        [AOT.MonoPInvokeCallback(typeof(EVENT_CALLBACK))]
+        private static FMOD.RESULT OnRewardAudioComplete(EVENT_CALLBACK_TYPE type, IntPtr instancePtr, IntPtr parameterPtr)
+        {
+            if (type == EVENT_CALLBACK_TYPE.TIMELINE_MARKER)
+            {
+                isRewardAudioPlaying = false;
+                Debug.Log("Reward audio finished - navigation cues can resume");
+            }
+            return FMOD.RESULT.OK;
+        }
+
+
+        private void RemoveCompletedPOIs()
+        {
+            var poisToRemove = activePOIs.Where(poi => poi.ShouldBeRemoved).ToList();
+
+            if (poisToRemove.Count > 0)
+            {
+                Debug.Log($"Removing {poisToRemove.Count} completed POIs from map");
+
+                foreach (var poi in poisToRemove)
+                {
+                    poi.Cleanup();
+                    activePOIs.Remove(poi);
+
+                    // Also remove from current layer's POI list
+                    if (currentLayer?.pois != null)
+                    {
+                        currentLayer.pois.Remove(poi);
+                    }
+                }
+
+                // Clear cached data for removed POIs
+                foreach (var poi in poisToRemove)
+                {
+                    if (poiDataCache.ContainsKey(poi))
+                    {
+                        poiDataCache.Remove(poi);
+                    }
                 }
             }
         }
@@ -499,16 +793,6 @@ namespace LoGa.LudoEngine.Game
                 targetingText.text = "";
         }
 
-        private void ClearAllNavigationState()
-        {
-            activeCuePOIs.Clear();
-            ClearTargeting();
-            isInCyclePause = false;
-            cyclePauseTimer = 0f;
-            currentCueIndex = 0;
-            cueTimer = 0f;
-        }
-
         private void UpdateTargetingUI()
         {
             if (targetingText != null)
@@ -536,8 +820,8 @@ namespace LoGa.LudoEngine.Game
                 debugText.text = $"Layer: {currentLayer.layerName}\n" +
                                $"Target: {targetingState.targetPOI.characterName}\n" +
                                $"Dist: {data.distance:F0}m | Angle: {data.angleDifference:F1}°\n" +
-                               $"Head: {HeadTrackingService.CurrentHeading:F0}°\n" +
-                               $"Provider: {HeadTrackingService.ActiveProviderName}";
+                               $"MaxCues: {currentMaxActiveCues} (Completed: {totalCompletedPOIs})\n" +
+                               $"Head: {HeadTrackingService.CurrentHeading:F0}°";
             }
             else if (targetingState.mode == TargetingMode.Potential)
             {
@@ -545,15 +829,15 @@ namespace LoGa.LudoEngine.Game
                 debugText.text = $"Layer: {currentLayer.layerName}\n" +
                                $"Targeting: {targetingState.targetPOI.characterName}\n" +
                                $"Progress: {progress:F1}%\n" +
-                               $"Timer: {targetingState.timer:F2}s / {targetLockTime:F1}s\n" +
+                               $"MaxCues: {currentMaxActiveCues} (Completed: {totalCompletedPOIs})\n" +
                                $"Head: {HeadTrackingService.CurrentHeading:F0}°";
             }
             else
             {
                 debugText.text = $"Layer: {currentLayer.layerName}\n" +
                                $"POIs: {activePOIs.Count}\n" +
+                               $"MaxCues: {currentMaxActiveCues} (Completed: {totalCompletedPOIs})\n" +
                                $"Head: {HeadTrackingService.CurrentHeading:F0}°\n" +
-                               $"Provider: {HeadTrackingService.ActiveProviderName}\n" +
                                $"Location: {location.x:F6}, {location.y:F6}";
             }
         }
@@ -581,20 +865,6 @@ namespace LoGa.LudoEngine.Game
         /// <summary>
         /// Time layer management methods
         /// </summary>
-        private void InitializeAmbientMusic()
-        {
-            if (!mainAmbientEvent.IsNull)
-            {
-                ambientMusicInstance = AudioService.CreateAudioInstance(mainAmbientEvent);
-                AudioService.PlayAudio(ambientMusicInstance, Vector3.zero);
-                Debug.Log("Started main ambient music system");
-            }
-            else
-            {
-                Debug.LogError("Main ambient event not assigned!");
-            }
-        }
-
         private void OnTimeLayerChanging(TimeLayer from, TimeLayer to)
         {
             Debug.Log($"POIManager: Preparing transition from {from.layerName} to {to.layerName}");
@@ -615,7 +885,6 @@ namespace LoGa.LudoEngine.Game
 
             currentLayer = newLayer;
             LoadLayerPOIs(newLayer);
-            SwitchLayerAmbientMusic(newLayer);
 
             if (debugText != null)
             {
@@ -661,19 +930,6 @@ namespace LoGa.LudoEngine.Game
             }
         }
 
-        private void SwitchLayerAmbientMusic(TimeLayer layer)
-        {
-            if (ambientMusicInstance.isValid())
-            {
-                AudioService.SetParameter(ambientMusicInstance, "TimeLayer", layer.layerIndex);
-                Debug.Log($"Switched ambient music to layer {layer.layerIndex} ({layer.layerName})");
-            }
-            else
-            {
-                Debug.LogError("Ambient music instance is not valid!");
-            }
-        }
-
         private void CleanupCurrentLayerPOIs()
         {
             foreach (var poi in activePOIs)
@@ -701,6 +957,14 @@ namespace LoGa.LudoEngine.Game
                 bool isUnlocked = unlockedPOIs.Contains(poi.id);
                 poi.SetUnlocked(isUnlocked);
             }
+        }
+
+        /// <summary>
+        /// Public bool for external access, notify game manager when a poi comes in proximity
+        /// </summary>
+        public bool HasPOIInProximity()
+        {
+            return activePOIs.Any(poi => poi.isInProximity);
         }
 
         /// <summary>
@@ -773,6 +1037,41 @@ namespace LoGa.LudoEngine.Game
             }
         }
 
+
+        // Add method to get progression info (for UI or other systems):
+        public ProgressionInfo GetProgressionInfo()
+        {
+            return new ProgressionInfo
+            {
+                completedPOIs = totalCompletedPOIs,
+                currentMaxCues = currentMaxActiveCues,
+                nextThreshold = completionsToIncrease,
+                maxPossible = maxMaxActiveCues,
+                progressToNext = totalCompletedPOIs < completionsToIncrease ?
+                    (float)totalCompletedPOIs / completionsToIncrease : 1.0f
+            };
+        }
+
+        // Add this struct for progression info:
+        [System.Serializable]
+        public struct ProgressionInfo
+        {
+            public int completedPOIs;
+            public int currentMaxCues;
+            public int nextThreshold;
+            public int maxPossible;
+            public float progressToNext; // 0.0 to 1.0
+        }
+
+        // Optional: Add method to manually reset progression (for testing):
+        [ContextMenu("Reset Progression")]
+        public void ResetProgression()
+        {
+            totalCompletedPOIs = 0;
+            currentMaxActiveCues = baseMaxActiveCues;
+            Debug.Log($"🔄 Progression reset. Max cues: {currentMaxActiveCues}");
+        }
+
         private void OnDestroy()
         {
             // Unsubscribe from events
@@ -785,10 +1084,11 @@ namespace LoGa.LudoEngine.Game
             // Cleanup resources
             CleanupCurrentLayerPOIs();
 
-            if (ambientMusicInstance.isValid())
+            // Cleanup reward instance
+            if (rewardInstance.isValid())
             {
-                AudioService.StopAudio(ambientMusicInstance, true);
-                AudioService.ReleaseAudio(ambientMusicInstance);
+                AudioService.StopAudio(rewardInstance, true);
+                AudioService.ReleaseAudio(rewardInstance);
             }
         }
     }

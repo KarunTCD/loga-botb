@@ -326,7 +326,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36e4f2a4f2bba42fb88924494e64403f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  debugPermissions: 1
 --- !u!4 &244556588
 Transform:
   m_ObjectHideFlags: 0
@@ -427,7 +426,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 631bc0cff6c7c483c8056160eee3ad50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  configServicePrefab: {fileID: 1402754178}
+  storageServicePrefab: {fileID: 449420931}
   permissionServicePrefab: {fileID: 244556587}
   locationServicePrefab: {fileID: 600280646}
   headTrackingServicePrefab: {fileID: 1653246184}
@@ -452,7 +451,52 @@ Transform:
   - {fileID: 1653246185}
   - {fileID: 2075450575}
   - {fileID: 1924921433}
+  - {fileID: 449420932}
   m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &449420930
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 449420932}
+  - component: {fileID: 449420931}
+  m_Layer: 0
+  m_Name: StorageService
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &449420931
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 449420930}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7320ea78be9b4d64bc81f72dff6a5d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &449420932
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 449420930}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 419118823}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &553554542
 GameObject:
@@ -558,12 +602,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e5c165eb86494c77a5365354dbffc1b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  useEKF: 1
-  processNoisePosition: 0.01
-  processNoiseVelocity: 1
-  measurementNoiseGPS: 5
-  measurementNoiseAccel: 0.5
-  accelThreshold: 0.1
+  useKalmanFilter: 1
+  processNoise: 0.1
+  measurementNoise: 5
+  goodAccuracyThreshold: 5
+  poorAccuracyThreshold: 25
+  gpsUpdateInterval: 1
+  significantMoveThreshold: 1
 --- !u!4 &600280647
 Transform:
   m_ObjectHideFlags: 0

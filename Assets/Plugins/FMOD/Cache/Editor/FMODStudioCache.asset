@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-8704625382590345583
+--- !u!114 &-9201064876068096182
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -9,25 +9,89 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/farmer_music
+  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
+  m_Name: bank:/Combat.bank
   m_EditorClassIdentifier: 
-  Path: event:/farmer_music
-  Guid:
-    Data1: 670137374
-    Data2: 1227847142
-    Data3: 445860019
-    Data4: 1260604156
-  Banks:
-  - {fileID: -2072804872322699232}
-  IsStream: 1
-  Is3D: 1
-  IsOneShot: 0
-  Parameters:
-  - {fileID: -72112717291237577}
-  MinDistance: 1
-  MaxDistance: 20
-  Length: 0
+  Path: Assets/Audio/Build/Desktop/Combat.bank
+  Name: Combat
+  StudioPath: bank:/Combat
+  lastModified: 638924973509526026
+  FileSizes:
+  - Name: Desktop
+    Value: 2691488
+  Exists: 1
+--- !u!114 &-9074572175999152312
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/celtic_farmer_audio/Zone
+  m_EditorClassIdentifier: 
+  Name: Zone
+  StudioPath: 
+  Min: 0
+  Max: 3
+  Default: 0
+  ID:
+    data1: 1112535331
+    data2: 2309411790
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &-8960227262851152707
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/NarrationComplete
+  m_EditorClassIdentifier: 
+  Name: NarrationComplete
+  StudioPath: parameter:/NarrationComplete
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 492007618
+    data2: 2415047040
+  Type: 0
+  IsGlobal: 1
+  Labels: []
+  Exists: 1
+--- !u!114 &-8707707265397882252
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/boyne_audio/Zone
+  m_EditorClassIdentifier: 
+  Name: Zone
+  StudioPath: 
+  Min: 0
+  Max: 3
+  Default: 0
+  ID:
+    data1: 1112535331
+    data2: 2309411790
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
 --- !u!114 &-8545971718447149477
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -52,12 +116,11 @@ MonoBehaviour:
   Is3D: 0
   IsOneShot: 1
   Parameters:
-  - {fileID: 5655664269677492689}
-  - {fileID: -17035483891437240}
+  - {fileID: 962700134664562737}
   MinDistance: 1
   MaxDistance: 20
-  Length: 14000
---- !u!114 &-8487181924367557180
+  Length: 9000
+--- !u!114 &-8501214003927083526
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -66,21 +129,25 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/child_modern_music/Zone
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/french_soldier_audio
   m_EditorClassIdentifier: 
-  Name: Zone
-  StudioPath: 
-  Min: 0
-  Max: 3
-  Default: 0
-  ID:
-    data1: 1112535331
-    data2: 2309411790
-  Type: 0
-  IsGlobal: 0
-  Labels: []
-  Exists: 1
+  Path: event:/french_soldier_audio
+  Guid:
+    Data1: 1635846001
+    Data2: 1225494644
+    Data3: -1492882271
+    Data4: 1089509511
+  Banks:
+  - {fileID: -2072804872322699232}
+  IsStream: 1
+  Is3D: 1
+  IsOneShot: 0
+  Parameters:
+  - {fileID: 6038185040394527545}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 70503
 --- !u!114 &-8326130563702846123
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -105,7 +172,7 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
---- !u!114 &-7665875587563523758
+--- !u!114 &-8299403273253589408
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -114,25 +181,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/child_modern_music
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/battle_fox_audio/NarrationVariant
   m_EditorClassIdentifier: 
-  Path: event:/child_modern_music
-  Guid:
-    Data1: -878459424
-    Data2: 1276716403
-    Data3: -1871576394
-    Data4: 1301315179
-  Banks:
-  - {fileID: -2072804872322699232}
-  IsStream: 1
-  Is3D: 1
-  IsOneShot: 1
-  Parameters:
-  - {fileID: -8487181924367557180}
-  MinDistance: 1
-  MaxDistance: 20
-  Length: 0
+  Name: NarrationVariant
+  StudioPath: 
+  Min: 1
+  Max: 2
+  Default: 1
+  ID:
+    data1: 87377771
+    data2: 1171044379
+  Type: 1
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
 --- !u!114 &-7609103010726695882
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -165,7 +228,31 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 90
   Length: 0
---- !u!114 &-7317307929384543602
+--- !u!114 &-7574812512715141971
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/william_audio/Zone
+  m_EditorClassIdentifier: 
+  Name: Zone
+  StudioPath: 
+  Min: 0
+  Max: 3
+  Default: 0
+  ID:
+    data1: 1112535331
+    data2: 2309411790
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &-7526162794770875228
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -175,9 +262,60 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/james_music
+  m_Name: event:/oak_greeting
   m_EditorClassIdentifier: 
-  Path: event:/james_music
+  Path: event:/oak_greeting
+  Guid:
+    Data1: 486818563
+    Data2: 1229722763
+    Data3: 747145148
+    Data4: -99600686
+  Banks:
+  - {fileID: -2072804872322699232}
+  IsStream: 1
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 120000
+--- !u!114 &-6952881011818862437
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/battle_raven_audio/Zone
+  m_EditorClassIdentifier: 
+  Name: Zone
+  StudioPath: 
+  Min: 0
+  Max: 3
+  Default: 0
+  ID:
+    data1: 1112535331
+    data2: 2309411790
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &-6835865248959326012
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/james_audio
+  m_EditorClassIdentifier: 
+  Path: event:/james_audio
   Guid:
     Data1: -1406718307
     Data2: 1317937260
@@ -189,10 +327,58 @@ MonoBehaviour:
   Is3D: 1
   IsOneShot: 0
   Parameters:
-  - {fileID: -5872659263192881469}
+  - {fileID: 8565167282811094332}
   MinDistance: 1
   MaxDistance: 20
-  Length: 0
+  Length: 102270
+--- !u!114 &-6781905481941968035
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/mercenary_encounter/CombatType
+  m_EditorClassIdentifier: 
+  Name: CombatType
+  StudioPath: 
+  Min: 1
+  Max: 6
+  Default: 1
+  ID:
+    data1: 3158361182
+    data2: 3085786482
+  Type: 1
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &-6753778266678478677
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/harp_girl_audio/Zone
+  m_EditorClassIdentifier: 
+  Name: Zone
+  StudioPath: 
+  Min: 0
+  Max: 3
+  Default: 0
+  ID:
+    data1: 1112535331
+    data2: 2309411790
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
 --- !u!114 &-6556491914249172038
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -237,7 +423,7 @@ MonoBehaviour:
   - Name: Desktop
     Value: 506
   Exists: 1
---- !u!114 &-5872659263192881469
+--- !u!114 &-6296752583857902836
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -247,7 +433,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/james_music/Zone
+  m_Name: parameter:/battle_fox_audio/Zone
   m_EditorClassIdentifier: 
   Name: Zone
   StudioPath: 
@@ -261,7 +447,63 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
---- !u!114 &-5155890584717725837
+--- !u!114 &-6156019066867203751
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/william_audio
+  m_EditorClassIdentifier: 
+  Path: event:/william_audio
+  Guid:
+    Data1: 1175538158
+    Data2: 1256538305
+    Data3: 857137839
+    Data4: 547777320
+  Banks:
+  - {fileID: -2072804872322699232}
+  IsStream: 1
+  Is3D: 1
+  IsOneShot: 0
+  Parameters:
+  - {fileID: -7574812512715141971}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 98428
+--- !u!114 &-6136427063580899603
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/combat/heartbeat_audio
+  m_EditorClassIdentifier: 
+  Path: event:/combat/heartbeat_audio
+  Guid:
+    Data1: -933501478
+    Data2: 1105982401
+    Data3: -1485982032
+    Data4: -153862852
+  Banks:
+  - {fileID: -9201064876068096182}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 0
+  Parameters:
+  - {fileID: 6522814535592547978}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 812
+--- !u!114 &-5909152015201415076
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -271,7 +513,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/barber_surgeon_music/Zone
+  m_Name: parameter:/celtic_fox_audio/Zone
   m_EditorClassIdentifier: 
   Name: Zone
   StudioPath: 
@@ -285,6 +527,112 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
+--- !u!114 &-5725850402963345730
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/schomberg_audio
+  m_EditorClassIdentifier: 
+  Path: event:/schomberg_audio
+  Guid:
+    Data1: -1543126747
+    Data2: 1314846725
+    Data3: -866096995
+    Data4: -1863781256
+  Banks:
+  - {fileID: -2072804872322699232}
+  IsStream: 1
+  Is3D: 1
+  IsOneShot: 0
+  Parameters:
+  - {fileID: 3551903945902111711}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 130388
+--- !u!114 &-5516222332430744039
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/combat/mercenary_footsteps
+  m_EditorClassIdentifier: 
+  Path: event:/combat/mercenary_footsteps
+  Guid:
+    Data1: -1000586084
+    Data2: 1281804476
+    Data3: -863532887
+    Data4: -1380123222
+  Banks:
+  - {fileID: -9201064876068096182}
+  IsStream: 0
+  Is3D: 1
+  IsOneShot: 0
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 246
+--- !u!114 &-5239665623575717730
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/village_woman_audio/Zone
+  m_EditorClassIdentifier: 
+  Name: Zone
+  StudioPath: 
+  Min: 0
+  Max: 3
+  Default: 0
+  ID:
+    data1: 1112535331
+    data2: 2309411790
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &-5164331480738545981
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/combat/mercenary_attack
+  m_EditorClassIdentifier: 
+  Path: event:/combat/mercenary_attack
+  Guid:
+    Data1: 1643837809
+    Data2: 1323961476
+    Data3: -526707781
+    Data4: -536056061
+  Banks:
+  - {fileID: -9201064876068096182}
+  IsStream: 0
+  Is3D: 1
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 1460
 --- !u!114 &-4634650297046693860
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -309,7 +657,7 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
---- !u!114 &-4176406076702822943
+--- !u!114 &-4442659610704371921
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -318,25 +666,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/louis_music
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/battle_raven_audio/NarrationVariant
   m_EditorClassIdentifier: 
-  Path: event:/louis_music
-  Guid:
-    Data1: 536625850
-    Data2: 1251709943
-    Data3: -913172600
-    Data4: -836348760
-  Banks:
-  - {fileID: -2072804872322699232}
-  IsStream: 1
-  Is3D: 1
-  IsOneShot: 0
-  Parameters:
-  - {fileID: 5570442341208652100}
-  MinDistance: 1
-  MaxDistance: 20
-  Length: 0
+  Name: NarrationVariant
+  StudioPath: 
+  Min: 1
+  Max: 2
+  Default: 1
+  ID:
+    data1: 87377771
+    data2: 1171044379
+  Type: 1
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
 --- !u!114 &-4033021608061444249
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -389,7 +733,7 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 126000
---- !u!114 &-3371191593901127804
+--- !u!114 &-3342211075688722402
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -399,7 +743,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/salmon_music/Zone
+  m_Name: parameter:/grenadier_audio/Zone
   m_EditorClassIdentifier: 
   Name: Zone
   StudioPath: 
@@ -413,6 +757,34 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
+--- !u!114 &-3159261197335402281
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/battle_oak_audio
+  m_EditorClassIdentifier: 
+  Path: event:/battle_oak_audio
+  Guid:
+    Data1: -573735400
+    Data2: 1164887914
+    Data3: 803607699
+    Data4: -1636424172
+  Banks:
+  - {fileID: -2072804872322699232}
+  IsStream: 1
+  Is3D: 1
+  IsOneShot: 0
+  Parameters:
+  - {fileID: 2228033022237651436}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 109474
 --- !u!114 &-3071137849130329491
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -432,6 +804,134 @@ MonoBehaviour:
   FileSizes:
   - Name: Desktop
     Value: 506
+  Exists: 1
+--- !u!114 &-3013468149654837092
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/louis_audio
+  m_EditorClassIdentifier: 
+  Path: event:/louis_audio
+  Guid:
+    Data1: 536625850
+    Data2: 1251709943
+    Data3: -913172600
+    Data4: -836348760
+  Banks:
+  - {fileID: -2072804872322699232}
+  IsStream: 1
+  Is3D: 1
+  IsOneShot: 0
+  Parameters:
+  - {fileID: 4807972765691942357}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 81341
+--- !u!114 &-2943090342760852332
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/modern_farmer_audio/Zone
+  m_EditorClassIdentifier: 
+  Name: Zone
+  StudioPath: 
+  Min: 0
+  Max: 3
+  Default: 0
+  ID:
+    data1: 1112535331
+    data2: 2309411790
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &-2857752396775698339
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/sarsfield_audio
+  m_EditorClassIdentifier: 
+  Path: event:/sarsfield_audio
+  Guid:
+    Data1: 663945898
+    Data2: 1080172379
+    Data3: 941068199
+    Data4: -1103627851
+  Banks:
+  - {fileID: -2072804872322699232}
+  IsStream: 1
+  Is3D: 1
+  IsOneShot: 0
+  Parameters:
+  - {fileID: 1604820642810303284}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 33338
+--- !u!114 &-2840640885622858268
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/barber_surgeon_audio/Zone
+  m_EditorClassIdentifier: 
+  Name: Zone
+  StudioPath: 
+  Min: 0
+  Max: 3
+  Default: 0
+  ID:
+    data1: 1112535331
+    data2: 2309411790
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &-2582239335087819956
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/modern_raven_audio/NarrationVariant
+  m_EditorClassIdentifier: 
+  Name: NarrationVariant
+  StudioPath: 
+  Min: 1
+  Max: 2
+  Default: 1
+  ID:
+    data1: 87377771
+    data2: 1171044379
+  Type: 1
+  IsGlobal: 0
+  Labels: []
   Exists: 1
 --- !u!114 &-2310149781929280275
 MonoBehaviour:
@@ -460,6 +960,35 @@ MonoBehaviour:
   - Battle1690
   - Modern
   Exists: 1
+--- !u!114 &-2184037371137245529
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/celtic_fox_audio
+  m_EditorClassIdentifier: 
+  Path: event:/celtic_fox_audio
+  Guid:
+    Data1: 1409366747
+    Data2: 1253460628
+    Data3: 367639432
+    Data4: 595799489
+  Banks:
+  - {fileID: -2072804872322699232}
+  IsStream: 1
+  Is3D: 1
+  IsOneShot: 0
+  Parameters:
+  - {fileID: -5909152015201415076}
+  - {fileID: 2011927977527597038}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 13227
 --- !u!114 &-2072804872322699232
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -475,40 +1004,12 @@ MonoBehaviour:
   Path: Assets/Audio/Build/Desktop/Master.bank
   Name: Master
   StudioPath: bank:/Master
-  lastModified: 638905269761782306
+  lastModified: 638924995631920613
   FileSizes:
   - Name: Desktop
-    Value: 28553824
+    Value: 51253984
   Exists: 1
---- !u!114 &-696626694013031420
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/sergeant_major_music
-  m_EditorClassIdentifier: 
-  Path: event:/sergeant_major_music
-  Guid:
-    Data1: -1131596615
-    Data2: 1217703647
-    Data3: 1396483752
-    Data4: -1934053682
-  Banks:
-  - {fileID: -2072804872322699232}
-  IsStream: 1
-  Is3D: 1
-  IsOneShot: 0
-  Parameters:
-  - {fileID: 4041109380873986805}
-  MinDistance: 1
-  MaxDistance: 20
-  Length: 0
---- !u!114 &-645820461886399233
+--- !u!114 &-2052320907851671852
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -518,7 +1019,70 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/raven_music/Zone
+  m_Name: parameter:/reward_audio/RewardID
+  m_EditorClassIdentifier: 
+  Name: RewardID
+  StudioPath: 
+  Min: 0
+  Max: 10
+  Default: 0
+  ID:
+    data1: 3313013036
+    data2: 381065151
+  Type: 2
+  IsGlobal: 0
+  Labels:
+  - None
+  - Dutch Lion Amulet
+  - Triskel
+  - Ancient Crops
+  - Modern Crops
+  - Daisy Chain
+  - Brigid's Cross
+  - Acorn
+  - Grenade
+  - Royal Seal Ring
+  - Golden Sun
+  Exists: 1
+--- !u!114 &-2025815995093431045
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/celtic_child_audio
+  m_EditorClassIdentifier: 
+  Path: event:/celtic_child_audio
+  Guid:
+    Data1: 1745561768
+    Data2: 1107027871
+    Data3: 998473345
+    Data4: 284351180
+  Banks:
+  - {fileID: -2072804872322699232}
+  IsStream: 1
+  Is3D: 1
+  IsOneShot: 0
+  Parameters:
+  - {fileID: 5253520597996899557}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 153693
+--- !u!114 &-1898967523566692985
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/battle_farmer_audio/Zone
   m_EditorClassIdentifier: 
   Name: Zone
   StudioPath: 
@@ -532,7 +1096,7 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
---- !u!114 &-336613186091516016
+--- !u!114 &-1161597028456508719
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -542,9 +1106,93 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/raven_music
+  m_Name: event:/combat/mercenary_encounter
   m_EditorClassIdentifier: 
-  Path: event:/raven_music
+  Path: event:/combat/mercenary_encounter
+  Guid:
+    Data1: -1263395470
+    Data2: 1272893624
+    Data3: 1061061532
+    Data4: 956329762
+  Banks:
+  - {fileID: -9201064876068096182}
+  IsStream: 1
+  Is3D: 1
+  IsOneShot: 1
+  Parameters:
+  - {fileID: -6781905481941968035}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 69632
+--- !u!114 &-1142362391883012233
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/village_woman_audio
+  m_EditorClassIdentifier: 
+  Path: event:/village_woman_audio
+  Guid:
+    Data1: 1522258705
+    Data2: 1224621541
+    Data3: 1824080025
+    Data4: 1129485362
+  Banks:
+  - {fileID: -2072804872322699232}
+  IsStream: 1
+  Is3D: 1
+  IsOneShot: 0
+  Parameters:
+  - {fileID: -5239665623575717730}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 38125
+--- !u!114 &-1093687401170062786
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/battle_child_audio
+  m_EditorClassIdentifier: 
+  Path: event:/battle_child_audio
+  Guid:
+    Data1: -1890251322
+    Data2: 1280318621
+    Data3: 1633948590
+    Data4: 2147073893
+  Banks:
+  - {fileID: -2072804872322699232}
+  IsStream: 1
+  Is3D: 1
+  IsOneShot: 0
+  Parameters:
+  - {fileID: 7043200866928059898}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 50891
+--- !u!114 &-57198664374766352
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/modern_raven_audio
+  m_EditorClassIdentifier: 
+  Path: event:/modern_raven_audio
   Guid:
     Data1: -17476983
     Data2: 1197733990
@@ -556,11 +1204,12 @@ MonoBehaviour:
   Is3D: 1
   IsOneShot: 0
   Parameters:
-  - {fileID: -645820461886399233}
+  - {fileID: 2510504410322664773}
+  - {fileID: -2582239335087819956}
   MinDistance: 1
   MaxDistance: 20
-  Length: 0
---- !u!114 &-114475489008245556
+  Length: 35663
+--- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -569,26 +1218,137 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/salmon_music
+  m_Script: {fileID: 11500000, guid: d32cf7c32a3ed8347bac48ef5ed56d82, type: 3}
+  m_Name: FMODStudioCache
   m_EditorClassIdentifier: 
-  Path: event:/salmon_music
-  Guid:
-    Data1: -1794321705
-    Data2: 1155231689
-    Data3: -816275816
-    Data4: -1405444301
-  Banks:
+  EditorBanks:
+  - {fileID: 7937843521026953583}
   - {fileID: -2072804872322699232}
-  IsStream: 1
-  Is3D: 1
-  IsOneShot: 0
-  Parameters:
-  - {fileID: -3371191593901127804}
-  MinDistance: 1
-  MaxDistance: 20
-  Length: 0
---- !u!114 &-72112717291237577
+  - {fileID: 3727765447631376544}
+  - {fileID: 4657716592082696483}
+  - {fileID: -3071137849130329491}
+  - {fileID: 3838825471777141232}
+  - {fileID: -6443719217133375580}
+  - {fileID: -9201064876068096182}
+  EditorEvents:
+  - {fileID: -4027970587427831066}
+  - {fileID: -7609103010726695882}
+  - {fileID: -8545971718447149477}
+  - {fileID: 6260727882452214148}
+  - {fileID: -3159261197335402281}
+  - {fileID: 4228073711540055099}
+  - {fileID: -6835865248959326012}
+  - {fileID: 8834474720198705900}
+  - {fileID: -3013468149654837092}
+  - {fileID: 6736377213202774991}
+  - {fileID: 8768052866398908895}
+  - {fileID: -6156019066867203751}
+  - {fileID: -1142362391883012233}
+  - {fileID: 6432366638044029968}
+  - {fileID: -5725850402963345730}
+  - {fileID: 8383362571895565179}
+  - {fileID: 3219049231609547031}
+  - {fileID: 7908589005149596952}
+  - {fileID: -8501214003927083526}
+  - {fileID: -57198664374766352}
+  - {fileID: -2025815995093431045}
+  - {fileID: -2857752396775698339}
+  - {fileID: -1093687401170062786}
+  - {fileID: 1196395283467373978}
+  - {fileID: 4167923604842590848}
+  - {fileID: -2184037371137245529}
+  - {fileID: 1808663676030248571}
+  - {fileID: 1051342063221319385}
+  - {fileID: -7526162794770875228}
+  - {fileID: -1161597028456508719}
+  - {fileID: 753020055336074534}
+  - {fileID: -5164331480738545981}
+  - {fileID: -5516222332430744039}
+  - {fileID: -6136427063580899603}
+  - {fileID: 7207487229205096975}
+  - {fileID: 592993469962140371}
+  EditorParameters:
+  - {fileID: -8960227262851152707}
+  MasterBanks:
+  - {fileID: -2072804872322699232}
+  StringsBanks:
+  - {fileID: 7937843521026953583}
+  cacheVersion: 131847
+  cacheTime: 638924995631987309
+  SerializableEventsDict:
+  - key: event:/ambient_sounds
+    index: 0
+  - key: event:/nav_cue
+    index: 1
+  - key: event:/time_portal
+    index: 2
+  - key: event:/harp_girl_audio
+    index: 3
+  - key: event:/battle_oak_audio
+    index: 4
+  - key: event:/barber_surgeon_audio
+    index: 5
+  - key: event:/james_audio
+    index: 6
+  - key: event:/sergeant_major_audio
+    index: 7
+  - key: event:/louis_audio
+    index: 8
+  - key: event:/grenadier_audio
+    index: 9
+  - key: event:/salmon_audio
+    index: 10
+  - key: event:/william_audio
+    index: 11
+  - key: event:/village_woman_audio
+    index: 12
+  - key: event:/celtic_farmer_audio
+    index: 13
+  - key: event:/schomberg_audio
+    index: 14
+  - key: event:/battle_farmer_audio
+    index: 15
+  - key: event:/battle_raven_audio
+    index: 16
+  - key: event:/modern_farmer_audio
+    index: 17
+  - key: event:/french_soldier_audio
+    index: 18
+  - key: event:/modern_raven_audio
+    index: 19
+  - key: event:/celtic_child_audio
+    index: 20
+  - key: event:/sarsfield_audio
+    index: 21
+  - key: event:/battle_child_audio
+    index: 22
+  - key: event:/battle_fox_audio
+    index: 23
+  - key: event:/boyne_audio
+    index: 24
+  - key: event:/celtic_fox_audio
+    index: 25
+  - key: event:/modern_child_audio
+    index: 26
+  - key: event:/reward_audio
+    index: 27
+  - key: event:/oak_greeting
+    index: 28
+  - key: event:/combat/mercenary_encounter
+    index: 29
+  - key: event:/combat/attack_impact
+    index: 30
+  - key: event:/combat/mercenary_attack
+    index: 31
+  - key: event:/combat/mercenary_footsteps
+    index: 32
+  - key: event:/combat/heartbeat_audio
+    index: 33
+  - key: event:/combat/berries_collect
+    index: 34
+  - key: event:/combat/berries_music
+    index: 35
+--- !u!114 &59723176013266999
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -598,7 +1358,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/farmer_music/Zone
+  m_Name: parameter:/modern_child_audio/Zone
   m_EditorClassIdentifier: 
   Name: Zone
   StudioPath: 
@@ -612,7 +1372,62 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
---- !u!114 &-17035483891437240
+--- !u!114 &592993469962140371
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/combat/berries_music
+  m_EditorClassIdentifier: 
+  Path: event:/combat/berries_music
+  Guid:
+    Data1: 988374413
+    Data2: 1231066701
+    Data3: -1620283763
+    Data4: -935952914
+  Banks:
+  - {fileID: -9201064876068096182}
+  IsStream: 1
+  Is3D: 1
+  IsOneShot: 0
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 45738
+--- !u!114 &753020055336074534
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/combat/attack_impact
+  m_EditorClassIdentifier: 
+  Path: event:/combat/attack_impact
+  Guid:
+    Data1: 799305034
+    Data2: 1269305174
+    Data3: 1265642687
+    Data4: -1737986025
+  Banks:
+  - {fileID: -9201064876068096182}
+  IsStream: 0
+  Is3D: 1
+  IsOneShot: 1
+  Parameters:
+  - {fileID: 3006034800040850118}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 574
+--- !u!114 &962700134664562737
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -639,87 +1454,7 @@ MonoBehaviour:
   - Forward
   - Backward
   Exists: 1
---- !u!114 &11400000
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d32cf7c32a3ed8347bac48ef5ed56d82, type: 3}
-  m_Name: FMODStudioCache
-  m_EditorClassIdentifier: 
-  EditorBanks:
-  - {fileID: 7937843521026953583}
-  - {fileID: -2072804872322699232}
-  - {fileID: 3727765447631376544}
-  - {fileID: 4657716592082696483}
-  - {fileID: -3071137849130329491}
-  - {fileID: 3838825471777141232}
-  - {fileID: -6443719217133375580}
-  EditorEvents:
-  - {fileID: 825540548431408317}
-  - {fileID: -8704625382590345583}
-  - {fileID: 898744353406138437}
-  - {fileID: -336613186091516016}
-  - {fileID: -7317307929384543602}
-  - {fileID: -4027970587427831066}
-  - {fileID: -696626694013031420}
-  - {fileID: -4176406076702822943}
-  - {fileID: 4102378261553981461}
-  - {fileID: -114475489008245556}
-  - {fileID: 2206577961322073762}
-  - {fileID: -7609103010726695882}
-  - {fileID: 3440187416531342231}
-  - {fileID: -8545971718447149477}
-  - {fileID: 8529618090388666752}
-  - {fileID: 7716898382821133600}
-  - {fileID: -7665875587563523758}
-  EditorParameters: []
-  MasterBanks:
-  - {fileID: -2072804872322699232}
-  StringsBanks:
-  - {fileID: 7937843521026953583}
-  cacheVersion: 131847
-  cacheTime: 638905269761840062
-  SerializableEventsDict:
-  - key: event:/battle_oak_music
-    index: 0
-  - key: event:/farmer_music
-    index: 1
-  - key: event:/barber_surgeon_music
-    index: 2
-  - key: event:/raven_music
-    index: 3
-  - key: event:/james_music
-    index: 4
-  - key: event:/ambient_sounds
-    index: 5
-  - key: event:/sergeant_major_music
-    index: 6
-  - key: event:/louis_music
-    index: 7
-  - key: event:/grenadier_music
-    index: 8
-  - key: event:/salmon_music
-    index: 9
-  - key: event:/fox_music
-    index: 10
-  - key: event:/nav_cue
-    index: 11
-  - key: event:/william_music
-    index: 12
-  - key: event:/time_portal
-    index: 13
-  - key: event:/harp_girl_music
-    index: 14
-  - key: event:/child_neolithic_music
-    index: 15
-  - key: event:/child_modern_music
-    index: 16
---- !u!114 &825540548431408317
+--- !u!114 &1051342063221319385
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -729,25 +1464,25 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/battle_oak_music
+  m_Name: event:/reward_audio
   m_EditorClassIdentifier: 
-  Path: event:/battle_oak_music
+  Path: event:/reward_audio
   Guid:
-    Data1: -573735400
-    Data2: 1164887914
-    Data3: 803607699
-    Data4: -1636424172
+    Data1: 1537784784
+    Data2: 1287908770
+    Data3: -161326454
+    Data4: 209117433
   Banks:
   - {fileID: -2072804872322699232}
   IsStream: 1
-  Is3D: 1
-  IsOneShot: 0
+  Is3D: 0
+  IsOneShot: 1
   Parameters:
-  - {fileID: 4061104573433583399}
+  - {fileID: -2052320907851671852}
   MinDistance: 1
   MaxDistance: 20
-  Length: 0
---- !u!114 &898744353406138437
+  Length: 10144
+--- !u!114 &1196395283467373978
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -757,25 +1492,26 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/barber_surgeon_music
+  m_Name: event:/battle_fox_audio
   m_EditorClassIdentifier: 
-  Path: event:/barber_surgeon_music
+  Path: event:/battle_fox_audio
   Guid:
-    Data1: -254515590
-    Data2: 1318876954
-    Data3: 511570084
-    Data4: -896650416
+    Data1: -393206063
+    Data2: 1312764488
+    Data3: 1408129976
+    Data4: -1364446629
   Banks:
   - {fileID: -2072804872322699232}
   IsStream: 1
   Is3D: 1
   IsOneShot: 0
   Parameters:
-  - {fileID: -5155890584717725837}
+  - {fileID: -6296752583857902836}
+  - {fileID: -8299403273253589408}
   MinDistance: 1
   MaxDistance: 20
-  Length: 0
---- !u!114 &1204628863080048405
+  Length: 6300
+--- !u!114 &1285807649221292570
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -785,7 +1521,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/grenadier_music/Zone
+  m_Name: parameter:/salmon_audio/Zone
   m_EditorClassIdentifier: 
   Name: Zone
   StudioPath: 
@@ -799,7 +1535,7 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
---- !u!114 &1256571898328974457
+--- !u!114 &1604820642810303284
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -809,7 +1545,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/harp_girl_music/Zone
+  m_Name: parameter:/sarsfield_audio/Zone
   m_EditorClassIdentifier: 
   Name: Zone
   StudioPath: 
@@ -823,7 +1559,7 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
---- !u!114 &2206577961322073762
+--- !u!114 &1808663676030248571
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -833,25 +1569,25 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/fox_music
+  m_Name: event:/modern_child_audio
   m_EditorClassIdentifier: 
-  Path: event:/fox_music
+  Path: event:/modern_child_audio
   Guid:
-    Data1: 1409366747
-    Data2: 1253460628
-    Data3: 367639432
-    Data4: 595799489
+    Data1: -878459424
+    Data2: 1276716403
+    Data3: -1871576394
+    Data4: 1301315179
   Banks:
   - {fileID: -2072804872322699232}
   IsStream: 1
   Is3D: 1
   IsOneShot: 0
   Parameters:
-  - {fileID: 8573215453366634477}
+  - {fileID: 59723176013266999}
   MinDistance: 1
   MaxDistance: 20
-  Length: 0
---- !u!114 &2779168840276551436
+  Length: 73330
+--- !u!114 &2011927977527597038
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -861,7 +1597,31 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/child_neolithic_music/Zone
+  m_Name: parameter:/celtic_fox_audio/NarrationVariant
+  m_EditorClassIdentifier: 
+  Name: NarrationVariant
+  StudioPath: 
+  Min: 1
+  Max: 2
+  Default: 1
+  ID:
+    data1: 87377771
+    data2: 1171044379
+  Type: 1
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &2228033022237651436
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/battle_oak_audio/Zone
   m_EditorClassIdentifier: 
   Name: Zone
   StudioPath: 
@@ -875,7 +1635,57 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
---- !u!114 &3440187416531342231
+--- !u!114 &2510504410322664773
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/modern_raven_audio/Zone
+  m_EditorClassIdentifier: 
+  Name: Zone
+  StudioPath: 
+  Min: 0
+  Max: 3
+  Default: 0
+  ID:
+    data1: 1112535331
+    data2: 2309411790
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &3006034800040850118
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/attack_impact/HitResult
+  m_EditorClassIdentifier: 
+  Name: HitResult
+  StudioPath: 
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 1463922002
+    data2: 2738073405
+  Type: 2
+  IsGlobal: 0
+  Labels:
+  - Miss
+  - Hit
+  Exists: 1
+--- !u!114 &3219049231609547031
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -885,24 +1695,49 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/william_music
+  m_Name: event:/battle_raven_audio
   m_EditorClassIdentifier: 
-  Path: event:/william_music
+  Path: event:/battle_raven_audio
   Guid:
-    Data1: 1175538158
-    Data2: 1256538305
-    Data3: 857137839
-    Data4: 547777320
+    Data1: 239461205
+    Data2: 1088080628
+    Data3: -2103075665
+    Data4: -1856326545
   Banks:
   - {fileID: -2072804872322699232}
   IsStream: 1
   Is3D: 1
   IsOneShot: 0
   Parameters:
-  - {fileID: 4879424086487916034}
+  - {fileID: -6952881011818862437}
+  - {fileID: -4442659610704371921}
   MinDistance: 1
   MaxDistance: 20
-  Length: 0
+  Length: 17682
+--- !u!114 &3551903945902111711
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/schomberg_audio/Zone
+  m_EditorClassIdentifier: 
+  Name: Zone
+  StudioPath: 
+  Min: 0
+  Max: 3
+  Default: 0
+  ID:
+    data1: 1112535331
+    data2: 2309411790
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
 --- !u!114 &3727765447631376544
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -943,55 +1778,7 @@ MonoBehaviour:
   - Name: Desktop
     Value: 506
   Exists: 1
---- !u!114 &4041109380873986805
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/sergeant_major_music/Zone
-  m_EditorClassIdentifier: 
-  Name: Zone
-  StudioPath: 
-  Min: 0
-  Max: 3
-  Default: 0
-  ID:
-    data1: 1112535331
-    data2: 2309411790
-  Type: 0
-  IsGlobal: 0
-  Labels: []
-  Exists: 1
---- !u!114 &4061104573433583399
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/battle_oak_music/Zone
-  m_EditorClassIdentifier: 
-  Name: Zone
-  StudioPath: 
-  Min: 0
-  Max: 3
-  Default: 0
-  ID:
-    data1: 1112535331
-    data2: 2309411790
-  Type: 0
-  IsGlobal: 0
-  Labels: []
-  Exists: 1
---- !u!114 &4102378261553981461
+--- !u!114 &4167923604842590848
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1001,24 +1788,52 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/grenadier_music
+  m_Name: event:/boyne_audio
   m_EditorClassIdentifier: 
-  Path: event:/grenadier_music
+  Path: event:/boyne_audio
   Guid:
-    Data1: 1797648841
-    Data2: 1241449785
-    Data3: 1116406153
-    Data4: 981486305
+    Data1: 1214089938
+    Data2: 1155372457
+    Data3: 70843062
+    Data4: -863116591
   Banks:
   - {fileID: -2072804872322699232}
   IsStream: 1
   Is3D: 1
   IsOneShot: 0
   Parameters:
-  - {fileID: 1204628863080048405}
+  - {fileID: -8707707265397882252}
   MinDistance: 1
   MaxDistance: 20
-  Length: 0
+  Length: 75181
+--- !u!114 &4228073711540055099
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/barber_surgeon_audio
+  m_EditorClassIdentifier: 
+  Path: event:/barber_surgeon_audio
+  Guid:
+    Data1: -254515590
+    Data2: 1318876954
+    Data3: 511570084
+    Data4: -896650416
+  Banks:
+  - {fileID: -2072804872322699232}
+  IsStream: 1
+  Is3D: 1
+  IsOneShot: 0
+  Parameters:
+  - {fileID: -2840640885622858268}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 88742
 --- !u!114 &4657716592082696483
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1039,7 +1854,7 @@ MonoBehaviour:
   - Name: Desktop
     Value: 506
   Exists: 1
---- !u!114 &4879424086487916034
+--- !u!114 &4807972765691942357
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1049,7 +1864,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/william_music/Zone
+  m_Name: parameter:/louis_audio/Zone
   m_EditorClassIdentifier: 
   Name: Zone
   StudioPath: 
@@ -1063,7 +1878,7 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
---- !u!114 &5570442341208652100
+--- !u!114 &5253520597996899557
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1073,7 +1888,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/louis_music/Zone
+  m_Name: parameter:/celtic_child_audio/Zone
   m_EditorClassIdentifier: 
   Name: Zone
   StudioPath: 
@@ -1087,7 +1902,7 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
---- !u!114 &5655664269677492689
+--- !u!114 &6038185040394527545
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1097,21 +1912,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/time_portal/Trigger
+  m_Name: parameter:/french_soldier_audio/Zone
   m_EditorClassIdentifier: 
-  Name: Trigger
+  Name: Zone
   StudioPath: 
   Min: 0
-  Max: 1
+  Max: 3
   Default: 0
   ID:
-    data1: 3182214286
-    data2: 3291611135
+    data1: 1112535331
+    data2: 2309411790
   Type: 0
   IsGlobal: 0
   Labels: []
   Exists: 1
---- !u!114 &7716898382821133600
+--- !u!114 &6260727882452214148
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1121,24 +1936,207 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/child_neolithic_music
+  m_Name: event:/harp_girl_audio
   m_EditorClassIdentifier: 
-  Path: event:/child_neolithic_music
+  Path: event:/harp_girl_audio
   Guid:
-    Data1: 1745561768
-    Data2: 1107027871
-    Data3: 998473345
-    Data4: 284351180
+    Data1: -1568402162
+    Data2: 1290817365
+    Data3: 2102118808
+    Data4: -1994431221
   Banks:
   - {fileID: -2072804872322699232}
   IsStream: 1
   Is3D: 1
-  IsOneShot: 1
+  IsOneShot: 0
   Parameters:
-  - {fileID: 2779168840276551436}
+  - {fileID: -6753778266678478677}
   MinDistance: 1
   MaxDistance: 20
-  Length: 0
+  Length: 46592
+--- !u!114 &6432366638044029968
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/celtic_farmer_audio
+  m_EditorClassIdentifier: 
+  Path: event:/celtic_farmer_audio
+  Guid:
+    Data1: 670137374
+    Data2: 1227847142
+    Data3: 445860019
+    Data4: 1260604156
+  Banks:
+  - {fileID: -2072804872322699232}
+  IsStream: 1
+  Is3D: 1
+  IsOneShot: 0
+  Parameters:
+  - {fileID: -9074572175999152312}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 74295
+--- !u!114 &6522814535592547978
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/heartbeat_audio/Health
+  m_EditorClassIdentifier: 
+  Name: Health
+  StudioPath: 
+  Min: 0
+  Max: 3
+  Default: 3
+  ID:
+    data1: 3804003974
+    data2: 595706749
+  Type: 1
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &6736377213202774991
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/grenadier_audio
+  m_EditorClassIdentifier: 
+  Path: event:/grenadier_audio
+  Guid:
+    Data1: 1797648841
+    Data2: 1241449785
+    Data3: 1116406153
+    Data4: 981486305
+  Banks:
+  - {fileID: -2072804872322699232}
+  IsStream: 1
+  Is3D: 1
+  IsOneShot: 0
+  Parameters:
+  - {fileID: -3342211075688722402}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 98768
+--- !u!114 &7043200866928059898
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/battle_child_audio/Zone
+  m_EditorClassIdentifier: 
+  Name: Zone
+  StudioPath: 
+  Min: 0
+  Max: 3
+  Default: 0
+  ID:
+    data1: 1112535331
+    data2: 2309411790
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &7207487229205096975
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/combat/berries_collect
+  m_EditorClassIdentifier: 
+  Path: event:/combat/berries_collect
+  Guid:
+    Data1: -2015602834
+    Data2: 1312012597
+    Data3: 1408835470
+    Data4: 644009244
+  Banks:
+  - {fileID: -9201064876068096182}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 1404
+--- !u!114 &7420022013926712054
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/sergeant_major_audio/Zone
+  m_EditorClassIdentifier: 
+  Name: Zone
+  StudioPath: 
+  Min: 0
+  Max: 3
+  Default: 0
+  ID:
+    data1: 1112535331
+    data2: 2309411790
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &7908589005149596952
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/modern_farmer_audio
+  m_EditorClassIdentifier: 
+  Path: event:/modern_farmer_audio
+  Guid:
+    Data1: 1300191582
+    Data2: 1165851472
+    Data3: 1850780308
+    Data4: -1329949955
+  Banks:
+  - {fileID: -2072804872322699232}
+  IsStream: 1
+  Is3D: 1
+  IsOneShot: 0
+  Parameters:
+  - {fileID: -2943090342760852332}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 74295
 --- !u!114 &7937843521026953583
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1154,11 +2152,39 @@ MonoBehaviour:
   Path: Assets/Audio/Build/Desktop/Master.strings.bank
   Name: Master.strings
   StudioPath: bank:/Master.strings
-  lastModified: 638905269761840062
+  lastModified: 638924995631987309
   FileSizes:
   - Name: Desktop
-    Value: 2120
+    Value: 3374
   Exists: 1
+--- !u!114 &8383362571895565179
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/battle_farmer_audio
+  m_EditorClassIdentifier: 
+  Path: event:/battle_farmer_audio
+  Guid:
+    Data1: 1296916268
+    Data2: 1248758663
+    Data3: -1184820074
+    Data4: -444323801
+  Banks:
+  - {fileID: -2072804872322699232}
+  IsStream: 1
+  Is3D: 1
+  IsOneShot: 0
+  Parameters:
+  - {fileID: -1898967523566692985}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 66642
 --- !u!114 &8447249208792425948
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1174,7 +2200,7 @@ MonoBehaviour:
   Name: Character_ID
   StudioPath: 
   Min: 0
-  Max: 14
+  Max: 20
   Default: 0
   ID:
     data1: 315080306
@@ -1192,41 +2218,19 @@ MonoBehaviour:
   - James
   - Sergeant Major
   - Grenadier
-  - Farmer
-  - Child_Neolithic
+  - Celtic Farmer
+  - Child Neolithic
   - Barber Surgeon
-  - Harp_Girl
-  - Child_Modern
+  - Harp Girl
+  - Child Modern
+  - Sarsfield
+  - Schomberg
+  - River Boyne
+  - Battle Farmer
+  - French Soldier
+  - Village Woman
   Exists: 1
---- !u!114 &8529618090388666752
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/harp_girl_music
-  m_EditorClassIdentifier: 
-  Path: event:/harp_girl_music
-  Guid:
-    Data1: -1568402162
-    Data2: 1290817365
-    Data3: 2102118808
-    Data4: -1994431221
-  Banks:
-  - {fileID: -2072804872322699232}
-  IsStream: 1
-  Is3D: 1
-  IsOneShot: 0
-  Parameters:
-  - {fileID: 1256571898328974457}
-  MinDistance: 1
-  MaxDistance: 20
-  Length: 0
---- !u!114 &8573215453366634477
+--- !u!114 &8565167282811094332
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1236,7 +2240,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/fox_music/Zone
+  m_Name: parameter:/james_audio/Zone
   m_EditorClassIdentifier: 
   Name: Zone
   StudioPath: 
@@ -1250,3 +2254,59 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
+--- !u!114 &8768052866398908895
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/salmon_audio
+  m_EditorClassIdentifier: 
+  Path: event:/salmon_audio
+  Guid:
+    Data1: -1794321705
+    Data2: 1155231689
+    Data3: -816275816
+    Data4: -1405444301
+  Banks:
+  - {fileID: -2072804872322699232}
+  IsStream: 1
+  Is3D: 1
+  IsOneShot: 0
+  Parameters:
+  - {fileID: 1285807649221292570}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 84859
+--- !u!114 &8834474720198705900
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/sergeant_major_audio
+  m_EditorClassIdentifier: 
+  Path: event:/sergeant_major_audio
+  Guid:
+    Data1: -1131596615
+    Data2: 1217703647
+    Data3: 1396483752
+    Data4: -1934053682
+  Banks:
+  - {fileID: -2072804872322699232}
+  IsStream: 1
+  Is3D: 1
+  IsOneShot: 0
+  Parameters:
+  - {fileID: 7420022013926712054}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 69350

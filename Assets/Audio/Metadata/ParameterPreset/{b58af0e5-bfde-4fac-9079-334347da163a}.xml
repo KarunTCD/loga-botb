@@ -16,7 +16,7 @@
 			<value>2</value>
 		</property>
 		<property name="maximum">
-			<value>15</value>
+			<value>21</value>
 		</property>
 		<property name="enumerationLabels">
 			<value>None</value>
@@ -29,11 +29,17 @@
 			<value>James</value>
 			<value>Sergeant Major</value>
 			<value>Grenadier</value>
-			<value>Farmer</value>
-			<value>Child_Neolithic</value>
+			<value>Celtic Farmer</value>
+			<value>Child Neolithic</value>
 			<value>Barber Surgeon</value>
-			<value>Harp_Girl</value>
-			<value>Child_Modern</value>
+			<value>Harp Girl</value>
+			<value>Child Modern</value>
+			<value>Sarsfield</value>
+			<value>Schomberg</value>
+			<value>River Boyne</value>
+			<value>Battle Farmer</value>
+			<value>French Soldier</value>
+			<value>Village Woman</value>
 		</property>
 		<property name="initialValue">
 			<value>0</value>

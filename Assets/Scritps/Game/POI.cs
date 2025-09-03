@@ -3,6 +3,8 @@ using FMODUnity;
 using FMOD.Studio;
 using LoGa.LudoEngine.Core;
 using LoGa.LudoEngine.Services;
+using System;
+using System.Collections.Generic;
 
 namespace LoGa.LudoEngine.Game
 {
@@ -53,23 +55,47 @@ namespace LoGa.LudoEngine.Game
         public PortalType portalType = PortalType.None;
         public EventReference portalActivationAudio;
 
+        [Header("Reward Settings")]
+        public bool hasReward = false;          // Does this POI give a reward?
+        public int rewardId = 0;               // Specific reward ID (0 = no reward)
+        public string rewardName = "";         // For debugging/display
+
+        [Header("Completion State")]
+        private bool isCompleted = false;
+        private bool shouldBeRemoved = false; // Flag for delayed removal
+        private static Dictionary<IntPtr, POI> activeInstances = new Dictionary<IntPtr, POI>();
+
+        [Header("Portal Variant Settings")]
+        public bool hasMultipleVariants = false;  // True for fox/raven portals
+        public int narrationVariantCount = 2;     // Number of narration variants
+
+        public bool IsCompleted => isCompleted;
+        public bool ShouldBeRemoved => shouldBeRemoved;
+
         // Private state - no external access to avoid state conflicts
         private float proximityRadius;
         private float dialogueRadius;
-        private bool isInProximity;
+        public bool isInProximity { get; private set; }
         private bool isAudioPlaying = false;
         private bool hasBeenTriggered = false;
 
         // Audio references
         public EventReference characterAudioEvent;
-        private EventInstance characterAudioInstance;
+        public EventInstance characterAudioInstance;
         private EventInstance sharedCueInstance;
 
         // Character audio parameters
         private const string ZONE_PARAMETER = "Zone";
 
+        // Parameter tracking for completion detection
+        public static bool narrationJustCompleted = false;
+        public static IntPtr completedInstanceHandle = IntPtr.Zero;
+        private static TimeLayer pendingTransitionLayer = null;
+        private static IntPtr pendingPortalInstance = IntPtr.Zero;
+
         private bool isInitialized;
         private bool isDiscovered;
+        private bool wasPlayingBeforeSilence = false;
 
         // Public properties (read-only)
         public bool IsDiscovered => isDiscovered;
@@ -90,6 +116,20 @@ namespace LoGa.LudoEngine.Game
             {
                 characterAudioInstance = AudioService.CreateAudioInstance(characterAudioEvent);
                 AudioService.SetParameter(characterAudioInstance, ZONE_PARAMETER, 0.0f);
+
+                // Set narration variant for portals with multiple variants
+                if (hasMultipleVariants)
+                {
+                    int selectedVariant = UnityEngine.Random.Range(1, narrationVariantCount + 1);
+                    AudioService.SetParameter(characterAudioInstance, "NarrationVariant", selectedVariant);
+                    Debug.Log($"Portal {characterName} - Selected variant: {selectedVariant}");
+                }
+
+                // Register this POI instance for callbacks
+                activeInstances[characterAudioInstance.handle] = this;
+
+                // Register for timeline marker callbacks (destination markers)
+                characterAudioInstance.setCallback(NarrationCompleteCallback, EVENT_CALLBACK_TYPE.TIMELINE_MARKER);
             }
 
             // Show marker
@@ -101,6 +141,63 @@ namespace LoGa.LudoEngine.Game
 
             isInitialized = true;
             Debug.Log($"POI initialized: {characterName}");
+        }
+
+        [AOT.MonoPInvokeCallback(typeof(EVENT_CALLBACK))]
+        static FMOD.RESULT NarrationCompleteCallback(EVENT_CALLBACK_TYPE type, IntPtr instancePtr, IntPtr parameterPtr)
+        {
+            if (type == EVENT_CALLBACK_TYPE.TIMELINE_MARKER)
+            {
+                // Find which POI this belongs to
+                if (activeInstances.TryGetValue(instancePtr, out POI poi))
+                {
+                    Debug.Log($"NARRATION COMPLETE: {poi.characterName}!");
+
+                    // Set flag for POIManager to detect
+                    narrationJustCompleted = true;
+                    completedInstanceHandle = instancePtr;
+                }
+            }
+
+            return FMOD.RESULT.OK;
+        }
+
+        [AOT.MonoPInvokeCallback(typeof(EVENT_CALLBACK))]
+        static FMOD.RESULT PortalTransitionCallback(EVENT_CALLBACK_TYPE type, IntPtr instancePtr, IntPtr parameterPtr)
+        {
+            if (type == EVENT_CALLBACK_TYPE.TIMELINE_MARKER)
+            {
+                // Check if this is the portal instance we're waiting for
+                if (instancePtr == pendingPortalInstance && pendingTransitionLayer != null)
+                {
+                    Debug.Log($"Portal audio complete - transitioning to {pendingTransitionLayer.layerName}");
+
+                    // Trigger the actual time layer transition
+                    TimeLayerManager.Instance.TransitionToLayer(pendingTransitionLayer);
+
+                    // Clear pending data
+                    pendingTransitionLayer = null;
+                    pendingPortalInstance = IntPtr.Zero;
+                }
+            }
+
+            return FMOD.RESULT.OK;
+        }
+
+        public void MarkAsCompleted()
+        {
+            isCompleted = true;
+
+            if (IsPortal)
+            {
+                CheckPortalActivation();
+            }
+            else
+            {
+                // Regular POI - fade out music and mark for immediate removal
+                AudioService.StopAudio(characterAudioInstance, true); // Allow fade out
+                shouldBeRemoved = true;
+            }
         }
 
         public void SetSharedCueInstance(EventInstance instance)
@@ -140,12 +237,6 @@ namespace LoGa.LudoEngine.Game
                 AudioService.SetParameter(characterAudioInstance, ZONE_PARAMETER, zoneValue);
 
                 Debug.Log($"{characterName} - Distance: {data.distance:F1}m → Zone: {zoneValue:F2}");
-
-                // Check portal activation
-                if (IsPortal && data.distance <= dialogueRadius && !hasBeenTriggered)
-                {
-                    CheckPortalActivation();
-                }
             }
         }
 
@@ -177,6 +268,18 @@ namespace LoGa.LudoEngine.Game
                     Debug.Log($"[{characterName}] Targeted cue: Index {config.cueIndex}");
                     break;
             }
+        }
+
+        public bool CheckNarrationCompletion()
+        {
+            if (narrationJustCompleted && completedInstanceHandle == characterAudioInstance.handle)
+            {
+                // Reset the static flags
+                narrationJustCompleted = false;
+                completedInstanceHandle = IntPtr.Zero;
+                return true;
+            }
+            return false;
         }
 
         /// <summary>
@@ -227,19 +330,30 @@ namespace LoGa.LudoEngine.Game
         {
             hasBeenTriggered = true;
 
-            Debug.Log($"{portalType} portal ({characterName}) activated - transitioning to {targetLayer.layerName}");
+            Debug.Log($"{portalType} portal ({characterName}) activated - starting transition to {targetLayer.layerName}");
 
             if (!portalActivationAudio.IsNull)
             {
                 var portalInstance = AudioService.CreateAudioInstance(portalActivationAudio);
                 int portalTypeValue = portalType == PortalType.Forward ? 1 : 2;
                 AudioService.SetParameter(portalInstance, "PortalType", portalTypeValue);
-                AudioService.SetParameter(portalInstance, "Trigger", 1.0f);
+
+                // Register callback for portal transition completion
+                portalInstance.setCallback(PortalTransitionCallback, EVENT_CALLBACK_TYPE.TIMELINE_MARKER);
+
+                // Store target layer info for the callback
+                pendingTransitionLayer = targetLayer;
+                pendingPortalInstance = portalInstance.handle;
+
                 AudioService.PlayAudio(portalInstance, Vector3.zero);
             }
-
-            TimeLayerManager.Instance.TransitionToLayer(targetLayer);
+            else
+            {
+                // No portal audio, transition immediately
+                TimeLayerManager.Instance.TransitionToLayer(targetLayer);
+            }
         }
+
 
         // Discovery and unlock methods
         public void SetDiscovered(bool discovered)
@@ -260,6 +374,24 @@ namespace LoGa.LudoEngine.Game
             }
         }
 
+        public void SilenceAudio()
+        {
+            if (isAudioPlaying)
+            {
+                wasPlayingBeforeSilence = true;
+                AudioService.StopAudio(characterAudioInstance, true);
+            }
+        }
+
+        public void ResumeAudio(Vector3 audioPosition)
+        {
+            if (wasPlayingBeforeSilence && isInProximity)
+            {
+                AudioService.PlayAudio(characterAudioInstance, audioPosition);
+                wasPlayingBeforeSilence = false;
+            }
+        }
+
         /// <summary>
         /// Clean up POI resources
         /// </summary>
@@ -267,9 +399,14 @@ namespace LoGa.LudoEngine.Game
         {
             if (!isInitialized) return;
 
+            // Remove from active instances dictionary
+            if (characterAudioInstance.handle != IntPtr.Zero)
+            {
+                activeInstances.Remove(characterAudioInstance.handle);
+            }
+
             AudioService.StopAudio(characterAudioInstance);
             AudioService.ReleaseAudio(characterAudioInstance);
-
             // Hide marker
             if (marker != null)
             {
