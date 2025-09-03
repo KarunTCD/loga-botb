@@ -2241,6 +2241,37 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 269995155}
   m_CullTransparentMesh: 1
+--- !u!1 &285331080
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 285331081}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &285331081
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 285331080}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &304934539
 GameObject:
   m_ObjectHideFlags: 0
@@ -7300,8 +7331,8 @@ MonoBehaviour:
     pois:
     - id: fox
       characterName: Fox
-      latitude: 53.34906
-      longitude: -6.249796
+      latitude: 53.3447
+      longitude: -6.25875
       marker: {fileID: 812127815}
       characterId: 5
       portalType: 1
@@ -7326,8 +7357,8 @@ MonoBehaviour:
         Path: event:/celtic_fox_audio
     - id: salmon_knowledge
       characterName: Salmon Of Knowledge
-      latitude: 53.348495
-      longitude: -6.249042
+      latitude: 53.3444
+      longitude: -6.25738
       marker: {fileID: 1553759305}
       characterId: 3
       portalType: 0
@@ -7350,6 +7381,32 @@ MonoBehaviour:
           Data3: -816275816
           Data4: -1405444301
         Path: event:/salmon_audio
+    - id: celtic_child
+      characterName: Celtic Child
+      latitude: 53.34342
+      longitude: -6.25631
+      marker: {fileID: 1630744044}
+      characterId: 11
+      portalType: 0
+      portalActivationAudio:
+        Guid:
+          Data1: -1630672160
+          Data2: 1272249977
+          Data3: 39049607
+          Data4: -699573844
+        Path: event:/time_portal
+      hasReward: 1
+      rewardId: 5
+      rewardName: Daisy Chain
+      hasMultipleVariants: 0
+      narrationVariantCount: 1
+      characterAudioEvent:
+        Guid:
+          Data1: 1745561768
+          Data2: 1107027871
+          Data3: 998473345
+          Data4: 284351180
+        Path: event:/celtic_child_audio
   - layerName: Battle1690
     layerDescription: Time Layer when Battle of Boyne took place - 1690
     layerIndex: 1
@@ -7361,13 +7418,13 @@ MonoBehaviour:
         Data4: 841210949
       Path: event:/ambient_sounds
     pois:
-    - id: raven
-      characterName: Raven
-      latitude: 53.3491
-      longitude: -6.250266
-      marker: {fileID: 906921090}
-      characterId: 4
-      portalType: 2
+    - id: barber_surgeon
+      characterName: Barber Surgeon
+      latitude: 53.34471
+      longitude: -6.25823
+      marker: {fileID: 1413553337}
+      characterId: 12
+      portalType: 0
       portalActivationAudio:
         Guid:
           Data1: -1630672160
@@ -7382,17 +7439,17 @@ MonoBehaviour:
       narrationVariantCount: 2
       characterAudioEvent:
         Guid:
-          Data1: -17476983
-          Data2: 1197733990
-          Data3: 1956351362
-          Data4: -540070583
-        Path: event:/modern_raven_audio
-    - id: river_boyne
-      characterName: River Boyne
-      latitude: 53.3485
-      longitude: -6.249032
-      marker: {fileID: 181349703}
-      characterId: 2
+          Data1: -254515590
+          Data2: 1318876954
+          Data3: 511570084
+          Data4: -896650416
+        Path: event:/barber_surgeon_audio
+    - id: grenadier
+      characterName: Grenadier
+      latitude: 0
+      longitude: 0
+      marker: {fileID: 1630744044}
+      characterId: 9
       portalType: 0
       portalActivationAudio:
         Guid:
@@ -7401,22 +7458,22 @@ MonoBehaviour:
           Data3: 39049607
           Data4: -699573844
         Path: event:/time_portal
-      hasReward: 0
-      rewardId: 0
-      rewardName: 
+      hasReward: 1
+      rewardId: 8
+      rewardName: Grenade
       hasMultipleVariants: 0
       narrationVariantCount: 1
       characterAudioEvent:
         Guid:
-          Data1: 1214089938
-          Data2: 1155372457
-          Data3: 70843062
-          Data4: -863116591
-        Path: event:/boyne_audio
+          Data1: 1797648841
+          Data2: 1241449785
+          Data3: 1116406153
+          Data4: 981486305
+        Path: event:/grenadier_audio
     - id: william_orange
       characterName: William of Orange
-      latitude: 53.348022
-      longitude: -6.250015
+      latitude: 53.34465
+      longitude: -6.25742
       marker: {fileID: 2099162380}
       characterId: 1
       portalType: 0
@@ -7441,8 +7498,8 @@ MonoBehaviour:
         Path: event:/william_audio
     - id: louis
       characterName: Louis XIV
-      latitude: 53.350086
-      longitude: -6.24711
+      latitude: 53.34404
+      longitude: -6.25634
       marker: {fileID: 1545574668}
       characterId: 6
       portalType: 0
@@ -7467,8 +7524,8 @@ MonoBehaviour:
         Path: event:/louis_audio
     - id: james
       characterName: Deposed King James II
-      latitude: 53.348366
-      longitude: -6.248591
+      latitude: 53.34407
+      longitude: -6.25743
       marker: {fileID: 632247704}
       characterId: 7
       portalType: 0
@@ -7493,8 +7550,8 @@ MonoBehaviour:
         Path: event:/james_audio
     - id: fox
       characterName: Fox
-      latitude: 53.35015
-      longitude: -6.248593
+      latitude: 53.34512
+      longitude: -6.25722
       marker: {fileID: 812127815}
       characterId: 5
       portalType: 1
@@ -7519,8 +7576,8 @@ MonoBehaviour:
         Path: event:/battle_fox_audio
     - id: raven
       characterName: Raven
-      latitude: 53.349457
-      longitude: -6.247245
+      latitude: 0
+      longitude: 0
       marker: {fileID: 254441663}
       characterId: 4
       portalType: 2
@@ -7554,88 +7611,10 @@ MonoBehaviour:
         Data4: 841210949
       Path: event:/ambient_sounds
     pois:
-    - id: raven
-      characterName: Raven
-      latitude: 53.348396
-      longitude: -6.249969
-      marker: {fileID: 906921090}
-      characterId: 4
-      portalType: 2
-      portalActivationAudio:
-        Guid:
-          Data1: -1630672160
-          Data2: 1272249977
-          Data3: 39049607
-          Data4: -699573844
-        Path: event:/time_portal
-      hasReward: 0
-      rewardId: 0
-      rewardName: 
-      hasMultipleVariants: 0
-      narrationVariantCount: 1
-      characterAudioEvent:
-        Guid:
-          Data1: -17476983
-          Data2: 1197733990
-          Data3: 1956351362
-          Data4: -540070583
-        Path: event:/modern_raven_audio
-    - id: farmer
-      characterName: Farmer
-      latitude: 53.348362
-      longitude: -6.248631
-      marker: {fileID: 1118109659}
-      characterId: 10
-      portalType: 0
-      portalActivationAudio:
-        Guid:
-          Data1: -1630672160
-          Data2: 1272249977
-          Data3: 39049607
-          Data4: -699573844
-        Path: event:/time_portal
-      hasReward: 1
-      rewardId: 4
-      rewardName: Modern Crops
-      hasMultipleVariants: 0
-      narrationVariantCount: 1
-      characterAudioEvent:
-        Guid:
-          Data1: 670137374
-          Data2: 1227847142
-          Data3: 445860019
-          Data4: 1260604156
-        Path: event:/celtic_farmer_audio
-    - id: child
-      characterName: Child
-      latitude: 53.34952
-      longitude: -6.249068
-      marker: {fileID: 1630744044}
-      characterId: 14
-      portalType: 0
-      portalActivationAudio:
-        Guid:
-          Data1: -1630672160
-          Data2: 1272249977
-          Data3: 39049607
-          Data4: -699573844
-        Path: event:/time_portal
-      hasReward: 0
-      rewardId: 0
-      rewardName: 
-      hasMultipleVariants: 0
-      narrationVariantCount: 1
-      characterAudioEvent:
-        Guid:
-          Data1: -878459424
-          Data2: 1276716403
-          Data3: -1871576394
-          Data4: 1301315179
-        Path: event:/modern_child_audio
     - id: battle_oak
       characterName: Battle Oak
-      latitude: 53.34908
-      longitude: -6.249963
+      latitude: 53.348267
+      longitude: -6.249847
       marker: {fileID: 2127153680}
       characterId: 2
       portalType: 0
@@ -7658,7 +7637,59 @@ MonoBehaviour:
           Data3: 803607699
           Data4: -1636424172
         Path: event:/battle_oak_audio
-  defaultLayerIndex: 1
+    - id: raven
+      characterName: Raven
+      latitude: 53.34428
+      longitude: -6.25814
+      marker: {fileID: 906921090}
+      characterId: 4
+      portalType: 2
+      portalActivationAudio:
+        Guid:
+          Data1: -1630672160
+          Data2: 1272249977
+          Data3: 39049607
+          Data4: -699573844
+        Path: event:/time_portal
+      hasReward: 0
+      rewardId: 0
+      rewardName: 
+      hasMultipleVariants: 0
+      narrationVariantCount: 1
+      characterAudioEvent:
+        Guid:
+          Data1: -17476983
+          Data2: 1197733990
+          Data3: 1956351362
+          Data4: -540070583
+        Path: event:/modern_raven_audio
+    - id: modern_farmer
+      characterName: Modern Farmer
+      latitude: 53.34427
+      longitude: -6.2588
+      marker: {fileID: 1118109659}
+      characterId: 18
+      portalType: 0
+      portalActivationAudio:
+        Guid:
+          Data1: -1630672160
+          Data2: 1272249977
+          Data3: 39049607
+          Data4: -699573844
+        Path: event:/time_portal
+      hasReward: 1
+      rewardId: 4
+      rewardName: Modern Crops
+      hasMultipleVariants: 0
+      narrationVariantCount: 1
+      characterAudioEvent:
+        Guid:
+          Data1: 670137374
+          Data2: 1227847142
+          Data3: 445860019
+          Data4: 1260604156
+        Path: event:/celtic_farmer_audio
+  defaultLayerIndex: 2
   transitionDuration: 3
   timePortalAudio:
     Guid:
@@ -9280,19 +9311,12 @@ MonoBehaviour:
       Data3: -949885777
       Data4: 691049561
     Path: event:/nav_cue
-  mainAmbientEvent:
-    Guid:
-      Data1: -642792527
-      Data2: 1157833136
-      Data3: 2146350997
-      Data4: 841210949
-    Path: event:/ambient_sounds
-  proximityRadius: 40
-  dialogueRadius: 20
+  proximityRadius: 30
+  dialogueRadius: 15
   maxCueRadius: 1000
   discoveryDistance: 20
-  cueStagingDelay: 3
-  cyclePauseDelay: 5
+  cueStagingDelay: 4
+  cyclePauseDelay: 6
   baseMaxActiveCues: 1
   maxMaxActiveCues: 2
   completionsToIncrease: 2
@@ -11504,10 +11528,10 @@ MonoBehaviour:
   joystick: {fileID: 98771672}
   fixPhraseManager: {fileID: 150098454}
   gameManager: {fileID: 1662718314}
-  northLatitude: 53.351048
-  southLatitude: 53.347187
-  eastLongitude: -6.245949
-  westLongitude: -6.251248
+  northLatitude: 53.349644
+  southLatitude: 53.34212
+  eastLongitude: -6.252051
+  westLongitude: -6.259341
   joystickMoveSpeed: 0.00001
 --- !u!1 &1432207049
 GameObject:
@@ -12814,7 +12838,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1630744044
 RectTransform:
   m_ObjectHideFlags: 0
@@ -13034,9 +13058,13 @@ MonoBehaviour:
     Path: event:/combat/berries_collect
   combatTriggerCheckInterval: 2
   approachDuration: 4
-  berrySpawnDistanceMin: 5
-  berrySpawnDistanceMax: 15
-  berryCollectionRadius: 5
+  mainAmbientEvent:
+    Guid:
+      Data1: -642792527
+      Data2: 1157833136
+      Data3: 2146350997
+      Data4: 841210949
+    Path: event:/ambient_sounds
   enableTestingMode: 1
   tapTimeWindow: 0.5
   gameState: 1
@@ -15423,3 +15451,4 @@ SceneRoots:
   - {fileID: 1421694613}
   - {fileID: 1323550134}
   - {fileID: 150098453}
+  - {fileID: 285331081}

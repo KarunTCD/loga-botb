@@ -11,9 +11,9 @@ namespace LoGa.LudoEngine.Game
         public Vector3 worldPosition { get; private set; }
 
         // GPS-friendly distances accounting for accuracy issues
-        private const float SPAWN_MIN_DISTANCE = 8f;   // Minimum 8m from player
+        private const float SPAWN_MIN_DISTANCE = 6f;   // Minimum 8m from player
         private const float SPAWN_MAX_DISTANCE = 10f;  // Maximum 10m from player  
-        private const float COLLECTION_RADIUS = 3f;    // 3m collection radius for GPS accuracy
+        private const float COLLECTION_RADIUS = 5f;    // 3m collection radius for GPS accuracy
 
         private ILocationService LocationService => ServiceLocator.GetService<ILocationService>();
 

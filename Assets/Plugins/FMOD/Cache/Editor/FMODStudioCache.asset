@@ -15,7 +15,7 @@ MonoBehaviour:
   Path: Assets/Audio/Build/Desktop/Combat.bank
   Name: Combat
   StudioPath: bank:/Combat
-  lastModified: 638924029001879674
+  lastModified: 638924973509526026
   FileSizes:
   - Name: Desktop
     Value: 2691488
@@ -1004,10 +1004,10 @@ MonoBehaviour:
   Path: Assets/Audio/Build/Desktop/Master.bank
   Name: Master
   StudioPath: bank:/Master
-  lastModified: 638920780433556662
+  lastModified: 638924995631920613
   FileSizes:
   - Name: Desktop
-    Value: 51253088
+    Value: 51253984
   Exists: 1
 --- !u!114 &-2052320907851671852
 MonoBehaviour:
@@ -1274,7 +1274,7 @@ MonoBehaviour:
   StringsBanks:
   - {fileID: 7937843521026953583}
   cacheVersion: 131847
-  cacheTime: 638924029001879674
+  cacheTime: 638924995631987309
   SerializableEventsDict:
   - key: event:/ambient_sounds
     index: 0
@@ -1481,7 +1481,7 @@ MonoBehaviour:
   - {fileID: -2052320907851671852}
   MinDistance: 1
   MaxDistance: 20
-  Length: 0
+  Length: 10144
 --- !u!114 &1196395283467373978
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2152,7 +2152,7 @@ MonoBehaviour:
   Path: Assets/Audio/Build/Desktop/Master.strings.bank
   Name: Master.strings
   StudioPath: bank:/Master.strings
-  lastModified: 638920780433659828
+  lastModified: 638924995631987309
   FileSizes:
   - Name: Desktop
     Value: 3374

@@ -55,6 +55,9 @@ namespace LoGa.LudoEngine.Core
         [SerializeField] private float combatTriggerCheckInterval = 2f;
         [SerializeField] private float approachDuration = 4f;
 
+        [Header("Universal Audio")]
+        [SerializeField] private EventReference mainAmbientEvent;
+
         [Header("Testing")]
         [SerializeField] private bool enableTestingMode = true;
         [SerializeField] private float tapTimeWindow = 0.5f; // Time window to detect multiple taps
@@ -64,12 +67,14 @@ namespace LoGa.LudoEngine.Core
         private GameplayState currentGameplayState = GameplayState.Wander;
         private string currentSessionId;
         public GameState gameState = GameState.Suspended;
+        private bool isPlayerInPOIProximity = false;
 
         // Health system
         private int playerHealth = 3;
         private const int maxHealth = 3;
 
         // Audio instances
+        private EventInstance mainAmbientInstance;
         private EventInstance mercenaryEncounterInstance;
         private EventInstance currentFootstepsInstance;
         private EventInstance currentAttackInstance;
@@ -139,6 +144,15 @@ namespace LoGa.LudoEngine.Core
         {
             SuspendGame();
             InitializeCombatAudio();
+
+            // Subscribe to time layer changes for ambient music
+            TimeLayerManager.Instance.TimeLayerChanged += OnTimeLayerChanged;
+        }
+
+        private void OnTimeLayerChanged(TimeLayer newLayer)
+        {
+            Debug.Log($"[TEST] GameManager: Time layer changed to {newLayer.layerName}");
+            UpdateAmbientMusicForTimeLayer(newLayer);
         }
 
         private void Update()
@@ -146,10 +160,16 @@ namespace LoGa.LudoEngine.Core
             HandleTestingInput();
             if (currentMode == GameMode.Player && gameState == GameState.Running)
             {
+                // Handle proximity-based state transitions FIRST
+                CheckForProximityStateTransitions();
+
                 switch (currentGameplayState)
                 {
                     case GameplayState.Wander:
                         UpdateWanderMode();
+                        break;
+                    case GameplayState.Interact:
+                        // Let POIManager handle interact mode logic
                         break;
                     case GameplayState.Combat:
                         UpdateCombatMode();
@@ -254,6 +274,30 @@ namespace LoGa.LudoEngine.Core
             {
                 sharedBerryInstance = AudioService.CreateAudioInstance(berryAmbientEvent);
                 Debug.Log("[TEST] Shared berry audio instance created");
+            }
+
+            InitializeAmbientMusic();
+        }
+
+        private void InitializeAmbientMusic()
+        {
+            if (!mainAmbientEvent.IsNull)
+            {
+                mainAmbientInstance = AudioService.CreateAudioInstance(mainAmbientEvent);
+                Debug.Log("[TEST] Main ambient music instance created");
+            }
+            else
+            {
+                Debug.LogError("Main ambient event not assigned in GameManager!");
+            }
+        }
+
+        private void UpdateAmbientMusicForTimeLayer(TimeLayer layer)
+        {
+            if (AudioService.IsInstanceValid(mainAmbientInstance))
+            {
+                AudioService.SetParameter(mainAmbientInstance, "TimeLayer", layer.layerIndex);
+                Debug.Log($"[TEST] Switched ambient music to layer {layer.layerIndex} ({layer.layerName})");
             }
         }
 
@@ -387,6 +431,7 @@ namespace LoGa.LudoEngine.Core
             {
                 case GameplayState.Wander:
                     EnablePOIManager();
+                    StartAmbientMusic();
                     // Always stop heartbeat in wander mode
                     if (AudioService.IsInstanceValid(heartbeatInstance))
                     {
@@ -401,6 +446,7 @@ namespace LoGa.LudoEngine.Core
 
                 case GameplayState.Combat:
                     DisablePOIManager();
+                    StopAmbientMusic();
                     StartCombat();
                     // Don't start heartbeat here - only after damage
                     break;
@@ -432,6 +478,56 @@ namespace LoGa.LudoEngine.Core
                 poiManager.ClearAllNavigationState();
                 poiManager.enabled = false;
             }
+        }
+
+        private void StartAmbientMusic()
+        {
+            if (AudioService.IsInstanceValid(mainAmbientInstance))
+            {
+                PLAYBACK_STATE playbackState;
+                mainAmbientInstance.getPlaybackState(out playbackState);
+                if (playbackState != PLAYBACK_STATE.PLAYING)
+                {
+                    AudioService.PlayAudio(mainAmbientInstance, Vector3.zero);
+                    Debug.Log("[TEST] Started main ambient music");
+                }
+            }
+        }
+
+        private void StopAmbientMusic()
+        {
+            if (AudioService.IsInstanceValid(mainAmbientInstance))
+            {
+                AudioService.StopAudio(mainAmbientInstance, true);
+                Debug.Log("[TEST] Stopped main ambient music");
+            }
+        }
+
+        public void CheckForProximityStateTransitions()
+        {
+            if (currentGameplayState != GameplayState.Wander && currentGameplayState != GameplayState.Interact)
+                return; // Only handle Wander ↔ Interact transitions
+
+            bool nowInProximity = IsPlayerInPOIProximity();
+
+            if (nowInProximity && !isPlayerInPOIProximity && currentGameplayState == GameplayState.Wander)
+            {
+                Debug.Log("[GameManager] Player entered POI proximity - transitioning to Interact mode");
+                TransitionToInteractMode();
+                isPlayerInPOIProximity = true;
+            }
+            else if (!nowInProximity && isPlayerInPOIProximity && currentGameplayState == GameplayState.Interact)
+            {
+                Debug.Log("[GameManager] Player left POI proximity - transitioning to Wander mode");
+                TransitionToWanderMode();
+                isPlayerInPOIProximity = false;
+            }
+        }
+
+        private bool IsPlayerInPOIProximity()
+        {
+            // Ask POIManager if any POI is currently in proximity
+            return poiManager != null && poiManager.HasPOIInProximity();
         }
 
         #endregion
@@ -997,6 +1093,11 @@ namespace LoGa.LudoEngine.Core
                 mapManager.enabled = true;
                 mapManager.SetSpectatorMode(false);
             }
+            // Start ambient music when entering player mode
+            if (currentGameplayState == GameplayState.Wander)
+            {
+                StartAmbientMusic();
+            }
 
             // Only enable POI manager if in wander mode
             if (currentGameplayState == GameplayState.Wander && poiManager != null)
@@ -1143,6 +1244,19 @@ namespace LoGa.LudoEngine.Core
             try
             {
                 var firebaseService = ServiceLocator.GetService<IFirebaseService>();
+
+                // Unsubscribe from time layer events
+                if (TimeLayerManager.Instance != null)
+                {
+                    TimeLayerManager.Instance.TimeLayerChanged -= OnTimeLayerChanged;
+                }
+
+                // Cleanup ambient music
+                if (AudioService.IsInstanceValid(mainAmbientInstance))
+                {
+                    AudioService.StopAudio(mainAmbientInstance, true);
+                    AudioService.ReleaseAudio(mainAmbientInstance);
+                }
 
                 if (firebaseService != null && firebaseService.IsInitialized)
                 {
