@@ -1,0 +1,224 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa735d4f30e23439f99d420cf2328772, type: 3}
+  m_Name: AudioEventLookup
+  m_EditorClassIdentifier: 
+  characterAudioEvents:
+  - eventName: oak_audio
+    eventReference:
+      Guid:
+        Data1: -573735400
+        Data2: 1164887914
+        Data3: 803607699
+        Data4: -1636424172
+      Path: event:/battle_oak_audio
+  - eventName: celtic_farmer_audio
+    eventReference:
+      Guid:
+        Data1: 670137374
+        Data2: 1227847142
+        Data3: 445860019
+        Data4: 1260604156
+      Path: event:/celtic_farmer_audio
+  - eventName: battle_fox_audio
+    eventReference:
+      Guid:
+        Data1: -393206063
+        Data2: 1312764488
+        Data3: 1408129976
+        Data4: -1364446629
+      Path: event:/battle_fox_audio
+  - eventName: modern_raven_audio
+    eventReference:
+      Guid:
+        Data1: -17476983
+        Data2: 1197733990
+        Data3: 1956351362
+        Data4: -540070583
+      Path: event:/modern_raven_audio
+  - eventName: battle_raven_audio
+    eventReference:
+      Guid:
+        Data1: 239461205
+        Data2: 1088080628
+        Data3: -2103075665
+        Data4: -1856326545
+      Path: event:/battle_raven_audio
+  - eventName: celtic_fox_audio
+    eventReference:
+      Guid:
+        Data1: 1409366747
+        Data2: 1253460628
+        Data3: 367639432
+        Data4: 595799489
+      Path: event:/celtic_fox_audio
+  - eventName: batttle_farmer_audio
+    eventReference:
+      Guid:
+        Data1: 1296916268
+        Data2: 1248758663
+        Data3: -1184820074
+        Data4: -444323801
+      Path: event:/battle_farmer_audio
+  - eventName: modern_farmer_audio
+    eventReference:
+      Guid:
+        Data1: 1300191582
+        Data2: 1165851472
+        Data3: 1850780308
+        Data4: -1329949955
+      Path: event:/modern_farmer_audio
+  - eventName: celtic_child_audio
+    eventReference:
+      Guid:
+        Data1: 1745561768
+        Data2: 1107027871
+        Data3: 998473345
+        Data4: 284351180
+      Path: event:/celtic_child_audio
+  - eventName: battle_child_audio
+    eventReference:
+      Guid:
+        Data1: -1890251322
+        Data2: 1280318621
+        Data3: 1633948590
+        Data4: 2147073893
+      Path: event:/battle_child_audio
+  - eventName: modern_child_audio
+    eventReference:
+      Guid:
+        Data1: -878459424
+        Data2: 1276716403
+        Data3: -1871576394
+        Data4: 1301315179
+      Path: event:/modern_child_audio
+  - eventName: barber_surgeon_audio
+    eventReference:
+      Guid:
+        Data1: -254515590
+        Data2: 1318876954
+        Data3: 511570084
+        Data4: -896650416
+      Path: event:/barber_surgeon_audio
+  - eventName: river_boyne_audio
+    eventReference:
+      Guid:
+        Data1: 1214089938
+        Data2: 1155372457
+        Data3: 70843062
+        Data4: -863116591
+      Path: event:/boyne_audio
+  - eventName: buckley_audio
+    eventReference:
+      Guid:
+        Data1: -823444755
+        Data2: 1313405025
+        Data3: 1259903395
+        Data4: -740381983
+      Path: event:/buckley_audio
+  - eventName: french_soldier_audio
+    eventReference:
+      Guid:
+        Data1: 1635846001
+        Data2: 1225494644
+        Data3: -1492882271
+        Data4: 1089509511
+      Path: event:/french_soldier_audio
+  - eventName: grenadier_audio
+    eventReference:
+      Guid:
+        Data1: 1797648841
+        Data2: 1241449785
+        Data3: 1116406153
+        Data4: 981486305
+      Path: event:/grenadier_audio
+  - eventName: harp_girl_audio
+    eventReference:
+      Guid:
+        Data1: -1568402162
+        Data2: 1290817365
+        Data3: 2102118808
+        Data4: -1994431221
+      Path: event:/harp_girl_audio
+  - eventName: james_audio
+    eventReference:
+      Guid:
+        Data1: -1406718307
+        Data2: 1317937260
+        Data3: 1653865350
+        Data4: -1378154026
+      Path: event:/james_audio
+  - eventName: louis_audio
+    eventReference:
+      Guid:
+        Data1: 536625850
+        Data2: 1251709943
+        Data3: -913172600
+        Data4: -836348760
+      Path: event:/louis_audio
+  - eventName: sarsfield_audio
+    eventReference:
+      Guid:
+        Data1: 663945898
+        Data2: 1080172379
+        Data3: 941068199
+        Data4: -1103627851
+      Path: event:/sarsfield_audio
+  - eventName: schomberg_audio
+    eventReference:
+      Guid:
+        Data1: -1543126747
+        Data2: 1314846725
+        Data3: -866096995
+        Data4: -1863781256
+      Path: event:/schomberg_audio
+  - eventName: sergeant_major_audio
+    eventReference:
+      Guid:
+        Data1: -1131596615
+        Data2: 1217703647
+        Data3: 1396483752
+        Data4: -1934053682
+      Path: event:/sergeant_major_audio
+  - eventName: village_woman_audio
+    eventReference:
+      Guid:
+        Data1: 1522258705
+        Data2: 1224621541
+        Data3: 1824080025
+        Data4: 1129485362
+      Path: event:/village_woman_audio
+  - eventName: william_audio
+    eventReference:
+      Guid:
+        Data1: 1175538158
+        Data2: 1256538305
+        Data3: 857137839
+        Data4: 547777320
+      Path: event:/william_audio
+  - eventName: salmon_audio
+    eventReference:
+      Guid:
+        Data1: -1794321705
+        Data2: 1155231689
+        Data3: -816275816
+        Data4: -1405444301
+      Path: event:/salmon_audio
+  portalAudioEvents:
+  - eventName: portal_audio
+    eventReference:
+      Guid:
+        Data1: -1630672160
+        Data2: 1272249977
+        Data3: 39049607
+        Data4: -699573844
+      Path: event:/time_portal

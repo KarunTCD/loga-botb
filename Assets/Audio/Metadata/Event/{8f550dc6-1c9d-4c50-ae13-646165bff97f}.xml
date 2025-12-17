@@ -71,7 +71,7 @@
 			<destination>{63cd5214-eeda-4b15-9a3f-b6f5128a77f1}</destination>
 		</relationship>
 		<relationship name="modules">
-			<destination>{1c89a7ce-aba9-4ca0-a499-d545e716f688}</destination>
+			<destination>{1ee3e889-8001-4fb6-b904-dc5adf55c23b}</destination>
 		</relationship>
 		<relationship name="mixerGroup">
 			<destination>{aaa3ab28-a277-4399-a237-4e20094dda84}</destination>
@@ -99,7 +99,7 @@
 	</object>
 	<object class="ParameterProxy" id="{821053b2-f229-4ef6-8a8e-fe27505d3364}">
 		<relationship name="modules">
-			<destination>{1c89a7ce-aba9-4ca0-a499-d545e716f688}</destination>
+			<destination>{1ee3e889-8001-4fb6-b904-dc5adf55c23b}</destination>
 		</relationship>
 		<relationship name="preset">
 			<destination>{3b6a0b80-71ac-46ea-8522-0e7817b2c47c}</destination>
@@ -127,15 +127,12 @@
 			<destination>{b15d8a4e-0f6d-4125-9864-cc7946732c7e}</destination>
 		</relationship>
 	</object>
-	<object class="SingleSound" id="{1c89a7ce-aba9-4ca0-a499-d545e716f688}">
+	<object class="SingleSound" id="{1ee3e889-8001-4fb6-b904-dc5adf55c23b}">
 		<property name="length">
 			<value>2</value>
 		</property>
-		<property name="maxVoices">
-			<value>1</value>
-		</property>
 		<relationship name="audioFile">
-			<destination>{0273eed0-b4bd-488c-95ae-982de5663d5b}</destination>
+			<destination>{fdc4872e-077a-4961-a945-17666e9a9191}</destination>
 		</relationship>
 	</object>
 	<object class="EventMixerGroup" id="{aaa3ab28-a277-4399-a237-4e20094dda84}">
