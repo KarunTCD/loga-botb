@@ -16,7 +16,7 @@
 			<value>2</value>
 		</property>
 		<property name="maximum">
-			<value>21</value>
+			<value>22</value>
 		</property>
 		<property name="enumerationLabels">
 			<value>None</value>
@@ -40,6 +40,7 @@
 			<value>Battle Farmer</value>
 			<value>French Soldier</value>
 			<value>Village Woman</value>
+			<value>John Buckley</value>
 		</property>
 		<property name="initialValue">
 			<value>0</value>

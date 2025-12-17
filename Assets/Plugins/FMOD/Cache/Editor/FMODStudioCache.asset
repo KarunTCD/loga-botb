@@ -15,10 +15,10 @@ MonoBehaviour:
   Path: Assets/Audio/Build/Desktop/Combat.bank
   Name: Combat
   StudioPath: bank:/Combat
-  lastModified: 638924973509526026
+  lastModified: 638942466993459421
   FileSizes:
   - Name: Desktop
-    Value: 2691488
+    Value: 2723424
   Exists: 1
 --- !u!114 &-9074572175999152312
 MonoBehaviour:
@@ -633,6 +633,30 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 1460
+--- !u!114 &-4743487842025713055
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/buckley_audio/Zone
+  m_EditorClassIdentifier: 
+  Name: Zone
+  StudioPath: 
+  Min: 0
+  Max: 3
+  Default: 0
+  ID:
+    data1: 1112535331
+    data2: 2309411790
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
 --- !u!114 &-4634650297046693860
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -949,7 +973,7 @@ MonoBehaviour:
   StudioPath: 
   Min: 0
   Max: 2
-  Default: 1
+  Default: 2
   ID:
     data1: 2126995294
     data2: 1926241287
@@ -1004,10 +1028,10 @@ MonoBehaviour:
   Path: Assets/Audio/Build/Desktop/Master.bank
   Name: Master
   StudioPath: bank:/Master
-  lastModified: 638924995631920613
+  lastModified: 638954431777447769
   FileSizes:
   - Name: Desktop
-    Value: 51253984
+    Value: 56323648
   Exists: 1
 --- !u!114 &-2052320907851671852
 MonoBehaviour:
@@ -1267,6 +1291,7 @@ MonoBehaviour:
   - {fileID: -6136427063580899603}
   - {fileID: 7207487229205096975}
   - {fileID: 592993469962140371}
+  - {fileID: 5465696178537049345}
   EditorParameters:
   - {fileID: -8960227262851152707}
   MasterBanks:
@@ -1274,7 +1299,7 @@ MonoBehaviour:
   StringsBanks:
   - {fileID: 7937843521026953583}
   cacheVersion: 131847
-  cacheTime: 638924995631987309
+  cacheTime: 638954431777489226
   SerializableEventsDict:
   - key: event:/ambient_sounds
     index: 0
@@ -1348,6 +1373,8 @@ MonoBehaviour:
     index: 34
   - key: event:/combat/berries_music
     index: 35
+  - key: event:/buckley_audio
+    index: 36
 --- !u!114 &59723176013266999
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1902,6 +1929,34 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
+--- !u!114 &5465696178537049345
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/buckley_audio
+  m_EditorClassIdentifier: 
+  Path: event:/buckley_audio
+  Guid:
+    Data1: -823444755
+    Data2: 1313405025
+    Data3: 1259903395
+    Data4: -740381983
+  Banks:
+  - {fileID: -2072804872322699232}
+  IsStream: 1
+  Is3D: 1
+  IsOneShot: 0
+  Parameters:
+  - {fileID: -4743487842025713055}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 66532
 --- !u!114 &6038185040394527545
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2152,10 +2207,10 @@ MonoBehaviour:
   Path: Assets/Audio/Build/Desktop/Master.strings.bank
   Name: Master.strings
   StudioPath: bank:/Master.strings
-  lastModified: 638924995631987309
+  lastModified: 638954431777489226
   FileSizes:
   - Name: Desktop
-    Value: 3374
+    Value: 3418
   Exists: 1
 --- !u!114 &8383362571895565179
 MonoBehaviour:
@@ -2200,7 +2255,7 @@ MonoBehaviour:
   Name: Character_ID
   StudioPath: 
   Min: 0
-  Max: 20
+  Max: 21
   Default: 0
   ID:
     data1: 315080306
@@ -2229,6 +2284,7 @@ MonoBehaviour:
   - Battle Farmer
   - French Soldier
   - Village Woman
+  - John Buckley
   Exists: 1
 --- !u!114 &8565167282811094332
 MonoBehaviour:

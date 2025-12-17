@@ -2,25 +2,34 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools">
     
-    <!-- Location Permissions (REMOVE maxSdkVersion) -->
+    <!-- Remove AD_ID permission added by Firebase/dependencies -->
+        <uses-permission android:name="com.google.android.gms.permission.AD_ID"
+                         tools:node="remove"/>
+
+    <!-- Internet & network state needed for Firebase -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <!-- Location Permissions -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    
+
     <!-- Bluetooth Permissions for older Android -->
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" android:maxSdkVersion="30"/>
     <uses-permission android:name="android.permission.BLUETOOTH" android:maxSdkVersion="30"/>
-    
+
     <!-- Bluetooth Permissions for Android 12+ -->
     <uses-permission android:name="android.permission.BLUETOOTH_SCAN" android:minSdkVersion="31" android:usesPermissionFlags="neverForLocation"/>
     <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" android:minSdkVersion="31"/>
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" android:minSdkVersion="31"/>
-    
+
+    <!-- Optional: BLE feature -->
     <uses-feature android:name="android.hardware.bluetooth_le" android:required="false"/>
 
     <application android:theme="@style/UnityThemeSelector"
                  android:icon="@drawable/app_icon"
                  android:label="@string/app_name">
-        
+
         <!-- Unity Player Activity -->
         <activity android:name="com.unity3d.player.UnityPlayerActivity"
                   android:theme="@style/UnityThemeSelector"
@@ -31,8 +40,8 @@
             </intent-filter>
             <meta-data android:name="unityplayer.UnityActivity" android:value="true" />
         </activity>
-        
-        <!-- Unity Game Activity (keep both for compatibility) -->
+
+        <!-- Unity Game Activity (for compatibility) -->
         <activity android:name="com.unity3d.player.UnityPlayerGameActivity"
                   android:theme="@style/BaseUnityGameActivityTheme"
                   android:exported="true">
@@ -43,6 +52,6 @@
             <meta-data android:name="unityplayer.UnityActivity" android:value="true" />
             <meta-data android:name="android.app.lib_name" android:value="game" />
         </activity>
-        
+
     </application>
 </manifest>
