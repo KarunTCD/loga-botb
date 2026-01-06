@@ -16,7 +16,7 @@
 			<value>2</value>
 		</property>
 		<property name="maximum">
-			<value>22</value>
+			<value>31</value>
 		</property>
 		<property name="enumerationLabels">
 			<value>None</value>
@@ -41,6 +41,15 @@
 			<value>French Soldier</value>
 			<value>Village Woman</value>
 			<value>John Buckley</value>
+			<value>Morning Glories</value>
+			<value>Heartsease</value>
+			<value>Mignonette</value>
+			<value>Honeysuckle</value>
+			<value>Yellow Poppy</value>
+			<value>Redwood</value>
+			<value>Lonely Flower</value>
+			<value>The Forest</value>
+			<value>Lilac</value>
 		</property>
 		<property name="initialValue">
 			<value>0</value>

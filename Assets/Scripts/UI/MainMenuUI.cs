@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 using LoGa.LudoEngine.Core;
 using LoGa.LudoEngine.Services;
+using System.Collections;
 
 namespace LoGa.LudoEngine.UI
 {
@@ -137,12 +138,17 @@ namespace LoGa.LudoEngine.UI
 
             if (storageService != null)
             {
-                storageService.DeleteAll();
+                // Delete ALL PlayerPrefs
+                storageService.ResetToDefaults();
 
+                // Track analytics
                 var analyticsService = ServiceLocator.GetService<IAnalyticsService>();
                 analyticsService?.TrackEvent("game_progress_reset");
 
                 Debug.Log("All progress deleted successfully");
+
+                // CRITICAL: Reload scene to reinitialize from JSON defaults
+                StartCoroutine(ReloadSceneAfterReset());
             }
             else
             {
@@ -151,6 +157,25 @@ namespace LoGa.LudoEngine.UI
 
             if (confirmationDialog != null)
                 confirmationDialog.SetActive(false);
+        }
+
+        private IEnumerator ReloadSceneAfterReset()
+        {
+            Debug.Log("MainMenuUI: Reloading scene after reset...");
+
+            // Show brief feedback
+            if (requirementsText != null)
+            {
+                requirementsText.text = "Progress reset! Reloading...";
+                requirementsText.color = Color.green;
+            }
+
+            yield return new WaitForSeconds(1.5f);
+
+            // Reload current scene
+            UnityEngine.SceneManagement.SceneManager.LoadScene(
+                UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex
+            );
         }
 
         private void OnNoClick()

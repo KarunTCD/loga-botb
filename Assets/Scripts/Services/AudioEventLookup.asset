@@ -213,6 +213,78 @@ MonoBehaviour:
         Data3: -816275816
         Data4: -1405444301
       Path: event:/salmon_audio
+  - eventName: morning_glories_audio
+    eventReference:
+      Guid:
+        Data1: -1273391050
+        Data2: 1243334695
+        Data3: 458475651
+        Data4: -977101694
+      Path: event:/morning_glories_audio
+  - eventName: heartsease_audio
+    eventReference:
+      Guid:
+        Data1: -903644029
+        Data2: 1083995466
+        Data3: 851358358
+        Data4: 343187846
+      Path: event:/heartsease_audio
+  - eventName: mignonette_audio
+    eventReference:
+      Guid:
+        Data1: -1544840568
+        Data2: 1101676883
+        Data3: 496824761
+        Data4: -1674180941
+      Path: event:/mignonette_audio
+  - eventName: honeysuckle_audio
+    eventReference:
+      Guid:
+        Data1: -2034193535
+        Data2: 1157056015
+        Data3: -1850042446
+        Data4: 1521813665
+      Path: event:/honeysuckle_audio
+  - eventName: redwood_audio
+    eventReference:
+      Guid:
+        Data1: 291763574
+        Data2: 1270957277
+        Data3: -145159549
+        Data4: -981668449
+      Path: event:/redwood_audio
+  - eventName: yellow_poppy_audio
+    eventReference:
+      Guid:
+        Data1: 1596464743
+        Data2: 1294139571
+        Data3: -1149390967
+        Data4: -2106046477
+      Path: event:/yellow_poppy_audio
+  - eventName: lonely_flower_audio
+    eventReference:
+      Guid:
+        Data1: 1575508520
+        Data2: 1236560690
+        Data3: 1070213309
+        Data4: 544412664
+      Path: event:/lonely_flower_audio
+  - eventName: the_forest_audio
+    eventReference:
+      Guid:
+        Data1: -1233517895
+        Data2: 1181162891
+        Data3: -1373806682
+        Data4: 449142386
+      Path: event:/the_forest_audio
+  - eventName: lilac_audio
+    eventReference:
+      Guid:
+        Data1: 1079854949
+        Data2: 1203303552
+        Data3: -1777793146
+        Data4: -746233166
+      Path: event:/lilac_audio
   portalAudioEvents:
   - eventName: portal_audio
     eventReference:

@@ -1,260 +1,251 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
-using LoGa.LudoEngine.Core;
-using LoGa.LudoEngine.Utilities;
-using System.Collections.Generic;
 
 namespace LoGa.LudoEngine.Services
 {
     public class StorageService : MonoBehaviour, IStorageService
     {
-        public bool IsInitialized { get; private set; }
+        // Key tracking list stored as JSON
+        private const string ALL_KEYS_LIST = "STORAGE_ALL_KEYS";
 
-        private static readonly Dictionary<string, object> defaultValues = new Dictionary<string, object>
+        // Wrapper class for serializing lists (JsonUtility requirement)
+        [Serializable]
+        private class KeyList
         {
-            { "TotalCompletedPOIs", 0 },
-            { "CurrentMaxActiveCues", 1 },
-            { "HasCompletedTutorial", false },
-            { "HasPlayedWelcomeDialogue", false },
-            { "HasPlayedEndDialogue", false },
+            public List<string> keys = new List<string>();
+        }
 
-            // Character Unlock preferences
-            { "Character1Unlocked", false},
-            { "Character2Unlocked", false},
-            { "Character3Unlocked", false},
-            { "Character4Unlocked", false},
-            { "Character5Unlocked", false},
-            { "Character6Unlocked", false},
-            { "Character7Unlocked", false},
-            { "Character8Unlocked", false},
-            { "Character9Unlocked", false},
-            { "Character10Unlocked", false},
-            { "Character11Unlocked", false},
-            { "Character12Unlocked", false},
-            { "Character13Unlocked", false},
-            { "Character14Unlocked", false},
-            { "Character15Unlocked", false},
-            { "Character16Unlocked", false},
-            { "Character17Unlocked", false},
-            { "Character18Unlocked", false},
-            { "Character19Unlocked", false},
-            { "Character20Unlocked", false},
-            { "Character21Unlocked", false},
-            { "Character22Unlocked", false},
-            { "Character23Unlocked", false},
-            { "Character24Unlocked", false},
-            { "Character25Unlocked", false},
-
-            // Reward Unlock preferences
-            { "Reward1Unlocked", false},
-            { "Reward2Unlocked", false},
-            { "Reward3Unlocked", false},
-            { "Reward4Unlocked", false},
-            { "Reward5Unlocked", false},
-            { "Reward6Unlocked", false},
-            { "Reward7Unlocked", false},
-            { "Reward8Unlocked", false},
-            { "Reward9Unlocked", false},
-            { "Reward10Unlocked", false},
-        };
+        public bool IsInitialized { get; private set; }
 
         public Task<bool> InitializeAsync()
         {
             try
             {
-                InitializeDefaults();
+                Debug.Log("StorageService: Initializing");
                 IsInitialized = true;
-                Debug.Log("Storage service initialized with defaults");
                 return Task.FromResult(true);
             }
             catch (Exception e)
             {
-                Debug.LogError($"Failed to initialize storage service: {e.Message}");
+                Debug.LogError($"StorageService: Initialization failed - {e.Message}");
                 return Task.FromResult(false);
             }
         }
 
-        private void InitializeDefaults()
-        {
-            int newPrefsCount = 0;
-            foreach (var kvp in defaultValues)
-            {
-                if (!PlayerPrefs.HasKey(kvp.Key))
-                {
-                    Save(kvp.Key, kvp.Value);
-                    newPrefsCount++;
-                }
-            }
-            Debug.Log($"Initialized {newPrefsCount} new preferences with defaults");
-        }
+        // ========================================
+        // BASIC OPERATIONS
+        // ========================================
 
         public void Save(string key, object value)
         {
-            if (string.IsNullOrEmpty(key))
-            {
-                Debug.LogError("Storage key cannot be null or empty");
-                return;
-            }
-
-            if (value == null)
-            {
-                PlayerPrefs.DeleteKey(key);
-                PlayerPrefs.Save();
-                Debug.Log($"Deleted key: {key}");
-                return;
-            }
-
             try
             {
-                switch (value)
+                if (value == null)
                 {
-                    case string strValue:
-                        PlayerPrefs.SetString(key, strValue);
-                        break;
-                    case int intValue:
-                        PlayerPrefs.SetInt(key, intValue);
-                        break;
-                    case float floatValue:
-                        PlayerPrefs.SetFloat(key, floatValue);
-                        break;
-                    case bool boolValue:
-                        PlayerPrefs.SetInt(key, boolValue ? 1 : 0);
-                        break;
-                    case DateTime dateValue:
-                        PlayerPrefs.SetString(key, dateValue.ToBinary().ToString());
-                        break;
-                    default:
-                        // Serialize complex types to JSON
-                        string jsonValue = JsonUtility.ToJson(value);
-                        PlayerPrefs.SetString(key, jsonValue);
-                        break;
+                    Debug.LogWarning($"StorageService: Attempted to save null value for key '{key}'");
+                    return;
+                }
+
+                // Track this key
+                TrackKey(key);
+
+                // Serialize based on type
+                if (value is string stringValue)
+                {
+                    PlayerPrefs.SetString(key, stringValue);
+                }
+                else if (value is int intValue)
+                {
+                    PlayerPrefs.SetInt(key, intValue);
+                }
+                else if (value is float floatValue)
+                {
+                    PlayerPrefs.SetFloat(key, floatValue);
+                }
+                else if (value is bool boolValue)
+                {
+                    PlayerPrefs.SetInt(key, boolValue ? 1 : 0);
+                }
+                else
+                {
+                    // Complex objects - use JsonUtility
+                    string json = JsonUtility.ToJson(value);
+                    PlayerPrefs.SetString(key, json);
                 }
 
                 PlayerPrefs.Save();
-                Debug.Log($"Saved {value.GetType().Name}: {key} = {value}");
             }
             catch (Exception e)
             {
-                Debug.LogError($"Failed to save key '{key}': {e.Message}");
+                Debug.LogError($"StorageService: Failed to save key '{key}' - {e.Message}");
             }
         }
 
-        public T Load<T>(string key)
+        public T Load<T>(string key, T defaultValue = default)
         {
-            if (string.IsNullOrEmpty(key))
-            {
-                Debug.LogError("Storage key cannot be null or empty");
-                return default(T);
-            }
-
-            if (!PlayerPrefs.HasKey(key))
-            {
-                // Return default if we have one defined
-                if (defaultValues.TryGetValue(key, out object defaultValue))
-                {
-                    try
-                    {
-                        return (T)defaultValue;
-                    }
-                    catch (InvalidCastException)
-                    {
-                        Debug.LogError($"Cannot cast default value for key '{key}' to type {typeof(T)}");
-                    }
-                }
-                return default(T);
-            }
-
             try
             {
+                if (!PlayerPrefs.HasKey(key))
+                {
+                    return defaultValue;
+                }
+
                 Type type = typeof(T);
 
                 if (type == typeof(string))
                 {
-                    return (T)(object)PlayerPrefs.GetString(key);
+                    return (T)(object)PlayerPrefs.GetString(key, defaultValue?.ToString() ?? "");
                 }
                 else if (type == typeof(int))
                 {
-                    return (T)(object)PlayerPrefs.GetInt(key);
+                    return (T)(object)PlayerPrefs.GetInt(key, Convert.ToInt32(defaultValue));
                 }
                 else if (type == typeof(float))
                 {
-                    return (T)(object)PlayerPrefs.GetFloat(key);
+                    return (T)(object)PlayerPrefs.GetFloat(key, Convert.ToSingle(defaultValue));
                 }
                 else if (type == typeof(bool))
                 {
-                    return (T)(object)(PlayerPrefs.GetInt(key) == 1);
-                }
-                else if (type == typeof(DateTime))
-                {
-                    string dateString = PlayerPrefs.GetString(key);
-                    if (long.TryParse(dateString, out long dateBinary))
-                    {
-                        return (T)(object)DateTime.FromBinary(dateBinary);
-                    }
-                    return default(T);
+                    return (T)(object)(PlayerPrefs.GetInt(key, Convert.ToBoolean(defaultValue) ? 1 : 0) == 1);
                 }
                 else
                 {
-                    // Deserialize from JSON
-                    string jsonValue = PlayerPrefs.GetString(key);
-                    if (!string.IsNullOrEmpty(jsonValue))
+                    // Complex objects - use JsonUtility
+                    string json = PlayerPrefs.GetString(key, "");
+                    if (string.IsNullOrEmpty(json))
                     {
-                        return JsonUtility.FromJson<T>(jsonValue);
+                        return defaultValue;
                     }
-                    return default(T);
+
+                    return JsonUtility.FromJson<T>(json);
                 }
             }
             catch (Exception e)
             {
-                Debug.LogError($"Failed to load key '{key}': {e.Message}");
-                return default(T);
+                Debug.LogError($"StorageService: Failed to load key '{key}' - {e.Message}");
+                return defaultValue;
             }
         }
 
         public bool HasKey(string key)
         {
-            return !string.IsNullOrEmpty(key) && PlayerPrefs.HasKey(key);
+            return PlayerPrefs.HasKey(key);
         }
+
+        // ========================================
+        // BULK OPERATIONS
+        // ========================================
 
         public void DeleteKey(string key)
         {
-            if (!string.IsNullOrEmpty(key))
+            if (PlayerPrefs.HasKey(key))
             {
                 PlayerPrefs.DeleteKey(key);
+                UntrackKey(key);
                 PlayerPrefs.Save();
-                Debug.Log($"Deleted key: {key}");
             }
         }
 
-        public void ResetToDefault(string key)
+        public void DeleteKeysWithPrefix(string prefix)
         {
-            if (defaultValues.TryGetValue(key, out object defaultValue))
+            var allKeys = GetAllKeys();
+            int deletedCount = 0;
+
+            foreach (var key in allKeys)
             {
-                Save(key, defaultValue);
+                if (key.StartsWith(prefix))
+                {
+                    PlayerPrefs.DeleteKey(key);
+                    UntrackKey(key);
+                    deletedCount++;
+                }
             }
-        }
 
-        public void ResetAllToDefaults()
-        {
-            foreach (var kvp in defaultValues)
+            if (deletedCount > 0)
             {
-                Save(kvp.Key, kvp.Value);
+                PlayerPrefs.Save();
+                Debug.Log($"StorageService: Deleted {deletedCount} keys with prefix '{prefix}'");
             }
         }
 
-        public void DeleteAll()
+        public List<string> GetAllKeys()
         {
+            if (!PlayerPrefs.HasKey(ALL_KEYS_LIST))
+            {
+                return new List<string>();
+            }
+
+            string json = PlayerPrefs.GetString(ALL_KEYS_LIST, "");
+            try
+            {
+                KeyList keyList = JsonUtility.FromJson<KeyList>(json);
+                return keyList?.keys ?? new List<string>();
+            }
+            catch
+            {
+                return new List<string>();
+            }
+        }
+
+        // ========================================
+        // RESET OPERATION
+        // ========================================
+
+        public void ResetToDefaults()
+        {
+            Debug.Log("StorageService: Resetting to defaults - DELETING ALL PLAYERPREFS");
+
+            // Nuclear option - clear everything
             PlayerPrefs.DeleteAll();
             PlayerPrefs.Save();
-            Debug.Log("Deleted all storage keys");
+
+            Debug.Log("StorageService: All PlayerPrefs cleared - app will reinitialize from JSON defaults");
         }
 
-        private void OnDisable()
+        // ========================================
+        // KEY TRACKING (for bulk operations)
+        // ========================================
+
+        private void TrackKey(string key)
         {
-            if (ApplicationState.IsQuitting)
+            if (key == ALL_KEYS_LIST) return; // Don't track the tracking list itself
+
+            var keys = GetAllKeys();
+            if (!keys.Contains(key))
             {
-                ServiceLocator.UnregisterService<IStorageService>();
+                keys.Add(key);
+
+                KeyList keyList = new KeyList { keys = keys };
+                string json = JsonUtility.ToJson(keyList);
+                PlayerPrefs.SetString(ALL_KEYS_LIST, json);
+            }
+        }
+
+        private void UntrackKey(string key)
+        {
+            var keys = GetAllKeys();
+            if (keys.Remove(key))
+            {
+                KeyList keyList = new KeyList { keys = keys };
+                string json = JsonUtility.ToJson(keyList);
+                PlayerPrefs.SetString(ALL_KEYS_LIST, json);
+            }
+        }
+
+        // ========================================
+        // DEBUG METHODS
+        // ========================================
+
+        [System.Diagnostics.Conditional("UNITY_EDITOR")]
+        public void DebugPrintAllKeys()
+        {
+            var keys = GetAllKeys();
+            Debug.Log($"=== StorageService: All Keys ({keys.Count}) ===");
+            foreach (var key in keys)
+            {
+                Debug.Log($"  - {key}");
             }
         }
     }

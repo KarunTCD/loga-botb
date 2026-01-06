@@ -116,6 +116,9 @@
 	</object>
 	<object class="MixerBusPanner" id="{96f5d078-4be3-4aca-807c-a487827b9424}" />
 	<object class="EventSound" id="{930aa439-492e-4285-8a65-adf5c0b3fe95}">
+		<property name="triggerConditionMode">
+			<value>1</value>
+		</property>
 		<property name="length">
 			<value>126</value>
 		</property>
@@ -124,6 +127,7 @@
 		</property>
 		<relationship name="triggerConditions">
 			<destination>{240d737e-f833-45d3-9233-4d84f0d4b546}</destination>
+			<destination>{33307b30-64bc-4b9d-864e-cd830b8649f3}</destination>
 		</relationship>
 		<relationship name="event">
 			<destination>{a7cfd31f-b957-4104-92d4-0ae734da0bdf}</destination>
@@ -153,9 +157,6 @@
 		<property name="maxVoices">
 			<value>1</value>
 		</property>
-		<relationship name="triggerConditions">
-			<destination>{5e98c426-33c1-4eb1-a367-37514c601bce}</destination>
-		</relationship>
 		<relationship name="event">
 			<destination>{f779508b-a508-4962-8a92-56a1b8ff2b27}</destination>
 		</relationship>
@@ -240,13 +241,7 @@
 			<destination>{1b02b5fd-7e66-48a3-9666-ecdf6a59f59d}</destination>
 		</relationship>
 	</object>
-	<object class="MixerBusEffectChain" id="{ebb9d233-d4b2-4985-b4ef-175956c89058}">
-		<relationship name="effects">
-			<destination>{28fdd02f-f8e0-4a86-96b7-a9f815887797}</destination>
-		</relationship>
-	</object>
-	<object class="MixerBusPanner" id="{7ca99bbc-2dc4-4a03-983c-34d0ff6021d4}" />
-	<object class="ParameterCondition" id="{5e98c426-33c1-4eb1-a367-37514c601bce}">
+	<object class="ParameterCondition" id="{33307b30-64bc-4b9d-864e-cd830b8649f3}">
 		<property name="minimum">
 			<value>1</value>
 		</property>
@@ -257,6 +252,12 @@
 			<destination>{1b02b5fd-7e66-48a3-9666-ecdf6a59f59d}</destination>
 		</relationship>
 	</object>
+	<object class="MixerBusEffectChain" id="{ebb9d233-d4b2-4985-b4ef-175956c89058}">
+		<relationship name="effects">
+			<destination>{28fdd02f-f8e0-4a86-96b7-a9f815887797}</destination>
+		</relationship>
+	</object>
+	<object class="MixerBusPanner" id="{7ca99bbc-2dc4-4a03-983c-34d0ff6021d4}" />
 	<object class="MixerBusEffectChain" id="{fdbdb509-6eb1-44d1-a879-6556ae5e9964}">
 		<relationship name="effects">
 			<destination>{223c0de4-f992-4520-94f2-30807118c948}</destination>

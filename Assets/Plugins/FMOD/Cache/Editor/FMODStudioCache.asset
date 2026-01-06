@@ -15,7 +15,7 @@ MonoBehaviour:
   Path: Assets/Audio/Build/Desktop/Combat.bank
   Name: Combat
   StudioPath: bank:/Combat
-  lastModified: 638942466993459421
+  lastModified: 639016145802851809
   FileSizes:
   - Name: Desktop
     Value: 2723424
@@ -278,7 +278,35 @@ MonoBehaviour:
   Parameters: []
   MinDistance: 1
   MaxDistance: 20
-  Length: 120000
+  Length: 87606
+--- !u!114 &-7419408389634030148
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/mignonette_audio
+  m_EditorClassIdentifier: 
+  Path: event:/mignonette_audio
+  Guid:
+    Data1: -1544840568
+    Data2: 1101676883
+    Data3: 496824761
+    Data4: -1674180941
+  Banks:
+  - {fileID: -2072804872322699232}
+  IsStream: 1
+  Is3D: 1
+  IsOneShot: 0
+  Parameters:
+  - {fileID: -3880696621149737165}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 30364
 --- !u!114 &-6952881011818862437
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -555,6 +583,30 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 130388
+--- !u!114 &-5640041780570095563
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/honeysuckle_audio/Zone
+  m_EditorClassIdentifier: 
+  Name: Zone
+  StudioPath: 
+  Min: 0
+  Max: 3
+  Default: 0
+  ID:
+    data1: 1112535331
+    data2: 2309411790
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
 --- !u!114 &-5516222332430744039
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -633,6 +685,58 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 1460
+--- !u!114 &-5045139781245944318
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/yellow_poppy_audio/Zone
+  m_EditorClassIdentifier: 
+  Name: Zone
+  StudioPath: 
+  Min: 0
+  Max: 3
+  Default: 0
+  ID:
+    data1: 1112535331
+    data2: 2309411790
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &-5041736061662496256
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/redwood_audio
+  m_EditorClassIdentifier: 
+  Path: event:/redwood_audio
+  Guid:
+    Data1: 291763574
+    Data2: 1270957277
+    Data3: -145159549
+    Data4: -981668449
+  Banks:
+  - {fileID: -2072804872322699232}
+  IsStream: 1
+  Is3D: 1
+  IsOneShot: 0
+  Parameters:
+  - {fileID: 3267308189402828794}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 81342
 --- !u!114 &-4743487842025713055
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -757,6 +861,58 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 126000
+--- !u!114 &-3880696621149737165
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/mignonette_audio/Zone
+  m_EditorClassIdentifier: 
+  Name: Zone
+  StudioPath: 
+  Min: 0
+  Max: 3
+  Default: 0
+  ID:
+    data1: 1112535331
+    data2: 2309411790
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &-3575717033230735608
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/yellow_poppy_audio
+  m_EditorClassIdentifier: 
+  Path: event:/yellow_poppy_audio
+  Guid:
+    Data1: 1596464743
+    Data2: 1294139571
+    Data3: -1149390967
+    Data4: -2106046477
+  Banks:
+  - {fileID: -2072804872322699232}
+  IsStream: 1
+  Is3D: 1
+  IsOneShot: 0
+  Parameters:
+  - {fileID: -5045139781245944318}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 44908
 --- !u!114 &-3342211075688722402
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -973,7 +1129,7 @@ MonoBehaviour:
   StudioPath: 
   Min: 0
   Max: 2
-  Default: 2
+  Default: 1
   ID:
     data1: 2126995294
     data2: 1926241287
@@ -1028,10 +1184,10 @@ MonoBehaviour:
   Path: Assets/Audio/Build/Desktop/Master.bank
   Name: Master
   StudioPath: bank:/Master
-  lastModified: 638954431777447769
+  lastModified: 639016529471858200
   FileSizes:
   - Name: Desktop
-    Value: 56323648
+    Value: 72433440
   Exists: 1
 --- !u!114 &-2052320907851671852
 MonoBehaviour:
@@ -1292,6 +1448,15 @@ MonoBehaviour:
   - {fileID: 7207487229205096975}
   - {fileID: 592993469962140371}
   - {fileID: 5465696178537049345}
+  - {fileID: 1068724473635095624}
+  - {fileID: 2660754039230036814}
+  - {fileID: -3575717033230735608}
+  - {fileID: -5041736061662496256}
+  - {fileID: 7295068272532622942}
+  - {fileID: 5077581405104497806}
+  - {fileID: -7419408389634030148}
+  - {fileID: 6468531450394023017}
+  - {fileID: 4986309622957215237}
   EditorParameters:
   - {fileID: -8960227262851152707}
   MasterBanks:
@@ -1299,7 +1464,7 @@ MonoBehaviour:
   StringsBanks:
   - {fileID: 7937843521026953583}
   cacheVersion: 131847
-  cacheTime: 638954431777489226
+  cacheTime: 639016529471891137
   SerializableEventsDict:
   - key: event:/ambient_sounds
     index: 0
@@ -1375,6 +1540,24 @@ MonoBehaviour:
     index: 35
   - key: event:/buckley_audio
     index: 36
+  - key: event:/morning_glories_audio
+    index: 37
+  - key: event:/lilac_audio
+    index: 38
+  - key: event:/yellow_poppy_audio
+    index: 39
+  - key: event:/redwood_audio
+    index: 40
+  - key: event:/honeysuckle_audio
+    index: 41
+  - key: event:/heartsease_audio
+    index: 42
+  - key: event:/mignonette_audio
+    index: 43
+  - key: event:/the_forest_audio
+    index: 44
+  - key: event:/lonely_flower_audio
+    index: 45
 --- !u!114 &59723176013266999
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1509,6 +1692,58 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 10144
+--- !u!114 &1068724473635095624
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/morning_glories_audio
+  m_EditorClassIdentifier: 
+  Path: event:/morning_glories_audio
+  Guid:
+    Data1: -1273391050
+    Data2: 1243334695
+    Data3: 458475651
+    Data4: -977101694
+  Banks:
+  - {fileID: -2072804872322699232}
+  IsStream: 1
+  Is3D: 1
+  IsOneShot: 0
+  Parameters:
+  - {fileID: 5626387497712871280}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 25105
+--- !u!114 &1142033901091375217
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/the_forest_audio/Zone
+  m_EditorClassIdentifier: 
+  Name: Zone
+  StudioPath: 
+  Min: 0
+  Max: 3
+  Default: 0
+  ID:
+    data1: 1112535331
+    data2: 2309411790
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
 --- !u!114 &1196395283467373978
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1686,6 +1921,34 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
+--- !u!114 &2660754039230036814
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/lilac_audio
+  m_EditorClassIdentifier: 
+  Path: event:/lilac_audio
+  Guid:
+    Data1: 1079854949
+    Data2: 1203303552
+    Data3: -1777793146
+    Data4: -746233166
+  Banks:
+  - {fileID: -2072804872322699232}
+  IsStream: 1
+  Is3D: 1
+  IsOneShot: 0
+  Parameters:
+  - {fileID: 8054740853981100843}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 29205
 --- !u!114 &3006034800040850118
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1741,6 +2004,30 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 17682
+--- !u!114 &3267308189402828794
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/redwood_audio/Zone
+  m_EditorClassIdentifier: 
+  Name: Zone
+  StudioPath: 
+  Min: 0
+  Max: 3
+  Default: 0
+  ID:
+    data1: 1112535331
+    data2: 2309411790
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
 --- !u!114 &3551903945902111711
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1833,6 +2120,30 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 75181
+--- !u!114 &4202959263986107597
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/lonely_flower_audio/Zone
+  m_EditorClassIdentifier: 
+  Name: Zone
+  StudioPath: 
+  Min: 0
+  Max: 3
+  Default: 0
+  ID:
+    data1: 1112535331
+    data2: 2309411790
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
 --- !u!114 &4228073711540055099
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1905,6 +2216,62 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
+--- !u!114 &4986309622957215237
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/lonely_flower_audio
+  m_EditorClassIdentifier: 
+  Path: event:/lonely_flower_audio
+  Guid:
+    Data1: 1575508520
+    Data2: 1236560690
+    Data3: 1070213309
+    Data4: 544412664
+  Banks:
+  - {fileID: -2072804872322699232}
+  IsStream: 1
+  Is3D: 1
+  IsOneShot: 0
+  Parameters:
+  - {fileID: 4202959263986107597}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 53296
+--- !u!114 &5077581405104497806
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/heartsease_audio
+  m_EditorClassIdentifier: 
+  Path: event:/heartsease_audio
+  Guid:
+    Data1: -903644029
+    Data2: 1083995466
+    Data3: 851358358
+    Data4: 343187846
+  Banks:
+  - {fileID: -2072804872322699232}
+  IsStream: 1
+  Is3D: 1
+  IsOneShot: 0
+  Parameters:
+  - {fileID: 6971874180647156737}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 34859
 --- !u!114 &5253520597996899557
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1957,6 +2324,30 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 66532
+--- !u!114 &5626387497712871280
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/morning_glories_audio/Zone
+  m_EditorClassIdentifier: 
+  Name: Zone
+  StudioPath: 
+  Min: 0
+  Max: 3
+  Default: 0
+  ID:
+    data1: 1112535331
+    data2: 2309411790
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
 --- !u!114 &6038185040394527545
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2037,6 +2428,34 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 74295
+--- !u!114 &6468531450394023017
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/the_forest_audio
+  m_EditorClassIdentifier: 
+  Path: event:/the_forest_audio
+  Guid:
+    Data1: -1233517895
+    Data2: 1181162891
+    Data3: -1373806682
+    Data4: 449142386
+  Banks:
+  - {fileID: -2072804872322699232}
+  IsStream: 1
+  Is3D: 1
+  IsOneShot: 0
+  Parameters:
+  - {fileID: 1142033901091375217}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 53296
 --- !u!114 &6522814535592547978
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2089,6 +2508,30 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 98768
+--- !u!114 &6971874180647156737
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/heartsease_audio/Zone
+  m_EditorClassIdentifier: 
+  Name: Zone
+  StudioPath: 
+  Min: 0
+  Max: 3
+  Default: 0
+  ID:
+    data1: 1112535331
+    data2: 2309411790
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
 --- !u!114 &7043200866928059898
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2140,6 +2583,34 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 1404
+--- !u!114 &7295068272532622942
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/honeysuckle_audio
+  m_EditorClassIdentifier: 
+  Path: event:/honeysuckle_audio
+  Guid:
+    Data1: -2034193535
+    Data2: 1157056015
+    Data3: -1850042446
+    Data4: 1521813665
+  Banks:
+  - {fileID: -2072804872322699232}
+  IsStream: 1
+  Is3D: 1
+  IsOneShot: 0
+  Parameters:
+  - {fileID: -5640041780570095563}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 35982
 --- !u!114 &7420022013926712054
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2207,10 +2678,34 @@ MonoBehaviour:
   Path: Assets/Audio/Build/Desktop/Master.strings.bank
   Name: Master.strings
   StudioPath: bank:/Master.strings
-  lastModified: 638954431777489226
+  lastModified: 639016529471891137
   FileSizes:
   - Name: Desktop
-    Value: 3418
+    Value: 3916
+  Exists: 1
+--- !u!114 &8054740853981100843
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/lilac_audio/Zone
+  m_EditorClassIdentifier: 
+  Name: Zone
+  StudioPath: 
+  Min: 0
+  Max: 3
+  Default: 0
+  ID:
+    data1: 1112535331
+    data2: 2309411790
+  Type: 0
+  IsGlobal: 0
+  Labels: []
   Exists: 1
 --- !u!114 &8383362571895565179
 MonoBehaviour:
@@ -2255,7 +2750,7 @@ MonoBehaviour:
   Name: Character_ID
   StudioPath: 
   Min: 0
-  Max: 21
+  Max: 30
   Default: 0
   ID:
     data1: 315080306
@@ -2285,6 +2780,15 @@ MonoBehaviour:
   - French Soldier
   - Village Woman
   - John Buckley
+  - Morning Glories
+  - Heartsease
+  - Mignonette
+  - Honeysuckle
+  - Yellow Poppy
+  - Redwood
+  - Lonely Flower
+  - The Forest
+  - Lilac
   Exists: 1
 --- !u!114 &8565167282811094332
 MonoBehaviour:

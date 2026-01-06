@@ -65,5 +65,12 @@ namespace LoGa.LudoEngine.Game
         {
             inventory = StorageService.Load<Inventory>("PlayerInventory") ?? new Inventory();
         }
+
+        public void ResetInventory()
+        {
+            inventory = new Inventory();
+            SaveInventory();
+            Debug.Log("InventoryManager: Inventory reset to empty");
+        }
     }
 }

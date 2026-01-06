@@ -42,6 +42,7 @@ namespace LoGa.LudoEngine.Services
             public int maxMaxActiveCues;
             public int navigationUpgradeThreshold;
             public float maxTargetingDistance;
+            public int maxPlayerHealth;
             public GameBoundsData gameBounds;
         }
 
@@ -89,6 +90,7 @@ namespace LoGa.LudoEngine.Services
             public POIRewardData reward;
             public bool hasMultipleVariants;
             public int narrationVariantCount;
+            public int maxNavigationCues = 4;  // Default: 4 navigation cue snippets
         }
 
         [System.Serializable]

@@ -95,8 +95,8 @@ namespace LoGa.LudoEngine.Core
         private bool isPlayerInPOIProximity = false;
 
         // Health system
-        private int playerHealth = 3;
-        private const int maxHealth = 3;
+        private int maxHealth;
+        private int playerHealth;
 
         // System initialization flags
         private bool audioInitialized = false;
@@ -1086,21 +1086,34 @@ namespace LoGa.LudoEngine.Core
         {
             try
             {
+                // Set max from JSON
+                if (GameDataService != null && GameDataService.IsDataLoaded)
+                {
+                    maxHealth = GameDataService.GameConfig.maxPlayerHealth;
+                }
+                else
+                {
+                    // Emergency fallback if JSON not loaded
+                    maxHealth = 3;
+                    Debug.LogWarning("GameManager: JSON not loaded, using hardcoded maxHealth=3");
+                }
+
+                // Load current health from PlayerPrefs (or default to max)
                 if (StorageService != null)
                 {
-                    playerHealth = StorageService.Load<int>("PlayerHealth");
-                    if (playerHealth <= 0) playerHealth = maxHealth;
-                    Debug.Log($"GameManager: Loaded health from preferences: {playerHealth}");
+                    playerHealth = StorageService.Load<int>("PlayerHealth", maxHealth);
+                    Debug.Log($"GameManager: Loaded health {playerHealth}/{maxHealth}");
                 }
                 else
                 {
                     playerHealth = maxHealth;
-                    Debug.Log("GameManager: StorageService not available - defaulting to full health");
+                    Debug.LogWarning("GameManager: StorageService not available - defaulting to full health");
                 }
             }
             catch (Exception e)
             {
                 Debug.LogError($"GameManager: Error loading health - {e.Message}");
+                maxHealth = 3;
                 playerHealth = maxHealth;
             }
         }

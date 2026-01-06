@@ -292,6 +292,23 @@ namespace LoGa.LudoEngine.Game
             
         }
 
+        /// <summary>
+        /// Reload the current time layer (used after reset)
+        /// </summary>
+        public void ReloadCurrentLayer()
+        {
+            if (currentLayer == null)
+            {
+                Debug.LogError("TimeLayerManager: Cannot reload - no current layer");
+                return;
+            }
+
+            Debug.Log($"TimeLayerManager: Reloading current layer: {currentLayer.layerName}");
+
+            // Force POIManager to reload POIs for this layer
+            TimeLayerChanged?.Invoke(currentLayer);
+        }
+
         #endregion
 
         #region Debug and Validation
