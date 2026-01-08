@@ -302,6 +302,14 @@ namespace LoGa.LudoEngine.Services
             return Mathf.Approximately(currentValue, parameterValue);
         }
 
+        public void Reset()
+        {
+            Debug.Log("AudioService: Reset called");
+
+            // Reset initialization flag only
+            IsInitialized = false;
+        }
+
         private void OnDisable()
         {
             if (ApplicationState.IsQuitting)

@@ -27,7 +27,7 @@ namespace LoGa.LudoEngine.Services
         [SerializeField] private float gpsUpdateInterval = 1.0f;      // GPS polling rate
         [SerializeField] private float significantMoveThreshold = 1.0f; // Meters - when to trigger LocationChanged event
 
-        // ✅ PUBLIC PROPERTIES - Like HeadTrackingService.CurrentHeading
+        // PUBLIC PROPERTIES 
         public Vector2 CurrentLocation { get; private set; }
         public float CurrentLatitude => CurrentLocation.x;
         public float CurrentLongitude => CurrentLocation.y;
@@ -263,7 +263,7 @@ namespace LoGa.LudoEngine.Services
             PositionAccuracy = rawAccuracy;
             lastUpdateTime = Time.time;
 
-            // ✅ CRITICAL FIX - Only trigger LocationChanged event for SIGNIFICANT movement
+            // Only trigger LocationChanged event for SIGNIFICANT movement
             float distanceMoved = Vector2.Distance(newLocation, lastSignificantLocation) * 111320f; // Convert to meters
 
             if (distanceMoved >= significantMoveThreshold)
@@ -291,6 +291,27 @@ namespace LoGa.LudoEngine.Services
             }
         }
 
+        public void Reset()
+        {
+            Debug.Log("LocationService: Reset called");
+
+            if (IsRunning)
+            {
+                StopLocationUpdates();
+            }
+
+            // NOTE: Must stop Input.location to clear Failed state
+            if (Input.location.status != LocationServiceStatus.Stopped)
+            {
+                Debug.Log($"LocationService: Stopping Input.location (status: {Input.location.status})");
+                Input.location.Stop();
+            }
+
+            IsInitialized = false;
+            IsLocationAvailable = false;
+            filtersInitialized = false;
+        }
+
         private void OnDisable()
         {
             if (ApplicationState.IsQuitting)
@@ -310,12 +331,12 @@ namespace LoGa.LudoEngine.Services
         {
             useKalmanFilter = !useKalmanFilter;
             string status = useKalmanFilter ? "ENABLED" : "DISABLED";
-            Debug.Log($"🔄 Kalman Filter: {status}");
+            Debug.Log($"Kalman Filter: {status}");
 
             if (!useKalmanFilter)
             {
                 filtersInitialized = false;
-                Debug.Log("📍 Using RAW GPS data");
+                Debug.Log("Using RAW GPS data");
             }
             else if (IsInitialized)
             {

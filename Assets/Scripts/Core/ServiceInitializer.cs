@@ -64,7 +64,6 @@ namespace LoGa.LudoEngine.Core
 
             isInitializing = true;
 
-            // Hide retry panel if shown
             if (retryPanel != null)
             {
                 retryPanel.SetActive(false);
@@ -76,11 +75,18 @@ namespace LoGa.LudoEngine.Core
                 UpdateProgress(0, "Error: Service Manager not found");
                 Debug.LogError("ServiceManager not found. Please ensure it's created before ServiceInitializer");
                 ShowRetryPanel();
+                isInitializing = false;
                 return;
             }
 
+            // CRITICAL FIX: Reset services
+            ServiceManager.Instance.ResetAllServices();
+
             UpdateProgress(0, "Starting service initialization...");
             Debug.Log("ServiceInitializer: Starting initialization sequence");
+
+            // CRITICAL FIX: Restart the coroutine
+            ServiceManager.Instance.StartCoroutine(ServiceManager.Instance.RestartInitialization());
         }
 
         private void OnServiceUpdate(string status)

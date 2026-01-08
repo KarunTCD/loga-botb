@@ -155,6 +155,17 @@ namespace LoGa.LudoEngine.Services
             }
         }
 
+        public void Reset()
+        {
+            Debug.Log("ConfigService: Reset called");
+
+            // Clear loaded config
+            configValues.Clear();
+
+            // Reset initialization flag
+            IsInitialized = false;
+        }
+
         private void OnDisable()
         {
             if (ApplicationState.IsQuitting)

@@ -193,6 +193,13 @@ namespace LoGa.LudoEngine.Services
         // RESET OPERATION
         // ========================================
 
+        public void Reset()
+        {
+            Debug.Log("StorageService: Reset called");
+            // StorageService has no state to reset - always ready
+            // PlayerPrefs is always available
+        }
+
         public void ResetToDefaults()
         {
             Debug.Log("StorageService: Resetting to defaults - DELETING ALL PLAYERPREFS");

@@ -459,6 +459,21 @@ namespace LoGa.LudoEngine.Services
             }
         }
 
+        public void Reset()
+        {
+            Debug.Log("HeadTrackingService: Reset called");
+
+            // Stop tracking if active
+            if (activeProvider != null && activeProvider.IsConnected)
+            {
+                StopTracking();
+                ReleaseSharedResources(activeProvider); // release hardware resources
+            }
+
+            // Reset initialization flag
+            IsInitialized = false;
+        }
+
         private void OnDisable()
         {
             if (ApplicationState.IsQuitting)

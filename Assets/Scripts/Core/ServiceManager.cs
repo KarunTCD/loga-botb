@@ -70,7 +70,7 @@ namespace LoGa.LudoEngine.Core
         {
             Debug.Log("Creating service instances...");
 
-            // CRITICAL: Create GameDataService FIRST - no prefab needed, created programmatically
+            // NOTE: Create GameDataService FIRST - no prefab needed, created programmatically
             CreateService<IGameDataService, GameDataService>(null);
 
             CreateService<IStorageService, StorageService>(storageServicePrefab);
@@ -205,6 +205,65 @@ namespace LoGa.LudoEngine.Core
             else
             {
                 Debug.LogWarning($"Failed to initialize {serviceName}");
+            }
+        }
+
+        /// <summary>
+        /// Restart initialization after reset
+        /// Called when user clicks retry
+        /// </summary>
+        public IEnumerator RestartInitialization()
+        {
+            Debug.Log("ServiceManager: Restarting initialization");
+
+            // Small delay to ensure reset completed
+            yield return new WaitForSeconds(0.5f);
+
+            // Restart the initialization coroutine
+            yield return StartCoroutine(InitializeAllServices());
+        }
+
+
+        /// <summary>
+        /// Reset all services to allow retry after failed initialization
+        /// Called when user clicks retry button after initialization failure
+        /// </summary>
+        public void ResetAllServices()
+        {
+            Debug.Log("ServiceManager: Resetting all services for retry");
+
+            int resetCount = 0;
+            List<string> failedResets = new List<string>();
+
+            foreach (var kvp in serviceInstances)
+            {
+                try
+                {
+                    kvp.Value.Reset();
+                    resetCount++;
+                    Debug.Log($"  ✓ Reset {kvp.Key.Name}");
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError($"  ✗ Error resetting {kvp.Key.Name}: {e.Message}");
+                    failedResets.Add(kvp.Key.Name);
+                }
+            }
+
+            // Clear initialization status
+            foreach (var key in serviceInitStatus.Keys.ToList())
+            {
+                serviceInitStatus[key] = false;
+            }
+
+            // Reset ready flag
+            AreAllServicesReady = false;
+
+            Debug.Log($"ServiceManager: Reset complete - {resetCount}/{serviceInstances.Count} services reset");
+
+            if (failedResets.Count > 0)
+            {
+                Debug.LogWarning($"ServiceManager: Failed to reset: {string.Join(", ", failedResets)}");
             }
         }
 

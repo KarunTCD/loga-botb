@@ -251,6 +251,16 @@ namespace LoGa.LudoEngine.Services
             return false;
         }
 
+        public void Reset()
+        {
+            Debug.Log("AnalyticsService: Reset called");
+
+            // Reset initialization flag
+            IsInitialized = false;
+
+            // Note: Don't change consent status - user's choice persists
+        }
+
         private void OnApplicationPause(bool pauseStatus)
         {
             if (pauseStatus)

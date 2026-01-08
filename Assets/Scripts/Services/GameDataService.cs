@@ -202,6 +202,20 @@ namespace LoGa.LudoEngine.Services
             }
         }
 
+        public void Reset()
+        {
+            Debug.Log("GameDataService: Reset called");
+
+            // Clear loaded data
+            rawGameData = null;
+            GameConfig = null;
+            IsDataLoaded = false;
+
+            // Reset initialization
+            IsInitialized = false;
+            InitializationProgress = 0f;
+        }
+
         #endregion
 
         #region AudioEventLookup Management

@@ -7,11 +7,8 @@ using LoGa.LudoEngine.Core;
 namespace LoGa.LudoEngine.UI
 {
     /// <summary>
-    /// RACE-CONDITION SAFE Mode Selection UI
-    /// - No overlapping animations
-    /// - Explicit state management
-    /// - Safe async operation handling
-    /// - Proper cleanup on navigation
+    /// Mode Selection UI Component - handles player vs spectator choice
+    /// Manages session input and reports selections to UIManager
     /// </summary>
     public class ModeSelectionUI : MonoBehaviour
     {
@@ -45,23 +42,15 @@ namespace LoGa.LudoEngine.UI
 
         private enum SelectionState
         {
-            Inactive,           // Not currently active
             ChoosingMode,
             EnteringSession,
             Connecting,
             Starting
         }
 
-        private SelectionState currentState = SelectionState.Inactive;
+        private SelectionState currentState = SelectionState.ChoosingMode;
         private UIManager uiManager;
         private bool isInteractable = true;
-
-        #endregion
-
-        #region Coroutine Tracking (CRITICAL)
-
-        private Coroutine animationCoroutine;
-        private Coroutine errorClearCoroutine;
 
         #endregion
 
@@ -76,7 +65,7 @@ namespace LoGa.LudoEngine.UI
         public void SetUIManager(UIManager uiManager)
         {
             this.uiManager = uiManager;
-            Debug.Log("[ModeSelectionUI] UIManager reference set");
+            Debug.Log("ModeSelectionUI: UIManager reference set");
         }
 
         private void InitializeUI()
@@ -99,6 +88,7 @@ namespace LoGa.LudoEngine.UI
             if (runTutorialButton != null)
                 runTutorialButton.onClick.AddListener(OnRunTutorialButtonPressed);
 
+            // Setup input field events
             if (sessionInputField != null)
             {
                 sessionInputField.onValueChanged.AddListener(OnSessionInputChanged);
@@ -117,46 +107,13 @@ namespace LoGa.LudoEngine.UI
 
         #endregion
 
-        #region Public Interface
+        #region UI State Management
 
-        /// <summary>
-        /// SAFE: Called when panel is activated
-        /// </summary>
-        public void ResetUI()
-        {
-            Debug.Log("[ModeSelectionUI] Resetting UI to initial state");
-
-            // Stop any animations
-            StopAllAnimations();
-
-            // Reset to initial state
-            SetupInitialState();
-            SetAllInteractable(true);
-        }
-
-        /// <summary>
-        /// SAFE: External control of interactivity
-        /// </summary>
-        public void SetInteractable(bool interactable)
-        {
-            Debug.Log($"[ModeSelectionUI] Setting interactable to {interactable}");
-
-            isInteractable = interactable;
-            SetAllInteractable(interactable);
-        }
-
-        #endregion
-
-        #region State Management (SAFE)
-
-        /// <summary>
-        /// SAFE: State transitions with validation
-        /// </summary>
         private void TransitionToState(SelectionState newState)
         {
             if (currentState == newState) return;
 
-            Debug.Log($"[ModeSelectionUI] State: {currentState} → {newState}");
+            Debug.Log($"ModeSelectionUI: State transition {currentState} → {newState}");
 
             currentState = newState;
             UpdateUIForCurrentState();
@@ -166,22 +123,15 @@ namespace LoGa.LudoEngine.UI
         {
             switch (currentState)
             {
-                case SelectionState.Inactive:
-                    // Do nothing - panel is disabled
-                    break;
-
                 case SelectionState.ChoosingMode:
                     ShowModeSelection();
                     break;
-
                 case SelectionState.EnteringSession:
                     ShowSpectatorInput();
                     break;
-
                 case SelectionState.Connecting:
                     ShowConnectingState();
                     break;
-
                 case SelectionState.Starting:
                     ShowStartingState();
                     break;
@@ -238,28 +188,49 @@ namespace LoGa.LudoEngine.UI
 
         #endregion
 
-        #region Button Event Handlers (SAFE)
+        #region Public Interface
+
+        public void ResetUI()
+        {
+            Debug.Log("ModeSelectionUI: Resetting UI to initial state");
+
+            SetupInitialState();
+            SetAllInteractable(true);
+        }
+
+        public void SetInteractable(bool interactable)
+        {
+            Debug.Log($"ModeSelectionUI: Setting interactable to {interactable}");
+
+            isInteractable = interactable;
+            SetAllInteractable(interactable);
+        }
+
+        #endregion
+
+        #region Button Event Handlers
 
         private void OnPlayerModeButtonPressed()
         {
-            if (!isInteractable || currentState != SelectionState.ChoosingMode)
+            if (!isInteractable)
             {
-                Debug.Log("[ModeSelectionUI] Player mode button ignored - not interactable or wrong state");
+                Debug.Log("ModeSelectionUI: Player mode button pressed but UI not interactable");
                 return;
             }
 
-            Debug.Log("[ModeSelectionUI] Player mode button pressed");
+            Debug.Log("ModeSelectionUI: Player mode button pressed");
 
             TransitionToState(SelectionState.Starting);
-            AnimateButtonPress(playerModeButton);
+            StartCoroutine(AnimateButtonPress(playerModeButton));
 
+            // Report to UIManager
             if (uiManager != null)
             {
                 uiManager.OnPlayerModeSelected();
             }
             else
             {
-                Debug.LogError("[ModeSelectionUI] UIManager reference not set");
+                Debug.LogError("ModeSelectionUI: UIManager reference not set");
                 ShowError("Internal error - cannot start player mode");
                 ResetUI();
             }
@@ -267,15 +238,15 @@ namespace LoGa.LudoEngine.UI
 
         private void OnSpectatorModeButtonPressed()
         {
-            if (!isInteractable || currentState != SelectionState.ChoosingMode)
+            if (!isInteractable)
             {
-                Debug.Log("[ModeSelectionUI] Spectator mode button ignored");
+                Debug.Log("ModeSelectionUI: Spectator mode button pressed but UI not interactable");
                 return;
             }
 
-            Debug.Log("[ModeSelectionUI] Spectator mode button pressed");
+            Debug.Log("ModeSelectionUI: Spectator mode button pressed");
 
-            AnimateButtonPress(spectatorModeButton);
+            StartCoroutine(AnimateButtonPress(spectatorModeButton));
             TransitionToState(SelectionState.EnteringSession);
         }
 
@@ -283,12 +254,6 @@ namespace LoGa.LudoEngine.UI
         {
             if (!isInteractable || sessionInputField == null)
             {
-                return;
-            }
-
-            if (currentState != SelectionState.EnteringSession)
-            {
-                Debug.Log("[ModeSelectionUI] Connect button ignored - wrong state");
                 return;
             }
 
@@ -306,18 +271,19 @@ namespace LoGa.LudoEngine.UI
                 return;
             }
 
-            Debug.Log($"[ModeSelectionUI] Connecting to session {sessionId}");
+            Debug.Log($"ModeSelectionUI: Connecting to session {sessionId}");
 
             TransitionToState(SelectionState.Connecting);
-            AnimateButtonPress(connectButton);
+            StartCoroutine(AnimateButtonPress(connectButton));
 
+            // Report to UIManager
             if (uiManager != null)
             {
                 uiManager.OnSpectatorModeSelected(sessionId);
             }
             else
             {
-                Debug.LogError("[ModeSelectionUI] UIManager reference not set");
+                Debug.LogError("ModeSelectionUI: UIManager reference not set");
                 ShowError("Internal error - cannot connect to session");
                 TransitionToState(SelectionState.EnteringSession);
             }
@@ -330,9 +296,9 @@ namespace LoGa.LudoEngine.UI
                 return;
             }
 
-            Debug.Log("[ModeSelectionUI] Back button pressed");
+            Debug.Log("ModeSelectionUI: Back button pressed");
 
-            AnimateButtonPress(backButton);
+            StartCoroutine(AnimateButtonPress(backButton));
 
             // Handle different back behaviors based on current state
             if (currentState == SelectionState.EnteringSession)
@@ -349,7 +315,7 @@ namespace LoGa.LudoEngine.UI
                 }
                 else
                 {
-                    Debug.LogError("[ModeSelectionUI] UIManager reference not set");
+                    Debug.LogError("ModeSelectionUI: UIManager reference not set");
                 }
             }
         }
@@ -358,8 +324,8 @@ namespace LoGa.LudoEngine.UI
         {
             if (!isInteractable) return;
 
-            Debug.Log("[ModeSelectionUI] Run tutorial button pressed");
-            AnimateButtonPress(runTutorialButton);
+            Debug.Log("ModeSelectionUI: Run tutorial button pressed");
+            StartCoroutine(AnimateButtonPress(runTutorialButton));
 
             if (uiManager != null)
             {
@@ -367,7 +333,7 @@ namespace LoGa.LudoEngine.UI
             }
             else
             {
-                Debug.LogError("[ModeSelectionUI] UIManager reference not set");
+                Debug.LogError("ModeSelectionUI: UIManager reference not set");
             }
         }
 
@@ -377,6 +343,7 @@ namespace LoGa.LudoEngine.UI
 
         private void OnSessionInputChanged(string value)
         {
+            // Update connect button availability based on input
             bool hasValidInput = !string.IsNullOrEmpty(value.Trim());
 
             if (connectButton != null)
@@ -384,6 +351,7 @@ namespace LoGa.LudoEngine.UI
                 connectButton.interactable = hasValidInput && isInteractable;
             }
 
+            // Clear error when user starts typing
             if (hasValidInput)
             {
                 ClearError();
@@ -392,9 +360,10 @@ namespace LoGa.LudoEngine.UI
 
         private void OnSessionInputEndEdit(string value)
         {
-            if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
+            // Auto-connect if Enter key was pressed and input is valid
+            if (Input.inputString.Contains("\n") && !string.IsNullOrEmpty(value.Trim()))
             {
-                if (!string.IsNullOrEmpty(value.Trim()) && IsValidSessionId(value.Trim()))
+                if (IsValidSessionId(value.Trim()))
                 {
                     OnConnectButtonPressed();
                 }
@@ -436,6 +405,9 @@ namespace LoGa.LudoEngine.UI
                 runTutorialButton.gameObject.SetActive(true);
 
                 var buttonText = runTutorialButton.GetComponentInChildren<TextMeshProUGUI>();
+                if (buttonText == null)
+                    buttonText = runTutorialButton.GetComponentInChildren<TextMeshProUGUI>();
+
                 if (buttonText != null)
                 {
                     buttonText.text = hasCompletedTutorial ? "Run Tutorial Again" : "Review Tutorial";
@@ -452,44 +424,30 @@ namespace LoGa.LudoEngine.UI
             if (string.IsNullOrEmpty(sessionId))
                 return false;
 
+            // Basic validation - adjust based on your session ID format
             if (sessionId.Length < 8)
                 return false;
 
+            // Could add more specific validation here (GUID format, etc.)
             return true;
         }
 
         #endregion
 
-        #region Visual Feedback (SAFE)
+        #region Visual Feedback
 
-        /// <summary>
-        /// SAFE: Button animation with coroutine tracking
-        /// </summary>
-        private void AnimateButtonPress(Button button)
+        private IEnumerator AnimateButtonPress(Button button)
         {
-            if (button == null) return;
+            if (button == null) yield break;
 
-            // Stop any existing animation
-            if (animationCoroutine != null)
-            {
-                StopCoroutine(animationCoroutine);
-                animationCoroutine = null;
-            }
-
-            // Start new animation
-            animationCoroutine = StartCoroutine(AnimateButtonPressCoroutine(button));
-        }
-
-        private IEnumerator AnimateButtonPressCoroutine(Button button)
-        {
             Transform buttonTransform = button.transform;
             Vector3 originalScale = buttonTransform.localScale;
             Vector3 pressedScale = originalScale * 0.95f;
 
+            // Scale down
             float duration = 0.1f;
             float elapsed = 0f;
 
-            // Scale down
             while (elapsed < duration)
             {
                 elapsed += Time.deltaTime;
@@ -507,7 +465,6 @@ namespace LoGa.LudoEngine.UI
             }
 
             buttonTransform.localScale = originalScale;
-            animationCoroutine = null;
         }
 
         private void SetElementVisible(CanvasGroup group, bool visible)
@@ -565,7 +522,7 @@ namespace LoGa.LudoEngine.UI
 
         #endregion
 
-        #region Error Display (SAFE)
+        #region Error Display
 
         public void ShowError(string message)
         {
@@ -575,28 +532,14 @@ namespace LoGa.LudoEngine.UI
                 errorText.color = Color.red;
             }
 
-            Debug.LogError($"[ModeSelectionUI] Error: {message}");
+            Debug.LogError($"ModeSelectionUI Error: {message}");
 
-            // Cancel existing error clear
-            if (errorClearCoroutine != null)
-            {
-                StopCoroutine(errorClearCoroutine);
-                errorClearCoroutine = null;
-            }
-
-            // Start new error clear timer
-            errorClearCoroutine = StartCoroutine(ClearErrorAfterDelay(4f));
+            // Auto-clear error after delay
+            StartCoroutine(ClearErrorAfterDelay(4f));
         }
 
         public void ClearError()
         {
-            // Cancel pending clear
-            if (errorClearCoroutine != null)
-            {
-                StopCoroutine(errorClearCoroutine);
-                errorClearCoroutine = null;
-            }
-
             if (errorText != null)
             {
                 errorText.text = "";
@@ -607,7 +550,6 @@ namespace LoGa.LudoEngine.UI
         {
             yield return new WaitForSeconds(delay);
             ClearError();
-            errorClearCoroutine = null;
         }
 
         #endregion
@@ -616,7 +558,7 @@ namespace LoGa.LudoEngine.UI
 
         public void OnConnectionAttemptFailed(string reason)
         {
-            Debug.Log($"[ModeSelectionUI] Connection attempt failed - {reason}");
+            Debug.Log($"ModeSelectionUI: Connection attempt failed - {reason}");
 
             ShowError($"Connection failed: {reason}");
             TransitionToState(SelectionState.EnteringSession);
@@ -625,7 +567,7 @@ namespace LoGa.LudoEngine.UI
 
         public void OnPlayerModeStartFailed(string reason)
         {
-            Debug.Log($"[ModeSelectionUI] Player mode start failed - {reason}");
+            Debug.Log($"ModeSelectionUI: Player mode start failed - {reason}");
 
             ShowError($"Failed to start player mode: {reason}");
             TransitionToState(SelectionState.ChoosingMode);
@@ -634,40 +576,10 @@ namespace LoGa.LudoEngine.UI
 
         #endregion
 
-        #region Cleanup (SAFE)
-
-        /// <summary>
-        /// SAFE: Stop all animations when disabled
-        /// </summary>
-        private void StopAllAnimations()
-        {
-            if (animationCoroutine != null)
-            {
-                StopCoroutine(animationCoroutine);
-                animationCoroutine = null;
-            }
-
-            if (errorClearCoroutine != null)
-            {
-                StopCoroutine(errorClearCoroutine);
-                errorClearCoroutine = null;
-            }
-        }
-
-        private void OnDisable()
-        {
-            // Mark as inactive
-            currentState = SelectionState.Inactive;
-
-            // Stop all animations
-            StopAllAnimations();
-        }
+        #region Cleanup
 
         private void OnDestroy()
         {
-            // Stop animations
-            StopAllAnimations();
-
             // Remove button listeners
             if (playerModeButton != null)
                 playerModeButton.onClick.RemoveListener(OnPlayerModeButtonPressed);
@@ -687,9 +599,101 @@ namespace LoGa.LudoEngine.UI
                 sessionInputField.onEndEdit.RemoveListener(OnSessionInputEndEdit);
             }
 
-            Debug.Log("[ModeSelectionUI] Cleanup completed");
+            Debug.Log("ModeSelectionUI: Cleanup completed");
         }
 
         #endregion
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

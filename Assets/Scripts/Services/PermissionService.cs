@@ -13,7 +13,7 @@ namespace LoGa.LudoEngine.Services
     {
         public event Action<bool> LocationPermissionResult;
         public bool HasLocationPermission { get; private set; }
-
+        private bool isInitializing = false;
         public bool IsInitialized { get; private set; }
 
 #if PLATFORM_ANDROID
@@ -24,11 +24,22 @@ namespace LoGa.LudoEngine.Services
 
         public Task<bool> InitializeAsync()
         {
+            if (IsInitialized) return Task.FromResult(true);
+
+            if (isInitializing)
+            {
+                Debug.LogWarning("PermissionService: Already initializing");
+                return Task.FromResult(false);
+            }
+
+            isInitializing = true;
+
             CheckLocationPermission();
 
             if (HasLocationPermission)
             {
                 IsInitialized = true;
+                isInitializing = false;
                 return Task.FromResult(true);
             }
 
@@ -38,6 +49,7 @@ namespace LoGa.LudoEngine.Services
             {
                 LocationPermissionResult -= PermissionResultHandler;
                 IsInitialized = result;
+                isInitializing = false;
                 tcs.SetResult(result);
             }
 
@@ -47,6 +59,7 @@ namespace LoGa.LudoEngine.Services
             {
                 LocationPermissionResult -= PermissionResultHandler;
                 IsInitialized = false;
+                isInitializing = false;
                 tcs.TrySetResult(false);
                 Debug.LogWarning("Permission request timed out");
             }, null, 10000, System.Threading.Timeout.Infinite);
@@ -176,6 +189,13 @@ namespace LoGa.LudoEngine.Services
             return tcs.Task;
         }
 
+        public void Reset()
+        {
+            Debug.Log("PermissionService: Reset called");
+            IsInitialized = false;
+            isInitializing = false;
+            // No need to change HasLocationPermission - actual permission state unchanged
+        }
 
         private void OnApplicationFocus(bool focus)
         {

@@ -6,6 +6,7 @@ using Firebase.Database;
 using UnityEngine;
 using LoGa.LudoEngine.Core;
 using LoGa.LudoEngine.Utilities;
+using System.Linq;
 
 namespace LoGa.LudoEngine.Services
 {
@@ -276,6 +277,22 @@ namespace LoGa.LudoEngine.Services
             {
                 Debug.LogError($"Failed to delete session: {e.Message}");
             }
+        }
+
+        public void Reset()
+        {
+            Debug.Log("FirebaseService: Reset called");
+
+            // Disconnect from any active sessions
+            foreach (var sessionId in sessionListeners.Keys.ToList())
+            {
+                DisconnectFromSession(sessionId);
+            }
+
+            // Reset initialization flag
+            IsInitialized = false;
+
+            // Note: Don't destroy Firebase app - it stays initialized
         }
 
         private void OnDisable()
