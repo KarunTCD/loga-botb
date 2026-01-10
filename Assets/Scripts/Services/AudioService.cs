@@ -6,11 +6,14 @@ using LoGa.LudoEngine.Core;
 using LoGa.LudoEngine.Utilities;
 using System;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.IO;
 
 namespace LoGa.LudoEngine.Services
 {
     public class AudioService : MonoBehaviour, IAudioService
     {
+        private List<string> loadedBankPaths = new List<string>();
         public bool IsInitialized { get; private set; }
 
         public Task<bool> InitializeAsync()
@@ -40,6 +43,100 @@ namespace LoGa.LudoEngine.Services
             }
 
             return RuntimeManager.CreateInstance(eventRef);
+        }
+
+        // Load FMOD banks for a specific site
+        public bool LoadBanksForSite(string siteId)
+        {
+            try
+            {
+                Debug.Log($"AudioService: Loading banks for site: {siteId}");
+
+                // Unload any previously loaded banks
+                UnloadAllBanks();
+
+                // Build path to site's audio folder
+                string audioFolderPath = Path.Combine(
+                    Application.streamingAssetsPath,
+                    "Sites",
+                    siteId,
+                    "Audio"
+                );
+
+                Debug.Log($"AudioService: Looking for banks in: {audioFolderPath}");
+
+                // Verify folder exists
+                if (!Directory.Exists(audioFolderPath))
+                {
+                    Debug.LogError($"AudioService: Audio folder not found: {audioFolderPath}");
+                    return false;
+                }
+
+                // Load Master bank
+                string masterBankPath = Path.Combine(audioFolderPath, "Master.bank");
+                if (!File.Exists(masterBankPath))
+                {
+                    Debug.LogError($"AudioService: Master.bank not found at: {masterBankPath}");
+                    return false;
+                }
+
+                Debug.Log($"AudioService: Loading Master.bank from: {masterBankPath}");
+                FMODUnity.RuntimeManager.LoadBank(masterBankPath, true);
+                loadedBankPaths.Add(masterBankPath);
+                Debug.Log("AudioService: ✓ Master.bank loaded");
+
+                // Load Master.strings bank
+                string stringsBankPath = Path.Combine(audioFolderPath, "Master.strings.bank");
+                if (File.Exists(stringsBankPath))
+                {
+                    Debug.Log($"AudioService: Loading Master.strings.bank");
+                    FMODUnity.RuntimeManager.LoadBank(stringsBankPath, true);
+                    loadedBankPaths.Add(stringsBankPath);
+                    Debug.Log("AudioService: ✓ Master.strings.bank loaded");
+                }
+                else
+                {
+                    Debug.LogWarning($"AudioService: Master.strings.bank not found (optional)");
+                }
+
+                Debug.Log($"AudioService: ✅ Successfully loaded {loadedBankPaths.Count} banks for site: {siteId}");
+                return true;
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"AudioService: ❌ Failed to load banks for site {siteId}");
+                Debug.LogError($"Exception: {e.Message}");
+                Debug.LogError($"Stack trace: {e.StackTrace}");
+                return false;
+            }
+        }
+
+        // Unload all the banks added
+        public void UnloadAllBanks()
+        {
+            if (loadedBankPaths.Count == 0)
+            {
+                Debug.Log("AudioService: No banks to unload");
+                return;
+            }
+
+            Debug.Log($"AudioService: Unloading {loadedBankPaths.Count} banks");
+
+            foreach (string bankPath in loadedBankPaths)
+            {
+                try
+                {
+                    FMODUnity.RuntimeManager.UnloadBank(bankPath);
+                    Debug.Log($"AudioService: ✓ Unloaded bank: {Path.GetFileName(bankPath)}");
+                }
+                catch (Exception e)
+                {
+                    Debug.LogWarning($"AudioService: Error unloading bank {Path.GetFileName(bankPath)}: {e.Message}");
+                }
+            }
+
+            loadedBankPaths.Clear();
+            Debug.Log("AudioService: ✅ All banks unloaded");
         }
 
         // Replace the ListAllParameters method in AudioService with this corrected version:

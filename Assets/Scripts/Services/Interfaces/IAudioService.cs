@@ -19,5 +19,8 @@ namespace LoGa.LudoEngine.Services
         bool IsTrackPlaying(EventInstance instance, string parameterName, float parameterValue);
         float GetParameter(EventInstance instance, string paramName);
         void ListAllParameters(EventInstance instance, string poiName);
+        // Multi-site bank management
+        bool LoadBanksForSite(string siteId);
+        void UnloadAllBanks();
     }
 }

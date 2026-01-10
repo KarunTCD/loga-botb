@@ -1,0 +1,28 @@
+{
+  "sites": [
+    {
+      "id": "battle_of_boyne",
+      "name": "Battle of the Boyne",
+      "description": "Historical battle site 1690",
+      "folderName": "BattleOfBoyne",
+      "centerLocation": {
+        "latitude": 53.7045,
+        "longitude": -6.4658
+      },
+      "activationRadius": 5000,
+      "isDebug": false
+    },
+    {
+      "id": "debug",
+      "name": "Debug Test Site",
+      "description": "Local testing site",
+      "folderName": "Debug",
+      "centerLocation": {
+        "latitude": 53.349805,
+        "longitude": -6.260310
+      },
+      "activationRadius": 50000,
+      "isDebug": true
+    }
+  ]
+}
