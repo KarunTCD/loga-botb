@@ -704,8 +704,22 @@ MonoBehaviour:
   VirtualChannelSettings: []
   RealChannelSettings: []
   Plugins: []
-  MasterBanks: []
-  Banks: []
+  MasterBanks:
+  - Master
+  - Sites/Debug/Audio/Master
+  Banks:
+  - Combat
+  - oak
+  - raven
+  - salmon
+  - Sites/Debug/Audio/Combat
+  - Sites/Debug/Audio/oak
+  - Sites/Debug/Audio/raven
+  - Sites/Debug/Audio/salmon
+  - Sites/Debug/Audio/surgeon
+  - Sites/Debug/Audio/william
+  - surgeon
+  - william
   BanksToLoad: []
   LiveUpdatePort: 9264
   EnableMemoryTracking: 0
