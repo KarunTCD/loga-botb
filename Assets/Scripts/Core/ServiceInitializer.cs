@@ -79,13 +79,13 @@ namespace LoGa.LudoEngine.Core
                 return;
             }
 
-            // CRITICAL FIX: Reset services
+            // Reset services
             ServiceManager.Instance.ResetAllServices();
 
             UpdateProgress(0, "Starting service initialization...");
             Debug.Log("ServiceInitializer: Starting initialization sequence");
 
-            // CRITICAL FIX: Restart the coroutine
+            // Restart the coroutine
             ServiceManager.Instance.StartCoroutine(ServiceManager.Instance.RestartInitialization());
         }
 

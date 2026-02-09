@@ -687,8 +687,8 @@ MonoBehaviour:
   sourceBankPathUnformatted: 
   BankRefreshCooldown: 5
   ShowBankRefreshWindow: 1
-  AutomaticEventLoading: 1
-  BankLoadType: 0
+  AutomaticEventLoading: 0
+  BankLoadType: 2
   AutomaticSampleLoading: 0
   EncryptionKey: 
   ImportType: 0
@@ -707,11 +707,18 @@ MonoBehaviour:
   MasterBanks:
   - Master
   - Sites/Debug/Audio/Master
+  - Sites/BattleOfBoyne/Audio/Master
   Banks:
   - Combat
   - oak
   - raven
   - salmon
+  - Sites/BattleOfBoyne/Audio/Combat
+  - Sites/BattleOfBoyne/Audio/oak
+  - Sites/BattleOfBoyne/Audio/raven
+  - Sites/BattleOfBoyne/Audio/salmon
+  - Sites/BattleOfBoyne/Audio/surgeon
+  - Sites/BattleOfBoyne/Audio/william
   - Sites/Debug/Audio/Combat
   - Sites/Debug/Audio/oak
   - Sites/Debug/Audio/raven

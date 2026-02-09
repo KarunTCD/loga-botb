@@ -55,61 +55,36 @@ namespace LoGa.LudoEngine.Services
                 // Unload any previously loaded banks
                 UnloadAllBanks();
 
-                // Build path to site's audio folder
-                string audioFolderPath = Path.Combine(
-                    Application.streamingAssetsPath,
-                    "Sites",
-                    siteId,
-                    "Audio"
-                );
+                // CRITICAL: FMOD expects RELATIVE paths from StreamingAssets root
+                // NOT absolute paths
+                string relativeMasterBankPath = Path.Combine("Sites", siteId, "Audio", "Master.bank");
+                string relativeStringsBankPath = Path.Combine("Sites", siteId, "Audio", "Master.strings.bank");
 
-                Debug.Log($"AudioService: Looking for banks in: {audioFolderPath}");
+                Debug.Log($"AudioService: Loading Master.bank with relative path: {relativeMasterBankPath}");
 
-                // Verify folder exists
-                if (!Directory.Exists(audioFolderPath))
-                {
-                    Debug.LogError($"AudioService: Audio folder not found: {audioFolderPath}");
-                    return false;
-                }
-
-                // Load Master bank
-                string masterBankPath = Path.Combine(audioFolderPath, "Master.bank");
-                if (!File.Exists(masterBankPath))
-                {
-                    Debug.LogError($"AudioService: Master.bank not found at: {masterBankPath}");
-                    return false;
-                }
-
-                Debug.Log($"AudioService: Loading Master.bank from: {masterBankPath}");
-                FMODUnity.RuntimeManager.LoadBank(masterBankPath, true);
-                loadedBankPaths.Add(masterBankPath);
+                // Load Master bank (FMOD will prepend StreamingAssets path automatically)
+                FMODUnity.RuntimeManager.LoadBank(relativeMasterBankPath, true);
+                loadedBankPaths.Add(relativeMasterBankPath);
                 Debug.Log("AudioService: ✓ Master.bank loaded");
 
                 // Load Master.strings bank
-                string stringsBankPath = Path.Combine(audioFolderPath, "Master.strings.bank");
-                if (File.Exists(stringsBankPath))
-                {
-                    Debug.Log($"AudioService: Loading Master.strings.bank");
-                    FMODUnity.RuntimeManager.LoadBank(stringsBankPath, true);
-                    loadedBankPaths.Add(stringsBankPath);
-                    Debug.Log("AudioService: ✓ Master.strings.bank loaded");
-                }
-                else
-                {
-                    Debug.LogWarning($"AudioService: Master.strings.bank not found (optional)");
-                }
+                Debug.Log($"AudioService: Loading Master.strings.bank with relative path: {relativeStringsBankPath}");
+                FMODUnity.RuntimeManager.LoadBank(relativeStringsBankPath, true);
+                loadedBankPaths.Add(relativeStringsBankPath);
+                Debug.Log("AudioService: ✓ Master.strings.bank loaded");
 
-                Debug.Log($"AudioService: ✅ Successfully loaded {loadedBankPaths.Count} banks for site: {siteId}");
+                Debug.Log($"AudioService: Successfully loaded {loadedBankPaths.Count} banks for site: {siteId}");
                 return true;
             }
             catch (Exception e)
             {
-                Debug.LogError($"AudioService: ❌ Failed to load banks for site {siteId}");
+                Debug.LogError($"AudioService: Failed to load banks for site {siteId}");
                 Debug.LogError($"Exception: {e.Message}");
                 Debug.LogError($"Stack trace: {e.StackTrace}");
                 return false;
             }
         }
+
 
         // Unload all the banks added
         public void UnloadAllBanks()
@@ -126,6 +101,7 @@ namespace LoGa.LudoEngine.Services
             {
                 try
                 {
+                    // Use the same relative path we used to load
                     FMODUnity.RuntimeManager.UnloadBank(bankPath);
                     Debug.Log($"AudioService: ✓ Unloaded bank: {Path.GetFileName(bankPath)}");
                 }
@@ -136,7 +112,7 @@ namespace LoGa.LudoEngine.Services
             }
 
             loadedBankPaths.Clear();
-            Debug.Log("AudioService: ✅ All banks unloaded");
+            Debug.Log("AudioService: All banks unloaded");
         }
 
         // Replace the ListAllParameters method in AudioService with this corrected version:
@@ -180,70 +156,30 @@ namespace LoGa.LudoEngine.Services
             }
         }
 
-        // Enhanced navigation cue method with manual cue index control
-        public void PlayNavigationCue(EventInstance instance, Vector3 position, int characterId, float distance, bool isTargeted, float maxDistance, int cueIndex = 0)
+        //// <summary>
+        /// Play navigation cue with 4 core parameters for binaural audio
+        /// </summary>
+        public void PlayNavigationCue(EventInstance instance, Vector3 position, int cueIndex, int direction, float normalizedDistance)
         {
-            if (!IsInstanceValid(instance)) return;
+            if (!IsInstanceValid(instance))
+            {
+                Debug.LogWarning("Cannot play navigation cue - invalid instance");
+                return;
+            }
 
-            // Update 3D position
+            // Set 3D position
             Update3DAttributes(instance, position);
 
-            // Set existing parameters (keep all your current logic)
-            instance.setParameterByName("Character_ID", characterId);
-            instance.setParameterByName("Is_Target", isTargeted ? 1.0f : 0.0f);
-
-            // IMPORTANT: Always set distance for volume automation (keep your existing behavior)
-            UpdateDistanceBanding(instance, distance, maxDistance);
-
-            // NEW: Always set cue index - code determines the value
+            // Set the 4 core parameters for binaural navigation
             instance.setParameterByName("CueIndex", cueIndex);
-
-            if (cueIndex > 0)
-            {
-                Debug.Log($"Sequential cue: Character {characterId}, CueIndex {cueIndex}, Distance: {distance:F1}m, Normalized: {distance / maxDistance:F3}");
-            }
-            else
-            {
-                Debug.Log($"Distance-based cue: Character {characterId}, Distance: {distance:F1}m, Normalized: {distance / maxDistance:F3}");
-            }
-
-            // Set trigger parameter (keep existing)
+            instance.setParameterByName("Direction", direction);
+            instance.setParameterByName("NormalizedDistance", normalizedDistance);
             instance.setParameterByName("Trigger", 1.0f);
-            instance.start();
 
-            // Reset trigger parameter after a delay (keep existing)
-            StartCoroutine(ResetTriggerAfterDelay(instance, "Trigger", 0.1f));
-        }
+            // Start the instance
+            FMOD.RESULT result = instance.start();
 
-        // Original method for backward compatibility (your existing calls won't break)
-        public void PlayNavigationCue(EventInstance instance, Vector3 position, int characterId, float distance, bool isTargeted, float maxDistance)
-        {
-            // Calculate cue index based on normalized distance for distance-based mode
-            float normalizedDistance = Mathf.Clamp01(distance / maxDistance);
-            int distanceBasedCueIndex = CalculateDistanceBasedCueIndex(normalizedDistance);
-
-            // Call enhanced version with distance-based cue index
-            PlayNavigationCue(instance, position, characterId, distance, isTargeted, maxDistance, distanceBasedCueIndex);
-        }
-
-        // Helper method to calculate cue index from normalized distance
-        private int CalculateDistanceBasedCueIndex(float normalizedDistance)
-        {
-            // Map normalized distance (0-1) to cue indices (1-4)
-            if (normalizedDistance <= 0.25f) return 1;      // Close
-            else if (normalizedDistance <= 0.5f) return 2;  // Medium
-            else if (normalizedDistance <= 0.75f) return 3; // Far
-            else return 4;                                   // Very far
-        }
-
-        // Stop navigation cue by setting Character_ID to 0 (None)
-        public void StopNavigationCue(EventInstance instance)
-        {
-            //if (!IsInstanceValid(instance)) return;
-
-            // Setting to 0 ("None") will stop any playing sounds
-            //instance.setParameterByName("Character_ID", 0);
-
+            Debug.Log($"🎵 Navigation cue started: Cue={cueIndex}, Dir={direction}, Dist={normalizedDistance:F3}, Result={result}");
         }
 
         // Play regular audio
@@ -348,17 +284,6 @@ namespace LoGa.LudoEngine.Services
             }
 
             return value;
-        }
-
-        // Reset trigger parameter after delay
-        private IEnumerator ResetTriggerAfterDelay(EventInstance instance, string parameterName, float delay)
-        {
-            yield return new WaitForSeconds(delay);
-
-            if (IsInstanceValid(instance))
-            {
-                instance.setParameterByName(parameterName, 0.0f);
-            }
         }
 
         /// <summary>

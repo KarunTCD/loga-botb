@@ -270,7 +270,7 @@ namespace LoGa.LudoEngine.Services
             {
                 lastSignificantLocation = newLocation;
                 LocationChanged?.Invoke(newLocation); // RARE event for significant movement only
-                Debug.Log($"Significant movement detected: {distanceMoved:F1}m");
+                //Debug.Log($"Significant movement detected: {distanceMoved:F1}m");
             }
         }
 

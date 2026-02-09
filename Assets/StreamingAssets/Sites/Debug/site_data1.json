@@ -1,0 +1,73 @@
+{
+  "gameConfiguration": {
+    "defaultTimeLayer": 0,
+    "ambientAudioEvent": "event:/ambient_sounds",
+    "proximityRadius": 20.0,
+    "dialogueRadius": 10.0,
+    "maxCueRadius": 500000.0,
+    "targetLockTime": 1.0,
+    "targetLockAngle": 15.0,
+    "targetBreakAngle": 30.0,
+    "cueStagingDelay": 4.0,
+    "cyclePauseDelay": 6.0,
+    "baseMaxActiveCues": 1,
+    "maxMaxActiveCues": 2,
+    "navigationUpgradeThreshold": 2,
+    "maxTargetingDistance": 200.0,
+    "maxPlayerHealth": 3,
+    "gameBounds": {
+        "north": 53.337317,
+        "south": 53.333972,
+        "east": -6.299176,
+        "west": -6.305720
+    }
+  },
+  "timeLayers": [
+      {
+        "id": "battle_1690",
+        "layerName": "Battle of the Boyne",
+        "layerIndex": 0,
+          "pois": [
+              {
+                  "characterName": "Deposed King James II",
+                  "characterId": 7,
+                  "characterAudioEvent": "event:/james_audio",
+                  "navigationCueEvent": "event:/james_nav_cue",
+                  "navigationCueCount": 4,
+                  "latitude": 53.336896,
+                  "longitude": -6.303979,
+                  "portalType": "None",
+                  "portalJumpDistance": 1,
+                  "portalActivationAudio": "",
+                  "hasReward": true,
+                  "reward": {
+                      "id": 9,
+                      "name": "Royal Seal Ring"
+                  },
+                  "hasMultipleVariants": false,
+                  "narrationVariantCount": 1
+              },
+              {
+                  "characterName": "William of Orange",
+                  "characterId": 1,
+                  "characterAudioEvent": "event:/william_audio",
+                  "navigationCueEvent": "event:/william_nav_cue",
+                  "navigationCueCount": 4,
+                  "latitude": 53.335980,
+                  "longitude":  -6.304262,
+                  "portalType": "None",
+                  "portalJumpDistance": 1,
+                  "portalActivationAudio": "",
+                  "hasReward": true,
+                  "reward": {
+                      "id": 1,
+                      "name": "Dutch Lion Amulet"
+                  },
+                  "hasMultipleVariants": false,
+                  "narrationVariantCount": 1
+              }
+          ]
+      }
+  ]
+}
+

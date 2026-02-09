@@ -7,6 +7,7 @@ using TMPro;
 using LoGa.LudoEngine.Core;
 using LoGa.LudoEngine.Services;
 using System;
+using System.Collections;
 
 namespace LoGa.LudoEngine.Game
 {
@@ -54,9 +55,6 @@ namespace LoGa.LudoEngine.Game
         [SerializeField] private GameObject defaultPOIPrefab;
         [SerializeField] private List<CharacterPrefabMapping> characterPrefabs;
 
-        [Header("Audio System")]
-        [SerializeField] private EventReference sharedCueEvent;
-
         private float proximityRadius;
         private float dialogueRadius;
         private float maxCueRadius;
@@ -81,7 +79,6 @@ namespace LoGa.LudoEngine.Game
         [SerializeField] private TextMeshProUGUI zoneText;
         [SerializeField] private TextMeshProUGUI completionText;
 
-        private bool isUsingJSONData = false;
         private IGameDataService gameDataService;
 
         private TimeLayer currentLayer;
@@ -91,7 +88,6 @@ namespace LoGa.LudoEngine.Game
         private List<POI> activeCuePOIs = new List<POI>();
         private TargetingState targetingState = new TargetingState { mode = TargetingMode.None };
 
-        private EventInstance sharedCueInstance;
         private EventInstance welcomeInstance;
         private EventInstance rewardInstance;
 
@@ -104,7 +100,6 @@ namespace LoGa.LudoEngine.Game
         private int currentCueIndex = 0;
         private bool isInCyclePause = false;
         private float cyclePauseTimer = 0f;
-        // ❌ REMOVED: private int sequentialCueIndex = 0; (no longer used - POI handles its own)
         private int updateFrameCounter = 0;
 
         private Dictionary<int, bool> discoveredThisSession = new Dictionary<int, bool>();
@@ -183,24 +178,46 @@ namespace LoGa.LudoEngine.Game
         {
             try
             {
-                Debug.Log("POIManager: Starting initialization...");
+                Debug.Log("POIManager: Starting - waiting for site selection");
 
                 gameDataService = ServiceLocator.GetService<IGameDataService>();
-                isUsingJSONData = (gameDataService != null && gameDataService.IsDataLoaded);
-
-                Debug.Log($"POIManager: Data source determined - Using {(isUsingJSONData ? "JSON" : "Editor")} mode");
-
-                if (isUsingJSONData)
+                if (gameDataService == null)
                 {
-                    ApplyJSONConfiguration();
+                    Debug.LogError("POIManager: CRITICAL - GameDataService not found!");
+                    return;
+                }
+
+                Debug.Log("POIManager: GameDataService obtained");
+
+                // Load default progression values
+                LoadProgressionData();
+
+                // Subscribe to site loading event
+                if (SiteManager.Instance != null)
+                {
+                    SiteManager.Instance.OnSiteLoaded += OnSiteLoaded;
+                    Debug.Log("POIManager: Subscribed to OnSiteLoaded event");
                 }
                 else
                 {
-                    Debug.LogWarning("POIManager: Using editor fallback values");
-                    LoadProgressionData();
+                    Debug.LogError("POIManager: SiteManager.Instance not found!");
                 }
 
-                Debug.Log("POIManager: Waiting for AudioService initialization...");
+                Debug.Log("POIManager: Waiting for site selection...");
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"POIManager Start failed: {e.Message}");
+            }
+        }
+
+        private async void OnSiteLoaded(Site site)
+        {
+            try
+            {
+                Debug.Log($"POIManager: Site '{site.name}' loaded, now initializing audio...");
+
+                // Wait for AudioService to be ready
                 audioService = await ServiceLocator.GetInitializedService<IAudioService>();
                 if (audioService == null)
                 {
@@ -208,31 +225,33 @@ namespace LoGa.LudoEngine.Game
                     return;
                 }
 
+                // Initialize audio components (now that banks are loaded)
                 if (!InitializeAudioComponents())
                 {
                     Debug.LogError("POIManager: Failed to initialize audio components");
                     return;
                 }
 
+                // Subscribe to time layer events
                 TimeLayerManager.Instance.TimeLayerChanging += OnTimeLayerChanging;
                 TimeLayerManager.Instance.TimeLayerChanged += OnTimeLayerChanged;
 
+                // Load current layer (now that JSON data is loaded)
                 OnTimeLayerChanged(TimeLayerManager.Instance.CurrentLayer);
 
                 isInitialized = true;
-                Debug.Log($"POIManager: Initialization complete in {(isUsingJSONData ? "JSON" : "Editor")} mode");
+                Debug.Log("POIManager: Full initialization complete after site load");
             }
             catch (Exception e)
             {
-                Debug.LogError($"POIManager initialization failed: {e.Message}");
+                Debug.LogError($"POIManager OnSiteLoaded failed: {e.Message}");
             }
         }
-
         private void ApplyJSONConfiguration()
         {
-            if (!isUsingJSONData || gameDataService?.GameConfig == null)
+            if (gameDataService?.GameConfig == null)
             {
-                Debug.LogError("POIManager: ApplyJSONConfiguration called but JSON data not available");
+                Debug.LogError("POIManager: Cannot apply JSON configuration - GameConfig not available");
                 return;
             }
 
@@ -251,7 +270,6 @@ namespace LoGa.LudoEngine.Game
             targetBreakAngle = config.targetBreakAngle;
             maxTargetingDistance = config.maxTargetingDistance;
 
-            LoadProgressionData();
             RecalculateMaxActiveCues();
 
             Debug.Log($"POIManager: Applied JSON configuration");
@@ -341,6 +359,8 @@ namespace LoGa.LudoEngine.Game
         {
             if (!isInitialized) return;
 
+            //Debug.Log($"GameplayState: {GameManager.Instance?.CurrentGameplayState}, POIs: {activePOIs.Count}");
+
             if (TimeLayerManager.Instance.IsTransitioning ||
                 GameManager.Instance?.CurrentMode != GameManager.GameMode.Player)
                 return;
@@ -376,6 +396,8 @@ namespace LoGa.LudoEngine.Game
             {
                 UpdateDebugDisplay(currentLocation);
             }
+
+            CheckNavigationCueCompletions();
         }
 
         public void SilenceAllPOIAudio()
@@ -599,7 +621,7 @@ namespace LoGa.LudoEngine.Game
             }
         }
 
-        // ✅ UPDATED: HandleTargetedNavigation - Use POI's cycling method
+        // UPDATED: HandleTargetedNavigation - Use POI's cycling method
         private void HandleTargetedNavigation()
         {
             var targetPOI = targetingState.targetPOI;
@@ -611,71 +633,96 @@ namespace LoGa.LudoEngine.Game
             {
                 cueTimer = 0f;
 
-                // ✅ CHANGED: Get next cue index from the POI itself
-                int cueIndex = targetPOI.GetNextNavigationCueIndex();
+                // 🔥 ONLY WHEN LOCKED: Sequential cycling 1,2,3,4,1,2,3...
+                int sequentialCueIndex = targetPOI.GetNextNavigationCueIndex();
 
                 var config = new NavigationCueConfig
                 {
                     cueType = NavigationCueType.Sequential,
-                    cueIndex = cueIndex,  // ✅ POI provides its own cycling index
+                    cueIndex = sequentialCueIndex, // Cycles 1,2,3,4,1,2,3...
                     maxDistance = maxTargetingDistance,
                     isTargeted = true
                 };
 
                 targetPOI.ExecuteNavigationCue(data.audioPosition, config);
+                Debug.Log($"🎵 TARGETED SEQUENTIAL cue for {targetPOI.characterName} - index: {sequentialCueIndex}");
             }
         }
 
-        // ✅ UPDATED: HandleStandardNavigation - Always use cue_index = 0
         private void HandleStandardNavigation(List<POI> eligiblePOIs)
         {
             activeCuePOIs = eligiblePOIs;
 
-            if (activeCuePOIs.Count == 0) return;
+            Debug.Log($"🔄 HandleStandardNavigation: {activeCuePOIs.Count} eligible POIs");
+
+            if (activeCuePOIs.Count == 0)
+            {
+                Debug.Log("❌ No active cue POIs");
+                return;
+            }
 
             cueTimer += Time.deltaTime;
+            Debug.Log($"⏱️ CueTimer: {cueTimer:F2}s, StagingDelay: {cueStagingDelay}s, InPause: {isInCyclePause}");
 
             if (isInCyclePause)
             {
                 cyclePauseTimer += Time.deltaTime;
+                Debug.Log($"⏸️ In cycle pause: {cyclePauseTimer:F2}s / {cyclePauseDelay}s");
+
                 if (cyclePauseTimer >= cyclePauseDelay)
                 {
                     isInCyclePause = false;
                     cyclePauseTimer = 0f;
                     currentCueIndex = 0;
-                    cueTimer = cueStagingDelay;
+                    cueTimer = 0f;
+                    Debug.Log("▶️ Exiting cycle pause");
                 }
                 return;
             }
 
+            Debug.Log($"🎯 CurrentIndex: {currentCueIndex}/{activeCuePOIs.Count}, Timer: {cueTimer:F2}s >= {cueStagingDelay}s?");
+
             if (cueTimer >= cueStagingDelay && currentCueIndex < activeCuePOIs.Count)
             {
-                cueTimer = 0f;
+                Debug.Log($"🔊 EXECUTING NAV CUE for POI {currentCueIndex}");
 
+                cueTimer = 0f;
                 var poi = activeCuePOIs[currentCueIndex];
+
+                // 🔥 STANDARD NAVIGATION: Always use cue index 1 (no sequencing)
                 if (poiDataCache.TryGetValue(poi, out POIUpdateData data))
                 {
-                    // ✅ CHANGED: Always use cue_index = 0 in wander mode (no distance calculation)
                     var config = new NavigationCueConfig
                     {
                         cueType = NavigationCueType.DistanceBased,
-                        cueIndex = 0,  // ✅ ALWAYS 0 in wander mode
+                        cueIndex = 1, // 🔥 ALWAYS 1 for standard navigation
                         maxDistance = maxTargetingDistance,
                         isTargeted = false
                     };
 
                     poi.ExecuteNavigationCue(data.audioPosition, config);
+                    Debug.Log($"🎵 Executed standard navigation cue for {poi.characterName} - ALWAYS cue index: 1");
                 }
 
+                // Advance to next POI
                 currentCueIndex++;
 
+                // Check if cycle complete
                 if (currentCueIndex >= activeCuePOIs.Count)
                 {
                     isInCyclePause = true;
                     cyclePauseTimer = 0f;
-
-                    Debug.Log($"Completed cycle of {activeCuePOIs.Count}/{currentMaxActiveCues} cues, starting {cyclePauseDelay}s pause");
+                    currentCueIndex = 0;
+                    Debug.Log($"Navigation cycle complete - starting {cyclePauseDelay}s pause");
                 }
+                else
+                {
+                    Debug.Log($"Standard navigation advanced to index {currentCueIndex}");
+                }
+            }
+            else
+            {
+                Debug.Log($"⛔ Cue execution blocked - Timer: {cueTimer >= cueStagingDelay}, Index: {currentCueIndex < activeCuePOIs.Count}");
             }
         }
 
@@ -772,7 +819,7 @@ namespace LoGa.LudoEngine.Game
 
         private void CheckGameCompletion()
         {
-            if (StorageService == null || !isUsingJSONData || gameDataService == null) return;
+            if (StorageService == null || gameDataService == null) return;
 
             int totalPOIsInGame = GetTotalPOICountFromJSON();
 
@@ -798,7 +845,7 @@ namespace LoGa.LudoEngine.Game
 
         private int GetTotalPOICountFromJSON()
         {
-            if (!isUsingJSONData || gameDataService == null) return 0;
+            if (gameDataService == null) return 0;
 
             try
             {
@@ -1054,8 +1101,7 @@ namespace LoGa.LudoEngine.Game
                                $"Target: {targetingState.targetPOI.characterName}\n" +
                                $"Dist: {data.distance:F0}m | Angle: {data.angleDifference:F1}°\n" +
                                $"MaxCues: {currentMaxActiveCues} (Completed: {totalCompletedPOIs})\n" +
-                               $"Head: {HeadTrackingService.CurrentHeading:F0}°\n" +
-                               $"Mode: {(isUsingJSONData ? "JSON" : "Editor")}";
+                               $"Head: {HeadTrackingService.CurrentHeading:F0}°\n";
             }
             else if (targetingState.mode == TargetingMode.Potential)
             {
@@ -1064,8 +1110,7 @@ namespace LoGa.LudoEngine.Game
                                $"Targeting: {targetingState.targetPOI.characterName}\n" +
                                $"Progress: {progress:F1}%\n" +
                                $"MaxCues: {currentMaxActiveCues} (Completed: {totalCompletedPOIs})\n" +
-                               $"Head: {HeadTrackingService.CurrentHeading:F0}°\n" +
-                               $"Mode: {(isUsingJSONData ? "JSON" : "Editor")}";
+                               $"Head: {HeadTrackingService.CurrentHeading:F0}°\n";
             }
             else
             {
@@ -1073,8 +1118,33 @@ namespace LoGa.LudoEngine.Game
                                $"POIs: {activePOIs.Count}\n" +
                                $"MaxCues: {currentMaxActiveCues} (Completed: {totalCompletedPOIs})\n" +
                                $"Head: {HeadTrackingService.CurrentHeading:F0}°\n" +
-                               $"Location: {location.x:F6}, {location.y:F6}\n" +
-                               $"Mode: {(isUsingJSONData ? "JSON" : "Editor")}";
+                               $"Location: {location.x:F6}, {location.y:F6}\n";
+            }
+        }
+
+        private void CheckNavigationCueCompletions()
+        {
+            // 🔥 FIX: Only check activeCuePOIs, not all activePOIs
+            foreach (var poi in activeCuePOIs.ToList()) // ToList() to avoid collection modification
+            {
+                if (poi.CheckNavigationCueCompletion())
+                {
+                    Debug.Log($"Navigation cue completed for {poi.characterName} - starting {cueStagingDelay}s delay");
+
+                    // Check if this POI is currently targeted
+                    if (targetingState.mode == TargetingMode.Locked && targetingState.targetPOI == poi)
+                    {
+                        // Reset timer to start cueStagingDelay gap before next cue
+                        cueTimer = 0f; // Start delay timer from 0
+                        Debug.Log($"Targeted POI {poi.characterName} - {cueStagingDelay}s gap started");
+                    }
+                    else
+                    {
+                        // For standard navigation, this is handled in HandleStandardNavigation
+                        // The cue completion just triggers the timer reset there
+                        Debug.Log($"Standard navigation cue completed for {poi.characterName}");
+                    }
+                }
             }
         }
 
@@ -1119,7 +1189,7 @@ namespace LoGa.LudoEngine.Game
 
         private void OnTimeLayerChanged(TimeLayer newLayer)
         {
-            Debug.Log($"POIManager: Loading {newLayer.layerName} layer in {(isUsingJSONData ? "JSON" : "Editor")} mode");
+            Debug.Log($"POIManager: Loading {newLayer.layerName} layer");
 
             currentLayer = newLayer;
 
@@ -1140,7 +1210,7 @@ namespace LoGa.LudoEngine.Game
 
             if (debugText != null)
             {
-                debugText.text = $"Layer: {newLayer.layerName}\nPOIs: {activePOIs.Count}\nMode: {(isUsingJSONData ? "JSON" : "Editor")}";
+                debugText.text = $"Layer: {newLayer.layerName}\nPOIs: {activePOIs.Count}";
             }
         }
 
@@ -1148,90 +1218,77 @@ namespace LoGa.LudoEngine.Game
         {
             activePOIs.Clear();
 
-            if (isUsingJSONData)
+            // Wait for JSON data to be loaded
+            if (gameDataService == null || !gameDataService.IsDataLoaded)
             {
-                Debug.Log($"POIManager: JSON mode - loading POIs from JSON data for {layer.layerName}");
-                LoadPOIsFromJSON(layer);
-
-                if (layer.pois != null && layer.pois.Count > 0)
-                {
-                    Debug.Log($"POIManager: Cleaning up {layer.pois.Count} unused editor POIs");
-                    foreach (var editorPOI in layer.pois)
-                    {
-                        editorPOI?.Cleanup();
-                    }
-                    layer.pois.Clear();
-                }
+                Debug.LogWarning($"POIManager: JSON data not loaded yet for {layer.layerName} - waiting...");
+                return;
             }
-            else
+
+            Debug.Log($"POIManager: Loading POIs from JSON for {layer.layerName}");
+
+            // Apply JSON configuration on first load
+            if (gameDataService != null && gameDataService.IsDataLoaded)
             {
-                Debug.Log($"POIManager: Editor fallback mode - loading POIs for {layer.layerName}");
-
-                if (layer.pois != null && layer.pois.Count > 0)
-                {
-                    int skippedCount = 0;
-                    int loadedCount = 0;
-
-                    foreach (var poi in layer.pois)
-                    {
-                        if (IsPOICompleted(poi.characterId))
-                        {
-                            Debug.Log($"POIManager: Skipping completed editor POI - {poi.characterName} (ID: {poi.characterId})");
-                            skippedCount++;
-                            continue;
-                        }
-
-                        activePOIs.Add(poi);
-                        loadedCount++;
-                    }
-
-                    Debug.Log($"POIManager: Added {loadedCount} editor POIs, skipped {skippedCount} completed");
-                }
-                else
-                {
-                    Debug.LogWarning($"POIManager: No editor POIs configured for {layer.layerName}");
-                }
+                Debug.Log("POIManager: Applying JSON configuration");
+                ApplyJSONConfiguration();
             }
+
+            // Load POIs from JSON
+            LoadPOIsFromJSON(layer);
 
             InitializePOIs();
-            Debug.Log($"POIManager: Loaded {activePOIs.Count} POIs for {layer.layerName} (Mode: {(isUsingJSONData ? "JSON" : "Editor")})");
+            Debug.Log($"POIManager: Loaded {activePOIs.Count} POIs for {layer.layerName}");
         }
 
         private void LoadPOIsFromJSON(TimeLayer layer)
         {
-            if (!isUsingJSONData || gameDataService == null)
+            if (gameDataService == null)
             {
-                Debug.LogError("POIManager: LoadPOIsFromJSON called but not in JSON mode");
+                Debug.LogError("POIManager: GameDataService not available");
                 return;
             }
 
-            string jsonLayerId = MapTimeLayerToJsonId(layer.layerName);
-            var poiDataList = gameDataService.GetPOIsForTimeLayer(jsonLayerId);
+            // Use layer index to get the correct JSON time layer
+            var allTimeLayerData = gameDataService.GetAllTimeLayerData();
 
-            Debug.Log($"POIManager: Found {poiDataList.Count} total POIs in JSON for layer {jsonLayerId}");
-
-            int skippedCount = 0;
-            int loadedCount = 0;
-
-            foreach (var poiData in poiDataList)
+            if (layer.layerIndex >= 0 && layer.layerIndex < allTimeLayerData.Count)
             {
-                if (IsPOICompleted(poiData.characterId))
+                var jsonTimeLayer = allTimeLayerData[layer.layerIndex];
+
+                Debug.Log($"POIManager: Loading POIs for layer '{layer.layerName}' (Index: {layer.layerIndex}, JSON ID: {jsonTimeLayer.id})");
+
+                var poiDataList = jsonTimeLayer.pois; // Get POIs directly from the time layer
+
+                Debug.Log($"POIManager: Found {poiDataList.Count} POIs in JSON for layer index {layer.layerIndex}");
+
+                int skippedCount = 0;
+                int loadedCount = 0;
+
+                foreach (var poiData in poiDataList)
                 {
-                    Debug.Log($"POIManager: Skipping already-completed POI - {poiData.characterName} (ID: {poiData.characterId})");
-                    skippedCount++;
-                    continue;
+                    if (IsPOICompleted(poiData.characterId))
+                    {
+                        Debug.Log($"POIManager: Skipping completed POI - {poiData.characterName} (ID: {poiData.characterId})");
+                        skippedCount++;
+                        continue;
+                    }
+
+                    POI poi = CreatePOIFromJSONData(poiData);
+                    if (poi != null)
+                    {
+                        activePOIs.Add(poi);
+                        loadedCount++;
+                        Debug.Log($"POIManager: ✓ Loaded POI - {poiData.characterName} (ID: {poiData.characterId})");
+                    }
                 }
 
-                POI poi = CreatePOIFromJSONData(poiData);
-                if (poi != null)
-                {
-                    activePOIs.Add(poi);
-                    loadedCount++;
-                    Debug.Log($"POIManager: ✓ Created new JSON POI - {poiData.characterName} (ID: {poiData.characterId})");
-                }
+                Debug.Log($"POIManager: Loaded {loadedCount} POIs, skipped {skippedCount} completed");
             }
-
-            Debug.Log($"POIManager: 📊 Loaded {loadedCount} new POIs, skipped {skippedCount} completed POIs");
+            else
+            {
+                Debug.LogError($"POIManager: Invalid layer index {layer.layerIndex}, available layers: {allTimeLayerData.Count}");
+            }
         }
 
         private POI CreatePOIFromJSONData(GameDataService.POIData poiData)
@@ -1250,10 +1307,9 @@ namespace LoGa.LudoEngine.Game
                 poi.latitude = poiData.latitude;
                 poi.longitude = poiData.longitude;
 
-                if (gameDataService != null)
-                {
-                    poi.characterAudioEvent = gameDataService.GetAudioEventReference(poiData.characterAudioEvent);
-                }
+                // Character audio event name stored as string (loaded from bank)
+                poi.characterAudioEvent = poiData.characterAudioEvent;
+                poi.navigationCueEvent = poiData.navigationCueEvent;
 
                 poi.portalType = poiData.portalType switch
                 {
@@ -1271,8 +1327,8 @@ namespace LoGa.LudoEngine.Game
                 poi.hasReward = poiData.hasReward;
                 if (poiData.hasReward && poiData.reward != null)
                 {
-                    poi.rewardId = poiData.reward.rewardId;
-                    poi.rewardName = poiData.reward.rewardName;
+                    poi.rewardId = poiData.reward.id;       
+                    poi.rewardName = poiData.reward.name;   
                 }
 
                 poi.hasMultipleVariants = poiData.hasMultipleVariants;
@@ -1287,7 +1343,7 @@ namespace LoGa.LudoEngine.Game
                     poi.marker = markerTransform;
                 }
 
-                Debug.Log($"POIManager: Successfully created JSON POI - {poiData.characterName} (ID: {poiData.characterId}, Reward: {poiData.reward?.rewardId ?? 0})");
+                Debug.Log($"POIManager: Successfully created JSON POI - {poiData.characterName} (ID: {poiData.characterId}, Reward: {poiData.reward?.id ?? 0})");
                 return poi;
             }
             catch (Exception e)
@@ -1319,47 +1375,11 @@ namespace LoGa.LudoEngine.Game
             return new GameObject($"POI_{characterName}");
         }
 
-        private string MapTimeLayerToJsonId(string timeLayerName)
-        {
-            return timeLayerName.ToLower() switch
-            {
-                "modern era" => "modern",
-                "modern" => "modern",
-                "battle of the boyne 1690" => "battle_1690",
-                "battle of the boyne" => "battle_1690",
-                "battle 1690" => "battle_1690",
-                "neolithic era" => "neolithic",
-                "neolithic" => "neolithic",
-                "ancient" => "neolithic",
-                _ => "modern"
-            };
-        }
-
         private void InitializePOIs()
         {
             if (AudioService == null)
             {
                 Debug.LogError("Cannot initialize POIs - AudioService not available");
-                return;
-            }
-
-            try
-            {
-                if (sharedCueInstance.handle != IntPtr.Zero && AudioService.IsInstanceValid(sharedCueInstance))
-                {
-                    AudioService.ReleaseAudio(sharedCueInstance);
-                }
-
-                sharedCueInstance = AudioService.CreateAudioInstance(sharedCueEvent);
-                if (sharedCueInstance.handle == IntPtr.Zero)
-                {
-                    Debug.LogError("Failed to create shared cue instance");
-                    return;
-                }
-            }
-            catch (Exception e)
-            {
-                Debug.LogError("Error creating shared cue instance: " + e.Message);
                 return;
             }
 
@@ -1375,12 +1395,8 @@ namespace LoGa.LudoEngine.Game
                         Vector2 poiPosition = mapManager.GetScreenPosition(poi.latitude, poi.longitude);
                         poi.marker.anchoredPosition = poiPosition;
                     }
-                    poi.SetSharedCueInstance(sharedCueInstance);
+                    // DELETE: poi.SetSharedCueInstance(sharedCueInstance);
                     successfullyInitialized.Add(poi);
-                }
-                else
-                {
-                    Debug.LogError($"Failed to initialize POI: {poi.characterName}");
                 }
             }
 
@@ -1397,12 +1413,6 @@ namespace LoGa.LudoEngine.Game
 
             activePOIs.Clear();
             poiDataCache.Clear();
-
-            if (AudioService != null && sharedCueInstance.handle != IntPtr.Zero)
-            {
-                AudioService.StopAudio(sharedCueInstance, false);
-                AudioService.ReleaseAudio(sharedCueInstance);
-            }
         }
 
         public void UpdateUnlockedPOIs(List<string> unlockedPOIIds)
@@ -1483,14 +1493,12 @@ namespace LoGa.LudoEngine.Game
             Debug.Log($"Target Lock Time: {targetLockTime}s");
             Debug.Log($"Active POIs: {activePOIs.Count}");
             Debug.Log($"POI Data Cache: {poiDataCache.Count} entries");
-            Debug.Log($"Data Source: {(isUsingJSONData ? "JSON" : "Editor")}");
         }
 
         [ContextMenu("Debug POI Distances")]
         public void DebugPOIDistances()
         {
             Debug.Log($"=== POI Distance Debug ===");
-            Debug.Log($"Data Source: {(isUsingJSONData ? "JSON" : "Editor")}");
             foreach (var entry in poiDataCache)
             {
                 var poi = entry.Key;
@@ -1524,7 +1532,6 @@ namespace LoGa.LudoEngine.Game
         public void DebugDataSource()
         {
             Debug.Log($"=== POI Manager Data Source Debug ===");
-            Debug.Log($"Using JSON Data: {isUsingJSONData}");
             Debug.Log($"GameDataService Available: {gameDataService != null}");
             Debug.Log($"GameDataService Data Loaded: {gameDataService?.IsDataLoaded ?? false}");
             Debug.Log($"Current Layer: {currentLayer?.layerName ?? "None"}");
@@ -1540,8 +1547,88 @@ namespace LoGa.LudoEngine.Game
             }
         }
 
+        public void CompleteReset()
+        {
+            Debug.Log("POIManager: COMPLETE RESET - destroying all state");
+
+            // Stop all audio
+            StopAllAudio();
+
+            // Clear all collections
+            CleanupCurrentLayerPOIs();
+            ClearAllNavigationState();
+
+            // Reset all flags
+            isInitialized = false;
+
+            // Clear progression (site-specific)
+            totalCompletedPOIs = 0;
+            currentMaxActiveCues = baseMaxActiveCues;
+
+            // Clear session tracking
+            discoveredThisSession.Clear();
+            proximityReachedThisSession.Clear();
+
+            // Unsubscribe from events (will resubscribe when site loads)
+            if (TimeLayerManager.Instance != null)
+            {
+                TimeLayerManager.Instance.TimeLayerChanging -= OnTimeLayerChanging;
+                TimeLayerManager.Instance.TimeLayerChanged -= OnTimeLayerChanged;
+            }
+
+            Debug.Log("POIManager: Complete reset finished");
+        }
+
+        /// <summary>
+        /// Stop all POI audio - called when exiting gameplay
+        /// </summary>
+        public void StopAllAudio()
+        {
+            Debug.Log("POIManager: Stopping all POI audio");
+
+            // Stop all individual POI audio
+            foreach (var poi in activePOIs)
+            {
+                if (poi.characterAudioInstance.handle != IntPtr.Zero && AudioService != null)
+                {
+                    AudioService.StopAudio(poi.characterAudioInstance, false); // Immediate stop
+                    Debug.Log($"POIManager: Stopped character audio for {poi.characterName}");
+                }
+
+                // NEW: Stop individual navigation cue instances
+                if (AudioService != null && AudioService.IsInstanceValid(poi.navigationCueInstance))
+                {
+                    AudioService.StopAudio(poi.navigationCueInstance, false);
+                    Debug.Log($"POIManager: Stopped navigation cue for {poi.characterName}");
+                }
+            }
+
+            // Stop reward and welcome audio
+            if (AudioService != null)
+            {
+                if (AudioService.IsInstanceValid(rewardInstance))
+                {
+                    AudioService.StopAudio(rewardInstance, false);
+                }
+
+                if (AudioService.IsInstanceValid(welcomeInstance))
+                {
+                    AudioService.StopAudio(welcomeInstance, false);
+                }
+            }
+
+            Debug.Log("POIManager: All POI audio stopped");
+        }
+
         private void OnDestroy()
         {
+            // Unsubscribe from SiteManager
+            if (SiteManager.Instance != null)
+            {
+                SiteManager.Instance.OnSiteLoaded -= OnSiteLoaded;
+            }
+
+            // Existing cleanup
             if (TimeLayerManager.Instance != null)
             {
                 TimeLayerManager.Instance.TimeLayerChanging -= OnTimeLayerChanging;

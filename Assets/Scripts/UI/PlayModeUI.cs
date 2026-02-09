@@ -97,15 +97,15 @@ namespace LoGa.LudoEngine.UI
                                       "• Walk around to discover Points of Interest\n" +
                                       "• Listen for spatial audio cues\n" +
                                       "• Get close to POIs to hear historical accounts\n\n" +
-                                      "⚔️ COMBAT:\n" +
+                                      "COMBAT:\n" +
                                       "• Face attacking mercenaries to block\n" +
                                       "• Listen for footsteps and attack sounds\n" +
                                       "• Quick head turns are key to survival\n\n" +
-                                      "🍓 HEALTH:\n" +
+                                      " HEALTH:\n" +
                                       "• Collect berries to restore health\n" +
                                       "• Follow the berry audio to find them\n" +
                                       "• Stay healthy to continue exploring\n\n" +
-                                      "👥 SHARING:\n" +
+                                      "SHARING:\n" +
                                       "• Share your Session ID for others to watch\n" +
                                       "• Spectators see your journey in real-time";
             }
@@ -176,8 +176,8 @@ namespace LoGa.LudoEngine.UI
             {
                 GameManager.GameplayState.Wander => "Exploring the battlefield",
                 GameManager.GameplayState.Interact => "At Point of Interest",
-                GameManager.GameplayState.Combat => "⚔️ COMBAT ACTIVE ⚔️",
-                GameManager.GameplayState.Recovery => "🍓 Collecting berries",
+                GameManager.GameplayState.Combat => "⚔ COMBAT ACTIVE ",
+                GameManager.GameplayState.Recovery => "Collecting berries",
                 GameManager.GameplayState.Paused => "Game Paused",
                 _ => "Game Active"
             };

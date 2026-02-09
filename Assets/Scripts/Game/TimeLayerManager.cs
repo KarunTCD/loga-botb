@@ -11,28 +11,22 @@ namespace LoGa.LudoEngine.Game
     {
         public static TimeLayerManager Instance { get; private set; }
 
-        [Header("Editor Fallback Configuration (JSON will override completely)")]
-        [SerializeField] private List<TimeLayer> timeLayers; // Keep original name to preserve inspector data
-        [SerializeField] private int defaultLayerIndex = 0;
-
-        [Header("Transition Settings")]
+        [Header("Transition Settings - Will be overridden by JSON")]
         [SerializeField] private float transitionDuration = 3f;
         [SerializeField] private EventReference timePortalAudio;
 
-        // STRICT SEPARATION: Track data source
-        private bool isUsingJSONData = false;
         private IGameDataService gameDataService;
-        // Note: timeLayers list will be either JSON or editor layers, never mixed
+        private List<TimeLayer> timeLayers = new List<TimeLayer>();
+        private TimeLayer currentLayer;
+        private bool isTransitioning = false;
+        private bool isInitialized = false;
 
         public event System.Action<TimeLayer, TimeLayer> TimeLayerChanging;
         public event System.Action<TimeLayer> TimeLayerChanged;
 
-        private TimeLayer currentLayer;
-        private bool isTransitioning = false;
-
         public TimeLayer CurrentLayer => currentLayer;
         public bool IsTransitioning => isTransitioning;
-        public int CurrentLayerIndex => timeLayers.IndexOf(currentLayer);
+        public int CurrentLayerIndex => currentLayer?.layerIndex ?? -1;
         public int TotalLayers => timeLayers.Count;
 
         private IAudioService AudioService => ServiceLocator.GetService<IAudioService>();
@@ -46,187 +40,122 @@ namespace LoGa.LudoEngine.Game
             }
 
             Instance = this;
-
-            // STRICT SEPARATION: Determine data source ONCE at startup
             gameDataService = ServiceLocator.GetService<IGameDataService>();
-            isUsingJSONData = (gameDataService != null && gameDataService.IsDataLoaded);
 
-            Debug.Log($"TimeLayerManager: Data source determined - Using {(isUsingJSONData ? "JSON" : "Editor")} mode");
-
-            if (isUsingJSONData)
+            if (gameDataService == null)
             {
-                InitializeFromGameData();
-            }
-            else
-            {
-                InitializeFromEditorData();
-            }
-
-            // Validate we have a current layer
-            if (currentLayer == null)
-            {
-                Debug.LogError("TimeLayerManager: No current layer set after initialization!");
-                if (timeLayers != null && timeLayers.Count > 0)
-                {
-                    currentLayer = timeLayers[0];
-                    Debug.LogWarning($"TimeLayerManager: Defaulting to first layer: {currentLayer.layerName}");
-                }
-            }
-
-            Debug.Log($"TimeLayerManager: Initialized with {timeLayers?.Count ?? 0} layers in {(isUsingJSONData ? "JSON" : "Editor")} mode");
-            Debug.Log($"TimeLayerManager: Current layer: {currentLayer?.layerName ?? "None"}");
-        }
-
-        #region JSON Data Integration - STRICT SEPARATION
-
-        /// <summary>
-        /// Initialize completely from JSON data, ignore all editor settings
-        /// </summary>
-        private void InitializeFromGameData()
-        {
-            if (!isUsingJSONData || gameDataService?.GameConfig == null)
-            {
-                Debug.LogError("TimeLayerManager: InitializeFromGameData called but JSON data not available");
-                InitializeFromEditorData(); // Fallback
+                Debug.LogError("TimeLayerManager: CRITICAL - GameDataService not found! Cannot function without JSON data.");
+                enabled = false;
                 return;
             }
+
+            // Subscribe to JSON loading
+            gameDataService.OnDataLoaded += InitializeFromJSON;
+
+            Debug.Log("TimeLayerManager: Waiting for JSON data - no fallback available");
+        }
+
+        private void InitializeFromJSON()
+        {
+            Debug.Log("TimeLayerManager: JSON data loaded, initializing...");
 
             var config = gameDataService.GameConfig;
             var timeLayerDataList = gameDataService.GetAllTimeLayerData();
 
-            Debug.Log($"TimeLayerManager: JSON mode - completely replacing editor configuration");
-            Debug.Log($"TimeLayerManager: Loading {timeLayerDataList.Count} time layers from JSON");
-
-            // Apply JSON configuration (override editor values completely)
-            defaultLayerIndex = config.defaultTimeLayer;
-
-            // Create time layers from JSON data ONLY
-            if (timeLayerDataList != null && timeLayerDataList.Count > 0)
+            if (timeLayerDataList == null || timeLayerDataList.Count == 0)
             {
-                timeLayers = CreateTimeLayersFromJSONData(timeLayerDataList);
-                Debug.Log($"TimeLayerManager: Created {timeLayers.Count} time layers from JSON data");
-            }
-            else
-            {
-                Debug.LogError("TimeLayerManager: No time layer data in JSON!");
-                timeLayers = new List<TimeLayer>();
-            }
-
-            // Set default layer from JSON configuration
-            SetDefaultLayerFromData(config.defaultTimeLayer);
-
-            Debug.Log($"TimeLayerManager: JSON initialization complete - {timeLayers.Count} layers, default: {currentLayer?.layerName}");
-        }
-
-        /// <summary>
-        /// Create time layers from JSON data only, no editor references
-        /// </summary>
-        private List<TimeLayer> CreateTimeLayersFromJSONData(List<GameDataService.TimeLayerData> timeLayerDataList)
-        {
-            var newTimeLayers = new List<TimeLayer>();
-
-            foreach (var layerData in timeLayerDataList.OrderBy(l => l.layerIndex))
-            {
-                TimeLayer timeLayer = new TimeLayer();
-
-                // Set basic properties from JSON
-                timeLayer.layerName = layerData.layerName;
-                timeLayer.layerIndex = layerData.layerIndex;
-
-                // Convert ambient audio event through GameDataService lookup
-                if (!string.IsNullOrEmpty(layerData.ambientAudioEvent))
-                {
-                    timeLayer.ambientSound = gameDataService.GetAudioEventReference(layerData.ambientAudioEvent);
-                    Debug.Log($"TimeLayerManager: Set ambient audio for {timeLayer.layerName}: {layerData.ambientAudioEvent}");
-                }
-
-                // Initialize empty POI list - POIs will be created by POIManager from JSON
-                timeLayer.pois = new List<POI>();
-
-                newTimeLayers.Add(timeLayer);
-
-                Debug.Log($"TimeLayerManager: Created JSON time layer '{timeLayer.layerName}' (Index: {timeLayer.layerIndex})");
-            }
-
-            return newTimeLayers;
-        }
-
-        /// <summary>
-        /// Set default layer from JSON configuration
-        /// </summary>
-        private void SetDefaultLayerFromData(int defaultIndex)
-        {
-            if (timeLayers != null && defaultIndex >= 0 && defaultIndex < timeLayers.Count)
-            {
-                currentLayer = timeLayers[defaultIndex];
-                Debug.Log($"TimeLayerManager: Set default layer to '{currentLayer.layerName}' from JSON (Index: {defaultIndex})");
-            }
-            else
-            {
-                Debug.LogError($"TimeLayerManager: Invalid default layer index {defaultIndex}, using first layer");
-                if (timeLayers != null && timeLayers.Count > 0)
-                {
-                    currentLayer = timeLayers[0];
-                }
-            }
-        }
-
-        #endregion
-
-        #region Editor Data Fallback - STRICT SEPARATION
-
-        /// <summary>
-        /// Initialize from editor data only when JSON is not available
-        /// </summary>
-        private void InitializeFromEditorData()
-        {
-            Debug.Log("TimeLayerManager: Editor fallback mode - using inspector configuration");
-
-            if (timeLayers == null || timeLayers.Count == 0)
-            {
-                Debug.LogError("TimeLayerManager: No editor time layers configured!");
+                Debug.LogError("TimeLayerManager: CRITICAL - No time layers in JSON! Game cannot start.");
+                enabled = false;
                 return;
             }
 
-            // Use editor configuration directly (timeLayers list remains unchanged)
-            // defaultLayerIndex is already set from inspector
-            defaultLayerIndex = Mathf.Clamp(defaultLayerIndex, 0, timeLayers.Count - 1);
+            // Build layers from JSON data
+            timeLayers = BuildLayersFromJSON(timeLayerDataList);
 
-            // Set default layer from editor configuration
-            currentLayer = timeLayers[defaultLayerIndex];
+            // Set current layer from JSON default
+            int defaultIndex = config.defaultTimeLayer;
+            SetCurrentLayerByIndex(defaultIndex);
 
-            Debug.Log($"TimeLayerManager: Using editor configuration - {timeLayers.Count} layers, starting in layer: {currentLayer.layerName} (Index: {defaultLayerIndex})");
+            isInitialized = true;
 
-            // Log editor POI counts for validation
-            foreach (var layer in timeLayers)
+            Debug.Log($"TimeLayerManager: Initialized with {timeLayers.Count} layers from JSON");
+            Debug.Log($"TimeLayerManager: Current layer: '{currentLayer.layerName}' (Index: {currentLayer.layerIndex})");
+
+            // Trigger initial layer load
+            TimeLayerChanged?.Invoke(currentLayer);
+        }
+
+        private List<TimeLayer> BuildLayersFromJSON(List<GameDataService.TimeLayerData> layerDataList)
+        {
+            var layers = new List<TimeLayer>();
+
+            foreach (var data in layerDataList.OrderBy(l => l.layerIndex))
             {
-                Debug.Log($"TimeLayerManager: Editor layer '{layer.layerName}' has {layer.pois?.Count ?? 0} POIs");
+                TimeLayer layer = new TimeLayer
+                {
+                    layerName = data.layerName,
+                    layerIndex = data.layerIndex,
+                    pois = new List<POI>()
+                };
+
+                // Set ambient audio from JSON
+                if (!string.IsNullOrEmpty(data.ambientAudioEvent))
+                {
+                    layer.ambientSound = gameDataService.GetAudioEventReference(data.ambientAudioEvent);
+                }
+
+                layers.Add(layer);
+                Debug.Log($"TimeLayerManager: Built layer '{layer.layerName}' (Index: {layer.layerIndex})");
+            }
+
+            return layers;
+        }
+
+        private void SetCurrentLayerByIndex(int index)
+        {
+            var targetLayer = timeLayers.FirstOrDefault(l => l.layerIndex == index);
+
+            if (targetLayer != null)
+            {
+                currentLayer = targetLayer;
+                Debug.Log($"TimeLayerManager: Set current layer to '{currentLayer.layerName}' (Index: {index})");
+            }
+            else
+            {
+                Debug.LogError($"TimeLayerManager: CRITICAL - Invalid default layer index {index}!");
+                if (timeLayers.Count > 0)
+                {
+                    currentLayer = timeLayers[0];
+                    Debug.LogWarning($"TimeLayerManager: Fallback to first available layer: '{currentLayer.layerName}'");
+                }
             }
         }
 
-        #endregion
-
-        #region Core Methods
-
-        public List<TimeLayer> GetAllTimeLayers() => timeLayers;
-        public EventReference GetTimePortalEvent() => timePortalAudio;
-
+        // Public interface - only works after JSON loads
         public bool CanTransitionTo(TimeLayer targetLayer)
         {
+            if (!isInitialized) return false;
             if (isTransitioning) return false;
             if (targetLayer == currentLayer) return false;
             if (targetLayer == null) return false;
-            return timeLayers.Contains(targetLayer);
+            return timeLayers.Any(l => l.layerIndex == targetLayer.layerIndex);
         }
 
         public bool CanTransitionTo(int layerIndex)
         {
-            if (layerIndex < 0 || layerIndex >= timeLayers.Count) return false;
-            return CanTransitionTo(timeLayers[layerIndex]);
+            if (!isInitialized) return false;
+            var targetLayer = GetLayerByIndex(layerIndex);
+            return CanTransitionTo(targetLayer);
         }
 
         public void TransitionToLayer(TimeLayer newLayer)
         {
+            if (!isInitialized)
+            {
+                Debug.LogError("TimeLayerManager: Cannot transition - not initialized with JSON data yet");
+                return;
+            }
+
             if (!CanTransitionTo(newLayer))
             {
                 Debug.LogWarning($"Cannot transition to layer: {newLayer?.layerName}");
@@ -238,9 +167,10 @@ namespace LoGa.LudoEngine.Game
 
         public void TransitionToLayer(int layerIndex)
         {
-            if (CanTransitionTo(layerIndex))
+            var targetLayer = GetLayerByIndex(layerIndex);
+            if (targetLayer != null)
             {
-                TransitionToLayer(timeLayers[layerIndex]);
+                TransitionToLayer(targetLayer);
             }
         }
 
@@ -252,137 +182,100 @@ namespace LoGa.LudoEngine.Game
             Debug.Log($"Transitioning from {previousLayer.layerName} to {newLayer.layerName}");
 
             GameManager.Instance?.SuspendNavigationAudio("time_portal_transition");
-
             TimeLayerChanging?.Invoke(previousLayer, newLayer);
 
             yield return new WaitForSeconds(transitionDuration);
 
             currentLayer = newLayer;
-
             TimeLayerChanged?.Invoke(newLayer);
 
             isTransitioning = false;
             Debug.Log($"Transition to {newLayer.layerName} complete");
         }
 
+        private TimeLayer GetLayerByIndex(int layerIndex)
+        {
+            return timeLayers.FirstOrDefault(l => l.layerIndex == layerIndex);
+        }
+
         public TimeLayer GetForwardLayer(int jumpDistance = 1)
         {
-            int targetIndex = CurrentLayerIndex + jumpDistance;
-            if (targetIndex < timeLayers.Count)
-                return timeLayers[targetIndex];
-            return null;
+            if (!isInitialized) return null;
+            int targetIndex = currentLayer.layerIndex + jumpDistance;
+            return GetLayerByIndex(targetIndex);
         }
 
         public TimeLayer GetBackwardLayer(int jumpDistance = 1)
         {
-            int targetIndex = CurrentLayerIndex - jumpDistance;
-            if (targetIndex >= 0)
-                return timeLayers[targetIndex];
-            return null;
+            if (!isInitialized) return null;
+            int targetIndex = currentLayer.layerIndex - jumpDistance;
+            return GetLayerByIndex(targetIndex);
         }
 
         public bool CanGoBackward() => GetBackwardLayer() != null;
         public bool CanGoForward() => GetForwardLayer() != null;
 
+        public List<TimeLayer> GetAllTimeLayers() => timeLayers;
+        public EventReference GetTimePortalEvent() => timePortalAudio;
+
         public void OnPOILayerLoadComplete()
         {
-            // Resume navigation now that POIs are loaded
             GameManager.Instance?.ResumeNavigationAudio("poi_layer_load_complete");
             Debug.Log("TimeLayerManager: POI layer loaded, navigation resumed");
-            
         }
 
-        /// <summary>
-        /// Reload the current time layer (used after reset)
-        /// </summary>
         public void ReloadCurrentLayer()
         {
-            if (currentLayer == null)
+            if (!isInitialized || currentLayer == null)
             {
-                Debug.LogError("TimeLayerManager: Cannot reload - no current layer");
+                Debug.LogError("TimeLayerManager: Cannot reload - not initialized or no current layer");
                 return;
             }
 
             Debug.Log($"TimeLayerManager: Reloading current layer: {currentLayer.layerName}");
-
-            // Force POIManager to reload POIs for this layer
             TimeLayerChanged?.Invoke(currentLayer);
         }
 
-        #endregion
-
-        #region Debug and Validation
-
-        [System.Diagnostics.Conditional("UNITY_EDITOR")]
-        public void LogTimeLayerInfo()
+        public void CompleteReset()
         {
-            Debug.Log("=== TIME LAYER INFO ===");
-            Debug.Log($"Data Source: {(isUsingJSONData ? "JSON" : "Editor")}");
-            Debug.Log($"Current Layer: {currentLayer?.layerName} (Index: {CurrentLayerIndex})");
-            Debug.Log($"Total Layers: {timeLayers?.Count ?? 0}");
+            Debug.Log("TimeLayerManager: COMPLETE RESET");
 
+            // Clear all layers
             if (timeLayers != null)
             {
-                for (int i = 0; i < timeLayers.Count; i++)
-                {
-                    var layer = timeLayers[i];
-                    Debug.Log($"  {i}: {layer.layerName} - {layer.pois?.Count ?? 0} POIs");
-                }
-            }
-        }
-
-        /// <summary>
-        /// Validate that we don't have mixed data sources
-        /// </summary>
-        [System.Diagnostics.Conditional("UNITY_EDITOR")]
-        private void ValidateDataIntegrity()
-        {
-            if (isUsingJSONData)
-            {
-                // In JSON mode, layers should not have pre-populated POIs
                 foreach (var layer in timeLayers)
                 {
-                    if (layer.pois != null && layer.pois.Count > 0)
-                    {
-                        Debug.LogWarning($"TimeLayerManager: JSON mode but layer '{layer.layerName}' has {layer.pois.Count} POIs - these should be empty in JSON mode");
-                    }
+                    layer?.pois?.ForEach(poi => poi?.Cleanup());
+                    layer?.pois?.Clear();
                 }
+                timeLayers.Clear();
             }
-            else
-            {
-                // In Editor mode, we should have editor layers
-                if (timeLayers == null || timeLayers.Count == 0)
-                {
-                    Debug.LogError("TimeLayerManager: Editor mode but no editor time layers configured");
-                }
-            }
+
+            // Reset state
+            currentLayer = null;
+            isTransitioning = false;
+            isInitialized = false;
+
+            Debug.Log("TimeLayerManager: Complete reset finished - ready for new site");
         }
-
-        #endregion
-
-        #region Cleanup
 
         private void OnDestroy()
         {
-            // Clean up any remaining POIs in layers (whether JSON or Editor)
+            if (gameDataService != null)
+            {
+                gameDataService.OnDataLoaded -= InitializeFromJSON;
+            }
+
             if (timeLayers != null)
             {
                 foreach (var layer in timeLayers)
                 {
-                    if (layer?.pois != null)
-                    {
-                        foreach (var poi in layer.pois)
-                        {
-                            poi?.Cleanup();
-                        }
-                        layer.pois.Clear();
-                    }
+                    layer?.pois?.ForEach(poi => poi?.Cleanup());
+                    layer?.pois?.Clear();
                 }
             }
 
             Debug.Log("TimeLayerManager: Cleanup completed");
         }
-
-        #endregion
     }
 }

@@ -24,6 +24,7 @@ namespace LoGa.LudoEngine.Core
             Initializing,    // Services loading, validation
             MainMenu,        // Welcome screen
             HardwareSetup,   // Device connection and validation
+            SiteSelection,   // Select what instance of the game to load based on current location  
             Tutorial,        // First-time user guidance
             ModeSelection,   // Player vs Spectator choice
             PlayerMode,      // Active gameplay as player
@@ -73,7 +74,7 @@ namespace LoGa.LudoEngine.Core
         [SerializeField] private EventReference berryCollectionEvent;
 
         [Header("Universal Audio")]
-        [SerializeField] private EventReference mainAmbientEvent;
+        private EventReference mainAmbientEvent;
 
         [Header("Combat Settings")]
         [SerializeField] private float combatTriggerCheckInterval = 2f;
@@ -238,25 +239,21 @@ namespace LoGa.LudoEngine.Core
             }
             else if (!GameDataService.IsDataLoaded)
             {
-                Debug.Log("GameManager: Waiting for game data to load...");
-                float timeout = 5f;
-                float elapsed = 0f;
-                while (!GameDataService.IsDataLoaded && elapsed < timeout)
-                {
-                    await Task.Delay(100);
-                    elapsed += 0.1f;
-                }
-
-                if (!GameDataService.IsDataLoaded)
-                {
-                    Debug.LogWarning("GameManager: Game data not loaded within timeout - proceeding with defaults");
-                }
+                Debug.Log("GameManager: Game data not loaded yet - will load after site selection");
             }
 
             if (GameDataService != null && GameDataService.IsDataLoaded)
             {
+                // Data already loaded (shouldn't happen in multi-site flow, but handle it)
                 ApplyGameDataConfiguration();
                 hasDataConfiguration = true;
+                Debug.Log("GameManager: Data was already loaded during services initialization");
+            }
+            else
+            {
+                // Normal multi-site flow: data loads after site selection
+                Debug.Log("GameManager: Data will be loaded after site selection");
+                hasDataConfiguration = false;
             }
 
             if (!InitializeUIManager())
@@ -286,14 +283,12 @@ namespace LoGa.LudoEngine.Core
 
             var config = GameDataService.GameConfig;
 
-            Debug.Log("GameManager: Applying data game configuration");
-
-            var bounds = config.gameBounds;
-            if (bounds != null)
+            // Load ambient event from JSON
+            string ambientEventPath = config.ambientAudioEvent;
+            if (!string.IsNullOrEmpty(ambientEventPath))
             {
-                Debug.Log($"GameManager: Game bounds configured");
-                Debug.Log($"  North: {bounds.north}, South: {bounds.south}");
-                Debug.Log($"  East: {bounds.east}, West: {bounds.west}");
+                mainAmbientEvent = GameDataService.GetAudioEventReference(ambientEventPath);
+                Debug.Log($"GameManager: Loaded ambient event from JSON: {ambientEventPath}");
             }
 
             Debug.Log($"GameManager: Default time layer: {config.defaultTimeLayer}");
@@ -375,6 +370,8 @@ namespace LoGa.LudoEngine.Core
         {
             try
             {
+                Debug.Log("GameManager: InitializeAudioSystems() called");
+
                 var audioService = await ServiceLocator.GetInitializedService<IAudioService>();
                 if (audioService == null)
                 {
@@ -382,20 +379,15 @@ namespace LoGa.LudoEngine.Core
                     return false;
                 }
 
-                if (!InitializeCombatAudio())
-                {
-                    Debug.LogError("GameManager: Combat audio initialization failed");
-                    return false;
-                }
+                Debug.Log("GameManager: AudioService obtained successfully");
 
-                if (!InitializeAmbientMusic())
-                {
-                    Debug.LogError("GameManager: Ambient music initialization failed");
-                    return false;
-                }
+                // ✅ Combat audio is completely optional - never blocks initialization
+                InitializeCombatAudio(); // Don't even check return value
 
+                // ✅ Set audioInitialized regardless of combat events
                 audioInitialized = true;
-                Debug.Log("GameManager: Audio systems initialized successfully");
+                Debug.Log("GameManager: Audio systems initialized successfully - audioInitialized = TRUE");
+
                 return true;
             }
             catch (Exception e)
@@ -407,37 +399,83 @@ namespace LoGa.LudoEngine.Core
 
         private bool InitializeCombatAudio()
         {
-            if (AudioService == null) return false;
+            Debug.Log("GameManager: InitializeCombatAudio() called");
+
+            if (AudioService == null)
+            {
+                Debug.LogWarning("GameManager: AudioService not available - skipping combat audio");
+                return true; // ✅ Don't fail, just skip
+            }
+
+            int successCount = 0;
+            int totalEvents = 2; // heartbeat + berry
 
             try
             {
+                // Try heartbeat event (optional)
                 if (!heartbeatEvent.IsNull)
                 {
                     heartbeatInstance = AudioService.CreateAudioInstance(heartbeatEvent);
-                    if (heartbeatInstance.handle == IntPtr.Zero)
+                    if (heartbeatInstance.handle != IntPtr.Zero)
                     {
-                        Debug.LogError("GameManager: Failed to create heartbeat instance");
-                        return false;
+                        successCount++;
+                        Debug.Log("GameManager: ✓ Heartbeat instance created");
+                    }
+                    else
+                    {
+                        Debug.LogWarning("GameManager: Failed to create heartbeat instance - continuing without it");
                     }
                 }
+                else
+                {
+                    Debug.LogWarning("GameManager: heartbeatEvent not assigned - skipping");
+                }
 
+                // Try berry ambient event (optional)
                 if (!berryAmbientEvent.IsNull)
                 {
                     sharedBerryInstance = AudioService.CreateAudioInstance(berryAmbientEvent);
-                    if (sharedBerryInstance.handle == IntPtr.Zero)
+                    if (sharedBerryInstance.handle != IntPtr.Zero)
                     {
-                        Debug.LogError("GameManager: Failed to create berry ambient instance");
-                        return false;
+                        successCount++;
+                        Debug.Log("GameManager: ✓ Berry ambient instance created");
+                    }
+                    else
+                    {
+                        Debug.LogWarning("GameManager: Failed to create berry instance - continuing without it");
                     }
                 }
+                else
+                {
+                    Debug.LogWarning("GameManager: berryAmbientEvent not assigned - skipping");
+                }
 
-                Debug.Log("GameManager: Combat audio initialized");
-                return true;
+                Debug.Log($"GameManager: Combat audio initialization complete - {successCount}/{totalEvents} events loaded");
+                return true; // ✅ Always succeed, even if 0 events loaded
             }
             catch (Exception e)
             {
-                Debug.LogError($"GameManager: Combat audio initialization error - {e.Message}");
-                return false;
+                Debug.LogWarning($"GameManager: Combat audio initialization error - {e.Message} - continuing anyway");
+                return true; // ✅ Still don't fail the whole system
+            }
+        }
+
+        private void InitializeAndStartAmbientAudio()
+        {
+            if (!audioInitialized || AudioService == null)
+            {
+                Debug.LogWarning("GameManager: Audio not ready for ambient initialization");
+                return;
+            }
+
+            if (InitializeAmbientMusic())
+            {
+                StartAmbientMusic();
+                Debug.Log("GameManager: Ambient audio initialized and started");
+            }
+            else
+            {
+                Debug.LogError("GameManager: Failed to initialize ambient audio");
             }
         }
 
@@ -552,14 +590,23 @@ namespace LoGa.LudoEngine.Core
         {
             return (from, to) switch
             {
+                // Forward progression
                 (ApplicationPhase.Initializing, ApplicationPhase.MainMenu) => true,
                 (ApplicationPhase.MainMenu, ApplicationPhase.HardwareSetup) => true,
+                (ApplicationPhase.HardwareSetup, ApplicationPhase.SiteSelection) => true,  
+                (ApplicationPhase.SiteSelection, ApplicationPhase.Tutorial) => true,  
+                (ApplicationPhase.SiteSelection, ApplicationPhase.ModeSelection) => true,  
                 (ApplicationPhase.HardwareSetup, ApplicationPhase.Tutorial) => true,
                 (ApplicationPhase.HardwareSetup, ApplicationPhase.ModeSelection) => true,
                 (ApplicationPhase.Tutorial, ApplicationPhase.ModeSelection) => true,
                 (ApplicationPhase.ModeSelection, ApplicationPhase.PlayerMode) => true,
                 (ApplicationPhase.ModeSelection, ApplicationPhase.SpectatorMode) => true,
+
+                // Backward navigation
                 (ApplicationPhase.HardwareSetup, ApplicationPhase.MainMenu) => true,
+                (ApplicationPhase.SiteSelection, ApplicationPhase.HardwareSetup) => true, 
+                (ApplicationPhase.Tutorial, ApplicationPhase.SiteSelection) => true,  
+                (ApplicationPhase.ModeSelection, ApplicationPhase.SiteSelection) => true, 
                 (ApplicationPhase.Tutorial, ApplicationPhase.HardwareSetup) => true,
                 (ApplicationPhase.ModeSelection, ApplicationPhase.HardwareSetup) => true,
                 (ApplicationPhase.ModeSelection, ApplicationPhase.Tutorial) => true,
@@ -622,11 +669,19 @@ namespace LoGa.LudoEngine.Core
 
         private void ExitPlayerMode()
         {
-            Debug.Log("GameManager: Exiting PlayerMode phase");
+            Debug.Log("GameManager: Exiting PlayerMode - triggering complete site unload");
+
+            // CRITICAL: Unload site first (triggers complete reset)
+            if (SiteManager.Instance != null)
+            {
+                SiteManager.Instance.UnloadCurrentSite();
+            }
+
+            // Suspend remaining systems
             SuspendGameplaySystems();
-            StopAmbientMusic();
             SetInternalGameMode(GameMode.Inactive);
-            CleanupPlayerSession();
+
+            Debug.Log("GameManager: PlayerMode exit complete");
         }
 
         private void ExitSpectatorMode()
@@ -789,7 +844,20 @@ namespace LoGa.LudoEngine.Core
         public void CompleteHardwareSetup()
         {
             Debug.Log("GameManager: Hardware setup completed");
+            TransitionToPhase(ApplicationPhase.SiteSelection);
+        }
 
+        public void CompleteSiteSelection()
+        {
+            Debug.Log("GameManager: Site selection completed");
+
+            // Apply game configuration from loaded site data
+            ApplyGameDataConfiguration();
+
+            // initialize and start ambient audio
+            InitializeAndStartAmbientAudio();
+
+            // Determine next phase
             bool shouldShowTutorial = !PlayerPrefs.HasKey("TutorialCompleted");
             ApplicationPhase nextPhase = shouldShowTutorial ?
                 ApplicationPhase.Tutorial :
@@ -999,7 +1067,19 @@ namespace LoGa.LudoEngine.Core
 
         private void StartAmbientMusic()
         {
-            if (!audioInitialized || AudioService == null) return;
+            Debug.Log("StartAmbientMusic() called");
+            Debug.Log($"audioInitialized: {audioInitialized}");
+            Debug.Log($"AudioService: {AudioService != null}");
+
+            if (!audioInitialized || AudioService == null)
+            {
+                Debug.LogError("Cannot start ambient - audio not ready");
+                return;
+            }
+
+            Debug.Log($"mainAmbientInstance valid: {AudioService.IsInstanceValid(mainAmbientInstance)}");
+            Debug.Log($"mainAmbientEvent null: {mainAmbientEvent.IsNull}");
+
 
             try
             {
@@ -1057,25 +1137,52 @@ namespace LoGa.LudoEngine.Core
 
             try
             {
-                if (AudioService != null && AudioService.IsInstanceValid(mainAmbientInstance))
+                if (AudioService.IsInstanceValid(mainAmbientInstance))
                 {
+                    // Simple and direct - no duplication needed
                     AudioService.SetParameter(mainAmbientInstance, "TimeLayer", newLayer.layerIndex);
                     Debug.Log($"GameManager: Ambient music updated for layer {newLayer.layerIndex}");
-                }
-                // ADD ANALYTICS EVENT
-                AnalyticsService?.TrackEvent($"time_travel_to_{newLayer.layerName.Replace(" ", "_").ToLower()}");
-
-                // Store time travel event
-                if (StorageService != null)
-                {
-                    string travelKey = $"TimeLayer_{newLayer.layerIndex}_Visited";
-                    StorageService.Save(travelKey, true);
                 }
             }
             catch (Exception e)
             {
-                Debug.LogError($"GameManager: Failed to update ambient music for time layer - {e.Message}");
+                Debug.LogError($"GameManager: Failed to update ambient music - {e.Message}");
             }
+        }
+
+        /// <summary>
+        /// Stop all gameplay audio when exiting to main menu
+        /// </summary>
+        public void StopAllGameplayAudio()
+        {
+            Debug.Log("GameManager: Stopping all gameplay audio");
+
+            // Stop main ambient music
+            if (AudioService != null && AudioService.IsInstanceValid(mainAmbientInstance))
+            {
+                AudioService.StopAudio(mainAmbientInstance, false);
+                Debug.Log("GameManager: Ambient music stopped");
+            }
+
+            // Stop POI audio through POIManager
+            if (poiManager != null)
+            {
+                poiManager.StopAllAudio();
+            }
+
+            // Stop combat audio
+            CleanupCombat();
+
+            // Stop recovery audio
+            CleanupRecovery();
+
+            // Stop heartbeat
+            if (AudioService != null && AudioService.IsInstanceValid(heartbeatInstance))
+            {
+                AudioService.StopAudio(heartbeatInstance, false);
+            }
+
+            Debug.Log("GameManager: All gameplay audio stopped");
         }
 
         #endregion
@@ -1173,6 +1280,14 @@ namespace LoGa.LudoEngine.Core
         private void UpdateHeartbeat()
         {
             if (!audioInitialized || AudioService == null) return;
+
+            // Check if heartbeat instance exists before using
+            if (heartbeatInstance.handle == IntPtr.Zero)
+            {
+                Debug.LogWarning("GameManager: Heartbeat instance not available - skipping heartbeat update");
+                return;
+            }
+
 
             try
             {
@@ -1841,6 +1956,31 @@ namespace LoGa.LudoEngine.Core
                 AudioService.PlayAudio(collectionInstance, position);
                 Debug.Log("GameManager: Berry collection sound played");
             }
+        }
+
+        public void ResetForSiteChange()
+        {
+            Debug.Log("GameManager: COMPLETE RESET for site change");
+
+            // Stop ALL audio
+            StopAllGameplayAudio();
+
+            // Reset all gameplay state
+            currentGameplayState = GameplayState.Wander;
+            gameState = GameState.Suspended;
+            isPlayerInPOIProximity = false;
+
+            // Reset health to max (from new site data when loaded)
+            // playerHealth will be reloaded from new JSON
+
+            // Clear combat state
+            CleanupCombat();
+            CleanupRecovery();
+
+            // Reset session
+            CleanupPlayerSession();
+
+            Debug.Log("GameManager: Complete reset finished");
         }
 
         private void CleanupRecovery()

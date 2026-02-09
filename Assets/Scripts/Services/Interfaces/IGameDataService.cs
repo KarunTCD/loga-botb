@@ -13,6 +13,8 @@ namespace LoGa.LudoEngine.Services
 
         // Data Loading
         Task<bool> LoadGameDataAsync();
+        Task<bool> LoadSiteData(string siteFolderName); 
+        void ClearSiteData(); 
 
         // Time Layer Operations
         List<GameDataService.TimeLayerData> GetAllTimeLayerData();
@@ -23,8 +25,6 @@ namespace LoGa.LudoEngine.Services
         // POI Operations
         List<GameDataService.POIData> GetPOIsForTimeLayer(string layerId);
         List<GameDataService.POIData> GetPOIsForTimeLayer(int layerIndex);
-
-        // CHANGED: Use int characterId instead of string
         GameDataService.POIData GetPOIData(int characterId);
 
         // Audio Event Conversion

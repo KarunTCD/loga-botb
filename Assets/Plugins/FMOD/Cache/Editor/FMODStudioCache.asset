@@ -111,8 +111,9 @@ MonoBehaviour:
     Data3: 1061061532
     Data4: 956329762
   Banks:
-  - {fileID: -6584727833568685771}
   - {fileID: 7063660329105735970}
+  - {fileID: -6584727833568685771}
+  - {fileID: -8165299445089214531}
   IsStream: 1
   Is3D: 1
   IsOneShot: 1
@@ -144,6 +145,24 @@ MonoBehaviour:
   Type: 0
   IsGlobal: 0
   Labels: []
+  Exists: 1
+--- !u!114 &-8698767544435464967
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
+  m_Name: bank:/Sites/BattleOfBoyne/Audio/raven.bank
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorBankRef
+  Path: Assets/StreamingAssets/Sites/BattleOfBoyne/Audio/raven.bank
+  Name: Sites/BattleOfBoyne/Audio/raven
+  StudioPath: 
+  lastModified: 638815112790447787
+  FileSizes: []
   Exists: 1
 --- !u!114 &-8696872385010538700
 MonoBehaviour:
@@ -188,8 +207,9 @@ MonoBehaviour:
     Data3: 2146350997
     Data4: 841210949
   Banks:
-  - {fileID: -1471485812431984116}
   - {fileID: 5915714569042196833}
+  - {fileID: -1471485812431984116}
+  - {fileID: -1623506985876570158}
   IsStream: 1
   Is3D: 0
   IsOneShot: 0
@@ -241,8 +261,9 @@ MonoBehaviour:
     Data3: 511570084
     Data4: -896650416
   Banks:
-  - {fileID: -1471485812431984116}
   - {fileID: 5915714569042196833}
+  - {fileID: -1471485812431984116}
+  - {fileID: -1623506985876570158}
   IsStream: 1
   Is3D: 1
   IsOneShot: 0
@@ -326,8 +347,9 @@ MonoBehaviour:
     Data3: -1184820074
     Data4: -444323801
   Banks:
-  - {fileID: -1471485812431984116}
   - {fileID: 5915714569042196833}
+  - {fileID: -1471485812431984116}
+  - {fileID: -1623506985876570158}
   IsStream: 1
   Is3D: 1
   IsOneShot: 0
@@ -355,8 +377,9 @@ MonoBehaviour:
     Data3: -949885777
     Data4: 691049561
   Banks:
-  - {fileID: -1471485812431984116}
   - {fileID: 5915714569042196833}
+  - {fileID: -1471485812431984116}
+  - {fileID: -1623506985876570158}
   IsStream: 1
   Is3D: 1
   IsOneShot: 1
@@ -365,7 +388,7 @@ MonoBehaviour:
   - {fileID: 8730814462308336216}
   - {fileID: 8871256283827726374}
   - {fileID: -48508636779410526}
-  - {fileID: -4287320059935126788}
+  - {fileID: 130282176075560007}
   MinDistance: 1
   MaxDistance: 90
   Length: 0
@@ -435,6 +458,48 @@ MonoBehaviour:
   lastModified: 638815112790590550
   FileSizes: []
   Exists: 1
+--- !u!114 &-8165299445089214531
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
+  m_Name: bank:/Sites/BattleOfBoyne/Audio/Combat.bank
+  m_EditorClassIdentifier: 
+  Path: Assets/StreamingAssets/Sites/BattleOfBoyne/Audio/Combat.bank
+  Name: Sites/BattleOfBoyne/Audio/Combat
+  StudioPath: bank:/Combat
+  lastModified: 639016145802851809
+  FileSizes: []
+  Exists: 1
+--- !u!114 &-8114485289504982262
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/william_nav_cue/CueIndex
+  m_EditorClassIdentifier: 
+  Name: CueIndex
+  StudioPath: 
+  Min: 0
+  Max: 4
+  Default: 0
+  ID:
+    data1: 3753644876
+    data2: 2798513597
+  Type: 1
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
 --- !u!114 &-8107809798284396528
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -454,8 +519,9 @@ MonoBehaviour:
     Data3: 1116406153
     Data4: 981486305
   Banks:
-  - {fileID: -1471485812431984116}
   - {fileID: 5915714569042196833}
+  - {fileID: -1471485812431984116}
+  - {fileID: -1623506985876570158}
   IsStream: 1
   Is3D: 1
   IsOneShot: 0
@@ -480,6 +546,24 @@ MonoBehaviour:
   Name: Sites/Debug/Audio/raven
   StudioPath: bank:/raven
   lastModified: 638815112790447787
+  FileSizes: []
+  Exists: 0
+--- !u!114 &-7740427016116754941
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
+  m_Name: bank:/Sites/BattleOfBoyne/Audio/salmon.bank
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorBankRef
+  Path: Assets/StreamingAssets/Sites/BattleOfBoyne/Audio/salmon.bank
+  Name: Sites/BattleOfBoyne/Audio/salmon
+  StudioPath: 
+  lastModified: 638815112790493999
   FileSizes: []
   Exists: 1
 --- !u!114 &-7609103010726695882
@@ -636,8 +720,9 @@ MonoBehaviour:
     Data3: 496824761
     Data4: -1674180941
   Banks:
-  - {fileID: -1471485812431984116}
   - {fileID: 5915714569042196833}
+  - {fileID: -1471485812431984116}
+  - {fileID: -1623506985876570158}
   IsStream: 1
   Is3D: 1
   IsOneShot: 0
@@ -765,8 +850,9 @@ MonoBehaviour:
     Data3: 1259903395
     Data4: -740381983
   Banks:
-  - {fileID: -1471485812431984116}
   - {fileID: 5915714569042196833}
+  - {fileID: -1471485812431984116}
+  - {fileID: -1623506985876570158}
   IsStream: 1
   Is3D: 1
   IsOneShot: 0
@@ -790,7 +876,7 @@ MonoBehaviour:
   Path: Assets/StreamingAssets/Combat.bank
   Name: Combat
   StudioPath: bank:/Combat
-  lastModified: 639016145802851800
+  lastModified: 639052044276400455
   FileSizes: []
   Exists: 1
 --- !u!114 &-6579667040954129151
@@ -860,8 +946,9 @@ MonoBehaviour:
     Data3: -866096995
     Data4: -1863781256
   Banks:
-  - {fileID: -1471485812431984116}
   - {fileID: 5915714569042196833}
+  - {fileID: -1471485812431984116}
+  - {fileID: -1623506985876570158}
   IsStream: 1
   Is3D: 1
   IsOneShot: 0
@@ -911,6 +998,30 @@ MonoBehaviour:
     data1: 1112535331
     data2: 2309411790
   Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &-6190928269836927936
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/james_nav_cue/CueIndex
+  m_EditorClassIdentifier: 
+  Name: CueIndex
+  StudioPath: 
+  Min: 0
+  Max: 4
+  Default: 0
+  ID:
+    data1: 3753644876
+    data2: 2798513597
+  Type: 1
   IsGlobal: 0
   Labels: []
   Exists: 1
@@ -970,6 +1081,30 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 812
+--- !u!114 &-5979733961510050345
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/william_nav_cue/NormalizedDistance
+  m_EditorClassIdentifier: 
+  Name: NormalizedDistance
+  StudioPath: 
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 4032946360
+    data2: 2700767552
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
 --- !u!114 &-5944418055370613883
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -989,8 +1124,9 @@ MonoBehaviour:
     Data3: 1653865350
     Data4: -1378154026
   Banks:
-  - {fileID: -1471485812431984116}
   - {fileID: 5915714569042196833}
+  - {fileID: -1471485812431984116}
+  - {fileID: -1623506985876570158}
   IsStream: 1
   Is3D: 1
   IsOneShot: 0
@@ -1075,6 +1211,61 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 130388
+--- !u!114 &-5705547172170655820
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/william_nav_cue
+  m_EditorClassIdentifier: 
+  Path: event:/william_nav_cue
+  Guid:
+    Data1: -324151144
+    Data2: 1285414515
+    Data3: 1862357663
+    Data4: 652234817
+  Banks:
+  - {fileID: -1471485812431984116}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters:
+  - {fileID: 6183188355841637778}
+  - {fileID: -5979733961510050345}
+  - {fileID: 5081265754236716729}
+  - {fileID: -8114485289504982262}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 2081
+--- !u!114 &-5691028513598330998
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/james_nav_cue/NormalizedDistance
+  m_EditorClassIdentifier: 
+  Name: NormalizedDistance
+  StudioPath: 
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 4032946360
+    data2: 2700767552
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
 --- !u!114 &-5661288920930757592
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1092,7 +1283,7 @@ MonoBehaviour:
   StudioPath: bank:/william
   lastModified: 638815112790590550
   FileSizes: []
-  Exists: 1
+  Exists: 0
 --- !u!114 &-5640041780570095563
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1187,8 +1378,9 @@ MonoBehaviour:
     Data3: 941068199
     Data4: -1103627851
   Banks:
-  - {fileID: -1471485812431984116}
   - {fileID: 5915714569042196833}
+  - {fileID: -1471485812431984116}
+  - {fileID: -1623506985876570158}
   IsStream: 1
   Is3D: 1
   IsOneShot: 0
@@ -1216,8 +1408,9 @@ MonoBehaviour:
     Data3: -1485982032
     Data4: -153862852
   Banks:
-  - {fileID: -6584727833568685771}
   - {fileID: 7063660329105735970}
+  - {fileID: -6584727833568685771}
+  - {fileID: -8165299445089214531}
   IsStream: 0
   Is3D: 0
   IsOneShot: 0
@@ -1296,8 +1489,9 @@ MonoBehaviour:
     Data3: 2102118808
     Data4: -1994431221
   Banks:
-  - {fileID: -1471485812431984116}
   - {fileID: 5915714569042196833}
+  - {fileID: -1471485812431984116}
+  - {fileID: -1623506985876570158}
   IsStream: 1
   Is3D: 1
   IsOneShot: 0
@@ -1406,6 +1600,37 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
+--- !u!114 &-4748450937802611184
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/james_nav_cue
+  m_EditorClassIdentifier: 
+  Path: event:/james_nav_cue
+  Guid:
+    Data1: -1941612338
+    Data2: 1271683760
+    Data3: -1010710868
+    Data4: 913076872
+  Banks:
+  - {fileID: -1471485812431984116}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters:
+  - {fileID: -5691028513598330998}
+  - {fileID: -2367842477515753628}
+  - {fileID: 1319774379393820185}
+  - {fileID: -6190928269836927936}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 0
 --- !u!114 &-4743487842025713055
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1473,8 +1698,9 @@ MonoBehaviour:
     Data3: -1149390967
     Data4: -2106046477
   Banks:
-  - {fileID: -1471485812431984116}
   - {fileID: 5915714569042196833}
+  - {fileID: -1471485812431984116}
+  - {fileID: -1623506985876570158}
   IsStream: 1
   Is3D: 1
   IsOneShot: 0
@@ -1550,8 +1776,9 @@ MonoBehaviour:
     Data3: 367639432
     Data4: 595799489
   Banks:
-  - {fileID: -1471485812431984116}
   - {fileID: 5915714569042196833}
+  - {fileID: -1471485812431984116}
+  - {fileID: -1623506985876570158}
   IsStream: 1
   Is3D: 1
   IsOneShot: 0
@@ -1561,7 +1788,7 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 13227
---- !u!114 &-4287320059935126788
+--- !u!114 &-4191713452114569752
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1570,20 +1797,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/nav_cue/Is_Target
-  m_EditorClassIdentifier: 
-  Name: Is_Target
+  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
+  m_Name: bank:/Sites/BattleOfBoyne/Audio/surgeon.bank
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorBankRef
+  Path: Assets/StreamingAssets/Sites/BattleOfBoyne/Audio/surgeon.bank
+  Name: Sites/BattleOfBoyne/Audio/surgeon
   StudioPath: 
-  Min: 0
-  Max: 1
-  Default: 0
-  ID:
-    data1: 3487212685
-    data2: 2204712610
-  Type: 1
-  IsGlobal: 0
-  Labels: []
+  lastModified: 638815112790547021
+  FileSizes: []
   Exists: 1
 --- !u!114 &-4033021608061444249
 MonoBehaviour:
@@ -1708,8 +1929,9 @@ MonoBehaviour:
     Data3: -1777793146
     Data4: -746233166
   Banks:
-  - {fileID: -1471485812431984116}
   - {fileID: 5915714569042196833}
+  - {fileID: -1471485812431984116}
+  - {fileID: -1623506985876570158}
   IsStream: 1
   Is3D: 1
   IsOneShot: 0
@@ -1735,7 +1957,7 @@ MonoBehaviour:
   StudioPath: bank:/oak
   lastModified: 638815112790396294
   FileSizes: []
-  Exists: 1
+  Exists: 0
 --- !u!114 &-3342211075688722402
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1897,8 +2119,9 @@ MonoBehaviour:
     Data3: 1850780308
     Data4: -1329949955
   Banks:
-  - {fileID: -1471485812431984116}
   - {fileID: 5915714569042196833}
+  - {fileID: -1471485812431984116}
+  - {fileID: -1623506985876570158}
   IsStream: 1
   Is3D: 1
   IsOneShot: 0
@@ -2002,8 +2225,9 @@ MonoBehaviour:
     Data3: 998473345
     Data4: 284351180
   Banks:
-  - {fileID: -1471485812431984116}
   - {fileID: 5915714569042196833}
+  - {fileID: -1471485812431984116}
+  - {fileID: -1623506985876570158}
   IsStream: 1
   Is3D: 1
   IsOneShot: 0
@@ -2083,6 +2307,30 @@ MonoBehaviour:
     data1: 87377771
     data2: 1171044379
   Type: 1
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &-2367842477515753628
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/james_nav_cue/Trigger
+  m_EditorClassIdentifier: 
+  Name: Trigger
+  StudioPath: 
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 3182214286
+    data2: 3291611135
+  Type: 0
   IsGlobal: 0
   Labels: []
   Exists: 1
@@ -2273,6 +2521,24 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
+--- !u!114 &-1623506985876570158
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
+  m_Name: bank:/Sites/BattleOfBoyne/Audio/Master.bank
+  m_EditorClassIdentifier: 
+  Path: Assets/StreamingAssets/Sites/BattleOfBoyne/Audio/Master.bank
+  Name: Sites/BattleOfBoyne/Audio/Master
+  StudioPath: bank:/Master
+  lastModified: 639016529471858201
+  FileSizes: []
+  Exists: 1
 --- !u!114 &-1593919867115022682
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2347,7 +2613,7 @@ MonoBehaviour:
   Path: Assets/StreamingAssets/Master.bank
   Name: Master
   StudioPath: bank:/Master
-  lastModified: 639016529471858200
+  lastModified: 639052123337399363
   FileSizes: []
   Exists: 1
 --- !u!114 &-1463778092175058505
@@ -2369,8 +2635,9 @@ MonoBehaviour:
     Data3: 1396483752
     Data4: -1934053682
   Banks:
-  - {fileID: -1471485812431984116}
   - {fileID: 5915714569042196833}
+  - {fileID: -1471485812431984116}
+  - {fileID: -1623506985876570158}
   IsStream: 1
   Is3D: 1
   IsOneShot: 0
@@ -2398,8 +2665,9 @@ MonoBehaviour:
     Data3: 70843062
     Data4: -863116591
   Banks:
-  - {fileID: -1471485812431984116}
   - {fileID: 5915714569042196833}
+  - {fileID: -1471485812431984116}
+  - {fileID: -1623506985876570158}
   IsStream: 1
   Is3D: 1
   IsOneShot: 0
@@ -2427,8 +2695,9 @@ MonoBehaviour:
     Data3: -863532887
     Data4: -1380123222
   Banks:
-  - {fileID: -6584727833568685771}
   - {fileID: 7063660329105735970}
+  - {fileID: -6584727833568685771}
+  - {fileID: -8165299445089214531}
   IsStream: 0
   Is3D: 1
   IsOneShot: 0
@@ -2436,6 +2705,24 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 246
+--- !u!114 &-1210938888407514211
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
+  m_Name: bank:/Sites/BattleOfBoyne/Audio/oak.bank
+  m_EditorClassIdentifier: 
+  Path: Assets/StreamingAssets/Sites/BattleOfBoyne/Audio/oak.bank
+  Name: Sites/BattleOfBoyne/Audio/oak
+  StudioPath: 
+  lastModified: 638815112790396294
+  FileSizes: []
+  Exists: 1
 --- !u!114 &-1167043492185807487
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2611,8 +2898,9 @@ MonoBehaviour:
     Data3: -816275816
     Data4: -1405444301
   Banks:
-  - {fileID: -1471485812431984116}
   - {fileID: 5915714569042196833}
+  - {fileID: -1471485812431984116}
+  - {fileID: -1623506985876570158}
   IsStream: 1
   Is3D: 1
   IsOneShot: 0
@@ -2664,8 +2952,9 @@ MonoBehaviour:
     Data3: 747145148
     Data4: -99600686
   Banks:
-  - {fileID: -1471485812431984116}
   - {fileID: 5915714569042196833}
+  - {fileID: -1471485812431984116}
+  - {fileID: -1623506985876570158}
   IsStream: 1
   Is3D: 0
   IsOneShot: 1
@@ -2716,8 +3005,9 @@ MonoBehaviour:
     Data3: 1956351362
     Data4: -540070583
   Banks:
-  - {fileID: -1471485812431984116}
   - {fileID: 5915714569042196833}
+  - {fileID: -1471485812431984116}
+  - {fileID: -1623506985876570158}
   IsStream: 1
   Is3D: 1
   IsOneShot: 0
@@ -2770,8 +3060,9 @@ MonoBehaviour:
     Data3: 1824080025
     Data4: 1129485362
   Banks:
-  - {fileID: -1471485812431984116}
   - {fileID: 5915714569042196833}
+  - {fileID: -1471485812431984116}
+  - {fileID: -1623506985876570158}
   IsStream: 1
   Is3D: 1
   IsOneShot: 0
@@ -2799,8 +3090,9 @@ MonoBehaviour:
     Data3: 857137839
     Data4: 547777320
   Banks:
-  - {fileID: -1471485812431984116}
   - {fileID: 5915714569042196833}
+  - {fileID: -1471485812431984116}
+  - {fileID: -1623506985876570158}
   IsStream: 1
   Is3D: 1
   IsOneShot: 0
@@ -2890,6 +3182,13 @@ MonoBehaviour:
   - {fileID: 1506528883900028362}
   - {fileID: 6909598274578088531}
   - {fileID: -5661288920930757592}
+  - {fileID: -8165299445089214531}
+  - {fileID: -1623506985876570158}
+  - {fileID: -1210938888407514211}
+  - {fileID: -8698767544435464967}
+  - {fileID: -7740427016116754941}
+  - {fileID: -4191713452114569752}
+  - {fileID: 5587391100911160087}
   EditorEvents:
   - {fileID: 976313759710700672}
   - {fileID: 4434701402175005082}
@@ -2937,15 +3236,18 @@ MonoBehaviour:
   - {fileID: 4194647336341179629}
   - {fileID: -6616890126446640730}
   - {fileID: -81247394394423839}
+  - {fileID: -5705547172170655820}
+  - {fileID: -4748450937802611184}
   EditorParameters:
   - {fileID: -518548296048703672}
   MasterBanks:
   - {fileID: -1471485812431984116}
   - {fileID: 5915714569042196833}
+  - {fileID: -1623506985876570158}
   StringsBanks:
   - {fileID: 1972065782310597578}
   cacheVersion: 131847
-  cacheTime: 639016529471891137
+  cacheTime: 639056267561159968
   SerializableEventsDict:
   - key: event:/combat/attack_impact
     index: 0
@@ -3081,6 +3383,30 @@ MonoBehaviour:
   lastModified: 638815112790447780
   FileSizes: []
   Exists: 1
+--- !u!114 &130282176075560007
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/nav_cue/Is_Target
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: Is_Target
+  StudioPath: 
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 3487212685
+    data2: 2204712610
+  Type: 1
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
 --- !u!114 &222182855035378809
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3100,8 +3426,9 @@ MonoBehaviour:
     Data3: 803607699
     Data4: -1636424172
   Banks:
-  - {fileID: -1471485812431984116}
   - {fileID: 5915714569042196833}
+  - {fileID: -1471485812431984116}
+  - {fileID: -1623506985876570158}
   IsStream: 1
   Is3D: 1
   IsOneShot: 0
@@ -3129,8 +3456,9 @@ MonoBehaviour:
     Data3: 1408129976
     Data4: -1364446629
   Banks:
-  - {fileID: -1471485812431984116}
   - {fileID: 5915714569042196833}
+  - {fileID: -1471485812431984116}
+  - {fileID: -1623506985876570158}
   IsStream: 1
   Is3D: 1
   IsOneShot: 0
@@ -3331,8 +3659,9 @@ MonoBehaviour:
     Data3: 1265642687
     Data4: -1737986025
   Banks:
-  - {fileID: -6584727833568685771}
   - {fileID: 7063660329105735970}
+  - {fileID: -6584727833568685771}
+  - {fileID: -8165299445089214531}
   IsStream: 0
   Is3D: 1
   IsOneShot: 1
@@ -3360,8 +3689,9 @@ MonoBehaviour:
     Data3: -1871576394
     Data4: 1301315179
   Banks:
-  - {fileID: -1471485812431984116}
   - {fileID: 5915714569042196833}
+  - {fileID: -1471485812431984116}
+  - {fileID: -1623506985876570158}
   IsStream: 1
   Is3D: 1
   IsOneShot: 0
@@ -3503,6 +3833,38 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
+--- !u!114 &1319774379393820185
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/james_nav_cue/Direction
+  m_EditorClassIdentifier: 
+  Name: Direction
+  StudioPath: 
+  Min: 0
+  Max: 7
+  Default: 0
+  ID:
+    data1: 40668191
+    data2: 1578994455
+  Type: 2
+  IsGlobal: 0
+  Labels:
+  - N
+  - NE
+  - E
+  - SE
+  - S
+  - SW
+  - W
+  - NW
+  Exists: 1
 --- !u!114 &1348612204168821660
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3544,7 +3906,7 @@ MonoBehaviour:
   StudioPath: bank:/salmon
   lastModified: 638815112790493999
   FileSizes: []
-  Exists: 1
+  Exists: 0
 --- !u!114 &1604820642810303284
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3616,8 +3978,9 @@ MonoBehaviour:
     Data3: 1070213309
     Data4: 544412664
   Banks:
-  - {fileID: -1471485812431984116}
   - {fileID: 5915714569042196833}
+  - {fileID: -1471485812431984116}
+  - {fileID: -1623506985876570158}
   IsStream: 1
   Is3D: 1
   IsOneShot: 0
@@ -3645,8 +4008,9 @@ MonoBehaviour:
     Data3: 1633948590
     Data4: 2147073893
   Banks:
-  - {fileID: -1471485812431984116}
   - {fileID: 5915714569042196833}
+  - {fileID: -1471485812431984116}
+  - {fileID: -1623506985876570158}
   IsStream: 1
   Is3D: 1
   IsOneShot: 0
@@ -3670,10 +4034,10 @@ MonoBehaviour:
   Path: Assets/StreamingAssets/Master.strings.bank
   Name: Master.strings
   StudioPath: bank:/Master.strings
-  lastModified: 639016529471891130
+  lastModified: 639052123337434693
   FileSizes:
   - Name: 
-    Value: 3916
+    Value: 3862
   Exists: 1
 --- !u!114 &2011927977527597038
 MonoBehaviour:
@@ -3742,8 +4106,9 @@ MonoBehaviour:
     Data3: -161326454
     Data4: 209117433
   Banks:
-  - {fileID: -1471485812431984116}
   - {fileID: 5915714569042196833}
+  - {fileID: -1471485812431984116}
+  - {fileID: -1623506985876570158}
   IsStream: 1
   Is3D: 0
   IsOneShot: 1
@@ -3819,8 +4184,9 @@ MonoBehaviour:
     Data3: -1850042446
     Data4: 1521813665
   Banks:
-  - {fileID: -1471485812431984116}
   - {fileID: 5915714569042196833}
+  - {fileID: -1471485812431984116}
+  - {fileID: -1623506985876570158}
   IsStream: 1
   Is3D: 1
   IsOneShot: 0
@@ -3872,8 +4238,9 @@ MonoBehaviour:
     Data3: -1492882271
     Data4: 1089509511
   Banks:
-  - {fileID: -1471485812431984116}
   - {fileID: 5915714569042196833}
+  - {fileID: -1471485812431984116}
+  - {fileID: -1623506985876570158}
   IsStream: 1
   Is3D: 1
   IsOneShot: 0
@@ -4003,8 +4370,9 @@ MonoBehaviour:
     Data3: -526707781
     Data4: -536056061
   Banks:
-  - {fileID: -6584727833568685771}
   - {fileID: 7063660329105735970}
+  - {fileID: -6584727833568685771}
+  - {fileID: -8165299445089214531}
   IsStream: 0
   Is3D: 1
   IsOneShot: 1
@@ -4248,8 +4616,9 @@ MonoBehaviour:
     Data3: 39049607
     Data4: -699573844
   Banks:
-  - {fileID: -1471485812431984116}
   - {fileID: 5915714569042196833}
+  - {fileID: -1471485812431984116}
+  - {fileID: -1623506985876570158}
   IsStream: 1
   Is3D: 0
   IsOneShot: 1
@@ -4329,8 +4698,9 @@ MonoBehaviour:
     Data3: 1408835470
     Data4: 644009244
   Banks:
-  - {fileID: -6584727833568685771}
   - {fileID: 7063660329105735970}
+  - {fileID: -6584727833568685771}
+  - {fileID: -8165299445089214531}
   IsStream: 0
   Is3D: 0
   IsOneShot: 1
@@ -4438,6 +4808,38 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 34859
+--- !u!114 &5081265754236716729
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/william_nav_cue/Direction
+  m_EditorClassIdentifier: 
+  Name: Direction
+  StudioPath: 
+  Min: 0
+  Max: 7
+  Default: 0
+  ID:
+    data1: 40668191
+    data2: 1578994455
+  Type: 2
+  IsGlobal: 0
+  Labels:
+  - N
+  - NE
+  - E
+  - SE
+  - S
+  - SW
+  - W
+  - NW
+  Exists: 1
 --- !u!114 &5094771027455907505
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4505,8 +4907,9 @@ MonoBehaviour:
     Data3: -145159549
     Data4: -981668449
   Banks:
-  - {fileID: -1471485812431984116}
   - {fileID: 5915714569042196833}
+  - {fileID: -1471485812431984116}
+  - {fileID: -1623506985876570158}
   IsStream: 1
   Is3D: 1
   IsOneShot: 0
@@ -4567,6 +4970,24 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
+--- !u!114 &5587391100911160087
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
+  m_Name: bank:/Sites/BattleOfBoyne/Audio/william.bank
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorBankRef
+  Path: Assets/StreamingAssets/Sites/BattleOfBoyne/Audio/william.bank
+  Name: Sites/BattleOfBoyne/Audio/william
+  StudioPath: 
+  lastModified: 638815112790590550
+  FileSizes: []
+  Exists: 1
 --- !u!114 &5626387497712871280
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4610,8 +5031,9 @@ MonoBehaviour:
     Data3: 458475651
     Data4: -977101694
   Banks:
-  - {fileID: -1471485812431984116}
   - {fileID: 5915714569042196833}
+  - {fileID: -1471485812431984116}
+  - {fileID: -1623506985876570158}
   IsStream: 1
   Is3D: 1
   IsOneShot: 0
@@ -4637,7 +5059,7 @@ MonoBehaviour:
   StudioPath: bank:/Master
   lastModified: 639016529471858201
   FileSizes: []
-  Exists: 1
+  Exists: 0
 --- !u!114 &5994212761091609300
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4760,6 +5182,30 @@ MonoBehaviour:
   - None
   - Forward
   - Backward
+  Exists: 1
+--- !u!114 &6183188355841637778
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/william_nav_cue/Trigger
+  m_EditorClassIdentifier: 
+  Name: Trigger
+  StudioPath: 
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 3182214286
+    data2: 3291611135
+  Type: 0
+  IsGlobal: 0
+  Labels: []
   Exists: 1
 --- !u!114 &6260727882452214148
 MonoBehaviour:
@@ -4965,7 +5411,7 @@ MonoBehaviour:
   StudioPath: bank:/surgeon
   lastModified: 638815112790547021
   FileSizes: []
-  Exists: 1
+  Exists: 0
 --- !u!114 &6958162412499599721
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4985,8 +5431,9 @@ MonoBehaviour:
     Data3: -1620283763
     Data4: -935952914
   Banks:
-  - {fileID: -6584727833568685771}
   - {fileID: 7063660329105735970}
+  - {fileID: -6584727833568685771}
+  - {fileID: -8165299445089214531}
   IsStream: 1
   Is3D: 1
   IsOneShot: 0
@@ -5059,7 +5506,7 @@ MonoBehaviour:
   StudioPath: bank:/Combat
   lastModified: 639016145802851809
   FileSizes: []
-  Exists: 1
+  Exists: 0
 --- !u!114 &7063762279769721520
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5079,8 +5526,9 @@ MonoBehaviour:
     Data3: -913172600
     Data4: -836348760
   Banks:
-  - {fileID: -1471485812431984116}
   - {fileID: 5915714569042196833}
+  - {fileID: -1471485812431984116}
+  - {fileID: -1623506985876570158}
   IsStream: 1
   Is3D: 1
   IsOneShot: 0
@@ -5108,8 +5556,9 @@ MonoBehaviour:
     Data3: -2103075665
     Data4: -1856326545
   Banks:
-  - {fileID: -1471485812431984116}
   - {fileID: 5915714569042196833}
+  - {fileID: -1471485812431984116}
+  - {fileID: -1623506985876570158}
   IsStream: 1
   Is3D: 1
   IsOneShot: 0
@@ -5241,8 +5690,9 @@ MonoBehaviour:
     Data3: -1373806682
     Data4: 449142386
   Banks:
-  - {fileID: -1471485812431984116}
   - {fileID: 5915714569042196833}
+  - {fileID: -1471485812431984116}
+  - {fileID: -1623506985876570158}
   IsStream: 1
   Is3D: 1
   IsOneShot: 0
@@ -5342,8 +5792,9 @@ MonoBehaviour:
     Data3: 851358358
     Data4: 343187846
   Banks:
-  - {fileID: -1471485812431984116}
   - {fileID: 5915714569042196833}
+  - {fileID: -1471485812431984116}
+  - {fileID: -1623506985876570158}
   IsStream: 1
   Is3D: 1
   IsOneShot: 0
@@ -5471,8 +5922,9 @@ MonoBehaviour:
     Data3: 445860019
     Data4: 1260604156
   Banks:
-  - {fileID: -1471485812431984116}
   - {fileID: 5915714569042196833}
+  - {fileID: -1471485812431984116}
+  - {fileID: -1623506985876570158}
   IsStream: 1
   Is3D: 1
   IsOneShot: 0

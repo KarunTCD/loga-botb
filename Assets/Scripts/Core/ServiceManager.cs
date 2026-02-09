@@ -26,9 +26,6 @@ namespace LoGa.LudoEngine.Core
         [SerializeField] private FirebaseService firebaseServicePrefab;
         [SerializeField] private AnalyticsService analyticsServicePrefab;
 
-        [Header("Audio Configuration")]
-        [SerializeField] private AudioEventLookup audioEventLookup;
-
         private List<GameObject> createdServices = new List<GameObject>();
         private Dictionary<Type, IService> serviceInstances = new Dictionary<Type, IService>();
         private Dictionary<Type, bool> serviceInitStatus = new Dictionary<Type, bool>();
@@ -98,25 +95,7 @@ namespace LoGa.LudoEngine.Core
                 // Create GameObject programmatically (for GameDataService)
                 serviceObj = new GameObject(typeof(T).Name);
                 serviceObj.transform.SetParent(transform);
-                var component = serviceObj.AddComponent<U>();
-
-                // Special case for GameDataService - assign AudioEventLookup
-                if (typeof(T) == typeof(IGameDataService))
-                {
-                    var gameDataService = component as GameDataService;
-                    if (gameDataService != null)
-                    {
-                        if (audioEventLookup != null)
-                        {
-                            gameDataService.SetAudioEventLookup(audioEventLookup);
-                            Debug.Log($"ServiceManager: AudioEventLookup assigned to GameDataService with {audioEventLookup.TotalMappingCount} mappings");
-                        }
-                        else
-                        {
-                            Debug.LogWarning("ServiceManager: AudioEventLookup is null - audio events won't work");
-                        }
-                    }
-                }
+                serviceObj.AddComponent<U>();
             }
 
             createdServices.Add(serviceObj);
@@ -417,23 +396,6 @@ namespace LoGa.LudoEngine.Core
         }
 
         #region Debug Methods
-
-        [ContextMenu("Debug AudioEventLookup")]
-        public void DebugAudioEventLookup()
-        {
-            if (audioEventLookup != null)
-            {
-                Debug.Log($"AudioEventLookup has {audioEventLookup.TotalMappingCount} mappings:");
-                Debug.Log($"Character Events: {audioEventLookup.characterAudioEvents.Count}");
-                Debug.Log($"Portal Events: {audioEventLookup.portalAudioEvents.Count}");
-
-                audioEventLookup.DebugAllMappings();
-            }
-            else
-            {
-                Debug.LogError("AudioEventLookup is null in ServiceManager");
-            }
-        }
 
         [ContextMenu("Debug Hardware Status")]
         public void DebugHardwareStatus()

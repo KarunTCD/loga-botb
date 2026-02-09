@@ -12,9 +12,6 @@ namespace LoGa.LudoEngine.Services
         [Header("Configuration")]
         [SerializeField] private string jsonFileName = "game_data.json";
 
-        [Header("Audio Event Lookup")]
-        [SerializeField] private AudioEventLookup audioEventLookup;
-
         [SerializeField] private bool enableDebugLogs = true;
 
         #region JSON Data Structures
@@ -44,6 +41,7 @@ namespace LoGa.LudoEngine.Services
             public float maxTargetingDistance;
             public int maxPlayerHealth;
             public GameBoundsData gameBounds;
+            public string ambientAudioEvent;
         }
 
         [System.Serializable]
@@ -78,11 +76,13 @@ namespace LoGa.LudoEngine.Services
         [System.Serializable]
         public class POIData
         {
-            public int characterId;        // Primary identifier (integer)
-            public string characterName;   // Display name
+            public int characterId;
+            public string characterName;
             public float latitude;
             public float longitude;
             public string characterAudioEvent;
+            public string navigationCueEvent;    
+            public int navigationCueCount;
             public string portalType;
             public int portalJumpDistance;
             public string portalActivationAudio;
@@ -90,15 +90,14 @@ namespace LoGa.LudoEngine.Services
             public POIRewardData reward;
             public bool hasMultipleVariants;
             public int narrationVariantCount;
-            public int maxNavigationCues = 4;  // Default: 4 navigation cue snippets
         }
 
         [System.Serializable]
         public class POIRewardData
         {
-            public int rewardId;          // Primary identifier (integer)  
-            public string rewardName;     // Display name
-            public string audioEvent;
+            public int id;           
+            public string name;       
+            public string audioEvent; 
         }
 
         #endregion
@@ -127,33 +126,15 @@ namespace LoGa.LudoEngine.Services
 
             try
             {
-                InitializationProgress = 0.1f;
+                InitializationProgress = 0.5f;
 
-                bool success = await LoadGameDataAsync();
+                // Don't load game_data.json automatically
+                // Data will be loaded when SiteManager calls LoadSiteData()
 
-                if (success)
-                {
-                    IsInitialized = true;
-                    InitializationProgress = 1f;
-                    DebugLog("GameDataService: Initialization complete");
-
-                    // Debug AudioEventLookup status
-                    if (audioEventLookup != null)
-                    {
-                        DebugLog($"GameDataService: AudioEventLookup available with {audioEventLookup.TotalMappingCount} mappings");
-                    }
-                    else
-                    {
-                        Debug.LogWarning("GameDataService: No AudioEventLookup assigned - audio events will not work");
-                    }
-
-                    return true;
-                }
-                else
-                {
-                    Debug.LogError("GameDataService: Failed to load game data");
-                    return false;
-                }
+                IsInitialized = true;
+                InitializationProgress = 1f;
+                DebugLog("GameDataService: Initialization complete (waiting for site selection)");
+                return true;
             }
             catch (Exception e)
             {
@@ -214,57 +195,6 @@ namespace LoGa.LudoEngine.Services
             // Reset initialization
             IsInitialized = false;
             InitializationProgress = 0f;
-        }
-
-        #endregion
-
-        #region AudioEventLookup Management
-
-        /// <summary>
-        /// Set the AudioEventLookup reference (called by ServiceManager)
-        /// </summary>
-        public void SetAudioEventLookup(AudioEventLookup lookup)
-        {
-            audioEventLookup = lookup;
-            if (lookup != null)
-            {
-                DebugLog($"GameDataService: AudioEventLookup assigned with {lookup.TotalMappingCount} mappings");
-                DebugLog($"  Character events: {lookup.characterAudioEvents.Count}");
-                DebugLog($"  Portal events: {lookup.portalAudioEvents.Count}");
-
-                // Debug log all mappings for verification
-                if (enableDebugLogs)
-                {
-                    foreach (var mapping in lookup.characterAudioEvents)
-                    {
-                        DebugLog($"  Character audio: '{mapping.eventName}' → {mapping.eventReference}");
-                    }
-                    foreach (var mapping in lookup.portalAudioEvents)
-                    {
-                        DebugLog($"  Portal audio: '{mapping.eventName}' → {mapping.eventReference}");
-                    }
-                }
-            }
-            else
-            {
-                Debug.LogWarning("GameDataService: AudioEventLookup set to null");
-            }
-        }
-
-        /// <summary>
-        /// Get AudioEventLookup reference (for external access)
-        /// </summary>
-        public AudioEventLookup GetAudioEventLookup()
-        {
-            return audioEventLookup;
-        }
-
-        /// <summary>
-        /// Check if AudioEventLookup is available
-        /// </summary>
-        public bool HasAudioEventLookup()
-        {
-            return audioEventLookup != null;
         }
 
         #endregion
@@ -344,31 +274,29 @@ namespace LoGa.LudoEngine.Services
                 return new EventReference();
             }
 
-            if (audioEventLookup != null)
+            // Create EventReference directly from event name
+            EventReference eventRef = RuntimeManager.PathToEventReference(eventName);
+
+            if (eventRef.IsNull)
             {
-                var eventRef = audioEventLookup.GetEventReference(eventName);
-
-                if (eventRef.IsNull)
-                {
-                    Debug.LogWarning($"GameDataService: Audio event '{eventName}' not found in AudioEventLookup");
-                }
-                else
-                {
-                    DebugLog($"GameDataService: Found audio event '{eventName}' → {eventRef}");
-                }
-
-                return eventRef;
+                Debug.LogWarning($"GameDataService: Audio event '{eventName}' not found in loaded banks");
+            }
+            else
+            {
+                Debug.Log($"GameDataService: Found audio event '{eventName}'");
             }
 
-            // No lookup available - this is the main issue
-            Debug.LogError($"GameDataService: No AudioEventLookup assigned, cannot convert '{eventName}'");
-            return new EventReference();
+            return eventRef;
         }
 
         #endregion
 
         #region File Loading
 
+        /// <summary>
+        /// SINGLE FILE READING METHOD - Used by all data loading methods
+        /// Handles Android, PC, and Resources fallback
+        /// </summary>
         private async Task<string> LoadJsonFile(string fileName)
         {
             string path = System.IO.Path.Combine(Application.streamingAssetsPath, fileName);
@@ -383,7 +311,7 @@ namespace LoGa.LudoEngine.Services
 
                     if (www.result == UnityEngine.Networking.UnityWebRequest.Result.Success)
                     {
-                        DebugLog($"GameDataService: Loaded JSON from StreamingAssets (Android)");
+                        DebugLog($"GameDataService: Loaded JSON from StreamingAssets (Android): {fileName}");
                         return www.downloadHandler.text;
                     }
                 }
@@ -392,7 +320,7 @@ namespace LoGa.LudoEngine.Services
             else if (System.IO.File.Exists(path))
             {
                 string content = await Task.Run(() => System.IO.File.ReadAllText(path));
-                DebugLog($"GameDataService: Loaded JSON from StreamingAssets");
+                DebugLog($"GameDataService: Loaded JSON from StreamingAssets: {fileName}");
                 return content;
             }
 
@@ -401,11 +329,81 @@ namespace LoGa.LudoEngine.Services
             TextAsset asset = Resources.Load<TextAsset>(resourceName);
             if (asset != null)
             {
-                DebugLog($"GameDataService: Loaded JSON from Resources folder");
+                DebugLog($"GameDataService: Loaded JSON from Resources folder: {fileName}");
                 return asset.text;
             }
 
             throw new Exception($"Could not load {fileName} from StreamingAssets or Resources");
+        }
+
+        /// <summary>
+        /// Load data from a specific site folder
+        /// Called by SiteManager when site is selected
+        /// Uses LoadJsonFile() for platform compatibility
+        /// </summary>
+        public async Task<bool> LoadSiteData(string siteFolderName)
+        {
+            try
+            {
+                Debug.Log($"GameDataService: Loading site data for: {siteFolderName}");
+
+                // Build relative path for LoadJsonFile
+                string relativePath = System.IO.Path.Combine("Sites", siteFolderName, "site_data.json");
+
+                // Use the existing LoadJsonFile helper (handles Android, PC, Resources)
+                string json = await LoadJsonFile(relativePath);
+
+                // Parse JSON
+                rawGameData = JsonUtility.FromJson<GameData>(json);
+
+                if (rawGameData?.gameConfiguration == null)
+                {
+                    Debug.LogError("GameDataService: Invalid site data - missing gameConfiguration");
+                    return false;
+                }
+
+                if (rawGameData.timeLayers == null || rawGameData.timeLayers.Count == 0)
+                {
+                    Debug.LogError("GameDataService: Invalid site data - missing timeLayers");
+                    return false;
+                }
+
+                // Update cached config
+                GameConfig = rawGameData.gameConfiguration;
+                IsDataLoaded = true;
+
+                DebugLog($"GameDataService: Loaded site data for {siteFolderName}");
+                DebugLog($"  Time layers: {rawGameData.timeLayers.Count}");
+                DebugLog($"  POIs: {GetAllPOIData().Count}");
+                DebugLog($"  Max health: {GameConfig.maxPlayerHealth}");
+                DebugLog($"  Proximity radius: {GameConfig.proximityRadius}m");
+
+                // Fire events
+                OnGameConfigLoaded?.Invoke(GameConfig);
+                OnDataLoaded?.Invoke();
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"GameDataService: Failed to load site data: {e.Message}");
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Clear currently loaded site data
+        /// Called by SiteManager when unloading site
+        /// </summary>
+        public void ClearSiteData()
+        {
+            DebugLog("GameDataService: Clearing site data");
+
+            rawGameData = null;
+            GameConfig = null;
+            IsDataLoaded = false;
+
+            DebugLog("GameDataService: ✓ Site data cleared");
         }
 
         #endregion
@@ -419,72 +417,7 @@ namespace LoGa.LudoEngine.Services
                 Debug.Log(message);
             }
         }
-
-        [System.Diagnostics.Conditional("UNITY_EDITOR")]
-        [ContextMenu("Log Data Summary")]
-        public void LogDataSummary()
-        {
-            if (!IsDataLoaded)
-            {
-                Debug.Log("GameDataService: No data loaded yet");
-                return;
-            }
-
-            Debug.Log("=== GAME DATA SUMMARY ===");
-            Debug.Log($"Time Layers: {rawGameData.timeLayers?.Count ?? 0}");
-
-            int totalPOIs = 0;
-            int rewardPOIs = 0;
-            foreach (var layer in rawGameData.timeLayers ?? new List<TimeLayerData>())
-            {
-                if (layer.pois != null)
-                {
-                    totalPOIs += layer.pois.Count;
-                    rewardPOIs += layer.pois.Count(p => p.hasReward);
-                }
-                Debug.Log($"  - {layer.layerName}: {layer.pois?.Count ?? 0} POIs");
-            }
-
-            Debug.Log($"Total POIs: {totalPOIs}");
-            Debug.Log($"POIs with Rewards: {rewardPOIs}");
-            Debug.Log($"Proximity Radius: {GameConfig.proximityRadius}m");
-            Debug.Log($"Dialogue Radius: {GameConfig.dialogueRadius}m");
-
-            // Audio Event Lookup status
-            if (audioEventLookup != null)
-            {
-                Debug.Log($"AudioEventLookup: {audioEventLookup.TotalMappingCount} mappings available");
-            }
-            else
-            {
-                Debug.Log("AudioEventLookup: NOT ASSIGNED");
-            }
-        }
-
-        [System.Diagnostics.Conditional("UNITY_EDITOR")]
-        [ContextMenu("Debug Audio Mappings")]
-        public void DebugAudioMappings()
-        {
-            if (audioEventLookup == null)
-            {
-                Debug.LogError("GameDataService: No AudioEventLookup assigned");
-                return;
-            }
-
-            Debug.Log($"=== AUDIO EVENT MAPPINGS ({audioEventLookup.TotalMappingCount}) ===");
-            audioEventLookup.DebugAllMappings();
-
-            // Test some common events from JSON
-            var testEvents = new[] { "oak_audio", "celtic_farmer_audio", "modern_raven_audio", "battle_fox_audio", "portal_audio" };
-
-            Debug.Log("=== TESTING JSON AUDIO EVENTS ===");
-            foreach (var eventName in testEvents)
-            {
-                var eventRef = GetAudioEventReference(eventName);
-                Debug.Log($"Test '{eventName}': {(eventRef.IsNull ? "NOT FOUND" : "FOUND")}");
-            }
-        }
-
+        
         #endregion
     }
 }

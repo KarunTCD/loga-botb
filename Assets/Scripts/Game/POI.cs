@@ -74,7 +74,9 @@ namespace LoGa.LudoEngine.Game
 
         // ? NEW: Navigation cue cycling fields
         [Header("Navigation Cue Settings")]
-        private int maxNavigationCues = 4;
+        private bool waitingForCueCompletion = false; // completion monitoring
+        private float lastTriggerValue = 0f; // for Command Instrument detection
+        private int maxNavigationCues;
         private int currentNavigationCueIndex = 0;
 
         public bool IsCompleted => isCompleted;
@@ -86,9 +88,10 @@ namespace LoGa.LudoEngine.Game
         private bool isAudioPlaying = false;
         private bool hasBeenTriggered = false;
 
-        public EventReference characterAudioEvent;
+        public string characterAudioEvent;
         public EventInstance characterAudioInstance;
-        private EventInstance sharedCueInstance;
+        public string navigationCueEvent;
+        public EventInstance navigationCueInstance;
 
         private const string ZONE_PARAMETER = "Zone";
 
@@ -135,15 +138,14 @@ namespace LoGa.LudoEngine.Game
             };
             this.portalJumpDistance = poiData.portalJumpDistance;
 
-            var gameDataService = ServiceLocator.GetService<IGameDataService>();
-            if (gameDataService != null)
-            {
-                if (!string.IsNullOrEmpty(poiData.characterAudioEvent))
-                {
-                    this.characterAudioEvent = gameDataService.GetAudioEventReference(poiData.characterAudioEvent);
-                }
+            // Store event names as strings from JSON
+            this.characterAudioEvent = poiData.characterAudioEvent;
+            this.navigationCueEvent = poiData.navigationCueEvent;
 
-                if (!string.IsNullOrEmpty(poiData.portalActivationAudio))
+            if (!string.IsNullOrEmpty(poiData.portalActivationAudio))
+            {
+                var gameDataService = ServiceLocator.GetService<IGameDataService>();
+                if (gameDataService != null)
                 {
                     this.portalActivationAudio = gameDataService.GetAudioEventReference(poiData.portalActivationAudio);
                 }
@@ -152,15 +154,15 @@ namespace LoGa.LudoEngine.Game
             this.hasReward = poiData.hasReward;
             if (poiData.hasReward && poiData.reward != null)
             {
-                this.rewardId = poiData.reward.rewardId;
-                this.rewardName = poiData.reward.rewardName;
+                this.rewardId = poiData.reward.id;
+                this.rewardName = poiData.reward.name;
             }
 
             this.hasMultipleVariants = poiData.hasMultipleVariants;
             this.narrationVariantCount = poiData.narrationVariantCount;
 
-            // ? NEW: Initialize navigation cue configuration
-            this.maxNavigationCues = poiData.maxNavigationCues > 0 ? poiData.maxNavigationCues : 4;
+            // Load navigation cue count from JSON
+            this.maxNavigationCues = poiData.navigationCueCount > 0 ? poiData.navigationCueCount : 4;
 
             this.marker = gameObject.GetComponentInChildren<RectTransform>();
             if (this.marker == null)
@@ -168,7 +170,7 @@ namespace LoGa.LudoEngine.Game
                 Debug.LogWarning($"POI {characterName}: No RectTransform found for marker");
             }
 
-            Debug.Log($"POI: Initialized {characterName} from JSON (ID: {characterId}, MaxNavCues: {maxNavigationCues})");
+            Debug.Log($"POI: Initialized {characterName} from JSON (ID: {characterId}, NavCues: {maxNavigationCues}, NavEvent: {navigationCueEvent})");
         }
 
         /// <summary>
@@ -185,30 +187,55 @@ namespace LoGa.LudoEngine.Game
             this.proximityRadius = proximityRadius;
             this.dialogueRadius = dialogueRadius;
 
-            if (!characterAudioEvent.IsNull)
+            // Initialize character audio instance from string event name
+            if (!string.IsNullOrEmpty(characterAudioEvent))
             {
-                characterAudioInstance = AudioService.CreateAudioInstance(characterAudioEvent);
-
-                if (characterAudioInstance.handle == IntPtr.Zero)
+                var gameDataService = ServiceLocator.GetService<IGameDataService>();
+                if (gameDataService != null)
                 {
-                    Debug.LogError($"Failed to create audio instance for {characterName}");
-                    return false;
+                    EventReference charEvent = gameDataService.GetAudioEventReference(characterAudioEvent);
+                    characterAudioInstance = AudioService.CreateAudioInstance(charEvent);
+
+                    if (characterAudioInstance.handle == IntPtr.Zero)
+                    {
+                        Debug.LogError($"Failed to create audio instance for {characterName}");
+                        return false;
+                    }
+
+                    AudioService.SetParameter(characterAudioInstance, ZONE_PARAMETER, 0.0f);
+
+                    if (hasMultipleVariants)
+                    {
+                        int selectedVariant = UnityEngine.Random.Range(1, narrationVariantCount + 1);
+                        AudioService.SetParameter(characterAudioInstance, "NarrationVariant", selectedVariant);
+                        Debug.Log($"Portal {characterName} - Selected variant: {selectedVariant}");
+                    }
+
+                    activeInstances[characterAudioInstance.handle] = this;
+                    characterAudioInstance.setCallback(NarrationCompleteCallback, EVENT_CALLBACK_TYPE.TIMELINE_MARKER);
                 }
-
-                AudioService.SetParameter(characterAudioInstance, ZONE_PARAMETER, 0.0f);
-
-                if (hasMultipleVariants)
-                {
-                    int selectedVariant = UnityEngine.Random.Range(1, narrationVariantCount + 1);
-                    AudioService.SetParameter(characterAudioInstance, "NarrationVariant", selectedVariant);
-                    Debug.Log($"Portal {characterName} - Selected variant: {selectedVariant}");
-                }
-
-                activeInstances[characterAudioInstance.handle] = this;
-                characterAudioInstance.setCallback(NarrationCompleteCallback, EVENT_CALLBACK_TYPE.TIMELINE_MARKER);
             }
 
-            // ? NEW: Log navigation cue configuration
+            // Initialize navigation cue instance from string event name
+            if (!string.IsNullOrEmpty(navigationCueEvent))
+            {
+                var gameDataService = ServiceLocator.GetService<IGameDataService>();
+                if (gameDataService != null)
+                {
+                    EventReference navEvent = gameDataService.GetAudioEventReference(navigationCueEvent);
+                    navigationCueInstance = AudioService.CreateAudioInstance(navEvent);
+
+                    if (navigationCueInstance.handle == IntPtr.Zero)
+                    {
+                        Debug.LogError($"Failed to create navigation cue instance for {characterName}");
+                    }
+                    else
+                    {
+                        Debug.Log($"Created navigation cue instance for {characterName}: {navigationCueEvent}");
+                    }
+                }
+            }
+
             Debug.Log($"POI '{characterName}': Configured with {maxNavigationCues} navigation cues");
 
             if (marker != null)
@@ -273,11 +300,6 @@ namespace LoGa.LudoEngine.Game
             }
         }
 
-        public void SetSharedCueInstance(EventInstance instance)
-        {
-            sharedCueInstance = instance;
-        }
-
         public void UpdateProximity(POIUpdateData data, float zoneValue)
         {
             if (!isInitialized || AudioService == null) return;
@@ -323,31 +345,37 @@ namespace LoGa.LudoEngine.Game
         /// </summary>
         public void ExecuteNavigationCue(Vector3 position, NavigationCueConfig config)
         {
-            if (!isInitialized || isInProximity || AudioService == null) return;
+            Debug.Log($"🔊 POI.ExecuteNavigationCue called for {characterName}");
 
-            switch (config.cueType)
+            if (!isInitialized || isInProximity || AudioService == null)
             {
-                case NavigationCueType.DistanceBased:
-                    AudioService.PlayNavigationCue(sharedCueInstance, position, characterId,
-                        Vector3.Distance(Vector3.zero, position), config.isTargeted, config.maxDistance, config.cueIndex);
-                    Debug.Log($"[{characterName}] Distance-based cue: Index {config.cueIndex}");
-                    break;
-
-                case NavigationCueType.Sequential:
-                    AudioService.PlayNavigationCue(sharedCueInstance, position, characterId,
-                        Vector3.Distance(Vector3.zero, position), config.isTargeted, config.maxDistance, config.cueIndex);
-                    Debug.Log($"[{characterName}] Sequential cue: Index {config.cueIndex}");
-                    break;
-
-                case NavigationCueType.Targeted:
-                    AudioService.PlayNavigationCue(sharedCueInstance, position, characterId,
-                        Vector3.Distance(Vector3.zero, position), config.isTargeted, config.maxDistance, config.cueIndex);
-                    Debug.Log($"[{characterName}] Targeted cue: Index {config.cueIndex}");
-                    break;
+                Debug.LogWarning($"BLOCKED - Init: {isInitialized}, Proximity: {isInProximity}, AudioService: {AudioService != null}");
+                return;
             }
+
+            if (!AudioService.IsInstanceValid(navigationCueInstance))
+            {
+                Debug.LogError($"Navigation cue instance invalid for {characterName}");
+                return;
+            }
+
+            // Calculate direction from position (0=N, 1=NE, 2=E, 3=SE, 4=S, 5=SW, 6=W, 7=NW)
+            float angle = Mathf.Atan2(position.x, position.z) * Mathf.Rad2Deg;
+            if (angle < 0) angle += 360;
+            int direction = Mathf.RoundToInt(angle / 45f) % 8;
+
+            float distance = Vector3.Distance(Vector3.zero, position);
+            float normalizedDistance = distance / config.maxDistance;
+
+            // ✅ Use updated AudioService method (encapsulates all FMOD calls)
+            AudioService.PlayNavigationCue(navigationCueInstance, position, config.cueIndex, direction, normalizedDistance);
+
+            waitingForCueCompletion = true;
+
+            Debug.Log($"✅ [{characterName}] Navigation cue executed: Index {config.cueIndex}, Direction {direction}, Distance {normalizedDistance:F3}");
         }
 
-        // ? NEW: Get next navigation cue index (sequential cycling)
+        // Get next navigation cue index (sequential cycling)
         public int GetNextNavigationCueIndex()
         {
             int indexToReturn = currentNavigationCueIndex;
@@ -360,11 +388,34 @@ namespace LoGa.LudoEngine.Game
             return indexToReturn;
         }
 
-        // ? NEW: Reset navigation cue index (called when targeting clears)
+        // Reset navigation cue index (called when targeting clears)
         public void ResetNavigationCueIndex()
         {
             currentNavigationCueIndex = 0;
             Debug.Log($"POI '{characterName}': Navigation cue index reset to 0");
+        }
+
+        public bool CheckNavigationCueCompletion()
+        {
+            if (!waitingForCueCompletion) return false;
+
+            if (!AudioService.IsInstanceValid(navigationCueInstance))
+            {
+                waitingForCueCompletion = false;
+                return false;
+            }
+
+            float explicitValue, finalValue;
+            FMOD.RESULT result = navigationCueInstance.getParameterByName("Trigger", out explicitValue, out finalValue);
+
+            if (result == FMOD.RESULT.OK && finalValue < 0.1f)
+            {
+                waitingForCueCompletion = false;
+                Debug.Log($"Navigation cue completed for {characterName} via Command Instrument");
+                return true;
+            }
+
+            return false;
         }
 
         public bool CheckNarrationCompletion()
@@ -500,6 +551,10 @@ namespace LoGa.LudoEngine.Game
             {
                 AudioService.StopAudio(characterAudioInstance);
                 AudioService.ReleaseAudio(characterAudioInstance);
+
+                AudioService.StopAudio(navigationCueInstance, false);
+                AudioService.ReleaseAudio(navigationCueInstance);
+
             }
 
             if (marker != null)
@@ -510,9 +565,11 @@ namespace LoGa.LudoEngine.Game
 
             isAudioPlaying = false;
             hasBeenTriggered = false;
+            waitingForCueCompletion = false;
             isInitialized = false;
 
             Debug.Log($"POI cleanup complete: {characterName}");
         }
+
     }
 }

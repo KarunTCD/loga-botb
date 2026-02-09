@@ -2,6 +2,7 @@ using UnityEngine;
 using LoGa.LudoEngine.Core;
 using LoGa.LudoEngine.Services;
 using System.Linq;
+using FMODUnity;
 
 namespace LoGa.LudoEngine.Game
 {
@@ -43,10 +44,19 @@ namespace LoGa.LudoEngine.Game
         public void PlayItemAudio(int itemId)
         {
             var item = inventory.items.FirstOrDefault(i => i.itemId == itemId);
-            if (item != null && !item.audioClip.IsNull)
+            if (item != null && !string.IsNullOrEmpty(item.audioClip))
             {
-                var instance = AudioService.CreateAudioInstance(item.audioClip);
-                AudioService.PlayAudio(instance, Vector3.zero);
+                // Get EventReference from string using GameDataService
+                var gameDataService = ServiceLocator.GetService<IGameDataService>();
+                if (gameDataService != null)
+                {
+                    EventReference audioEvent = gameDataService.GetAudioEventReference(item.audioClip);
+                    if (!audioEvent.IsNull)
+                    {
+                        var instance = AudioService.CreateAudioInstance(audioEvent);
+                        AudioService.PlayAudio(instance, Vector3.zero);
+                    }
+                }
             }
         }
 

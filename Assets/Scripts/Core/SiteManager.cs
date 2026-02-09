@@ -1,154 +1,198 @@
-using System;
+using UnityEngine;
 using System.Collections.Generic;
 using System.IO;
-using UnityEngine;
+using System;
+using System.Threading.Tasks;
 using LoGa.LudoEngine.Services;
+using LoGa.LudoEngine.Game;
 
 namespace LoGa.LudoEngine.Core
 {
+    /// <summary>
+    /// Manages multi-site system - coordinates loading sites and their data
+    /// Singleton manager that persists across scenes
+    /// </summary>
     public class SiteManager : MonoBehaviour
     {
         public static SiteManager Instance { get; private set; }
 
-        [Header("Current Site")]
-        [SerializeField] private string currentSiteId = null;
+        [Header("Site Management")]
+        private List<Site> availableSites;
+        private Site currentSite;
 
-        [Header("Site Data")]
-        private SiteMetadataList siteMetadataList;
-
-        // Services
+        // Service references
         private IAudioService audioService;
         private IGameDataService gameDataService;
 
+        public Site CurrentSite => currentSite;
+        public List<Site> AvailableSites => availableSites;
+
         // Events
-        public event Action<string> OnSiteLoaded;
+        public event Action<Site> OnSiteLoaded;
         public event Action OnSiteUnloaded;
 
         private void Awake()
         {
-            // Singleton
-            if (Instance != null && Instance != this)
+            if (Instance == null)
+            {
+                Instance = this;
+                DontDestroyOnLoad(gameObject);
+                Debug.Log("SiteManager: Instance created");
+            }
+            else
             {
                 Destroy(gameObject);
                 return;
             }
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
         }
 
         private void Start()
         {
-            // Get services
+            // Get services (after ServiceManager initializes them)
             audioService = ServiceLocator.GetService<IAudioService>();
             gameDataService = ServiceLocator.GetService<IGameDataService>();
 
-            // Load site metadata
+            if (audioService == null)
+            {
+                Debug.LogError("SiteManager: AudioService not found!");
+            }
+
+            if (gameDataService == null)
+            {
+                Debug.LogError("SiteManager: GameDataService not found!");
+            }
+
+            // Load list of available sites
             LoadSiteMetadata();
         }
 
         /// <summary>
-        /// Load list of available sites
+        /// Load site_metadata.json to get list of available sites
         /// </summary>
-        public bool LoadSiteMetadata()
+        private void LoadSiteMetadata()
         {
             try
             {
-                string path = Path.Combine(Application.streamingAssetsPath, "Sites", "site_metadata.json");
+                string path = Path.Combine(
+                    Application.streamingAssetsPath,
+                    "Sites",
+                    "site_metadata.json"
+                );
 
                 Debug.Log($"SiteManager: Loading site metadata from: {path}");
+                Debug.Log($"SiteManager: StreamingAssetsPath = {Application.streamingAssetsPath}");
 
                 if (!File.Exists(path))
                 {
                     Debug.LogError($"SiteManager: site_metadata.json not found at: {path}");
-                    return false;
+
+                    // Check if Sites folder exists
+                    string sitesFolder = Path.Combine(Application.streamingAssetsPath, "Sites");
+                    Debug.LogError($"SiteManager: Sites folder exists? {Directory.Exists(sitesFolder)}");
+
+                    if (Directory.Exists(sitesFolder))
+                    {
+                        string[] files = Directory.GetFiles(sitesFolder);
+                        Debug.LogError($"SiteManager: Files in Sites folder: {string.Join(", ", files)}");
+                    }
+
+                    availableSites = new List<Site>();
+                    return;
                 }
 
+                Debug.Log($"SiteManager: File exists, reading...");
                 string json = File.ReadAllText(path);
-                siteMetadataList = JsonUtility.FromJson<SiteMetadataList>(json);
+                Debug.Log($"SiteManager: JSON length: {json.Length} characters");
+                Debug.Log($"SiteManager: JSON content: {json}");
 
-                if (siteMetadataList == null || siteMetadataList.sites == null)
+                SiteMetadataList metadata = JsonUtility.FromJson<SiteMetadataList>(json);
+                Debug.Log($"SiteManager: Parsed metadata, sites = {metadata?.sites?.Count ?? 0}");
+
+                availableSites = metadata.sites;
+
+                if (availableSites == null)
                 {
-                    Debug.LogError("SiteManager: Failed to parse site_metadata.json");
-                    return false;
+                    Debug.LogError($"SiteManager: availableSites is null after parsing!");
+                    availableSites = new List<Site>();
+                    return;
                 }
 
-                Debug.Log($"SiteManager: ✅ Loaded {siteMetadataList.sites.Count} sites:");
-                foreach (var site in siteMetadataList.sites)
+                Debug.Log($"SiteManager: Loaded {availableSites.Count} sites:");
+                foreach (var site in availableSites)
                 {
                     Debug.Log($"  - {site.name} ({site.id}) {(site.isDebug ? "[DEBUG]" : "")}");
                 }
-
-                return true;
             }
             catch (Exception e)
             {
-                Debug.LogError($"SiteManager: ❌ Failed to load site metadata: {e.Message}");
-                return false;
+                Debug.LogError($"SiteManager: Failed to load site metadata: {e.Message}");
+                Debug.LogError($"SiteManager: Stack trace: {e.StackTrace}");
+                availableSites = new List<Site>();
             }
         }
 
         /// <summary>
-        /// Load a specific site (banks + data + POIs)
+        /// Load a specific site (banks + data)
+        /// Called by UI when user selects a site
         /// </summary>
-        public bool LoadSite(string siteId)
+        public async Task<bool> LoadSite(string siteId)
         {
             Debug.Log($"========================================");
             Debug.Log($"SiteManager: Loading site: {siteId}");
             Debug.Log($"========================================");
 
-            // 1. Unload current site if any
-            if (currentSiteId != null)
+            // Find site in metadata
+            Site site = availableSites.Find(s => s.id == siteId);
+            if (site == null)
+            {
+                Debug.LogError($"SiteManager: Site '{siteId}' not found in metadata");
+                return false;
+            }
+
+            // 1. Unload previous site if any
+            if (currentSite != null)
             {
                 UnloadCurrentSite();
             }
 
             // 2. Load FMOD banks
-            Debug.Log($"SiteManager: Step 1/3 - Loading FMOD banks...");
-            if (!audioService.LoadBanksForSite(siteId))
+            Debug.Log($"SiteManager: Step 1/2 - Loading FMOD banks...");
+            if (audioService == null || !audioService.LoadBanksForSite(site.folderName))
             {
-                Debug.LogError($"SiteManager: ❌ Failed to load audio banks for site: {siteId}");
+                Debug.LogError($"SiteManager: Failed to load audio banks");
                 return false;
             }
             Debug.Log($"SiteManager: ✓ Banks loaded");
 
-            // 3. Load site JSON data
-            Debug.Log($"SiteManager: Step 2/3 - Loading site data JSON...");
-            string jsonPath = Path.Combine(Application.streamingAssetsPath, "Sites", siteId, "site_data.json");
+            // 3. Load site data into GameDataService (await async call)
+            Debug.Log($"SiteManager: Step 2/2 - Loading site data...");
+            bool dataLoaded = await gameDataService.LoadSiteData(site.folderName);
 
-            if (!File.Exists(jsonPath))
+            if (!dataLoaded)
             {
-                Debug.LogError($"SiteManager: ❌ site_data.json not found at: {jsonPath}");
-                audioService.UnloadAllBanks();
+                Debug.LogError($"SiteManager: Failed to load site data");
+                audioService?.UnloadAllBanks();
                 return false;
             }
+            Debug.Log($"SiteManager: ✓ Site data loaded");
 
-            string json = File.ReadAllText(jsonPath);
+            // 4. Set current site
+            currentSite = site;
 
-            // TODO: Parse and use site data
-            // For now, just verify it's valid JSON
-            try
+            // 5. Notify TimeLayerManager to reload (if it exists)
+            if (TimeLayerManager.Instance != null)
             {
-                var testParse = JsonUtility.FromJson<Dictionary<string, object>>(json);
-                Debug.Log($"SiteManager: ✓ Site data JSON valid ({json.Length} characters)");
-            }
-            catch (Exception e)
-            {
-                Debug.LogError($"SiteManager: ❌ Invalid site_data.json: {e.Message}");
-                audioService.UnloadAllBanks();
-                return false;
+                Debug.Log("SiteManager: Notifying TimeLayerManager to reload");
+                TimeLayerManager.Instance.ReloadCurrentLayer();
             }
 
-            // 4. TODO: Create POIs from site data
-            Debug.Log($"SiteManager: Step 3/3 - Creating POIs... (TODO)");
-
-            // Store current site
-            currentSiteId = siteId;
+            // 6. Fire event
+            OnSiteLoaded?.Invoke(site);
 
             Debug.Log($"========================================");
-            Debug.Log($"SiteManager: ✅ Site '{siteId}' loaded successfully!");
+            Debug.Log($"SiteManager: Site '{site.name}' loaded successfully!");
             Debug.Log($"========================================");
 
-            OnSiteLoaded?.Invoke(siteId);
             return true;
         }
 
@@ -157,75 +201,52 @@ namespace LoGa.LudoEngine.Core
         /// </summary>
         public void UnloadCurrentSite()
         {
-            if (currentSiteId == null)
+            if (currentSite == null) return;
+
+            Debug.Log($"SiteManager: COMPLETELY unloading site: {currentSite.name}");
+
+            // 1. Unload banks
+            audioService?.UnloadAllBanks();
+
+            // 2. Clear game data  
+            gameDataService?.ClearSiteData();
+
+            // 3. CRITICAL: Trigger complete system reset
+            GameManager.Instance?.ResetForSiteChange();
+
+            // 4. Reset POIManager completely
+            if (FindObjectOfType<POIManager>() != null)
             {
-                Debug.Log("SiteManager: No site to unload");
-                return;
+                FindObjectOfType<POIManager>().CompleteReset();
             }
 
-            Debug.Log($"SiteManager: Unloading site: {currentSiteId}");
+            // 5. Reset TimeLayerManager
+            if (TimeLayerManager.Instance != null)
+            {
+                TimeLayerManager.Instance.CompleteReset();
+            }
 
-            // TODO: Destroy POIs when POI system is integrated
-
-            // Unload FMOD banks
-            audioService.UnloadAllBanks();
-
-            string previousSite = currentSiteId;
-            currentSiteId = null;
-
-            Debug.Log($"SiteManager: ✅ Site '{previousSite}' unloaded");
+            string previousSite = currentSite.name;
+            currentSite = null;
 
             OnSiteUnloaded?.Invoke();
-        }
-
-        /// <summary>
-        /// Get list of available sites
-        /// </summary>
-        public List<SiteMetadata> GetAvailableSites()
-        {
-            return siteMetadataList?.sites ?? new List<SiteMetadata>();
-        }
-
-        /// <summary>
-        /// Get currently loaded site ID
-        /// </summary>
-        public string GetCurrentSiteId()
-        {
-            return currentSiteId;
+            Debug.Log($"SiteManager: Site '{previousSite}' COMPLETELY unloaded and reset");
         }
 
         /// <summary>
         /// Get site metadata by ID
         /// </summary>
-        public SiteMetadata GetSiteMetadata(string siteId)
+        public Site GetSiteMetadata(string siteId)
         {
-            return siteMetadataList?.sites?.Find(s => s.id == siteId);
+            return availableSites?.Find(s => s.id == siteId);
         }
 
-        // JSON Data Structures
-        [Serializable]
-        public class SiteMetadataList
+        /// <summary>
+        /// Check if a site is currently loaded
+        /// </summary>
+        public bool IsSiteLoaded()
         {
-            public List<SiteMetadata> sites;
-        }
-
-        [Serializable]
-        public class SiteMetadata
-        {
-            public string id;
-            public string name;
-            public string description;
-            public string folderName;
-            public LocationData centerLocation;
-            public float activationRadius;
-            public bool isDebug;
-        }
-
-        [Serializable]
-        public class LocationData
-        {
-            public float latitude;
-            public float longitude;
+            return currentSite != null && gameDataService != null && gameDataService.IsDataLoaded;
         }
     }
 }
