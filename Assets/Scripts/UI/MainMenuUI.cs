@@ -64,18 +64,35 @@ namespace LoGa.LudoEngine.UI
         private void UpdateUI()
         {
             if (versionInfoText != null)
-                versionInfoText.text = $"Battle of the Boyne v{Application.version}\nUnity {Application.unityVersion}";
+                versionInfoText.text = $"Voices of the Boyne v{Application.version}";
 
             if (requirementsText != null)
             {
-                requirementsText.text = "Hardware Requirements:\n" +
-                                      "• Android 7.0+ or iOS 12.0+\n" +
-                                      "• Bluetooth LE support\n" +
-                                      "• GPS/Location services\n" +
-                                      "• Headphones recommended\n" +
-                                      "• MMRL device (optional)";
+#if UNITY_IOS
+                requirementsText.text =
+                    "Requirements:\n" +
+                    "• iPhone or iPad with iOS 12 or later\n" +
+                    "• Location services enabled\n" +
+                    "• Bluetooth enabled (optional)\n" +
+                    "• Headphones recommended\n" +
+                    "• Compatible external sensor (optional)";
+#elif UNITY_ANDROID
+        requirementsText.text =
+            "Requirements:\n" +
+            "• Android device running Android 7.0 or later\n" +
+            "• Location services enabled\n" +
+            "• Bluetooth enabled (optional)\n" +
+            "• Headphones recommended\n" +
+            "• Compatible external sensor (optional)";
+#else
+        requirementsText.text =
+            "Requirements:\n" +
+            "• Location services enabled\n" +
+            "• Headphones recommended";
+#endif
             }
         }
+
 
         private void OnPlayButtonClick()
         {
