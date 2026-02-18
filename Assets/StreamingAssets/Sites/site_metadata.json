@@ -13,6 +13,30 @@
       "isDebug": false
     },
     {
+      "id": "hill_of_tara",
+      "name": "Hill Of Tara",
+      "description": "Historical journey through the Hill of Tara",
+      "folderName": "HillOfTara",
+      "centerLocation": {
+        "latitude": 53.7045,
+        "longitude": -6.4658
+      },
+      "activationRadius": 5000,
+      "isDebug": false
+    },
+    {
+      "id": "piano_flowers",
+      "name": "Piano Flowers",
+      "description": "Mythical journey in the botanic garden.",
+      "folderName": "Flowers",
+      "centerLocation": {
+        "latitude": 53.7045,
+        "longitude": -6.4658
+      },
+      "activationRadius": 5000,
+      "isDebug": false
+    },
+    {
       "id": "debug",
       "name": "Debug Test Site",
       "description": "Local testing site",

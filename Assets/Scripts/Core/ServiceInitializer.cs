@@ -29,10 +29,26 @@ namespace LoGa.LudoEngine.Core
         {
             Debug.Log("ServiceInitializer: Starting in LoadingScene");
 
+            Debug.Log($"🔍 ServiceInitializer.Start() - Instance ID: {GetInstanceID()}, GameObject: {gameObject.name}");
+
+            var allServiceInitializers = FindObjectsOfType<ServiceInitializer>();
+            Debug.Log($"🔍 TOTAL ServiceInitializer COUNT: {allServiceInitializers.Length}");
+
+            for (int i = 0; i < allServiceInitializers.Length; i++)
+            {
+                Debug.Log($"  ServiceInitializer[{i}]: GameObject='{allServiceInitializers[i].gameObject.name}', " +
+                          $"Scene='{allServiceInitializers[i].gameObject.scene.name}', " +
+                          $"InstanceID={allServiceInitializers[i].GetInstanceID()}");
+            }
+
+            Debug.Log("ServiceInitializer: Starting in LoadingScene");
+
             // Subscribe to ServiceManager events
             ServiceManager.ServiceInitializationUpdate += OnServiceUpdate;
             ServiceManager.InitializationProgress += OnProgressUpdate;
             ServiceManager.AllServicesReady += OnAllServicesReady;
+
+            Debug.Log("🔗 ServiceInitializer: SUBSCRIBED to ServiceManager events");
 
             if (autoStartInitialization)
             {

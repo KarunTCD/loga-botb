@@ -13,7 +13,7 @@ namespace LoGa.LudoEngine.Game
 
         [Header("Transition Settings - Will be overridden by JSON")]
         [SerializeField] private float transitionDuration = 3f;
-        [SerializeField] private EventReference timePortalAudio;
+        private EventReference timePortalAudio;
 
         private IGameDataService gameDataService;
         private List<TimeLayer> timeLayers = new List<TimeLayer>();
@@ -67,6 +67,16 @@ namespace LoGa.LudoEngine.Game
                 Debug.LogError("TimeLayerManager: CRITICAL - No time layers in JSON! Game cannot start.");
                 enabled = false;
                 return;
+            }
+
+            if (!string.IsNullOrEmpty(config.timePortalAudioEvent))
+            {
+                timePortalAudio = gameDataService.GetAudioEventReference(config.timePortalAudioEvent);
+                Debug.Log("TimeLayerManager: ✓ Time portal audio loaded from JSON");
+            }
+            else
+            {
+                Debug.Log("TimeLayerManager: No time portal audio event in JSON - transitions will be silent");
             }
 
             // Build layers from JSON data

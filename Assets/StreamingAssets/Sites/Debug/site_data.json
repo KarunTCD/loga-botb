@@ -2,6 +2,18 @@
   "gameConfiguration": {
       "defaultTimeLayer": 0,
       "ambientAudioEvent": "event:/ambient_sounds",
+      "welcomeGreetingEvent": "event:/greeting_audio",
+      "rewardAnnouncementEvent": "event:/reward_audio",
+      "timePortalAudioEvent": "event:/time_portal",
+      "combatAudioEvents": {
+          "mercenaryEncounter": "event:/mercenary_encounter",
+          "mercenaryFootsteps": "event:/mercenary_footsteps",
+          "mercenaryAttack": "event:/mercenary_attack",
+          "attackImpact": "event:/attack_impact",
+          "heartbeat": "event:/heartbeat_audio",
+          "berryAmbient": "event:/berries_music",
+          "berryCollection": "event:/berries_collect"
+      },
       "proximityRadius": 20.0,
       "dialogueRadius": 10.0,
       "maxCueRadius": 500.0,
@@ -9,7 +21,7 @@
       "targetLockAngle": 30.0,
       "targetBreakAngle": 45.0,
       "cueStagingDelay": 3.0,
-      "cyclePauseDelay": 5.0,
+      "cyclePauseDelay": 4.0,
       "baseMaxActiveCues": 1,
       "maxMaxActiveCues": 2,
       "navigationUpgradeThreshold": 2,
@@ -30,12 +42,12 @@
           "pois": [
               {
                   "characterName": "Sheelanagig",
-                  "characterId": 1,
+                  "characterId": "sheelanagig",
                   "characterAudioEvent": "event:/sheelanagig_audio",
                   "navigationCueEvent": "event:/sheelanagig_cue",
                   "navigationCueCount": 4,
-                  "latitude": 53.58041,
-                  "longitude": -6.61073,
+                  "latitude": 53.336900,
+                  "longitude": -6.303951,
                   "portalType": "None",
                   "portalJumpDistance": 1,
                   "portalActivationAudio": "",
@@ -48,13 +60,13 @@
                   "narrationVariantCount": 1
               },
               {
-                  "characterName": "Corronation Stone",
-                  "characterId": 2,
-                  "characterAudioEvent": "event:/corronation_stone_audio",
-                  "navigationCueEvent": "event:/corronation_stone_cue",
+                  "characterName": "Coronation Stone",
+                  "characterId": "coronation_stone",
+                  "characterAudioEvent": "event:/coronation_stone_audio",
+                  "navigationCueEvent": "event:/coronation_stone_cue",
                   "navigationCueCount": 3,
-                  "latitude": 53.57865,
-                  "longitude": -6.61214,
+                  "latitude": 53.349077,
+                  "longitude": -6.249962,
                   "portalType": "None",
                   "portalJumpDistance": 1,
                   "portalActivationAudio": "",
@@ -68,26 +80,26 @@
               },
               {
                   "characterName": "Mound of Hostages",
-                  "characterId": 3,
+                  "characterId": "mound_of_hostages",
                   "characterAudioEvent": "event:/mound_of_hostages_audio",
                   "navigationCueEvent": "event:/mound_of_hostages_cue",
                   "navigationCueCount": 3,
-                  "latitude": 53.57963,
-                  "longitude": -6.61174,
+                  "latitude": 53.348500,
+                  "longitude": -6.249033,
                   "portalType": "None",
                   "portalJumpDistance": 1,
                   "portalActivationAudio": "",
                   "hasReward": true,
                   "reward": {
-                      "id": 9,
-                      "name": "Royal Seal Ring"
+                      "id": 2,
+                      "name": "Inkwell"
                   },
                   "hasMultipleVariants": false,
                   "narrationVariantCount": 1
               },
               {
                   "characterName": "Fox",
-                  "characterId": 4,
+                  "characterId": "fox_layer0",
                   "characterAudioEvent": "event:/celtic_fox_audio",
                   "navigationCueEvent": "event:/fox_cue",
                   "navigationCueCount": 4,
@@ -102,12 +114,12 @@
               },
               {
                   "characterName": "Fox2",
-                  "characterId": 4,
+                  "characterId": "fox_layer0",
                   "characterAudioEvent": "event:/celtic_fox_audio",
                   "navigationCueEvent": "event:/fox_cue",
                   "navigationCueCount": 4,
-                  "latitude": 53.57861,
-                  "longitude": -6.61247,
+                  "latitude": 53.348394,
+                  "longitude": -6.249856,
                   "portalType": "Forward",
                   "portalJumpDistance": 1,
                   "portalActivationAudio": "portal_audio",
@@ -124,7 +136,7 @@
           "pois": [
               {
                   "characterName": "Fenian Aillen",
-                  "characterId": 6,
+                  "characterId": "fenian_aillen",
                   "characterAudioEvent": "event:/fenian_aillen_audio",
                   "navigationCueEvent": "event:/fenian_aillen_cue",
                   "navigationCueCount": 3,
@@ -139,7 +151,7 @@
               },
               {
                   "characterName": "Fionn",
-                  "characterId": 7,
+                  "characterId": "fionn",
                   "characterAudioEvent": "event:/fionn_audio",
                   "navigationCueEvent": "event:/fionn_cue",
                   "navigationCueCount": 2,
@@ -154,7 +166,7 @@
               },
               {
                   "characterName": "Cormac",
-                  "characterId": 8,
+                  "characterId": "cormac",
                   "characterAudioEvent": "event:/cormac_audio",
                   "navigationCueEvent": "event:/cormac_cue",
                   "navigationCueCount": 2,
@@ -169,7 +181,7 @@
               },
               {
                   "characterName": "Fox",
-                  "characterId": 4,
+                  "characterId": "fox_layer1",
                   "characterAudioEvent": "event:/celtic_fox_audio",
                   "navigationCueEvent": "event:/fox_cue",
                   "navigationCueCount": 4,
@@ -191,7 +203,7 @@
         "pois": [
             {
                 "characterName": "St. Brigid",
-                "characterId": 9,
+                "characterId": "st_brigid",
                 "characterAudioEvent": "event:/st_brigid_audio",
                 "navigationCueEvent": "event:/st_brigid_cue",
                 "navigationCueCount": 4,
@@ -206,7 +218,7 @@
             },
             {
                 "characterName": "Laoghaire",
-                "characterId": 10,
+                "characterId": "laoghaire",
                 "characterAudioEvent": "event:/laoghaire_audio",
                 "navigationCueEvent": "event:/laoghaire_cue",
                 "navigationCueCount": 3,
@@ -221,7 +233,7 @@
             },
             {
                 "characterName": "Druid",
-                "characterId": 11,
+                "characterId": "druid",
                 "characterAudioEvent": "event:/druid_audio",
                 "navigationCueEvent": "event:/druid_cue",
                 "navigationCueCount": 2,
@@ -236,12 +248,12 @@
             },
             {
                 "characterName": "St. Patrick",
-                "characterId": 12,
+                "characterId": "st_patrick",
                 "characterAudioEvent": "event:/st_patrick_audio",
                 "navigationCueEvent": "event:/st_patrick_cue",
                 "navigationCueCount": 2,
-                "latitude": 53.58091,
-                "longitude": -6.61084,
+                "latitude": 53.349076,
+                "longitude": -6.249957,
                 "portalType": "None",
                 "portalJumpDistance": 1,
                 "portalActivationAudio": "",
@@ -251,12 +263,12 @@
             },
             {
                 "characterName": "Raven",
-                "characterId": 5,
+                "characterId": "raven_layer2",
                 "characterAudioEvent": "event:/battle_raven_audio",
                 "navigationCueEvent": "event:/raven_cue",
                 "navigationCueCount": 4,
-                "latitude": 53.57988,
-                "longitude": -6.61175,
+                "latitude": 53.348433,
+                "longitude": -6.248533,
                 "portalType": "Backward",
                 "portalJumpDistance": 2,
                 "portalActivationAudio": "portal_audio",
@@ -272,8 +284,8 @@
       "layerIndex": 3,
         "pois": [
             {
-                "characterName": "Brianboru",
-                "characterId": 13,
+                "characterName": "Brian Boru",
+                "characterId": "brian_boru",
                 "characterAudioEvent": "event:/brian_boru_audio",
                 "navigationCueEvent": "event:/brian_boru_cue",
                 "navigationCueCount": 2,
@@ -288,7 +300,7 @@
             },
             {
                 "characterName": "Viking King",
-                "characterId": 14,
+                "characterId": "viking_king",
                 "characterAudioEvent": "event:/viking_audio",
                 "navigationCueEvent": "event:/viking_cue",
                 "navigationCueCount": 3,
@@ -303,7 +315,7 @@
             },
             {
                 "characterName": "Gormflaith",
-                "characterId": 15,
+                "characterId": "gormflaith",
                 "characterAudioEvent": "event:/gormflaith_audio",
                 "navigationCueEvent": "event:/gormflaith_cue",
                 "navigationCueCount": 2,
@@ -318,7 +330,7 @@
             },
             {
                 "characterName": "Fox",
-                "characterId": 4,
+                "characterId": "fox_layer3",
                 "characterAudioEvent": "event:/battle_fox_audio",
                 "navigationCueEvent": "event:/fox_cue",
                 "navigationCueCount": 4,
@@ -340,7 +352,7 @@
         "pois": [
             {
                 "characterName": "British Israelite",
-                "characterId": 16,
+                "characterId": "british_israelite",
                 "characterAudioEvent": "event:/british_israelite_audio",
                 "navigationCueEvent": "event:/british_israelite_cue",
                 "navigationCueCount": 4,
@@ -355,7 +367,7 @@
             },
             {
                 "characterName": "Maud Gonne",
-                "characterId": 17,
+                "characterId": "maud_gonne",
                 "characterAudioEvent": "event:/maud_gonne_audio",
                 "navigationCueEvent": "event:/maud_gonne_cue",
                 "navigationCueCount": 4,
@@ -370,7 +382,7 @@
             },
             {
                 "characterName": "Daniel O' Connel",
-                "characterId": 18,
+                "characterId": "daniel_o_connel",
                 "characterAudioEvent": "event:/daniel_o_connel_audio",
                 "navigationCueEvent": "event:/daniel_o_connel_cue",
                 "navigationCueCount": 3,
@@ -385,7 +397,7 @@
             },
             {
                 "characterName": "Buckley/Yates",
-                "characterId": 19,
+                "characterId": "buckley_yates",
                 "characterAudioEvent": "event:/buckley_audio",
                 "navigationCueEvent": "event:/william_nav_cue",
                 "navigationCueCount": 4,
@@ -400,7 +412,7 @@
             },
             {
                 "characterName": "Raven",
-                "characterId": 5,
+                "characterId": "raven_layer4",
                 "characterAudioEvent": "event:/modern_raven_audio",
                 "navigationCueEvent": "event:/raven_cue",
                 "navigationCueCount": 4,

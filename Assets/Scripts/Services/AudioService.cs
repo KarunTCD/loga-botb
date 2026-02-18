@@ -67,6 +67,7 @@ namespace LoGa.LudoEngine.Services
                 loadedBankPaths.Add(relativeMasterBankPath);
                 Debug.Log("AudioService: ✓ Master.bank loaded");
 
+
                 // Load Master.strings bank
                 Debug.Log($"AudioService: Loading Master.strings.bank with relative path: {relativeStringsBankPath}");
                 FMODUnity.RuntimeManager.LoadBank(relativeStringsBankPath, true);
@@ -74,6 +75,7 @@ namespace LoGa.LudoEngine.Services
                 Debug.Log("AudioService: ✓ Master.strings.bank loaded");
 
                 Debug.Log($"AudioService: Successfully loaded {loadedBankPaths.Count} banks for site: {siteId}");
+
                 return true;
             }
             catch (Exception e)
@@ -84,7 +86,6 @@ namespace LoGa.LudoEngine.Services
                 return false;
             }
         }
-
 
         // Unload all the banks added
         public void UnloadAllBanks()

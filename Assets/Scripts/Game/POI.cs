@@ -5,6 +5,7 @@ using LoGa.LudoEngine.Core;
 using LoGa.LudoEngine.Services;
 using System;
 using System.Collections.Generic;
+using TMPro;
 
 namespace LoGa.LudoEngine.Game
 {
@@ -44,12 +45,11 @@ namespace LoGa.LudoEngine.Game
     public class POI
     {
         // Basic POI data
-        public string id;
         public string characterName;
         public float latitude;
         public float longitude;
         public RectTransform marker;
-        public int characterId;
+        public string characterId;
 
         [Header("Portal Settings")]
         public PortalType portalType = PortalType.None;
@@ -118,13 +118,13 @@ namespace LoGa.LudoEngine.Game
                 return audioService;
             }
         }
+        private TextMeshProUGUI directionDebugText;
 
         /// <summary>
         /// Initialize POI from JSON data
         /// </summary>
         public void InitializeFromData(GameDataService.POIData poiData, GameObject gameObject)
         {
-            this.id = poiData.characterId.ToString();
             this.characterName = poiData.characterName;
             this.characterId = poiData.characterId;
             this.latitude = poiData.latitude;
@@ -141,15 +141,6 @@ namespace LoGa.LudoEngine.Game
             // Store event names as strings from JSON
             this.characterAudioEvent = poiData.characterAudioEvent;
             this.navigationCueEvent = poiData.navigationCueEvent;
-
-            if (!string.IsNullOrEmpty(poiData.portalActivationAudio))
-            {
-                var gameDataService = ServiceLocator.GetService<IGameDataService>();
-                if (gameDataService != null)
-                {
-                    this.portalActivationAudio = gameDataService.GetAudioEventReference(poiData.portalActivationAudio);
-                }
-            }
 
             this.hasReward = poiData.hasReward;
             if (poiData.hasReward && poiData.reward != null)
@@ -345,7 +336,7 @@ namespace LoGa.LudoEngine.Game
         /// </summary>
         public void ExecuteNavigationCue(Vector3 position, NavigationCueConfig config)
         {
-            Debug.Log($"🔊 POI.ExecuteNavigationCue called for {characterName}");
+            Debug.Log($"POI.ExecuteNavigationCue called for {characterName}");
 
             if (!isInitialized || isInProximity || AudioService == null)
             {
@@ -367,12 +358,23 @@ namespace LoGa.LudoEngine.Game
             float distance = Vector3.Distance(Vector3.zero, position);
             float normalizedDistance = distance / config.maxDistance;
 
-            // ✅ Use updated AudioService method (encapsulates all FMOD calls)
+            if (directionDebugText != null)
+            {
+                string[] directionNames = { "North", "Northeast", "East", "Southeast", "South", "Southwest", "West", "Northwest" };
+                directionDebugText.text = $" {characterName}\n" +
+                                         $"Angle: {angle:F1}°\n" +
+                                         $"Direction: {direction} ({directionNames[direction]})\n" +
+                                         $"Distance: {distance:F1}m\n" +
+                                         $"3D Pos: X={position.x:F1}, Z={position.z:F1}\n" +
+                                         $"Cue Index: {config.cueIndex}";
+            }
+
+            // Use updated AudioService method (encapsulates all FMOD calls)
             AudioService.PlayNavigationCue(navigationCueInstance, position, config.cueIndex, direction, normalizedDistance);
 
             waitingForCueCompletion = true;
 
-            Debug.Log($"✅ [{characterName}] Navigation cue executed: Index {config.cueIndex}, Direction {direction}, Distance {normalizedDistance:F3}");
+            Debug.Log($"[{characterName}] Navigation cue executed: Index {config.cueIndex}, Direction {direction}, Distance {normalizedDistance:F3}");
         }
 
         // Get next navigation cue index (sequential cycling)
@@ -383,9 +385,12 @@ namespace LoGa.LudoEngine.Game
             // Increment and wrap around
             currentNavigationCueIndex = (currentNavigationCueIndex + 1) % maxNavigationCues;
 
-            Debug.Log($"POI '{characterName}': Navigation cue {indexToReturn}/{maxNavigationCues - 1}");
+            // Add 1 to convert from 0-based to 1-based indexing
+            int fmodCueIndex = indexToReturn + 1;
 
-            return indexToReturn;
+            Debug.Log($"POI '{characterName}': Navigation cue {fmodCueIndex}/{maxNavigationCues} (internal: {indexToReturn})");
+
+            return fmodCueIndex; 
         }
 
         // Reset navigation cue index (called when targeting clears)
@@ -418,6 +423,11 @@ namespace LoGa.LudoEngine.Game
             return false;
         }
 
+        public bool IsWaitingForCueCompletion()
+        {
+            return waitingForCueCompletion;
+        }
+
         public bool CheckNarrationCompletion()
         {
             if (narrationJustCompleted && completedInstanceHandle == characterAudioInstance.handle)
@@ -448,21 +458,30 @@ namespace LoGa.LudoEngine.Game
 
         private void CheckPortalActivation()
         {
+            Debug.Log($" CheckPortalActivation called for {characterName}");
+            Debug.Log($"   GameplayState: {GameManager.Instance?.CurrentGameplayState}");
+            Debug.Log($"   PortalType: {portalType}");
+
             if (GameManager.Instance?.CurrentGameplayState != GameManager.GameplayState.Interact)
             {
                 Debug.LogWarning($"Portal activation blocked for {characterName} - not in interact mode");
+                Debug.LogWarning($"   Current state: {GameManager.Instance?.CurrentGameplayState}");
                 return;
             }
 
             TimeLayer targetLayer = CalculateTargetLayer();
+            Debug.Log($"   TargetLayer: {targetLayer?.layerName ?? "None"}");
 
             if (targetLayer != null && TimeLayerManager.Instance.CanTransitionTo(targetLayer))
             {
+                Debug.Log($" Activating portal to {targetLayer.layerName}");
                 ActivatePortal(targetLayer);
             }
             else
             {
-                Debug.Log($"{portalType} portal: No valid transition available");
+                Debug.LogError($" Portal activation failed");
+                Debug.LogError($"   TargetLayer null: {targetLayer == null}");
+                Debug.LogError($"   CanTransition: {TimeLayerManager.Instance?.CanTransitionTo(targetLayer) ?? false}");
             }
         }
 
@@ -482,11 +501,27 @@ namespace LoGa.LudoEngine.Game
 
             Debug.Log($"{portalType} portal ({characterName}) activated - transitioning to {targetLayer.layerName}");
 
-            if (!portalActivationAudio.IsNull && AudioService != null)
+            // Get portal audio from TimeLayerManager 
+            EventReference portalAudio = TimeLayerManager.Instance.GetTimePortalEvent();
+
+            if (!portalAudio.IsNull && AudioService != null)
             {
-                var portalInstance = AudioService.CreateAudioInstance(portalActivationAudio);
+                Debug.Log($" Creating portal audio instance from TimeLayerManager...");
+
+                var portalInstance = AudioService.CreateAudioInstance(portalAudio);
+
+                if (portalInstance.handle == IntPtr.Zero)
+                {
+                    Debug.LogError($" Failed to create portal audio instance!");
+                    TimeLayerManager.Instance.TransitionToLayer(targetLayer);
+                    return;
+                }
+
+                Debug.Log($" Portal audio instance created successfully");
+
                 int portalTypeValue = portalType == PortalType.Forward ? 1 : 2;
                 AudioService.SetParameter(portalInstance, "PortalType", portalTypeValue);
+                Debug.Log($" Set PortalType parameter to: {portalTypeValue}");
 
                 portalInstance.setCallback(PortalTransitionCallback, EVENT_CALLBACK_TYPE.TIMELINE_MARKER);
 
@@ -494,11 +529,34 @@ namespace LoGa.LudoEngine.Game
                 pendingPortalInstance = portalInstance.handle;
 
                 AudioService.PlayAudio(portalInstance, Vector3.zero);
+                Debug.Log($" Portal audio started - waiting for completion");
             }
             else
             {
+                Debug.LogWarning($" No portal audio available - transitioning immediately");
+                Debug.LogWarning($"   TimeLayerManager portal audio null: {portalAudio.IsNull}");
+                Debug.LogWarning($"   AudioService null: {AudioService == null}");
+
                 TimeLayerManager.Instance.TransitionToLayer(targetLayer);
             }
+        }
+
+        /// <summary>
+        /// Trigger portal activation without marking POI as completed
+        /// Called for portal characters after narration ends
+        /// </summary>
+        public void TriggerPortalActivation()
+        {
+            if (!IsPortal)
+            {
+                Debug.LogWarning($"TriggerPortalActivation called on non-portal character: {characterName}");
+                return;
+            }
+
+            Debug.Log($"🌀 Portal {characterName} activation triggered");
+
+            // Run portal logic without marking as completed
+            CheckPortalActivation();
         }
 
         public void SetDiscovered(bool discovered)
@@ -534,6 +592,19 @@ namespace LoGa.LudoEngine.Game
             {
                 AudioService.PlayAudio(characterAudioInstance, audioPosition);
                 wasPlayingBeforeSilence = false;
+            }
+        }
+
+        public void SetDirectionDebugText(TextMeshProUGUI debugText)
+        {
+            directionDebugText = debugText;
+        }
+
+        public void ClearDirectionDebug()
+        {
+            if (directionDebugText != null)
+            {
+                directionDebugText.text = "";
             }
         }
 

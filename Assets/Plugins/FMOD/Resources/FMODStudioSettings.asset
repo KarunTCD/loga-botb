@@ -705,28 +705,11 @@ MonoBehaviour:
   RealChannelSettings: []
   Plugins: []
   MasterBanks:
-  - Master
   - Sites/Debug/Audio/Master
   - Sites/BattleOfBoyne/Audio/Master
-  Banks:
-  - Combat
-  - oak
-  - raven
-  - salmon
-  - Sites/BattleOfBoyne/Audio/Combat
-  - Sites/BattleOfBoyne/Audio/oak
-  - Sites/BattleOfBoyne/Audio/raven
-  - Sites/BattleOfBoyne/Audio/salmon
-  - Sites/BattleOfBoyne/Audio/surgeon
-  - Sites/BattleOfBoyne/Audio/william
-  - Sites/Debug/Audio/Combat
-  - Sites/Debug/Audio/oak
-  - Sites/Debug/Audio/raven
-  - Sites/Debug/Audio/salmon
-  - Sites/Debug/Audio/surgeon
-  - Sites/Debug/Audio/william
-  - surgeon
-  - william
+  - Sites/HillOfTara/Audio/Master
+  - Sites/Flowers/Audio/Master
+  Banks: []
   BanksToLoad: []
   LiveUpdatePort: 9264
   EnableMemoryTracking: 0

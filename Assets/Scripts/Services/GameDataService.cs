@@ -42,6 +42,23 @@ namespace LoGa.LudoEngine.Services
             public int maxPlayerHealth;
             public GameBoundsData gameBounds;
             public string ambientAudioEvent;
+
+            public string welcomeGreetingEvent;
+            public string rewardAnnouncementEvent;
+            public string timePortalAudioEvent;
+            public CombatAudioEvents combatAudioEvents;
+        }
+
+        [System.Serializable]
+        public class CombatAudioEvents
+        {
+            public string mercenaryEncounter;
+            public string mercenaryFootsteps;
+            public string mercenaryAttack;
+            public string attackImpact;
+            public string heartbeat;
+            public string berryAmbient;
+            public string berryCollection;
         }
 
         [System.Serializable]
@@ -76,7 +93,7 @@ namespace LoGa.LudoEngine.Services
         [System.Serializable]
         public class POIData
         {
-            public int characterId;
+            public string characterId;
             public string characterName;
             public float latitude;
             public float longitude;
@@ -249,7 +266,7 @@ namespace LoGa.LudoEngine.Services
             return layer?.pois ?? new List<POIData>();
         }
 
-        public POIData GetPOIData(int poiId)
+        public POIData GetPOIData(string poiId)
         {
             if (rawGameData?.timeLayers == null) return null;
 

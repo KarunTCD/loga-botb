@@ -31,7 +31,7 @@ namespace LoGa.LudoEngine.Game
     public class CharacterPrefabMapping
     {
         public string characterName;
-        public int characterId;
+        public string characterId;
         public GameObject prefab;
     }
 
@@ -69,15 +69,12 @@ namespace LoGa.LudoEngine.Game
         private float targetBreakAngle;
         private float maxTargetingDistance;
 
-        [Header("Reward System")]
-        [SerializeField] private EventReference welcomeGreetingEvent;
-        [SerializeField] private EventReference rewardAnnouncementEvent;
-
         [Header("UI References")]
         [SerializeField] private GameObject targetingIndicator;
         [SerializeField] private TextMeshProUGUI targetingText;
         [SerializeField] private TextMeshProUGUI zoneText;
         [SerializeField] private TextMeshProUGUI completionText;
+        [SerializeField] private TextMeshProUGUI directionDebugText;
 
         private IGameDataService gameDataService;
 
@@ -88,6 +85,8 @@ namespace LoGa.LudoEngine.Game
         private List<POI> activeCuePOIs = new List<POI>();
         private TargetingState targetingState = new TargetingState { mode = TargetingMode.None };
 
+        private EventReference welcomeGreetingEvent;
+        private EventReference rewardAnnouncementEvent;
         private EventInstance welcomeInstance;
         private EventInstance rewardInstance;
 
@@ -101,9 +100,10 @@ namespace LoGa.LudoEngine.Game
         private bool isInCyclePause = false;
         private float cyclePauseTimer = 0f;
         private int updateFrameCounter = 0;
+        private bool waitingForNextCue = false;
 
-        private Dictionary<int, bool> discoveredThisSession = new Dictionary<int, bool>();
-        private Dictionary<int, bool> proximityReachedThisSession = new Dictionary<int, bool>();
+        private Dictionary<string, bool> discoveredThisSession = new Dictionary<string, bool>();
+        private Dictionary<string, bool> proximityReachedThisSession = new Dictionary<string, bool>();
 
         private IStorageService storageService;
         private IAudioService audioService;
@@ -225,11 +225,21 @@ namespace LoGa.LudoEngine.Game
                     return;
                 }
 
-                // Initialize audio components (now that banks are loaded)
-                if (!InitializeAudioComponents())
+                // CRITICAL: Wrap audio initialization in try-catch, let no exceptions loose in event handlers, will cause event accummulation
+                bool audioInitialized = false;
+                try
                 {
-                    Debug.LogError("POIManager: Failed to initialize audio components");
-                    return;
+                    audioInitialized = InitializeAudioComponents();
+                }
+                catch (Exception audioEx)
+                {
+                    Debug.LogError($"POIManager: Audio initialization failed: {audioEx.Message} - continuing without audio");
+                    audioInitialized = false; // Continue anyway
+                }
+
+                if (!audioInitialized)
+                {
+                    Debug.LogWarning("POIManager: Audio components failed to initialize - POIs will load without audio");
                 }
 
                 // Subscribe to time layer events
@@ -245,6 +255,7 @@ namespace LoGa.LudoEngine.Game
             catch (Exception e)
             {
                 Debug.LogError($"POIManager OnSiteLoaded failed: {e.Message}");
+                Debug.LogError($"POIManager Stack trace: {e.StackTrace}");
             }
         }
         private void ApplyJSONConfiguration()
@@ -305,24 +316,56 @@ namespace LoGa.LudoEngine.Game
                 return false;
             }
 
-            if (!rewardAnnouncementEvent.IsNull)
+            // LOAD from JSON instead of inspector
+            var config = gameDataService?.GameConfig;
+            if (config == null)
             {
-                rewardInstance = AudioService.CreateAudioInstance(rewardAnnouncementEvent);
-                if (rewardInstance.handle == IntPtr.Zero)
-                {
-                    Debug.LogError("Failed to create reward instance");
-                    return false;
-                }
+                Debug.LogWarning("POIManager: No JSON config available - skipping audio initialization");
+                return true; // Don't fail, just skip
             }
 
-            if (!welcomeGreetingEvent.IsNull)
+            // Load reward announcement event (optional)
+            if (!string.IsNullOrEmpty(config.rewardAnnouncementEvent))
             {
-                welcomeInstance = AudioService.CreateAudioInstance(welcomeGreetingEvent);
-                if (welcomeInstance.handle == IntPtr.Zero)
+                rewardAnnouncementEvent = gameDataService.GetAudioEventReference(config.rewardAnnouncementEvent);
+                if (!rewardAnnouncementEvent.IsNull)
                 {
-                    Debug.LogError("Failed to create welcome instance");
-                    return false;
+                    rewardInstance = AudioService.CreateAudioInstance(rewardAnnouncementEvent);
+                    if (rewardInstance.handle == IntPtr.Zero)
+                    {
+                        Debug.LogWarning("Failed to create reward instance - continuing without reward audio");
+                    }
+                    else
+                    {
+                        Debug.Log("Reward instance created from JSON");
+                    }
                 }
+            }
+            else
+            {
+                Debug.Log("POIManager: No reward announcement event in JSON - skipping");
+            }
+
+            // Load welcome greeting event (optional)
+            if (!string.IsNullOrEmpty(config.welcomeGreetingEvent))
+            {
+                welcomeGreetingEvent = gameDataService.GetAudioEventReference(config.welcomeGreetingEvent);
+                if (!welcomeGreetingEvent.IsNull)
+                {
+                    welcomeInstance = AudioService.CreateAudioInstance(welcomeGreetingEvent);
+                    if (welcomeInstance.handle == IntPtr.Zero)
+                    {
+                        Debug.LogWarning("Failed to create welcome instance - continuing without welcome audio");
+                    }
+                    else
+                    {
+                        Debug.Log("Welcome instance created from JSON");
+                    }
+                }
+            }
+            else
+            {
+                Debug.Log("POIManager: No welcome greeting event in JSON - skipping");
             }
 
             return true;
@@ -335,7 +378,7 @@ namespace LoGa.LudoEngine.Game
             bool hasPlayedWelcome = StorageService.Load<bool>("HasPlayedWelcomeDialogue");
             if (!hasPlayedWelcome && AudioService.IsInstanceValid(welcomeInstance))
             {
-                GameManager.Instance?.SuspendNavigationAudio("oak_greeting");
+                GameManager.Instance?.SuspendNavigationAudio("greeting_audio");
                 welcomeInstance.setCallback(OnWelcomeComplete, EVENT_CALLBACK_TYPE.STOPPED);
                 AudioService.PlayAudio(welcomeInstance, Vector3.zero);
                 StorageService.Save("HasPlayedWelcomeDialogue", true);
@@ -353,6 +396,33 @@ namespace LoGa.LudoEngine.Game
                 Debug.Log("Oak greeting finished - navigation resumed");
             }
             return FMOD.RESULT.OK;
+        }
+
+        private void DebugPOIStatus()
+        {
+            Debug.Log("=== POI DEBUG STATUS ===");
+            Debug.Log($"POIManager initialized: {isInitialized}");
+            Debug.Log($"Active POIs count: {activePOIs?.Count ?? 0}");
+            Debug.Log($"Current time layer: {TimeLayerManager.Instance?.CurrentLayer?.layerIndex ?? -1}");
+
+            if (activePOIs != null && activePOIs.Count > 0)
+            {
+                foreach (var poi in activePOIs)
+                {
+                    if (poiDataCache.TryGetValue(poi, out POIUpdateData data))
+                    {
+                        Debug.Log($"  POI '{poi.characterName}' - Distance: {data.distance:F1}m, InProximity: {poi.isInProximity}, Bearing: {data.bearing:F1}°");
+                    }
+                    else
+                    {
+                        Debug.Log($"  POI '{poi.characterName}' - NO DATA IN CACHE");
+                    }
+                }
+            }
+
+            Debug.Log($"Targeting mode: {targetingState.mode}");
+            Debug.Log($"Target POI: {targetingState.targetPOI?.characterName ?? "None"}");
+            Debug.Log("========================");
         }
 
         private void Update()
@@ -389,6 +459,7 @@ namespace LoGa.LudoEngine.Game
 
             if (updateFrameCounter % 60 == 0)
             {
+                //DebugPOIStatus();
                 UpdateDiscoveryLogic();
             }
 
@@ -396,8 +467,6 @@ namespace LoGa.LudoEngine.Game
             {
                 UpdateDebugDisplay(currentLocation);
             }
-
-            CheckNavigationCueCompletions();
         }
 
         public void SilenceAllPOIAudio()
@@ -424,9 +493,16 @@ namespace LoGa.LudoEngine.Game
 
         public void ClearAllNavigationState()
         {
+            // Clear debug text for all POIs
+            foreach (var poi in activePOIs)
+            {
+                poi.ClearDirectionDebug();
+            }
+
             activeCuePOIs.Clear();
             ClearTargeting();
             isInCyclePause = false;
+            waitingForNextCue = false;
             cyclePauseTimer = 0f;
             currentCueIndex = 0;
             cueTimer = 0f;
@@ -621,31 +697,67 @@ namespace LoGa.LudoEngine.Game
             }
         }
 
-        // UPDATED: HandleTargetedNavigation - Use POI's cycling method
         private void HandleTargetedNavigation()
         {
             var targetPOI = targetingState.targetPOI;
             if (!poiDataCache.TryGetValue(targetPOI, out POIUpdateData data)) return;
 
-            cueTimer += Time.deltaTime;
+            Debug.Log($" Targeted: Waiting={targetPOI.IsWaitingForCueCompletion()}, Completed={targetPOI.CheckNavigationCueCompletion()}, DelayActive={waitingForNextCue}");
 
-            if (cueTimer >= cueStagingDelay)
+            // Check if previous targeted cue completed
+            if (targetPOI.CheckNavigationCueCompletion())
             {
+                Debug.Log($" Targeted cue completed via command instrument - starting {cueStagingDelay}s delay");
                 cueTimer = 0f;
+                waitingForNextCue = true;
+                return;
+            }
 
-                // 🔥 ONLY WHEN LOCKED: Sequential cycling 1,2,3,4,1,2,3...
+            // Handle delay phase after command instrument completion
+            if (waitingForNextCue)
+            {
+                cueTimer += Time.deltaTime;
+
+                if (cueTimer >= cueStagingDelay)
+                {
+                    Debug.Log($" Targeted delay complete - executing next cue");
+
+                    int sequentialCueIndex = targetPOI.GetNextNavigationCueIndex();
+
+                    var config = new NavigationCueConfig
+                    {
+                        cueType = NavigationCueType.Sequential,
+                        cueIndex = sequentialCueIndex,
+                        maxDistance = maxTargetingDistance,
+                        isTargeted = true
+                    };
+
+                    targetPOI.ExecuteNavigationCue(data.audioPosition, config);
+
+                    cueTimer = 0f;
+                    waitingForNextCue = false;
+                    Debug.Log($" TARGETED SEQUENTIAL cue executed: index {sequentialCueIndex}");
+                }
+                return;
+            }
+
+            // If no cue is playing and no delay active, start first targeted cue
+            if (!targetPOI.IsWaitingForCueCompletion() && !waitingForNextCue)
+            {
+                Debug.Log($" Starting first targeted cue");
+
                 int sequentialCueIndex = targetPOI.GetNextNavigationCueIndex();
 
                 var config = new NavigationCueConfig
                 {
                     cueType = NavigationCueType.Sequential,
-                    cueIndex = sequentialCueIndex, // Cycles 1,2,3,4,1,2,3...
+                    cueIndex = sequentialCueIndex,
                     maxDistance = maxTargetingDistance,
                     isTargeted = true
                 };
 
                 targetPOI.ExecuteNavigationCue(data.audioPosition, config);
-                Debug.Log($"🎵 TARGETED SEQUENTIAL cue for {targetPOI.characterName} - index: {sequentialCueIndex}");
+                Debug.Log($" TARGETED SEQUENTIAL cue started: index {sequentialCueIndex}");
             }
         }
 
@@ -653,21 +765,54 @@ namespace LoGa.LudoEngine.Game
         {
             activeCuePOIs = eligiblePOIs;
 
-            Debug.Log($"🔄 HandleStandardNavigation: {activeCuePOIs.Count} eligible POIs");
+            if (activeCuePOIs.Count == 0) return;
 
-            if (activeCuePOIs.Count == 0)
+            // Check if any POI's cue completed via command instrument
+            bool anyCompleted = false;
+            foreach (var poi in activeCuePOIs)
             {
-                Debug.Log("❌ No active cue POIs");
+                if (poi.CheckNavigationCueCompletion())
+                {
+                    Debug.Log($" Standard cue completed via command instrument - starting {cueStagingDelay}s delay");
+                    cueTimer = 0f;
+                    waitingForNextCue = true;
+                    anyCompleted = true;
+                    break;
+                }
+            }
+
+            if (anyCompleted) return;
+
+            // Handle delay phase after command instrument completion
+            if (waitingForNextCue)
+            {
+                cueTimer += Time.deltaTime;
+
+                if (cueTimer >= cueStagingDelay)
+                {
+                    waitingForNextCue = false;
+                    cueTimer = 0f;
+
+                    // Continue with next POI or start cycle pause
+                    if (currentCueIndex >= activeCuePOIs.Count)
+                    {
+                        isInCyclePause = true;
+                        cyclePauseTimer = 0f;
+                        currentCueIndex = 0;
+                        Debug.Log($" Navigation cycle complete - starting {cyclePauseDelay}s pause");
+                    }
+                    else
+                    {
+                        Debug.Log($" Standard navigation delay complete - ready for next POI");
+                    }
+                }
                 return;
             }
 
-            cueTimer += Time.deltaTime;
-            Debug.Log($"⏱️ CueTimer: {cueTimer:F2}s, StagingDelay: {cueStagingDelay}s, InPause: {isInCyclePause}");
-
+            // Handle cycle pause
             if (isInCyclePause)
             {
                 cyclePauseTimer += Time.deltaTime;
-                Debug.Log($"⏸️ In cycle pause: {cyclePauseTimer:F2}s / {cyclePauseDelay}s");
 
                 if (cyclePauseTimer >= cyclePauseDelay)
                 {
@@ -675,54 +820,30 @@ namespace LoGa.LudoEngine.Game
                     cyclePauseTimer = 0f;
                     currentCueIndex = 0;
                     cueTimer = 0f;
-                    Debug.Log("▶️ Exiting cycle pause");
+                    Debug.Log(" Exiting cycle pause");
                 }
                 return;
             }
 
-            Debug.Log($"🎯 CurrentIndex: {currentCueIndex}/{activeCuePOIs.Count}, Timer: {cueTimer:F2}s >= {cueStagingDelay}s?");
-
-            if (cueTimer >= cueStagingDelay && currentCueIndex < activeCuePOIs.Count)
+            // Execute next cue (only when not waiting for completion or delay)
+            if (currentCueIndex < activeCuePOIs.Count && !waitingForNextCue)
             {
-                Debug.Log($"🔊 EXECUTING NAV CUE for POI {currentCueIndex}");
-
-                cueTimer = 0f;
                 var poi = activeCuePOIs[currentCueIndex];
 
-                // 🔥 STANDARD NAVIGATION: Always use cue index 1 (no sequencing)
                 if (poiDataCache.TryGetValue(poi, out POIUpdateData data))
                 {
                     var config = new NavigationCueConfig
                     {
                         cueType = NavigationCueType.DistanceBased,
-                        cueIndex = 1, // 🔥 ALWAYS 1 for standard navigation
+                        cueIndex = 1, // Always 1 for standard navigation
                         maxDistance = maxTargetingDistance,
                         isTargeted = false
                     };
 
                     poi.ExecuteNavigationCue(data.audioPosition, config);
-                    Debug.Log($"🎵 Executed standard navigation cue for {poi.characterName} - ALWAYS cue index: 1");
+                    currentCueIndex++;
+                    Debug.Log($" Standard navigation cue executed for {poi.characterName} - POI {currentCueIndex}/{activeCuePOIs.Count}");
                 }
-
-                // Advance to next POI
-                currentCueIndex++;
-
-                // Check if cycle complete
-                if (currentCueIndex >= activeCuePOIs.Count)
-                {
-                    isInCyclePause = true;
-                    cyclePauseTimer = 0f;
-                    currentCueIndex = 0;
-                    Debug.Log($"Navigation cycle complete - starting {cyclePauseDelay}s pause");
-                }
-                else
-                {
-                    Debug.Log($"Standard navigation advanced to index {currentCueIndex}");
-                }
-            }
-            else
-            {
-                Debug.Log($"⛔ Cue execution blocked - Timer: {cueTimer >= cueStagingDelay}, Index: {currentCueIndex < activeCuePOIs.Count}");
             }
         }
 
@@ -743,6 +864,20 @@ namespace LoGa.LudoEngine.Game
         {
             Debug.Log($"NARRATION COMPLETE: {poi.characterName} has finished their dialogue!");
 
+            // PORTAL HANDLING: Allow activation but don't complete/remove
+            if (poi.IsPortal)
+            {
+                Debug.Log($"Portal {poi.characterName} activated - triggering time travel");
+
+                // Trigger portal functionality WITHOUT marking as completed
+                poi.TriggerPortalActivation();
+
+                // Track portal usage
+                AnalyticsService?.TrackEvent($"portal_used_{poi.characterId}");
+
+                return; // Don't run normal completion logic - keep portal active
+            }
+
             poi.MarkAsCompleted();
             UpdateProgressionTracking(poi);
 
@@ -750,7 +885,7 @@ namespace LoGa.LudoEngine.Game
 
             if (StorageService != null)
             {
-                string unlockKey = $"Character{poi.characterId}Unlocked";
+                string unlockKey = $"Character_{poi.characterId}_Unlocked";
                 StorageService.Save(unlockKey, true);
 
                 CheckGameCompletion();
@@ -821,20 +956,28 @@ namespace LoGa.LudoEngine.Game
         {
             if (StorageService == null || gameDataService == null) return;
 
-            int totalPOIsInGame = GetTotalPOICountFromJSON();
+            int totalNonPortalPOIs = GetTotalPOICountFromJSON(); 
 
-            if (totalPOIsInGame <= 0) return;
+            if (totalNonPortalPOIs <= 0) return;
 
+            // Get all character IDs and count unlocked ones
+            var allTimeLayerData = gameDataService.GetAllTimeLayerData();
             int unlockedCount = 0;
-            for (int i = 1; i <= totalPOIsInGame; i++)
+
+            foreach (var layer in allTimeLayerData)
             {
-                if (StorageService.Load<bool>($"Character{i}Unlocked"))
+                foreach (var poi in layer.pois)
                 {
-                    unlockedCount++;
+                    // Skip portals from completion check
+                    bool isPortal = !string.IsNullOrEmpty(poi.portalType) && poi.portalType != "None";
+                    if (!isPortal && StorageService.Load<bool>($"Character_{poi.characterId}_Unlocked"))
+                    {
+                        unlockedCount++;
+                    }
                 }
             }
 
-            if (unlockedCount >= totalPOIsInGame)
+            if (unlockedCount >= totalNonPortalPOIs)
             {
                 StorageService.Save("GameCompleted", true);
                 AnalyticsService?.TrackEvent("game_completed_all_characters_unlocked");
@@ -850,12 +993,19 @@ namespace LoGa.LudoEngine.Game
             try
             {
                 int totalCount = 0;
-                var timeLayerIds = new[] { "modern", "battle_1690", "neolithic" };
+                var allTimeLayerData = gameDataService.GetAllTimeLayerData();
 
-                foreach (var layerId in timeLayerIds)
+                foreach (var layer in allTimeLayerData)
                 {
-                    var pois = gameDataService.GetPOIsForTimeLayer(layerId);
-                    totalCount += pois.Count;
+                    // Count only non-portal characters for completion
+                    foreach (var poi in layer.pois)
+                    {
+                        bool isPortal = !string.IsNullOrEmpty(poi.portalType) && poi.portalType != "None";
+                        if (!isPortal)
+                        {
+                            totalCount++;
+                        }
+                    }
                 }
 
                 return totalCount;
@@ -1012,11 +1162,11 @@ namespace LoGa.LudoEngine.Game
 
                         if (StorageService != null)
                         {
-                            StorageService.Save($"Character{poi.characterId}Discovered", true);
+                            StorageService.Save($"Character_{poi.characterId}_Discovered", true);
                         }
                     }
 
-                    FirebaseService.SaveDiscoveredPOI(GameManager.Instance.CurrentSessionId, poi.characterId.ToString());
+                    FirebaseService.SaveDiscoveredPOI(GameManager.Instance.CurrentSessionId, poi.characterId);
                     Debug.Log($"Discovered POI: {poi.characterName} (ID: {poi.characterId})");
                 }
             }
@@ -1043,6 +1193,12 @@ namespace LoGa.LudoEngine.Game
             targetingState.mode = TargetingMode.Locked;
             targetingState.targetPOI.UpdateTargetingState(true);
 
+            // Clear standard navigation state when locking target
+            waitingForNextCue = false;
+            cueTimer = 0f;
+            isInCyclePause = false;
+            cyclePauseTimer = 0f;
+
             if (targetingIndicator != null)
                 targetingIndicator.SetActive(false);
 
@@ -1051,17 +1207,17 @@ namespace LoGa.LudoEngine.Game
 
             AnalyticsService?.TrackEvent($"character_targeted_{targetingState.targetPOI.characterId}");
 
-            Debug.Log($"Successfully locked onto {targetingState.targetPOI.characterName} after {targetingState.timer:F2}s");
+            Debug.Log($"Successfully locked onto {targetingState.targetPOI.characterName} - cleared standard navigation state");
         }
 
-        // ✅ UPDATED: ClearTargeting - Reset POI's cue cycle
+        // UPDATED: ClearTargeting - Reset POI's cue cycle
         private void ClearTargeting()
         {
             if (targetingState.mode == TargetingMode.Locked && targetingState.targetPOI != null)
             {
                 targetingState.targetPOI.UpdateTargetingState(false);
 
-                // ✅ NEW: Reset POI's cue cycle when unlocking
+                // Reset POI's cue cycle when unlocking
                 targetingState.targetPOI.ResetNavigationCueIndex();
             }
 
@@ -1119,32 +1275,6 @@ namespace LoGa.LudoEngine.Game
                                $"MaxCues: {currentMaxActiveCues} (Completed: {totalCompletedPOIs})\n" +
                                $"Head: {HeadTrackingService.CurrentHeading:F0}°\n" +
                                $"Location: {location.x:F6}, {location.y:F6}\n";
-            }
-        }
-
-        private void CheckNavigationCueCompletions()
-        {
-            // 🔥 FIX: Only check activeCuePOIs, not all activePOIs
-            foreach (var poi in activeCuePOIs.ToList()) // ToList() to avoid collection modification
-            {
-                if (poi.CheckNavigationCueCompletion())
-                {
-                    Debug.Log($"Navigation cue completed for {poi.characterName} - starting {cueStagingDelay}s delay");
-
-                    // Check if this POI is currently targeted
-                    if (targetingState.mode == TargetingMode.Locked && targetingState.targetPOI == poi)
-                    {
-                        // Reset timer to start cueStagingDelay gap before next cue
-                        cueTimer = 0f; // Start delay timer from 0
-                        Debug.Log($"Targeted POI {poi.characterName} - {cueStagingDelay}s gap started");
-                    }
-                    else
-                    {
-                        // For standard navigation, this is handled in HandleStandardNavigation
-                        // The cue completion just triggers the timer reset there
-                        Debug.Log($"Standard navigation cue completed for {poi.characterName}");
-                    }
-                }
             }
         }
 
@@ -1301,7 +1431,6 @@ namespace LoGa.LudoEngine.Game
 
                 POI poi = new POI();
 
-                poi.id = poiData.characterId.ToString();
                 poi.characterName = poiData.characterName;
                 poi.characterId = poiData.characterId;
                 poi.latitude = poiData.latitude;
@@ -1334,7 +1463,7 @@ namespace LoGa.LudoEngine.Game
                 poi.hasMultipleVariants = poiData.hasMultipleVariants;
                 poi.narrationVariantCount = poiData.narrationVariantCount;
 
-                // ✅ NEW: Initialize POI from JSON data (includes maxNavigationCues)
+                // Initialize POI from JSON data (includes maxNavigationCues)
                 poi.InitializeFromData(poiData, poiObject);
 
                 RectTransform markerTransform = poiObject.GetComponentInChildren<RectTransform>();
@@ -1353,7 +1482,7 @@ namespace LoGa.LudoEngine.Game
             }
         }
 
-        private GameObject GetPrefabForCharacter(string characterName, int characterId)
+        private GameObject GetPrefabForCharacter(string characterName, string characterId)
         {
             var mapping = characterPrefabs?.Find(m =>
                 m.characterName.Equals(characterName, StringComparison.OrdinalIgnoreCase) ||
@@ -1395,7 +1524,7 @@ namespace LoGa.LudoEngine.Game
                         Vector2 poiPosition = mapManager.GetScreenPosition(poi.latitude, poi.longitude);
                         poi.marker.anchoredPosition = poiPosition;
                     }
-                    // DELETE: poi.SetSharedCueInstance(sharedCueInstance);
+                    poi.SetDirectionDebugText(directionDebugText); // Pass debug text reference to POI
                     successfullyInitialized.Add(poi);
                 }
             }
@@ -1419,12 +1548,12 @@ namespace LoGa.LudoEngine.Game
         {
             foreach (var poi in activePOIs)
             {
-                bool isUnlocked = unlockedPOIIds.Contains(poi.characterId.ToString());
+                bool isUnlocked = unlockedPOIIds.Contains(poi.characterId);
                 poi.SetUnlocked(isUnlocked);
             }
         }
 
-        private bool IsPOICompleted(int characterId)
+        private bool IsPOICompleted(string characterId)
         {
             if (StorageService == null)
             {
@@ -1432,7 +1561,7 @@ namespace LoGa.LudoEngine.Game
                 return false;
             }
 
-            string characterUnlockKey = $"Character{characterId}Unlocked";
+            string characterUnlockKey = $"Character_{characterId}_Unlocked";
             bool isUnlocked = StorageService.Load<bool>(characterUnlockKey);
 
             return isUnlocked;
@@ -1525,7 +1654,7 @@ namespace LoGa.LudoEngine.Game
         {
             totalCompletedPOIs = 0;
             currentMaxActiveCues = baseMaxActiveCues;
-            Debug.Log($"🔄 Progression reset. Max cues: {currentMaxActiveCues}");
+            Debug.Log($"Progression reset. Max cues: {currentMaxActiveCues}");
         }
 
         [ContextMenu("Debug Data Source")]

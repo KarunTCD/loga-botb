@@ -64,14 +64,13 @@ namespace LoGa.LudoEngine.Core
         [SerializeField] private MapManager mapManager;
         [SerializeField] private POIManager poiManager;
 
-        [Header("Combat System Audio")]
-        [SerializeField] private EventReference mercenaryEncounterEvent;
-        [SerializeField] private EventReference mercenaryFootstepsEvent;
-        [SerializeField] private EventReference mercenaryAttackEvent;
-        [SerializeField] private EventReference attackImpactEvent;
-        [SerializeField] private EventReference heartbeatEvent;
-        [SerializeField] private EventReference berryAmbientEvent;
-        [SerializeField] private EventReference berryCollectionEvent;
+        private EventReference mercenaryEncounterEvent;
+        private EventReference mercenaryFootstepsEvent;
+        private EventReference mercenaryAttackEvent;
+        private EventReference attackImpactEvent;
+        private EventReference heartbeatEvent;
+        private EventReference berryAmbientEvent;
+        private EventReference berryCollectionEvent;
 
         [Header("Universal Audio")]
         private EventReference mainAmbientEvent;
@@ -404,59 +403,80 @@ namespace LoGa.LudoEngine.Core
             if (AudioService == null)
             {
                 Debug.LogWarning("GameManager: AudioService not available - skipping combat audio");
-                return true; // ✅ Don't fail, just skip
+                return true; // Don't fail, just skip
             }
 
+            // LOAD from JSON instead of inspector
+            var config = GameDataService?.GameConfig;
+            if (config?.combatAudioEvents == null)
+            {
+                Debug.Log("GameManager: No combat audio events in JSON - skipping combat audio");
+                return true; // Don't fail, just skip
+            }
+
+            var combatEvents = config.combatAudioEvents;
             int successCount = 0;
-            int totalEvents = 2; // heartbeat + berry
 
-            try
+            // Combat sequence events need persistent instances
+            LoadCombatEventWithInstance(combatEvents.mercenaryEncounter, ref mercenaryEncounterEvent, ref mercenaryEncounterInstance, "mercenary encounter", ref successCount);
+            LoadCombatEventWithInstance(combatEvents.heartbeat, ref heartbeatEvent, ref heartbeatInstance, "heartbeat", ref successCount);
+            LoadCombatEventWithInstance(combatEvents.berryAmbient, ref berryAmbientEvent, ref sharedBerryInstance, "berry ambient", ref successCount);
+
+            // Per-attack events use fresh instances
+            LoadCombatEventRef(combatEvents.mercenaryFootsteps, ref mercenaryFootstepsEvent, "mercenary footsteps", ref successCount);
+            LoadCombatEventRef(combatEvents.mercenaryAttack, ref mercenaryAttackEvent, "mercenary attack", ref successCount);
+            LoadCombatEventRef(combatEvents.attackImpact, ref attackImpactEvent, "attack impact", ref successCount);
+            LoadCombatEventRef(combatEvents.berryCollection, ref berryCollectionEvent, "berry collection", ref successCount);
+
+            Debug.Log($"GameManager: Combat audio initialization complete - {successCount}/7 events loaded");
+            return true; // Always succeed, even if 0 events loaded
+        }
+
+        private void LoadCombatEventWithInstance(string eventName, ref EventReference eventRef, ref EventInstance instance, string displayName, ref int successCount)
+        {
+            if (string.IsNullOrEmpty(eventName))
             {
-                // Try heartbeat event (optional)
-                if (!heartbeatEvent.IsNull)
-                {
-                    heartbeatInstance = AudioService.CreateAudioInstance(heartbeatEvent);
-                    if (heartbeatInstance.handle != IntPtr.Zero)
-                    {
-                        successCount++;
-                        Debug.Log("GameManager: ✓ Heartbeat instance created");
-                    }
-                    else
-                    {
-                        Debug.LogWarning("GameManager: Failed to create heartbeat instance - continuing without it");
-                    }
-                }
-                else
-                {
-                    Debug.LogWarning("GameManager: heartbeatEvent not assigned - skipping");
-                }
-
-                // Try berry ambient event (optional)
-                if (!berryAmbientEvent.IsNull)
-                {
-                    sharedBerryInstance = AudioService.CreateAudioInstance(berryAmbientEvent);
-                    if (sharedBerryInstance.handle != IntPtr.Zero)
-                    {
-                        successCount++;
-                        Debug.Log("GameManager: ✓ Berry ambient instance created");
-                    }
-                    else
-                    {
-                        Debug.LogWarning("GameManager: Failed to create berry instance - continuing without it");
-                    }
-                }
-                else
-                {
-                    Debug.LogWarning("GameManager: berryAmbientEvent not assigned - skipping");
-                }
-
-                Debug.Log($"GameManager: Combat audio initialization complete - {successCount}/{totalEvents} events loaded");
-                return true; // ✅ Always succeed, even if 0 events loaded
+                Debug.Log($"GameManager: No {displayName} event in JSON - skipping");
+                return;
             }
-            catch (Exception e)
+
+            eventRef = GameDataService.GetAudioEventReference(eventName);
+            if (!eventRef.IsNull)
             {
-                Debug.LogWarning($"GameManager: Combat audio initialization error - {e.Message} - continuing anyway");
-                return true; // ✅ Still don't fail the whole system
+                instance = AudioService.CreateAudioInstance(eventRef);
+                if (instance.handle != IntPtr.Zero)
+                {
+                    successCount++;
+                    Debug.Log($"GameManager: {displayName} instance created from JSON");
+                }
+                else
+                {
+                    Debug.LogWarning($"GameManager: Failed to create {displayName} instance - continuing without it");
+                }
+            }
+            else
+            {
+                Debug.LogWarning($"GameManager: Failed to load {displayName} event - continuing without it");
+            }
+        }
+
+        private void LoadCombatEventRef(string eventName, ref EventReference eventRef, string displayName, ref int successCount)
+        {
+            if (string.IsNullOrEmpty(eventName))
+            {
+                Debug.Log($"GameManager: No {displayName} event in JSON - skipping");
+                return;
+            }
+
+            eventRef = GameDataService.GetAudioEventReference(eventName);
+            if (!eventRef.IsNull)
+            {
+                successCount++;
+                Debug.Log($"GameManager: {displayName} event loaded from JSON");
+            }
+            else
+            {
+                Debug.LogWarning($"GameManager: Failed to load {displayName} event - continuing without it");
             }
         }
 

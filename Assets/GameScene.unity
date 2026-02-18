@@ -10188,46 +10188,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b67ec250c3fdd4c6692d9fa1d5dd09fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timeLayers:
-  - layerName: battle_1690
-    layerDescription: Battle of the Boyne
-    layerIndex: 1
-    ambientSound:
-      Guid:
-        Data1: -642792527
-        Data2: 1157833136
-        Data3: 2146350997
-        Data4: 841210949
-      Path: event:/ambient_sounds
-    pois:
-    - id: james
-      characterName: King James
-      latitude: 53.33033
-      longitude: -6.268968
-      marker: {fileID: 632247704}
-      characterId: 7
-      portalType: 0
-      portalActivationAudio:
-        Guid:
-          Data1: -1630672160
-          Data2: 1272249977
-          Data3: 39049607
-          Data4: -699573844
-        Path: event:/time_portal
-      portalJumpDistance: 0
-      hasReward: 1
-      rewardId: 9
-      rewardName: Royal Seal Ring
-      hasMultipleVariants: 0
-      narrationVariantCount: 1
-      characterAudioEvent:
-        Guid:
-          Data1: -1406718307
-          Data2: 1317937260
-          Data3: 1653865350
-          Data4: -1378154026
-        Path: event:/james_audio
-  defaultLayerIndex: 2
   transitionDuration: 3
   timePortalAudio:
     Guid:
@@ -12388,20 +12348,13 @@ MonoBehaviour:
   debugText: {fileID: 560394671}
   defaultPOIPrefab: {fileID: 0}
   characterPrefabs: []
-  sharedCueEvent:
-    Guid:
-      Data1: -1631769890
-      Data2: 1211054242
-      Data3: -949885777
-      Data4: 691049561
-    Path: event:/nav_cue
   welcomeGreetingEvent:
     Guid:
       Data1: 486818563
       Data2: 1229722763
       Data3: 747145148
       Data4: -99600686
-    Path: event:/oak_greeting
+    Path: event:/greeting_audio
   rewardAnnouncementEvent:
     Guid:
       Data1: 1537784784
@@ -12413,7 +12366,7 @@ MonoBehaviour:
   targetingText: {fileID: 962164252}
   zoneText: {fileID: 129240078}
   completionText: {fileID: 1780966843}
-  testDisplayText: {fileID: 1049571942}
+  directionDebugText: {fileID: 1049571942}
 --- !u!1 &1097020648
 GameObject:
   m_ObjectHideFlags: 0
@@ -17834,13 +17787,6 @@ MonoBehaviour:
       Data3: 1408835470
       Data4: 644009244
     Path: event:/combat/berries_collect
-  mainAmbientEvent:
-    Guid:
-      Data1: -642792527
-      Data2: 1157833136
-      Data3: 2146350997
-      Data4: 841210949
-    Path: event:/ambient_sounds
   combatTriggerCheckInterval: 2
   approachDuration: 4
 --- !u!1 &1680970633

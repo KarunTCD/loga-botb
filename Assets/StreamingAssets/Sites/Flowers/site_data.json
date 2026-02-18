@@ -1,0 +1,218 @@
+{
+  "gameConfiguration": {
+    "defaultTimeLayer": 0,
+    "ambientAudioEvent": "event:/ambient_sounds",
+    "welcomeGreetingEvent": "event:/greeting_audio",
+    "rewardAnnouncementEvent": "event:/reward_audio",
+    "timePortalAudioEvent": "event:/time_portal",
+    "combatAudioEvents": {
+        "mercenaryEncounter": "event:/mercenary_encounter",
+        "mercenaryFootsteps": "event:/mercenary_footsteps",
+        "mercenaryAttack": "event:/mercenary_attack",
+        "attackImpact": "event:/attack_impact",
+        "heartbeat": "event:/heartbeat_audio",
+        "berryAmbient": "event:/berries_music",
+        "berryCollection": "event:/berries_collect"
+    },
+    "proximityRadius": 20.0,
+    "dialogueRadius": 10.0,
+    "maxCueRadius": 500000.0,
+    "targetLockTime": 1.0,
+    "targetLockAngle": 15.0,
+    "targetBreakAngle": 30.0,
+    "cueStagingDelay": 4.0,
+    "cyclePauseDelay": 6.0,
+    "baseMaxActiveCues": 1,
+    "maxMaxActiveCues": 2,
+    "navigationUpgradeThreshold": 2,
+    "maxTargetingDistance": 200.0,
+    "maxPlayerHealth": 3,
+    "gameBounds": {
+        "north": 53.337317,
+        "south": 53.333972,
+        "east": -6.299176,
+        "west": -6.305720
+    }
+  },
+  "timeLayers": [
+      {
+        "id": "wildflowers",
+        "layerName": "Wild Flowers",
+        "layerIndex": 0,
+          "pois": [
+              {
+                  "characterName": "Yellow Poppy",
+                  "characterAudioEvent": "event:/yellow_poppy_audio",
+                  "navigationCueEvent": "event:/yellow_poppy_cue",
+                  "navigationCueCount": 3,
+                  "latitude": 53.336896,
+                  "longitude": -6.303979,
+                  "portalType": "None",
+                  "hasReward": false,
+                  "hasMultipleVariants": false,
+                  "narrationVariantCount": 1
+              },
+              {
+                  "characterName": "Redwood",
+                  "characterAudioEvent": "event:/redwood_audio",
+                  "navigationCueEvent": "event:/redwood_cue",
+                  "navigationCueCount": 3,
+                  "latitude": 53.336896,
+                  "longitude": -6.303979,
+                  "portalType": "None",
+                  "hasReward": false,
+                  "hasMultipleVariants": false,
+                  "narrationVariantCount": 1
+              },
+              {
+                  "characterName": "Lonely Flower",
+                  "characterAudioEvent": "event:/lonely_flower_audio",
+                  "navigationCueEvent": "event:/lonely_flower_cue",
+                  "navigationCueCount": 3,
+                  "latitude": 53.336896,
+                  "longitude": -6.303979,
+                  "portalType": "None",
+                  "hasReward": false,
+                  "hasMultipleVariants": false,
+                  "narrationVariantCount": 1
+              },
+              {
+                  "characterName": "The Forest",
+                  "characterAudioEvent": "event:/the_forest_audio",
+                  "navigationCueEvent": "event:/the_forest_cue",
+                  "navigationCueCount": 3,
+                  "latitude": 53.336896,
+                  "longitude": -6.303979,
+                  "portalType": "None",
+                  "hasReward": false,
+                  "hasMultipleVariants": false,
+                  "narrationVariantCount": 1
+              },
+              {
+                  "characterName": "Lilac",
+                  "characterAudioEvent": "event:/lilac_audio",
+                  "navigationCueEvent": "event:/lilac_cue",
+                  "navigationCueCount": 3,
+                  "latitude": 53.336896,
+                  "longitude": -6.303979,
+                  "portalType": "None",
+                  "hasReward": false,
+                  "hasMultipleVariants": false,
+                  "narrationVariantCount": 1
+              },
+              {
+                "characterName": "Fox",
+                "characterAudioEvent": "event:/modern_fox_audio",
+                "navigationCueEvent": "event:/fox_cue",
+                "navigationCueCount": 4,
+                "latitude": 53.57858,
+                "longitude": -6.61206,
+                "portalType": "Forward",
+                "portalJumpDistance": 1,
+                "portalActivationAudio": "portal_audio",
+                "hasReward": false,
+                "hasMultipleVariants": true,
+                "narrationVariantCount": 1
+            },
+            {
+                "characterName": "Fox",
+                "characterAudioEvent": "event:/modern_fox_audio",
+                "navigationCueEvent": "event:/fox_cue",
+                "navigationCueCount": 4,
+                "latitude": 53.57858,
+                "longitude": -6.61206,
+                "portalType": "Forward",
+                "portalJumpDistance": 1,
+                "portalActivationAudio": "portal_audio",
+                "hasReward": false,
+                "hasMultipleVariants": true,
+                "narrationVariantCount": 2
+            }
+          ]
+      },
+      {
+        "id": "garden_flowers",
+        "layerName": "Garden Flowers",
+        "layerIndex": 1,
+          "pois": [
+              {
+                  "characterName": "Morning Glories",
+                  "characterAudioEvent": "event:/morning_glories_audio",
+                  "navigationCueEvent": "event:/morning_glories_cue",
+                  "navigationCueCount": 3,
+                  "latitude": 53.336896,
+                  "longitude": -6.303979,
+                  "portalType": "None",
+                  "hasReward": false,
+                  "hasMultipleVariants": false,
+                  "narrationVariantCount": 1
+              },
+              {
+                  "characterName": "Heartsease",
+                  "characterAudioEvent": "event:/heartsease_audio",
+                  "navigationCueEvent": "event:/heartsease_cue",
+                  "navigationCueCount": 3,
+                  "latitude": 53.336896,
+                  "longitude": -6.303979,
+                  "portalType": "None",
+                  "hasReward": false,
+                  "hasMultipleVariants": false,
+                  "narrationVariantCount": 1
+              },
+              {
+                  "characterName": "Mignonette",
+                  "characterAudioEvent": "event:/mignonette_audio",
+                  "navigationCueEvent": "event:/mignonette_cue",
+                  "navigationCueCount": 3,
+                  "latitude": 53.336896,
+                  "longitude": -6.303979,
+                  "portalType": "None",
+                  "hasReward": false,
+                  "hasMultipleVariants": false,
+                  "narrationVariantCount": 1
+              },
+              {
+                  "characterName": "Honeysuckle",
+                  "characterAudioEvent": "event:/honeysuckle_audio",
+                  "navigationCueEvent": "event:/honeysuckle_cue",
+                  "navigationCueCount": 3,
+                  "latitude": 53.336896,
+                  "longitude": -6.303979,
+                  "portalType": "None",
+                  "hasReward": false,
+                  "hasMultipleVariants": false,
+                  "narrationVariantCount": 1
+              },
+              {
+                "characterName": "Raven",
+                "characterAudioEvent": "event:/modern_raven_audio",
+                "navigationCueEvent": "event:/raven_cue",
+                "navigationCueCount": 4,
+                "latitude": 53.57858,
+                "longitude": -6.61206,
+                "portalType": "Backward",
+                "portalJumpDistance": 1,
+                "portalActivationAudio": "portal_audio",
+                "hasReward": false,
+                "hasMultipleVariants": true,
+                "narrationVariantCount": 1
+            },
+            {
+                "characterName": "Raven",
+                "characterAudioEvent": "event:/modern_raven_audio",
+                "navigationCueEvent": "event:/raven_cue",
+                "navigationCueCount": 4,
+                "latitude": 53.57858,
+                "longitude": -6.61206,
+                "portalType": "Backward",
+                "portalJumpDistance": 1,
+                "portalActivationAudio": "portal_audio",
+                "hasReward": false,
+                "hasMultipleVariants": true,
+                "narrationVariantCount": 2
+            }
+          ]
+      }
+  ]
+}
+

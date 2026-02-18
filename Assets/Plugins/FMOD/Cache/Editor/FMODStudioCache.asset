@@ -20,6 +20,30 @@ MonoBehaviour:
   - Name: Desktop
     Value: 2723424
   Exists: 1
+--- !u!114 &-9078259210482350827
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/celtic_child_cue/NormalizedDistance
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: NormalizedDistance
+  StudioPath: 
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 4032946360
+    data2: 2700767552
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
 --- !u!114 &-9074572175999152312
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -31,30 +55,6 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
   m_Name: parameter:/celtic_farmer_audio/Zone
-  m_EditorClassIdentifier: 
-  Name: Zone
-  StudioPath: 
-  Min: 0
-  Max: 3
-  Default: 0
-  ID:
-    data1: 1112535331
-    data2: 2309411790
-  Type: 0
-  IsGlobal: 0
-  Labels: []
-  Exists: 1
---- !u!114 &-8983648839748012616
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/battle_oak_audio/Zone
   m_EditorClassIdentifier: 
   Name: Zone
   StudioPath: 
@@ -92,7 +92,7 @@ MonoBehaviour:
   IsGlobal: 1
   Labels: []
   Exists: 1
---- !u!114 &-8832293744068040192
+--- !u!114 &-8742562343709836119
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -101,27 +101,45 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/combat/mercenary_encounter
-  m_EditorClassIdentifier: 
-  Path: event:/combat/mercenary_encounter
-  Guid:
-    Data1: -1263395470
-    Data2: 1272893624
-    Data3: 1061061532
-    Data4: 956329762
-  Banks:
-  - {fileID: 7063660329105735970}
-  - {fileID: -6584727833568685771}
-  - {fileID: -8165299445089214531}
-  IsStream: 1
-  Is3D: 1
-  IsOneShot: 1
-  Parameters:
-  - {fileID: 471302139170871965}
-  MinDistance: 1
-  MaxDistance: 20
-  Length: 69632
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/salmon_cue/NormalizedDistance
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: NormalizedDistance
+  StudioPath: 
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 4032946360
+    data2: 2700767552
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &-8729065367875512460
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/modern_child_cue/CueIndex
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: CueIndex
+  StudioPath: 
+  Min: 0
+  Max: 4
+  Default: 0
+  ID:
+    data1: 3753644876
+    data2: 2798513597
+  Type: 1
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
 --- !u!114 &-8707707265397882252
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -145,24 +163,6 @@ MonoBehaviour:
   Type: 0
   IsGlobal: 0
   Labels: []
-  Exists: 1
---- !u!114 &-8698767544435464967
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
-  m_Name: bank:/Sites/BattleOfBoyne/Audio/raven.bank
-  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorBankRef
-  Path: Assets/StreamingAssets/Sites/BattleOfBoyne/Audio/raven.bank
-  Name: Sites/BattleOfBoyne/Audio/raven
-  StudioPath: 
-  lastModified: 638815112790447787
-  FileSizes: []
   Exists: 1
 --- !u!114 &-8696872385010538700
 MonoBehaviour:
@@ -207,9 +207,9 @@ MonoBehaviour:
     Data3: 2146350997
     Data4: 841210949
   Banks:
-  - {fileID: 5915714569042196833}
-  - {fileID: -1471485812431984116}
   - {fileID: -1623506985876570158}
+  - {fileID: -6723193621704778678}
+  - {fileID: -7373783738172781343}
   IsStream: 1
   Is3D: 0
   IsOneShot: 0
@@ -217,7 +217,7 @@ MonoBehaviour:
   - {fileID: 6680887596392730156}
   MinDistance: 1
   MaxDistance: 20
-  Length: 126000
+  Length: 125183
 --- !u!114 &-8584040875756603446
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -261,8 +261,6 @@ MonoBehaviour:
     Data3: 511570084
     Data4: -896650416
   Banks:
-  - {fileID: 5915714569042196833}
-  - {fileID: -1471485812431984116}
   - {fileID: -1623506985876570158}
   IsStream: 1
   Is3D: 1
@@ -347,8 +345,6 @@ MonoBehaviour:
     Data3: -1184820074
     Data4: -444323801
   Banks:
-  - {fileID: 5915714569042196833}
-  - {fileID: -1471485812431984116}
   - {fileID: -1623506985876570158}
   IsStream: 1
   Is3D: 1
@@ -358,7 +354,7 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 66642
---- !u!114 &-8457028083495491043
+--- !u!114 &-8463630182274578926
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -368,30 +364,83 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/nav_cue
-  m_EditorClassIdentifier: 
-  Path: event:/nav_cue
+  m_Name: event:/grenadier_cue
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/grenadier_cue
   Guid:
-    Data1: -1631769890
-    Data2: 1211054242
-    Data3: -949885777
-    Data4: 691049561
+    Data1: 383579544
+    Data2: 1104618711
+    Data3: -1162254401
+    Data4: 892857088
   Banks:
-  - {fileID: 5915714569042196833}
-  - {fileID: -1471485812431984116}
   - {fileID: -1623506985876570158}
-  IsStream: 1
-  Is3D: 1
+  IsStream: 0
+  Is3D: 0
   IsOneShot: 1
   Parameters:
-  - {fileID: 5094771027455907505}
-  - {fileID: 8730814462308336216}
-  - {fileID: 8871256283827726374}
-  - {fileID: -48508636779410526}
-  - {fileID: 130282176075560007}
+  - {fileID: -8408482526605198052}
+  - {fileID: -3483223223128215305}
+  - {fileID: -4456652708673483731}
+  - {fileID: -2622223195770307887}
   MinDistance: 1
-  MaxDistance: 90
-  Length: 0
+  MaxDistance: 20
+  Length: 3111
+--- !u!114 &-8408482526605198052
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/grenadier_cue/Trigger
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: Trigger
+  StudioPath: 
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 3182214286
+    data2: 3291611135
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &-8326894201236132289
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/schomberg_cue/Direction
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: Direction
+  StudioPath: 
+  Min: 0
+  Max: 7
+  Default: 0
+  ID:
+    data1: 40668191
+    data2: 1578994455
+  Type: 2
+  IsGlobal: 0
+  Labels:
+  - N
+  - NE
+  - E
+  - SE
+  - S
+  - SW
+  - W
+  - NW
+  Exists: 1
 --- !u!114 &-8326130563702846123
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -440,43 +489,7 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
---- !u!114 &-8193073775390080791
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
-  m_Name: bank:/william.bank
-  m_EditorClassIdentifier: 
-  Path: Assets/StreamingAssets/william.bank
-  Name: william
-  StudioPath: bank:/william
-  lastModified: 638815112790590550
-  FileSizes: []
-  Exists: 1
---- !u!114 &-8165299445089214531
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
-  m_Name: bank:/Sites/BattleOfBoyne/Audio/Combat.bank
-  m_EditorClassIdentifier: 
-  Path: Assets/StreamingAssets/Sites/BattleOfBoyne/Audio/Combat.bank
-  Name: Sites/BattleOfBoyne/Audio/Combat
-  StudioPath: bank:/Combat
-  lastModified: 639016145802851809
-  FileSizes: []
-  Exists: 1
---- !u!114 &-8114485289504982262
+--- !u!114 &-8198900439674309748
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -486,19 +499,27 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/william_nav_cue/CueIndex
-  m_EditorClassIdentifier: 
-  Name: CueIndex
+  m_Name: parameter:/modern_farmer_cue/Direction
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: Direction
   StudioPath: 
   Min: 0
-  Max: 4
+  Max: 7
   Default: 0
   ID:
-    data1: 3753644876
-    data2: 2798513597
-  Type: 1
+    data1: 40668191
+    data2: 1578994455
+  Type: 2
   IsGlobal: 0
-  Labels: []
+  Labels:
+  - N
+  - NE
+  - E
+  - SE
+  - S
+  - SW
+  - W
+  - NW
   Exists: 1
 --- !u!114 &-8107809798284396528
 MonoBehaviour:
@@ -519,8 +540,6 @@ MonoBehaviour:
     Data3: 1116406153
     Data4: 981486305
   Banks:
-  - {fileID: 5915714569042196833}
-  - {fileID: -1471485812431984116}
   - {fileID: -1623506985876570158}
   IsStream: 1
   Is3D: 1
@@ -530,7 +549,7 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 98768
---- !u!114 &-7939902466066679101
+--- !u!114 &-8089490201578493326
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -539,33 +558,52 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
-  m_Name: bank:/Sites/Debug/Audio/raven.bank
-  m_EditorClassIdentifier: 
-  Path: Assets/StreamingAssets/Sites/Debug/Audio/raven.bank
-  Name: Sites/Debug/Audio/raven
-  StudioPath: bank:/raven
-  lastModified: 638815112790447787
-  FileSizes: []
-  Exists: 0
---- !u!114 &-7740427016116754941
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
-  m_Name: bank:/Sites/BattleOfBoyne/Audio/salmon.bank
-  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorBankRef
-  Path: Assets/StreamingAssets/Sites/BattleOfBoyne/Audio/salmon.bank
-  Name: Sites/BattleOfBoyne/Audio/salmon
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/barber_surgeon_cue/Trigger
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: Trigger
   StudioPath: 
-  lastModified: 638815112790493999
-  FileSizes: []
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 3182214286
+    data2: 3291611135
+  Type: 0
+  IsGlobal: 0
+  Labels: []
   Exists: 1
+--- !u!114 &-7936391057325947761
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/sarsfield_cue
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/sarsfield_cue
+  Guid:
+    Data1: -1585103842
+    Data2: 1152702650
+    Data3: 1342341043
+    Data4: 1634487118
+  Banks:
+  - {fileID: -1623506985876570158}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters:
+  - {fileID: -1162208377982151673}
+  - {fileID: -4781846033512862809}
+  - {fileID: 2220611423289726240}
+  - {fileID: 1594081093784252604}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 2108
 --- !u!114 &-7609103010726695882
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -598,30 +636,6 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 90
   Length: 0
---- !u!114 &-7593842282530266258
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/mignonette_audio/Zone
-  m_EditorClassIdentifier: 
-  Name: Zone
-  StudioPath: 
-  Min: 0
-  Max: 3
-  Default: 0
-  ID:
-    data1: 1112535331
-    data2: 2309411790
-  Type: 0
-  IsGlobal: 0
-  Labels: []
-  Exists: 1
 --- !u!114 &-7574812512715141971
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -701,7 +715,49 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 30364
---- !u!114 &-7222267007962215473
+--- !u!114 &-7373783738172781343
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
+  m_Name: bank:/Sites/HillOfTara/Audio/Master.bank
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorBankRef
+  Path: Assets/StreamingAssets/Sites/HillOfTara/Audio/Master.bank
+  Name: Sites/HillOfTara/Audio/Master
+  StudioPath: bank:/Master
+  lastModified: 639067850749376415
+  FileSizes: []
+  Exists: 1
+--- !u!114 &-7282839519504321188
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/barber_surgeon_cue/CueIndex
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: CueIndex
+  StudioPath: 
+  Min: 0
+  Max: 4
+  Default: 0
+  ID:
+    data1: 3753644876
+    data2: 2798513597
+  Type: 1
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &-7170117153096397730
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -711,26 +767,294 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/mignonette_audio
-  m_EditorClassIdentifier: 
-  Path: event:/mignonette_audio
+  m_Name: event:/william_cue
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/william_cue
   Guid:
-    Data1: -1544840568
-    Data2: 1101676883
-    Data3: 496824761
-    Data4: -1674180941
+    Data1: -324151144
+    Data2: 1285414515
+    Data3: 1862357663
+    Data4: 652234817
   Banks:
-  - {fileID: 5915714569042196833}
-  - {fileID: -1471485812431984116}
   - {fileID: -1623506985876570158}
-  IsStream: 1
-  Is3D: 1
-  IsOneShot: 0
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
   Parameters:
-  - {fileID: -7593842282530266258}
+  - {fileID: -1171221787613857537}
+  - {fileID: -3624488473159465819}
+  - {fileID: 8326212567944771914}
+  - {fileID: 575155426378820778}
   MinDistance: 1
   MaxDistance: 20
-  Length: 30364
+  Length: 3749
+--- !u!114 &-7094835670904295827
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/barber_surgeon_cue
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/barber_surgeon_cue
+  Guid:
+    Data1: 1239723865
+    Data2: 1134432846
+    Data3: 1408931722
+    Data4: -1369311716
+  Banks:
+  - {fileID: -1623506985876570158}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters:
+  - {fileID: -7282839519504321188}
+  - {fileID: -8089490201578493326}
+  - {fileID: -2475470118585497383}
+  - {fileID: 4354539599882034981}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 3664
+--- !u!114 &-7089891141938989668
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: 
+  Guid:
+    Data1: 1490455798
+    Data2: 1184992550
+    Data3: 126566831
+    Data4: 56866273
+  Banks:
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters:
+  - {fileID: -2874431993186963446}
+  - {fileID: 14710048558130182}
+  - {fileID: 6165820553674787502}
+  - {fileID: -4282967371181235342}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 4576
+--- !u!114 &-7081113460468726475
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
+  m_Name: bank:/Sites/BattleOfBoyne/Audio/Master.strings.bank
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorBankRef
+  Path: Assets/StreamingAssets/Sites/BattleOfBoyne/Audio/Master.strings.bank
+  Name: Sites/BattleOfBoyne/Audio/Master.strings
+  StudioPath: bank:/Master.strings
+  lastModified: 639065732666554846
+  FileSizes:
+  - Name: 
+    Value: 4072
+  Exists: 1
+--- !u!114 &-6965565239228495433
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/salmon_cue/CueIndex
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: CueIndex
+  StudioPath: 
+  Min: 0
+  Max: 4
+  Default: 0
+  ID:
+    data1: 3753644876
+    data2: 2798513597
+  Type: 1
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
 --- !u!114 &-6952881011818862437
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -755,6 +1079,37 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
+--- !u!114 &-6898298219759275155
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/french_soldier_cue
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/french_soldier_cue
+  Guid:
+    Data1: 1712379013
+    Data2: 1088136290
+    Data3: -1135085653
+    Data4: 283496025
+  Banks:
+  - {fileID: -1623506985876570158}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters:
+  - {fileID: 2401262674194027579}
+  - {fileID: -2004358712304589211}
+  - {fileID: -2468450434894823076}
+  - {fileID: 4058182830674969693}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 3681
 --- !u!114 &-6835865248959326012
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -783,6 +1138,35 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 102270
+--- !u!114 &-6806508300651137032
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/heartbeat_audio
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/heartbeat_audio
+  Guid:
+    Data1: -933501478
+    Data2: 1105982401
+    Data3: -1485982032
+    Data4: -153862852
+  Banks:
+  - {fileID: -1623506985876570158}
+  - {fileID: -7373783738172781343}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 0
+  Parameters:
+  - {fileID: -3488331950987612014}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 812
 --- !u!114 &-6781905481941968035
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -831,6 +1215,56 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
+--- !u!114 &-6739551946387322027
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/battle_farmer_cue/Direction
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: Direction
+  StudioPath: 
+  Min: 0
+  Max: 7
+  Default: 0
+  ID:
+    data1: 40668191
+    data2: 1578994455
+  Type: 2
+  IsGlobal: 0
+  Labels:
+  - N
+  - NE
+  - E
+  - SE
+  - S
+  - SW
+  - W
+  - NW
+  Exists: 1
+--- !u!114 &-6723193621704778678
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
+  m_Name: bank:/Sites/Flowers/Audio/Master.bank
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorBankRef
+  Path: Assets/StreamingAssets/Sites/Flowers/Audio/Master.bank
+  Name: Sites/Flowers/Audio/Master
+  StudioPath: bank:/Master
+  lastModified: 639068551231187949
+  FileSizes: []
+  Exists: 1
 --- !u!114 &-6616890126446640730
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -850,9 +1284,9 @@ MonoBehaviour:
     Data3: 1259903395
     Data4: -740381983
   Banks:
-  - {fileID: 5915714569042196833}
-  - {fileID: -1471485812431984116}
   - {fileID: -1623506985876570158}
+  - {fileID: -6723193621704778678}
+  - {fileID: -7373783738172781343}
   IsStream: 1
   Is3D: 1
   IsOneShot: 0
@@ -861,48 +1295,6 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 66532
---- !u!114 &-6584727833568685771
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
-  m_Name: bank:/Combat.bank
-  m_EditorClassIdentifier: 
-  Path: Assets/StreamingAssets/Combat.bank
-  Name: Combat
-  StudioPath: bank:/Combat
-  lastModified: 639052044276400455
-  FileSizes: []
-  Exists: 1
---- !u!114 &-6579667040954129151
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/honeysuckle_audio/Zone
-  m_EditorClassIdentifier: 
-  Name: Zone
-  StudioPath: 
-  Min: 0
-  Max: 3
-  Default: 0
-  ID:
-    data1: 1112535331
-    data2: 2309411790
-  Type: 0
-  IsGlobal: 0
-  Labels: []
-  Exists: 1
 --- !u!114 &-6556491914249172038
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -946,8 +1338,6 @@ MonoBehaviour:
     Data3: -866096995
     Data4: -1863781256
   Banks:
-  - {fileID: 5915714569042196833}
-  - {fileID: -1471485812431984116}
   - {fileID: -1623506985876570158}
   IsStream: 1
   Is3D: 1
@@ -957,6 +1347,30 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 130388
+--- !u!114 &-6532771956939679054
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/raven_cue/Trigger
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: Trigger
+  StudioPath: 
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 3182214286
+    data2: 3291611135
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
 --- !u!114 &-6443719217133375580
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -977,6 +1391,430 @@ MonoBehaviour:
   - Name: Desktop
     Value: 506
   Exists: 1
+--- !u!114 &-6395347529198620374
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/battle_child_cue/Direction
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: Direction
+  StudioPath: 
+  Min: 0
+  Max: 7
+  Default: 0
+  ID:
+    data1: 40668191
+    data2: 1578994455
+  Type: 2
+  IsGlobal: 0
+  Labels:
+  - N
+  - NE
+  - E
+  - SE
+  - S
+  - SW
+  - W
+  - NW
+  Exists: 1
+--- !u!114 &-6391785352436886402
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/greeting_audio/TestReset
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: TestReset
+  StudioPath: 
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 3090507692
+    data2: 1785002981
+  Type: 1
+  IsGlobal: 1
+  Labels: []
+  Exists: 1
+--- !u!114 &-6306860814394566348
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: 
+  Guid:
+    Data1: 1490455798
+    Data2: 1184992550
+    Data3: 126566831
+    Data4: 56866273
+  Banks:
+  - {fileID: -1623506985876570158}
+  - {fileID: -1623506985876570158}
+  - {fileID: -1623506985876570158}
+  - {fileID: -1623506985876570158}
+  - {fileID: -1623506985876570158}
+  - {fileID: -1623506985876570158}
+  - {fileID: -1623506985876570158}
+  - {fileID: -1623506985876570158}
+  - {fileID: -1623506985876570158}
+  - {fileID: -1623506985876570158}
+  - {fileID: -1623506985876570158}
+  - {fileID: -1623506985876570158}
+  - {fileID: -1623506985876570158}
+  - {fileID: -1623506985876570158}
+  - {fileID: -1623506985876570158}
+  - {fileID: -1623506985876570158}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -1623506985876570158}
+  - {fileID: -1623506985876570158}
+  - {fileID: -1623506985876570158}
+  - {fileID: -1623506985876570158}
+  - {fileID: -1623506985876570158}
+  - {fileID: -1623506985876570158}
+  - {fileID: -1623506985876570158}
+  - {fileID: -1623506985876570158}
+  - {fileID: -1623506985876570158}
+  - {fileID: -1623506985876570158}
+  - {fileID: -1623506985876570158}
+  - {fileID: -1623506985876570158}
+  - {fileID: -1623506985876570158}
+  - {fileID: -1623506985876570158}
+  - {fileID: -1623506985876570158}
+  - {fileID: -1623506985876570158}
+  - {fileID: -1623506985876570158}
+  - {fileID: -1623506985876570158}
+  - {fileID: -1623506985876570158}
+  - {fileID: -1623506985876570158}
+  - {fileID: -1623506985876570158}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters:
+  - {fileID: 744839290426884483}
+  - {fileID: 4645601734999368301}
+  - {fileID: 5593292647928558220}
+  - {fileID: -3914945811000620595}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 4576
 --- !u!114 &-6296752583857902836
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -998,30 +1836,6 @@ MonoBehaviour:
     data1: 1112535331
     data2: 2309411790
   Type: 0
-  IsGlobal: 0
-  Labels: []
-  Exists: 1
---- !u!114 &-6190928269836927936
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/james_nav_cue/CueIndex
-  m_EditorClassIdentifier: 
-  Name: CueIndex
-  StudioPath: 
-  Min: 0
-  Max: 4
-  Default: 0
-  ID:
-    data1: 3753644876
-    data2: 2798513597
-  Type: 1
   IsGlobal: 0
   Labels: []
   Exists: 1
@@ -1081,7 +1895,7 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 812
---- !u!114 &-5979733961510050345
+--- !u!114 &-6060887563758481661
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1090,21 +1904,28 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/william_nav_cue/NormalizedDistance
-  m_EditorClassIdentifier: 
-  Name: NormalizedDistance
-  StudioPath: 
-  Min: 0
-  Max: 1
-  Default: 0
-  ID:
-    data1: 4032946360
-    data2: 2700767552
-  Type: 0
-  IsGlobal: 0
-  Labels: []
-  Exists: 1
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/louis_cue
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/louis_cue
+  Guid:
+    Data1: -238592784
+    Data2: 1092513539
+    Data3: 105871030
+    Data4: 1551399329
+  Banks:
+  - {fileID: -1623506985876570158}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters:
+  - {fileID: 684496599559031850}
+  - {fileID: -1210362127694681220}
+  - {fileID: -4108666949587542067}
+  - {fileID: 1547134084348833690}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 3545
 --- !u!114 &-5944418055370613883
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1124,8 +1945,6 @@ MonoBehaviour:
     Data3: 1653865350
     Data4: -1378154026
   Banks:
-  - {fileID: 5915714569042196833}
-  - {fileID: -1471485812431984116}
   - {fileID: -1623506985876570158}
   IsStream: 1
   Is3D: 1
@@ -1135,7 +1954,7 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 102270
---- !u!114 &-5931750605258505324
+--- !u!114 &-5937336574499287657
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1145,16 +1964,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/redwood_audio/Zone
-  m_EditorClassIdentifier: 
-  Name: Zone
+  m_Name: parameter:/james_cue/NormalizedDistance
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: NormalizedDistance
   StudioPath: 
   Min: 0
-  Max: 3
+  Max: 1
   Default: 0
   ID:
-    data1: 1112535331
-    data2: 2309411790
+    data1: 4032946360
+    data2: 2700767552
   Type: 0
   IsGlobal: 0
   Labels: []
@@ -1183,6 +2002,85 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
+--- !u!114 &-5805361664258148712
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter://Trigger
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: Trigger
+  StudioPath: 
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 3182214286
+    data2: 3291611135
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &-5798623115692521698
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/james_cue/CueIndex
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: CueIndex
+  StudioPath: 
+  Min: 0
+  Max: 4
+  Default: 0
+  ID:
+    data1: 3753644876
+    data2: 2798513597
+  Type: 1
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &-5773120654106354665
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/battle_farmer_cue
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/battle_farmer_cue
+  Guid:
+    Data1: -1141932266
+    Data2: 1095138487
+    Data3: 529610173
+    Data4: 198625275
+  Banks:
+  - {fileID: -1623506985876570158}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters:
+  - {fileID: 6926678579210091628}
+  - {fileID: -4308505624247430439}
+  - {fileID: -705935492697962410}
+  - {fileID: -6739551946387322027}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 3664
 --- !u!114 &-5725850402963345730
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1211,79 +2109,6 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 130388
---- !u!114 &-5705547172170655820
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/william_nav_cue
-  m_EditorClassIdentifier: 
-  Path: event:/william_nav_cue
-  Guid:
-    Data1: -324151144
-    Data2: 1285414515
-    Data3: 1862357663
-    Data4: 652234817
-  Banks:
-  - {fileID: -1471485812431984116}
-  IsStream: 0
-  Is3D: 0
-  IsOneShot: 1
-  Parameters:
-  - {fileID: 6183188355841637778}
-  - {fileID: -5979733961510050345}
-  - {fileID: 5081265754236716729}
-  - {fileID: -8114485289504982262}
-  MinDistance: 1
-  MaxDistance: 20
-  Length: 2081
---- !u!114 &-5691028513598330998
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/james_nav_cue/NormalizedDistance
-  m_EditorClassIdentifier: 
-  Name: NormalizedDistance
-  StudioPath: 
-  Min: 0
-  Max: 1
-  Default: 0
-  ID:
-    data1: 4032946360
-    data2: 2700767552
-  Type: 0
-  IsGlobal: 0
-  Labels: []
-  Exists: 1
---- !u!114 &-5661288920930757592
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
-  m_Name: bank:/Sites/Debug/Audio/william.bank
-  m_EditorClassIdentifier: 
-  Path: Assets/StreamingAssets/Sites/Debug/Audio/william.bank
-  Name: Sites/Debug/Audio/william
-  StudioPath: bank:/william
-  lastModified: 638815112790590550
-  FileSizes: []
-  Exists: 0
 --- !u!114 &-5640041780570095563
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1304,6 +2129,30 @@ MonoBehaviour:
   ID:
     data1: 1112535331
     data2: 2309411790
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &-5611147973520375648
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/buckley_cue/Trigger
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: Trigger
+  StudioPath: 
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 3182214286
+    data2: 3291611135
   Type: 0
   IsGlobal: 0
   Labels: []
@@ -1359,6 +2208,117 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 246
+--- !u!114 &-5451366751958479276
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/celtic_child_cue/Direction
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: Direction
+  StudioPath: 
+  Min: 0
+  Max: 7
+  Default: 0
+  ID:
+    data1: 40668191
+    data2: 1578994455
+  Type: 2
+  IsGlobal: 0
+  Labels:
+  - N
+  - NE
+  - E
+  - SE
+  - S
+  - SW
+  - W
+  - NW
+  Exists: 1
+--- !u!114 &-5438226612704686670
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/celtic_child_cue
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/celtic_child_cue
+  Guid:
+    Data1: 2021984899
+    Data2: 1229265348
+    Data3: -480995193
+    Data4: -1526453985
+  Banks:
+  - {fileID: -1623506985876570158}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters:
+  - {fileID: -9078259210482350827}
+  - {fileID: 5484759579803074570}
+  - {fileID: -5451366751958479276}
+  - {fileID: -1399996238783850412}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 2226
+--- !u!114 &-5378514058410364968
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/modern_child_cue/Trigger
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: Trigger
+  StudioPath: 
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 3182214286
+    data2: 3291611135
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &-5348417933284211992
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/modern_farmer_cue/Trigger
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: Trigger
+  StudioPath: 
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 3182214286
+    data2: 3291611135
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
 --- !u!114 &-5311537741575533181
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1378,8 +2338,6 @@ MonoBehaviour:
     Data3: 941068199
     Data4: -1103627851
   Banks:
-  - {fileID: 5915714569042196833}
-  - {fileID: -1471485812431984116}
   - {fileID: -1623506985876570158}
   IsStream: 1
   Is3D: 1
@@ -1389,36 +2347,6 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 33338
---- !u!114 &-5278031715962659334
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/combat/heartbeat_audio
-  m_EditorClassIdentifier: 
-  Path: event:/combat/heartbeat_audio
-  Guid:
-    Data1: -933501478
-    Data2: 1105982401
-    Data3: -1485982032
-    Data4: -153862852
-  Banks:
-  - {fileID: 7063660329105735970}
-  - {fileID: -6584727833568685771}
-  - {fileID: -8165299445089214531}
-  IsStream: 0
-  Is3D: 0
-  IsOneShot: 0
-  Parameters:
-  - {fileID: -131913794315055553}
-  MinDistance: 1
-  MaxDistance: 20
-  Length: 812
 --- !u!114 &-5239665623575717730
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1470,6 +2398,30 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 1460
+--- !u!114 &-5119473269520099862
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter://CueIndex
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: CueIndex
+  StudioPath: 
+  Min: 0
+  Max: 4
+  Default: 0
+  ID:
+    data1: 3753644876
+    data2: 2798513597
+  Type: 1
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
 --- !u!114 &-5098938996487333307
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1489,8 +2441,6 @@ MonoBehaviour:
     Data3: 2102118808
     Data4: -1994431221
   Banks:
-  - {fileID: 5915714569042196833}
-  - {fileID: -1471485812431984116}
   - {fileID: -1623506985876570158}
   IsStream: 1
   Is3D: 1
@@ -1552,7 +2502,7 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 81342
---- !u!114 &-4852719085836519178
+--- !u!114 &-4781846033512862809
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1562,16 +2512,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/morning_glories_audio/Zone
-  m_EditorClassIdentifier: 
-  Name: Zone
+  m_Name: parameter:/sarsfield_cue/Trigger
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: Trigger
   StudioPath: 
   Min: 0
-  Max: 3
+  Max: 1
   Default: 0
   ID:
-    data1: 1112535331
-    data2: 2309411790
+    data1: 3182214286
+    data2: 3291611135
   Type: 0
   IsGlobal: 0
   Labels: []
@@ -1600,37 +2550,6 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
---- !u!114 &-4748450937802611184
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/james_nav_cue
-  m_EditorClassIdentifier: 
-  Path: event:/james_nav_cue
-  Guid:
-    Data1: -1941612338
-    Data2: 1271683760
-    Data3: -1010710868
-    Data4: 913076872
-  Banks:
-  - {fileID: -1471485812431984116}
-  IsStream: 0
-  Is3D: 0
-  IsOneShot: 1
-  Parameters:
-  - {fileID: -5691028513598330998}
-  - {fileID: -2367842477515753628}
-  - {fileID: 1319774379393820185}
-  - {fileID: -6190928269836927936}
-  MinDistance: 1
-  MaxDistance: 20
-  Length: 0
 --- !u!114 &-4743487842025713055
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1679,7 +2598,7 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
---- !u!114 &-4504363436600524706
+--- !u!114 &-4552118593312161236
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1689,26 +2608,57 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/yellow_poppy_audio
-  m_EditorClassIdentifier: 
-  Path: event:/yellow_poppy_audio
+  m_Name: event:/attack_impact
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/attack_impact
   Guid:
-    Data1: 1596464743
-    Data2: 1294139571
-    Data3: -1149390967
-    Data4: -2106046477
+    Data1: 799305034
+    Data2: 1269305174
+    Data3: 1265642687
+    Data4: -1737986025
   Banks:
-  - {fileID: 5915714569042196833}
-  - {fileID: -1471485812431984116}
   - {fileID: -1623506985876570158}
-  IsStream: 1
+  - {fileID: -7373783738172781343}
+  IsStream: 0
   Is3D: 1
-  IsOneShot: 0
+  IsOneShot: 1
   Parameters:
-  - {fileID: 5994212761091609300}
+  - {fileID: -1265194970435462394}
   MinDistance: 1
   MaxDistance: 20
-  Length: 44908
+  Length: 574
+--- !u!114 &-4546738717714954989
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter://Direction
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: Direction
+  StudioPath: 
+  Min: 0
+  Max: 7
+  Default: 0
+  ID:
+    data1: 40668191
+    data2: 1578994455
+  Type: 2
+  IsGlobal: 0
+  Labels:
+  - N
+  - NE
+  - E
+  - SE
+  - S
+  - SW
+  - W
+  - NW
+  Exists: 1
 --- !u!114 &-4465189504523931342
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1732,6 +2682,38 @@ MonoBehaviour:
   Type: 0
   IsGlobal: 0
   Labels: []
+  Exists: 1
+--- !u!114 &-4456652708673483731
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/grenadier_cue/Direction
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: Direction
+  StudioPath: 
+  Min: 0
+  Max: 7
+  Default: 0
+  ID:
+    data1: 40668191
+    data2: 1578994455
+  Type: 2
+  IsGlobal: 0
+  Labels:
+  - N
+  - NE
+  - E
+  - SE
+  - S
+  - SW
+  - W
+  - NW
   Exists: 1
 --- !u!114 &-4442659610704371921
 MonoBehaviour:
@@ -1757,6 +2739,94 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
+--- !u!114 &-4418717943886800456
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/raven_cue/Direction
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: Direction
+  StudioPath: 
+  Min: 0
+  Max: 7
+  Default: 0
+  ID:
+    data1: 40668191
+    data2: 1578994455
+  Type: 2
+  IsGlobal: 0
+  Labels:
+  - N
+  - NE
+  - E
+  - SE
+  - S
+  - SW
+  - W
+  - NW
+  Exists: 1
+--- !u!114 &-4381267572519392703
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/raven_cue
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/raven_cue
+  Guid:
+    Data1: 1586913810
+    Data2: 1167195692
+    Data3: -579263600
+    Data4: -510590630
+  Banks:
+  - {fileID: -1623506985876570158}
+  - {fileID: -7373783738172781343}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters:
+  - {fileID: 6317383012276003948}
+  - {fileID: -6532771956939679054}
+  - {fileID: 6338213246743839538}
+  - {fileID: -4418717943886800456}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 5112
+--- !u!114 &-4308505624247430439
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/battle_farmer_cue/Trigger
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: Trigger
+  StudioPath: 
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 3182214286
+    data2: 3291611135
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
 --- !u!114 &-4296189643165826921
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1776,9 +2846,9 @@ MonoBehaviour:
     Data3: 367639432
     Data4: 595799489
   Banks:
-  - {fileID: 5915714569042196833}
-  - {fileID: -1471485812431984116}
   - {fileID: -1623506985876570158}
+  - {fileID: -6723193621704778678}
+  - {fileID: -7373783738172781343}
   IsStream: 1
   Is3D: 1
   IsOneShot: 0
@@ -1788,7 +2858,7 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 13227
---- !u!114 &-4191713452114569752
+--- !u!114 &-4282967371181235342
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1797,14 +2867,68 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
-  m_Name: bank:/Sites/BattleOfBoyne/Audio/surgeon.bank
-  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorBankRef
-  Path: Assets/StreamingAssets/Sites/BattleOfBoyne/Audio/surgeon.bank
-  Name: Sites/BattleOfBoyne/Audio/surgeon
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter://CueIndex
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: CueIndex
   StudioPath: 
-  lastModified: 638815112790547021
-  FileSizes: []
+  Min: 0
+  Max: 4
+  Default: 0
+  ID:
+    data1: 3753644876
+    data2: 2798513597
+  Type: 1
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &-4266904560600663020
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/oak_cue/NormalizedDistance
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: NormalizedDistance
+  StudioPath: 
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 4032946360
+    data2: 2700767552
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &-4108666949587542067
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/louis_cue/NormalizedDistance
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: NormalizedDistance
+  StudioPath: 
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 4032946360
+    data2: 2700767552
+  Type: 0
+  IsGlobal: 0
+  Labels: []
   Exists: 1
 --- !u!114 &-4033021608061444249
 MonoBehaviour:
@@ -1829,6 +2953,38 @@ MonoBehaviour:
   Type: 1
   IsGlobal: 0
   Labels: []
+  Exists: 1
+--- !u!114 &-4032177826657320194
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/boyne_cue/Direction
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: Direction
+  StudioPath: 
+  Min: 0
+  Max: 7
+  Default: 0
+  ID:
+    data1: 40668191
+    data2: 1578994455
+  Type: 2
+  IsGlobal: 0
+  Labels:
+  - N
+  - NE
+  - E
+  - SE
+  - S
+  - SW
+  - W
+  - NW
   Exists: 1
 --- !u!114 &-4027970587427831066
 MonoBehaviour:
@@ -1858,6 +3014,30 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 126000
+--- !u!114 &-3914945811000620595
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter://CueIndex
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: CueIndex
+  StudioPath: 
+  Min: 0
+  Max: 4
+  Default: 0
+  ID:
+    data1: 3753644876
+    data2: 2798513597
+  Type: 1
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
 --- !u!114 &-3880696621149737165
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1878,6 +3058,54 @@ MonoBehaviour:
   ID:
     data1: 1112535331
     data2: 2309411790
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &-3748323950326470899
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/oak_audio/Zone
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: Zone
+  StudioPath: 
+  Min: 0
+  Max: 3
+  Default: 0
+  ID:
+    data1: 1112535331
+    data2: 2309411790
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &-3624488473159465819
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/william_cue/NormalizedDistance
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: NormalizedDistance
+  StudioPath: 
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 4032946360
+    data2: 2700767552
   Type: 0
   IsGlobal: 0
   Labels: []
@@ -1910,7 +3138,7 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 44908
---- !u!114 &-3467004896288539831
+--- !u!114 &-3530067000227869999
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1919,28 +3147,30 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/lilac_audio
-  m_EditorClassIdentifier: 
-  Path: event:/lilac_audio
-  Guid:
-    Data1: 1079854949
-    Data2: 1203303552
-    Data3: -1777793146
-    Data4: -746233166
-  Banks:
-  - {fileID: 5915714569042196833}
-  - {fileID: -1471485812431984116}
-  - {fileID: -1623506985876570158}
-  IsStream: 1
-  Is3D: 1
-  IsOneShot: 0
-  Parameters:
-  - {fileID: 314064515739325301}
-  MinDistance: 1
-  MaxDistance: 20
-  Length: 29205
---- !u!114 &-3349617911595766466
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/modern_child_cue/Direction
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: Direction
+  StudioPath: 
+  Min: 0
+  Max: 7
+  Default: 0
+  ID:
+    data1: 40668191
+    data2: 1578994455
+  Type: 2
+  IsGlobal: 0
+  Labels:
+  - N
+  - NE
+  - E
+  - SE
+  - S
+  - SW
+  - W
+  - NW
+  Exists: 1
+--- !u!114 &-3488331950987612014
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1949,15 +3179,45 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
-  m_Name: bank:/Sites/Debug/Audio/oak.bank
-  m_EditorClassIdentifier: 
-  Path: Assets/StreamingAssets/Sites/Debug/Audio/oak.bank
-  Name: Sites/Debug/Audio/oak
-  StudioPath: bank:/oak
-  lastModified: 638815112790396294
-  FileSizes: []
-  Exists: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/heartbeat_audio/Health
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: Health
+  StudioPath: 
+  Min: 0
+  Max: 3
+  Default: 3
+  ID:
+    data1: 3804003974
+    data2: 595706749
+  Type: 1
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &-3483223223128215305
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/grenadier_cue/NormalizedDistance
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: NormalizedDistance
+  StudioPath: 
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 4032946360
+    data2: 2700767552
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
 --- !u!114 &-3342211075688722402
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2010,24 +3270,6 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 109474
---- !u!114 &-3126104030251265810
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
-  m_Name: bank:/salmon.bank
-  m_EditorClassIdentifier: 
-  Path: Assets/StreamingAssets/salmon.bank
-  Name: salmon
-  StudioPath: bank:/salmon
-  lastModified: 638815112790493990
-  FileSizes: []
-  Exists: 1
 --- !u!114 &-3101051888494871579
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2119,8 +3361,6 @@ MonoBehaviour:
     Data3: 1850780308
     Data4: -1329949955
   Banks:
-  - {fileID: 5915714569042196833}
-  - {fileID: -1471485812431984116}
   - {fileID: -1623506985876570158}
   IsStream: 1
   Is3D: 1
@@ -2153,6 +3393,62 @@ MonoBehaviour:
   Type: 0
   IsGlobal: 0
   Labels: []
+  Exists: 1
+--- !u!114 &-2917635638055209001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/modern_child_cue/NormalizedDistance
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: NormalizedDistance
+  StudioPath: 
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 4032946360
+    data2: 2700767552
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &-2874431993186963446
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter://Direction
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: Direction
+  StudioPath: 
+  Min: 0
+  Max: 7
+  Default: 0
+  ID:
+    data1: 40668191
+    data2: 1578994455
+  Type: 2
+  IsGlobal: 0
+  Labels:
+  - N
+  - NE
+  - E
+  - SE
+  - S
+  - SW
+  - W
+  - NW
   Exists: 1
 --- !u!114 &-2857752396775698339
 MonoBehaviour:
@@ -2225,8 +3521,6 @@ MonoBehaviour:
     Data3: 998473345
     Data4: 284351180
   Banks:
-  - {fileID: 5915714569042196833}
-  - {fileID: -1471485812431984116}
   - {fileID: -1623506985876570158}
   IsStream: 1
   Is3D: 1
@@ -2236,7 +3530,7 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 153693
---- !u!114 &-2647591662992922059
+--- !u!114 &-2622223195770307887
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2246,45 +3540,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/the_forest_audio/Zone
-  m_EditorClassIdentifier: 
-  Name: Zone
+  m_Name: parameter:/grenadier_cue/CueIndex
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: CueIndex
   StudioPath: 
   Min: 0
-  Max: 3
+  Max: 4
   Default: 0
   ID:
-    data1: 1112535331
-    data2: 2309411790
-  Type: 0
+    data1: 3753644876
+    data2: 2798513597
+  Type: 1
   IsGlobal: 0
   Labels: []
-  Exists: 1
---- !u!114 &-2638835743234036906
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/attack_impact/HitResult
-  m_EditorClassIdentifier: 
-  Name: HitResult
-  StudioPath: 
-  Min: 0
-  Max: 1
-  Default: 0
-  ID:
-    data1: 1463922002
-    data2: 2738073405
-  Type: 2
-  IsGlobal: 0
-  Labels:
-  - Miss
-  - Hit
   Exists: 1
 --- !u!114 &-2582239335087819956
 MonoBehaviour:
@@ -2310,7 +3578,7 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
---- !u!114 &-2367842477515753628
+--- !u!114 &-2475470118585497383
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2320,20 +3588,83 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/james_nav_cue/Trigger
-  m_EditorClassIdentifier: 
-  Name: Trigger
+  m_Name: parameter:/barber_surgeon_cue/NormalizedDistance
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: NormalizedDistance
   StudioPath: 
   Min: 0
   Max: 1
   Default: 0
   ID:
-    data1: 3182214286
-    data2: 3291611135
+    data1: 4032946360
+    data2: 2700767552
   Type: 0
   IsGlobal: 0
   Labels: []
   Exists: 1
+--- !u!114 &-2468450434894823076
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/french_soldier_cue/Direction
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: Direction
+  StudioPath: 
+  Min: 0
+  Max: 7
+  Default: 0
+  ID:
+    data1: 40668191
+    data2: 1578994455
+  Type: 2
+  IsGlobal: 0
+  Labels:
+  - N
+  - NE
+  - E
+  - SE
+  - S
+  - SW
+  - W
+  - NW
+  Exists: 1
+--- !u!114 &-2391691890753401199
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/modern_farmer_cue
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/modern_farmer_cue
+  Guid:
+    Data1: 1471330730
+    Data2: 1200106992
+    Data3: -1141970257
+    Data4: -1385470534
+  Banks:
+  - {fileID: -1623506985876570158}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters:
+  - {fileID: -8198900439674309748}
+  - {fileID: 1564863221711455}
+  - {fileID: -5348417933284211992}
+  - {fileID: 7443679660229887855}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 3749
 --- !u!114 &-2310149781929280275
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2410,6 +3741,34 @@ MonoBehaviour:
   - Name: Desktop
     Value: 72433440
   Exists: 1
+--- !u!114 &-2053580947959323456
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/berries_collect
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/berries_collect
+  Guid:
+    Data1: -2015602834
+    Data2: 1312012597
+    Data3: 1408835470
+    Data4: 644009244
+  Banks:
+  - {fileID: -1623506985876570158}
+  - {fileID: -7373783738172781343}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 1404
 --- !u!114 &-2052320907851671852
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2473,6 +3832,62 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 153693
+--- !u!114 &-2004358712304589211
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/french_soldier_cue/Trigger
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: Trigger
+  StudioPath: 
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 3182214286
+    data2: 3291611135
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &-1970626732444523890
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter://Direction
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: Direction
+  StudioPath: 
+  Min: 0
+  Max: 7
+  Default: 0
+  ID:
+    data1: 40668191
+    data2: 1578994455
+  Type: 2
+  IsGlobal: 0
+  Labels:
+  - N
+  - NE
+  - E
+  - SE
+  - S
+  - SW
+  - W
+  - NW
+  Exists: 1
 --- !u!114 &-1898967523566692985
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2497,6 +3912,37 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
+--- !u!114 &-1821588441518595626
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/salmon_cue
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/salmon_cue
+  Guid:
+    Data1: -1476072450
+    Data2: 1320824722
+    Data3: -1541902672
+    Data4: 910805044
+  Banks:
+  - {fileID: -1623506985876570158}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters:
+  - {fileID: 7790590524913344463}
+  - {fileID: 5089244083287046784}
+  - {fileID: -8742562343709836119}
+  - {fileID: -6965565239228495433}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 3053
 --- !u!114 &-1789929172405448064
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2536,9 +3982,40 @@ MonoBehaviour:
   Path: Assets/StreamingAssets/Sites/BattleOfBoyne/Audio/Master.bank
   Name: Sites/BattleOfBoyne/Audio/Master
   StudioPath: bank:/Master
-  lastModified: 639016529471858201
+  lastModified: 639065732666427391
   FileSizes: []
   Exists: 1
+--- !u!114 &-1596624247032323984
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/village_woman_cue
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/village_woman_cue
+  Guid:
+    Data1: 1939867533
+    Data2: 1263917770
+    Data3: -35990374
+    Data4: 827238463
+  Banks:
+  - {fileID: -1623506985876570158}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters:
+  - {fileID: 3622160020524105337}
+  - {fileID: 4920345956071047589}
+  - {fileID: 548005015279467847}
+  - {fileID: 3575925959332452103}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 2802
 --- !u!114 &-1593919867115022682
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2554,7 +4031,7 @@ MonoBehaviour:
   Name: RewardID
   StudioPath: 
   Min: 0
-  Max: 10
+  Max: 16
   Default: 0
   ID:
     data1: 3313013036
@@ -2563,16 +4040,22 @@ MonoBehaviour:
   IsGlobal: 0
   Labels:
   - None
-  - Dutch Lion Amulet
-  - Triskel
-  - Ancient Crops
-  - Modern Crops
-  - Daisy Chain
+  - Spade
+  - Green Ribbon
+  - Key
+  - Inkwell
+  - Harp
+  - Longship
+  - Triquetra
+  - Flame On A Hill
+  - Stave
+  - Oak Leaf
   - Brigid's Cross
-  - Acorn
-  - Grenade
-  - Royal Seal Ring
-  - Golden Sun
+  - Scroll
+  - Salmon
+  - Dragon Head
+  - Mound Of Hostages Icon
+  - Lia Fail
   Exists: 1
 --- !u!114 &-1587538637742025016
 MonoBehaviour:
@@ -2598,7 +4081,7 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
---- !u!114 &-1471485812431984116
+--- !u!114 &-1550197102885907375
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2607,16 +4090,30 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
-  m_Name: bank:/Master.bank
-  m_EditorClassIdentifier: 
-  Path: Assets/StreamingAssets/Master.bank
-  Name: Master
-  StudioPath: bank:/Master
-  lastModified: 639052123337399363
-  FileSizes: []
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/harp_girl_cue/Direction
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: Direction
+  StudioPath: 
+  Min: 0
+  Max: 7
+  Default: 0
+  ID:
+    data1: 40668191
+    data2: 1578994455
+  Type: 2
+  IsGlobal: 0
+  Labels:
+  - N
+  - NE
+  - E
+  - SE
+  - S
+  - SW
+  - W
+  - NW
   Exists: 1
---- !u!114 &-1463778092175058505
+--- !u!114 &-1399996238783850412
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2625,27 +4122,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/sergeant_major_audio
-  m_EditorClassIdentifier: 
-  Path: event:/sergeant_major_audio
-  Guid:
-    Data1: -1131596615
-    Data2: 1217703647
-    Data3: 1396483752
-    Data4: -1934053682
-  Banks:
-  - {fileID: 5915714569042196833}
-  - {fileID: -1471485812431984116}
-  - {fileID: -1623506985876570158}
-  IsStream: 1
-  Is3D: 1
-  IsOneShot: 0
-  Parameters:
-  - {fileID: 2797563039548127215}
-  MinDistance: 1
-  MaxDistance: 20
-  Length: 69350
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/celtic_child_cue/CueIndex
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: CueIndex
+  StudioPath: 
+  Min: 0
+  Max: 4
+  Default: 0
+  ID:
+    data1: 3753644876
+    data2: 2798513597
+  Type: 1
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
 --- !u!114 &-1360505769651308693
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2665,8 +4156,6 @@ MonoBehaviour:
     Data3: 70843062
     Data4: -863116591
   Banks:
-  - {fileID: 5915714569042196833}
-  - {fileID: -1471485812431984116}
   - {fileID: -1623506985876570158}
   IsStream: 1
   Is3D: 1
@@ -2676,7 +4165,7 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 75181
---- !u!114 &-1256897106286497164
+--- !u!114 &-1265194970435462394
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2685,43 +4174,70 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/combat/mercenary_footsteps
-  m_EditorClassIdentifier: 
-  Path: event:/combat/mercenary_footsteps
-  Guid:
-    Data1: -1000586084
-    Data2: 1281804476
-    Data3: -863532887
-    Data4: -1380123222
-  Banks:
-  - {fileID: 7063660329105735970}
-  - {fileID: -6584727833568685771}
-  - {fileID: -8165299445089214531}
-  IsStream: 0
-  Is3D: 1
-  IsOneShot: 0
-  Parameters: []
-  MinDistance: 1
-  MaxDistance: 20
-  Length: 246
---- !u!114 &-1210938888407514211
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
-  m_Name: bank:/Sites/BattleOfBoyne/Audio/oak.bank
-  m_EditorClassIdentifier: 
-  Path: Assets/StreamingAssets/Sites/BattleOfBoyne/Audio/oak.bank
-  Name: Sites/BattleOfBoyne/Audio/oak
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/attack_impact/HitResult
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: HitResult
   StudioPath: 
-  lastModified: 638815112790396294
-  FileSizes: []
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 1463922002
+    data2: 2738073405
+  Type: 2
+  IsGlobal: 0
+  Labels:
+  - Miss
+  - Hit
+  Exists: 1
+--- !u!114 &-1210362127694681220
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/louis_cue/Trigger
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: Trigger
+  StudioPath: 
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 3182214286
+    data2: 3291611135
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &-1171221787613857537
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/william_cue/Trigger
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: Trigger
+  StudioPath: 
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 3182214286
+    data2: 3291611135
+  Type: 0
+  IsGlobal: 0
+  Labels: []
   Exists: 1
 --- !u!114 &-1167043492185807487
 MonoBehaviour:
@@ -2744,6 +4260,30 @@ MonoBehaviour:
     data1: 1112535331
     data2: 2309411790
   Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &-1162208377982151673
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/sarsfield_cue/CueIndex
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: CueIndex
+  StudioPath: 
+  Min: 0
+  Max: 4
+  Default: 0
+  ID:
+    data1: 3753644876
+    data2: 2798513597
+  Type: 1
   IsGlobal: 0
   Labels: []
   Exists: 1
@@ -2879,6 +4419,38 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
+--- !u!114 &-854172344703449932
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/fox_cue/Direction
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: Direction
+  StudioPath: 
+  Min: 0
+  Max: 7
+  Default: 0
+  ID:
+    data1: 40668191
+    data2: 1578994455
+  Type: 2
+  IsGlobal: 0
+  Labels:
+  - N
+  - NE
+  - E
+  - SE
+  - S
+  - SW
+  - W
+  - NW
+  Exists: 1
 --- !u!114 &-842079613346931617
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2898,8 +4470,6 @@ MonoBehaviour:
     Data3: -816275816
     Data4: -1405444301
   Banks:
-  - {fileID: 5915714569042196833}
-  - {fileID: -1471485812431984116}
   - {fileID: -1623506985876570158}
   IsStream: 1
   Is3D: 1
@@ -2909,6 +4479,117 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 84859
+--- !u!114 &-759993963665880489
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/james_cue/Direction
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: Direction
+  StudioPath: 
+  Min: 0
+  Max: 7
+  Default: 0
+  ID:
+    data1: 40668191
+    data2: 1578994455
+  Type: 2
+  IsGlobal: 0
+  Labels:
+  - N
+  - NE
+  - E
+  - SE
+  - S
+  - SW
+  - W
+  - NW
+  Exists: 1
+--- !u!114 &-754988487916761385
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/schomberg_cue/CueIndex
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: CueIndex
+  StudioPath: 
+  Min: 0
+  Max: 4
+  Default: 0
+  ID:
+    data1: 3753644876
+    data2: 2798513597
+  Type: 1
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &-705935492697962410
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/battle_farmer_cue/NormalizedDistance
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: NormalizedDistance
+  StudioPath: 
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 4032946360
+    data2: 2700767552
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &-693366909740167629
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/james_cue
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/james_cue
+  Guid:
+    Data1: -1098350485
+    Data2: 1288857707
+    Data3: -2024208451
+    Data4: 1236633600
+  Banks:
+  - {fileID: -1623506985876570158}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters:
+  - {fileID: -5798623115692521698}
+  - {fileID: -759993963665880489}
+  - {fileID: -5937336574499287657}
+  - {fileID: 5304305687367647698}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 3100
 --- !u!114 &-667466502893612330
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2933,35 +4614,6 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
---- !u!114 &-593395696380087114
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/oak_greeting
-  m_EditorClassIdentifier: 
-  Path: event:/oak_greeting
-  Guid:
-    Data1: 486818563
-    Data2: 1229722763
-    Data3: 747145148
-    Data4: -99600686
-  Banks:
-  - {fileID: 5915714569042196833}
-  - {fileID: -1471485812431984116}
-  - {fileID: -1623506985876570158}
-  IsStream: 1
-  Is3D: 0
-  IsOneShot: 1
-  Parameters: []
-  MinDistance: 1
-  MaxDistance: 20
-  Length: 87606
 --- !u!114 &-518548296048703672
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3005,9 +4657,8 @@ MonoBehaviour:
     Data3: 1956351362
     Data4: -540070583
   Banks:
-  - {fileID: 5915714569042196833}
-  - {fileID: -1471485812431984116}
   - {fileID: -1623506985876570158}
+  - {fileID: -7373783738172781343}
   IsStream: 1
   Is3D: 1
   IsOneShot: 0
@@ -3017,7 +4668,7 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 35663
---- !u!114 &-131913794315055553
+--- !u!114 &-453364628771784897
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -3027,16 +4678,64 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/heartbeat_audio/Health
-  m_EditorClassIdentifier: 
-  Name: Health
+  m_Name: parameter:/boyne_cue/Trigger
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: Trigger
   StudioPath: 
   Min: 0
-  Max: 3
-  Default: 3
+  Max: 1
+  Default: 0
   ID:
-    data1: 3804003974
-    data2: 595706749
+    data1: 3182214286
+    data2: 3291611135
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &-181250039341598711
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter://NormalizedDistance
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: NormalizedDistance
+  StudioPath: 
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 4032946360
+    data2: 2700767552
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &-167060975179089129
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/buckley_cue/CueIndex
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: CueIndex
+  StudioPath: 
+  Min: 0
+  Max: 4
+  Default: 0
+  ID:
+    data1: 3753644876
+    data2: 2798513597
   Type: 1
   IsGlobal: 0
   Labels: []
@@ -3060,8 +4759,6 @@ MonoBehaviour:
     Data3: 1824080025
     Data4: 1129485362
   Banks:
-  - {fileID: 5915714569042196833}
-  - {fileID: -1471485812431984116}
   - {fileID: -1623506985876570158}
   IsStream: 1
   Is3D: 1
@@ -3090,8 +4787,6 @@ MonoBehaviour:
     Data3: 857137839
     Data4: 547777320
   Banks:
-  - {fileID: 5915714569042196833}
-  - {fileID: -1471485812431984116}
   - {fileID: -1623506985876570158}
   IsStream: 1
   Is3D: 1
@@ -3130,7 +4825,7 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 35663
---- !u!114 &-48508636779410526
+--- !u!114 &-4693581923871038
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -3139,21 +4834,26 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/nav_cue/CueIndex
-  m_EditorClassIdentifier: 
-  Name: CueIndex
-  StudioPath: 
-  Min: 0
-  Max: 4
-  Default: 0
-  ID:
-    data1: 3753644876
-    data2: 2798513597
-  Type: 1
-  IsGlobal: 0
-  Labels: []
-  Exists: 1
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/greeting_audio
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/greeting_audio
+  Guid:
+    Data1: 486818563
+    Data2: 1229722763
+    Data3: 747145148
+    Data4: -99600686
+  Banks:
+  - {fileID: -1623506985876570158}
+  - {fileID: -6723193621704778678}
+  IsStream: 1
+  Is3D: 0
+  IsOneShot: 1
+  Parameters:
+  - {fileID: -6391785352436886402}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 87606
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3167,62 +4867,25 @@ MonoBehaviour:
   m_Name: FMODStudioCache
   m_EditorClassIdentifier: 
   EditorBanks:
-  - {fileID: 1972065782310597578}
-  - {fileID: -6584727833568685771}
-  - {fileID: -1471485812431984116}
-  - {fileID: 505942318975427799}
-  - {fileID: 116824301331400780}
-  - {fileID: -3126104030251265810}
-  - {fileID: 8448846116905129152}
-  - {fileID: -8193073775390080791}
-  - {fileID: 7063660329105735970}
   - {fileID: 5915714569042196833}
-  - {fileID: -3349617911595766466}
-  - {fileID: -7939902466066679101}
-  - {fileID: 1506528883900028362}
-  - {fileID: 6909598274578088531}
-  - {fileID: -5661288920930757592}
-  - {fileID: -8165299445089214531}
   - {fileID: -1623506985876570158}
-  - {fileID: -1210938888407514211}
-  - {fileID: -8698767544435464967}
-  - {fileID: -7740427016116754941}
-  - {fileID: -4191713452114569752}
-  - {fileID: 5587391100911160087}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7081113460468726475}
+  - {fileID: -6723193621704778678}
   EditorEvents:
-  - {fileID: 976313759710700672}
-  - {fileID: 4434701402175005082}
-  - {fileID: 3215416244496856989}
-  - {fileID: -8832293744068040192}
-  - {fileID: 6958162412499599721}
-  - {fileID: -1256897106286497164}
-  - {fileID: -5278031715962659334}
-  - {fileID: -593395696380087114}
   - {fileID: -5098938996487333307}
   - {fileID: -126364968379555429}
-  - {fileID: 222182855035378809}
-  - {fileID: 8425457123970464139}
   - {fileID: -6535288379189498912}
-  - {fileID: 1818193164599176887}
   - {fileID: -8477276694403951917}
-  - {fileID: 5723909324413885438}
   - {fileID: 7191822785689919546}
   - {fileID: -2965027221724572029}
-  - {fileID: -3467004896288539831}
-  - {fileID: -4504363436600524706}
   - {fileID: 2556218685774065362}
-  - {fileID: 5461223605076755993}
   - {fileID: -8564522734040301191}
-  - {fileID: 2309210780305071889}
-  - {fileID: 7991416733947286805}
-  - {fileID: -7222267007962215473}
   - {fileID: -504466179298447227}
   - {fileID: -5944418055370613883}
   - {fileID: -2773270567912246794}
   - {fileID: -5311537741575533181}
   - {fileID: -8589154878664713870}
-  - {fileID: 7816885278939675295}
-  - {fileID: -1463778092175058505}
   - {fileID: 7063762279769721520}
   - {fileID: 1961390517431021619}
   - {fileID: -8107809798284396528}
@@ -3231,116 +4894,220 @@ MonoBehaviour:
   - {fileID: -1360505769651308693}
   - {fileID: -842079613346931617}
   - {fileID: -4296189643165826921}
-  - {fileID: -8457028083495491043}
   - {fileID: 1025439801905906871}
   - {fileID: 4194647336341179629}
   - {fileID: -6616890126446640730}
   - {fileID: -81247394394423839}
-  - {fileID: -5705547172170655820}
-  - {fileID: -4748450937802611184}
+  - {fileID: 1286068955870225545}
+  - {fileID: -6306860814394566348}
+  - {fileID: -4693581923871038}
+  - {fileID: 3729663970918841597}
+  - {fileID: 1090570077183154191}
+  - {fileID: -4381267572519392703}
+  - {fileID: -5773120654106354665}
+  - {fileID: 6269415904801486502}
+  - {fileID: -7936391057325947761}
+  - {fileID: 3206105705955782187}
+  - {fileID: -4552118593312161236}
+  - {fileID: -7094835670904295827}
+  - {fileID: -693366909740167629}
+  - {fileID: -2053580947959323456}
+  - {fileID: 2173251125942604138}
+  - {fileID: 3319827696727139728}
+  - {fileID: 3249143491057743658}
+  - {fileID: -5438226612704686670}
+  - {fileID: -6898298219759275155}
+  - {fileID: 1435178527900641791}
+  - {fileID: -1596624247032323984}
+  - {fileID: 8735481273513925045}
+  - {fileID: -7170117153096397730}
+  - {fileID: -8463630182274578926}
+  - {fileID: 1964476200214925442}
+  - {fileID: -2391691890753401199}
+  - {fileID: 2896846673217918708}
+  - {fileID: -6806508300651137032}
+  - {fileID: 4872593916688506594}
+  - {fileID: 397502643114456619}
+  - {fileID: -6060887563758481661}
+  - {fileID: 8250456991343072544}
+  - {fileID: -1821588441518595626}
+  - {fileID: 4059192091085653394}
+  - {fileID: -7089891141938989668}
   EditorParameters:
   - {fileID: -518548296048703672}
+  - {fileID: 9188696823279787146}
   MasterBanks:
-  - {fileID: -1471485812431984116}
   - {fileID: 5915714569042196833}
   - {fileID: -1623506985876570158}
+  - {fileID: -7373783738172781343}
+  - {fileID: -6723193621704778678}
   StringsBanks:
-  - {fileID: 1972065782310597578}
+  - {fileID: -7081113460468726475}
   cacheVersion: 131847
-  cacheTime: 639056267561159968
+  cacheTime: 639068553667367596
   SerializableEventsDict:
-  - key: event:/combat/attack_impact
-    index: 0
-  - key: event:/combat/berries_collect
-    index: 1
-  - key: event:/combat/mercenary_attack
-    index: 2
-  - key: event:/combat/mercenary_encounter
-    index: 3
-  - key: event:/combat/berries_music
-    index: 4
-  - key: event:/combat/mercenary_footsteps
-    index: 5
-  - key: event:/combat/heartbeat_audio
-    index: 6
-  - key: event:/oak_greeting
-    index: 7
   - key: event:/harp_girl_audio
-    index: 8
+    index: 0
   - key: event:/village_woman_audio
-    index: 9
-  - key: event:/battle_oak_audio
-    index: 10
-  - key: event:/celtic_farmer_audio
-    index: 11
+    index: 1
   - key: event:/schomberg_audio
-    index: 12
-  - key: event:/lonely_flower_audio
-    index: 13
+    index: 2
   - key: event:/battle_farmer_audio
-    index: 14
-  - key: event:/morning_glories_audio
-    index: 15
+    index: 3
   - key: event:/battle_raven_audio
-    index: 16
+    index: 4
   - key: event:/modern_farmer_audio
-    index: 17
-  - key: event:/lilac_audio
-    index: 18
-  - key: event:/yellow_poppy_audio
-    index: 19
+    index: 5
   - key: event:/french_soldier_audio
-    index: 20
-  - key: event:/redwood_audio
-    index: 21
+    index: 6
   - key: event:/barber_surgeon_audio
-    index: 22
-  - key: event:/honeysuckle_audio
-    index: 23
-  - key: event:/heartsease_audio
-    index: 24
-  - key: event:/mignonette_audio
-    index: 25
+    index: 7
   - key: event:/modern_raven_audio
-    index: 26
+    index: 8
   - key: event:/james_audio
-    index: 27
+    index: 9
   - key: event:/celtic_child_audio
-    index: 28
+    index: 10
   - key: event:/sarsfield_audio
-    index: 29
+    index: 11
   - key: event:/ambient_sounds
-    index: 30
-  - key: event:/the_forest_audio
-    index: 31
-  - key: event:/sergeant_major_audio
-    index: 32
+    index: 12
   - key: event:/louis_audio
-    index: 33
+    index: 13
   - key: event:/battle_child_audio
-    index: 34
+    index: 14
   - key: event:/grenadier_audio
-    index: 35
+    index: 15
   - key: event:/reward_audio
-    index: 36
+    index: 16
   - key: event:/battle_fox_audio
-    index: 37
+    index: 17
   - key: event:/boyne_audio
-    index: 38
+    index: 18
   - key: event:/salmon_audio
-    index: 39
+    index: 19
   - key: event:/celtic_fox_audio
-    index: 40
-  - key: event:/nav_cue
-    index: 41
+    index: 20
   - key: event:/modern_child_audio
-    index: 42
+    index: 21
   - key: event:/time_portal
-    index: 43
+    index: 22
   - key: event:/buckley_audio
-    index: 44
+    index: 23
   - key: event:/william_audio
+    index: 24
+  - key: 
+    index: 25
+  - key: event:/greeting_audio
+    index: 27
+  - key: event:/modern_child_cue
+    index: 28
+  - key: event:/harp_girl_cue
+    index: 29
+  - key: event:/raven_cue
+    index: 30
+  - key: event:/battle_farmer_cue
+    index: 31
+  - key: event:/oak_audio
+    index: 32
+  - key: event:/sarsfield_cue
+    index: 33
+  - key: event:/fox_cue
+    index: 34
+  - key: event:/attack_impact
+    index: 35
+  - key: event:/barber_surgeon_cue
+    index: 36
+  - key: event:/james_cue
+    index: 37
+  - key: event:/berries_collect
+    index: 38
+  - key: event:/mercenary_attack
+    index: 39
+  - key: event:/mercenary_encounter
+    index: 40
+  - key: event:/schomberg_cue
+    index: 41
+  - key: event:/celtic_child_cue
+    index: 42
+  - key: event:/french_soldier_cue
+    index: 43
+  - key: event:/boyne_cue
+    index: 44
+  - key: event:/village_woman_cue
     index: 45
+  - key: event:/berries_music
+    index: 46
+  - key: event:/william_cue
+    index: 47
+  - key: event:/grenadier_cue
+    index: 48
+  - key: event:/mercenary_footsteps
+    index: 49
+  - key: event:/modern_farmer_cue
+    index: 50
+  - key: event:/buckley_cue
+    index: 51
+  - key: event:/heartbeat_audio
+    index: 52
+  - key: event:/oak_cue
+    index: 53
+  - key: event:/battle_child_cue
+    index: 54
+  - key: event:/louis_cue
+    index: 55
+  - key: event:/goodbye_audio
+    index: 56
+  - key: event:/salmon_cue
+    index: 57
+--- !u!114 &1564863221711455
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/modern_farmer_cue/NormalizedDistance
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: NormalizedDistance
+  StudioPath: 
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 4032946360
+    data2: 2700767552
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &14710048558130182
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter://Trigger
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: Trigger
+  StudioPath: 
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 3182214286
+    data2: 3291611135
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
 --- !u!114 &59723176013266999
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3365,78 +5132,6 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
---- !u!114 &116824301331400780
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
-  m_Name: bank:/raven.bank
-  m_EditorClassIdentifier: 
-  Path: Assets/StreamingAssets/raven.bank
-  Name: raven
-  StudioPath: bank:/raven
-  lastModified: 638815112790447780
-  FileSizes: []
-  Exists: 1
---- !u!114 &130282176075560007
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/nav_cue/Is_Target
-  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
-  Name: Is_Target
-  StudioPath: 
-  Min: 0
-  Max: 1
-  Default: 0
-  ID:
-    data1: 3487212685
-    data2: 2204712610
-  Type: 1
-  IsGlobal: 0
-  Labels: []
-  Exists: 1
---- !u!114 &222182855035378809
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/battle_oak_audio
-  m_EditorClassIdentifier: 
-  Path: event:/battle_oak_audio
-  Guid:
-    Data1: -573735400
-    Data2: 1164887914
-    Data3: 803607699
-    Data4: -1636424172
-  Banks:
-  - {fileID: 5915714569042196833}
-  - {fileID: -1471485812431984116}
-  - {fileID: -1623506985876570158}
-  IsStream: 1
-  Is3D: 1
-  IsOneShot: 0
-  Parameters:
-  - {fileID: -8983648839748012616}
-  MinDistance: 1
-  MaxDistance: 20
-  Length: 109474
 --- !u!114 &244112113392936563
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3456,9 +5151,9 @@ MonoBehaviour:
     Data3: 1408129976
     Data4: -1364446629
   Banks:
-  - {fileID: 5915714569042196833}
-  - {fileID: -1471485812431984116}
   - {fileID: -1623506985876570158}
+  - {fileID: -6723193621704778678}
+  - {fileID: -7373783738172781343}
   IsStream: 1
   Is3D: 1
   IsOneShot: 0
@@ -3468,30 +5163,6 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 6300
---- !u!114 &314064515739325301
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/lilac_audio/Zone
-  m_EditorClassIdentifier: 
-  Name: Zone
-  StudioPath: 
-  Min: 0
-  Max: 3
-  Default: 0
-  ID:
-    data1: 1112535331
-    data2: 2309411790
-  Type: 0
-  IsGlobal: 0
-  Labels: []
-  Exists: 1
 --- !u!114 &364012597040360375
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3516,7 +5187,38 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
---- !u!114 &471302139170871965
+--- !u!114 &397502643114456619
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/battle_child_cue
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/battle_child_cue
+  Guid:
+    Data1: 794235629
+    Data2: 1210159824
+    Data3: 280963761
+    Data4: 249735233
+  Banks:
+  - {fileID: -1623506985876570158}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters:
+  - {fileID: -6395347529198620374}
+  - {fileID: 4810748750648245484}
+  - {fileID: 6213307581173141643}
+  - {fileID: 5650147891886099031}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 3749
+--- !u!114 &398061407282301313
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -3526,21 +5228,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/mercenary_encounter/CombatType
-  m_EditorClassIdentifier: 
-  Name: CombatType
+  m_Name: parameter://Trigger
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: Trigger
   StudioPath: 
-  Min: 1
-  Max: 6
-  Default: 1
+  Min: 0
+  Max: 1
+  Default: 0
   ID:
-    data1: 3158361182
-    data2: 3085786482
-  Type: 1
+    data1: 3182214286
+    data2: 3291611135
+  Type: 0
   IsGlobal: 0
   Labels: []
   Exists: 1
---- !u!114 &505942318975427799
+--- !u!114 &476258870302865942
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -3549,14 +5251,108 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
-  m_Name: bank:/oak.bank
-  m_EditorClassIdentifier: 
-  Path: Assets/StreamingAssets/oak.bank
-  Name: oak
-  StudioPath: bank:/oak
-  lastModified: 638815112790396290
-  FileSizes: []
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/oak_cue/CueIndex
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: CueIndex
+  StudioPath: 
+  Min: 0
+  Max: 4
+  Default: 0
+  ID:
+    data1: 3753644876
+    data2: 2798513597
+  Type: 1
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &520906851007601373
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/buckley_cue/Direction
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: Direction
+  StudioPath: 
+  Min: 0
+  Max: 7
+  Default: 0
+  ID:
+    data1: 40668191
+    data2: 1578994455
+  Type: 2
+  IsGlobal: 0
+  Labels:
+  - N
+  - NE
+  - E
+  - SE
+  - S
+  - SW
+  - W
+  - NW
+  Exists: 1
+--- !u!114 &548005015279467847
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/village_woman_cue/Direction
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: Direction
+  StudioPath: 
+  Min: 0
+  Max: 7
+  Default: 0
+  ID:
+    data1: 40668191
+    data2: 1578994455
+  Type: 2
+  IsGlobal: 0
+  Labels:
+  - N
+  - NE
+  - E
+  - SE
+  - S
+  - SW
+  - W
+  - NW
+  Exists: 1
+--- !u!114 &575155426378820778
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/william_cue/CueIndex
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: CueIndex
+  StudioPath: 
+  Min: 0
+  Max: 4
+  Default: 0
+  ID:
+    data1: 3753644876
+    data2: 2798513597
+  Type: 1
+  IsGlobal: 0
+  Labels: []
   Exists: 1
 --- !u!114 &592993469962140371
 MonoBehaviour:
@@ -3585,6 +5381,70 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 45738
+--- !u!114 &684496599559031850
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/louis_cue/Direction
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: Direction
+  StudioPath: 
+  Min: 0
+  Max: 7
+  Default: 0
+  ID:
+    data1: 40668191
+    data2: 1578994455
+  Type: 2
+  IsGlobal: 0
+  Labels:
+  - N
+  - NE
+  - E
+  - SE
+  - S
+  - SW
+  - W
+  - NW
+  Exists: 1
+--- !u!114 &744839290426884483
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter://Direction
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: Direction
+  StudioPath: 
+  Min: 0
+  Max: 7
+  Default: 0
+  ID:
+    data1: 40668191
+    data2: 1578994455
+  Type: 2
+  IsGlobal: 0
+  Labels:
+  - N
+  - NE
+  - E
+  - SE
+  - S
+  - SW
+  - W
+  - NW
+  Exists: 1
 --- !u!114 &753020055336074534
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3640,36 +5500,6 @@ MonoBehaviour:
   - Forward
   - Backward
   Exists: 1
---- !u!114 &976313759710700672
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/combat/attack_impact
-  m_EditorClassIdentifier: 
-  Path: event:/combat/attack_impact
-  Guid:
-    Data1: 799305034
-    Data2: 1269305174
-    Data3: 1265642687
-    Data4: -1737986025
-  Banks:
-  - {fileID: 7063660329105735970}
-  - {fileID: -6584727833568685771}
-  - {fileID: -8165299445089214531}
-  IsStream: 0
-  Is3D: 1
-  IsOneShot: 1
-  Parameters:
-  - {fileID: -2638835743234036906}
-  MinDistance: 1
-  MaxDistance: 20
-  Length: 574
 --- !u!114 &1025439801905906871
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3689,8 +5519,6 @@ MonoBehaviour:
     Data3: -1871576394
     Data4: 1301315179
   Banks:
-  - {fileID: 5915714569042196833}
-  - {fileID: -1471485812431984116}
   - {fileID: -1623506985876570158}
   IsStream: 1
   Is3D: 1
@@ -3756,6 +5584,37 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 25105
+--- !u!114 &1090570077183154191
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/harp_girl_cue
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/harp_girl_cue
+  Guid:
+    Data1: -898878447
+    Data2: 1307710990
+    Data3: -765104195
+    Data4: -378338777
+  Banks:
+  - {fileID: -1623506985876570158}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters:
+  - {fileID: 4888557766262865626}
+  - {fileID: 8601083904743182322}
+  - {fileID: 2086126056591885378}
+  - {fileID: -1550197102885907375}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 2737
 --- !u!114 &1142033901091375217
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3833,7 +5692,7 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
---- !u!114 &1319774379393820185
+--- !u!114 &1286068955870225545
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -3842,29 +5701,56 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/james_nav_cue/Direction
-  m_EditorClassIdentifier: 
-  Name: Direction
-  StudioPath: 
-  Min: 0
-  Max: 7
-  Default: 0
-  ID:
-    data1: 40668191
-    data2: 1578994455
-  Type: 2
-  IsGlobal: 0
-  Labels:
-  - N
-  - NE
-  - E
-  - SE
-  - S
-  - SW
-  - W
-  - NW
-  Exists: 1
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: 
+  Guid:
+    Data1: 1490455798
+    Data2: 1184992550
+    Data3: 126566831
+    Data4: 56866273
+  Banks:
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters:
+  - {fileID: -1970626732444523890}
+  - {fileID: -5805361664258148712}
+  - {fileID: 2241306035816608094}
+  - {fileID: 7364565904899930146}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 4576
 --- !u!114 &1348612204168821660
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3889,7 +5775,7 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
---- !u!114 &1506528883900028362
+--- !u!114 &1435178527900641791
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -3898,15 +5784,108 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
-  m_Name: bank:/Sites/Debug/Audio/salmon.bank
-  m_EditorClassIdentifier: 
-  Path: Assets/StreamingAssets/Sites/Debug/Audio/salmon.bank
-  Name: Sites/Debug/Audio/salmon
-  StudioPath: bank:/salmon
-  lastModified: 638815112790493999
-  FileSizes: []
-  Exists: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/boyne_cue
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/boyne_cue
+  Guid:
+    Data1: 937282438
+    Data2: 1150930068
+    Data3: -2127303775
+    Data4: -646125807
+  Banks:
+  - {fileID: -1623506985876570158}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters:
+  - {fileID: 8325256632883477195}
+  - {fileID: -453364628771784897}
+  - {fileID: -4032177826657320194}
+  - {fileID: 5681022311588935751}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 4564
+--- !u!114 &1516570127645183611
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/schomberg_cue/NormalizedDistance
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: NormalizedDistance
+  StudioPath: 
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 4032946360
+    data2: 2700767552
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &1547134084348833690
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/louis_cue/CueIndex
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: CueIndex
+  StudioPath: 
+  Min: 0
+  Max: 4
+  Default: 0
+  ID:
+    data1: 3753644876
+    data2: 2798513597
+  Type: 1
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &1594081093784252604
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/sarsfield_cue/Direction
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: Direction
+  StudioPath: 
+  Min: 0
+  Max: 7
+  Default: 0
+  ID:
+    data1: 40668191
+    data2: 1578994455
+  Type: 2
+  IsGlobal: 0
+  Labels:
+  - N
+  - NE
+  - E
+  - SE
+  - S
+  - SW
+  - W
+  - NW
+  Exists: 1
 --- !u!114 &1604820642810303284
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3959,36 +5938,6 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 73330
---- !u!114 &1818193164599176887
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/lonely_flower_audio
-  m_EditorClassIdentifier: 
-  Path: event:/lonely_flower_audio
-  Guid:
-    Data1: 1575508520
-    Data2: 1236560690
-    Data3: 1070213309
-    Data4: 544412664
-  Banks:
-  - {fileID: 5915714569042196833}
-  - {fileID: -1471485812431984116}
-  - {fileID: -1623506985876570158}
-  IsStream: 1
-  Is3D: 1
-  IsOneShot: 0
-  Parameters:
-  - {fileID: 5518785553541340501}
-  MinDistance: 1
-  MaxDistance: 20
-  Length: 53296
 --- !u!114 &1961390517431021619
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4008,8 +5957,6 @@ MonoBehaviour:
     Data3: 1633948590
     Data4: 2147073893
   Banks:
-  - {fileID: 5915714569042196833}
-  - {fileID: -1471485812431984116}
   - {fileID: -1623506985876570158}
   IsStream: 1
   Is3D: 1
@@ -4019,7 +5966,7 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 50891
---- !u!114 &1972065782310597578
+--- !u!114 &1964476200214925442
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4028,17 +5975,25 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
-  m_Name: bank:/Master.strings.bank
-  m_EditorClassIdentifier: 
-  Path: Assets/StreamingAssets/Master.strings.bank
-  Name: Master.strings
-  StudioPath: bank:/Master.strings
-  lastModified: 639052123337434693
-  FileSizes:
-  - Name: 
-    Value: 3862
-  Exists: 1
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/mercenary_footsteps
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/mercenary_footsteps
+  Guid:
+    Data1: -1000586084
+    Data2: 1281804476
+    Data3: -863532887
+    Data4: -1380123222
+  Banks:
+  - {fileID: -1623506985876570158}
+  - {fileID: -7373783738172781343}
+  IsStream: 0
+  Is3D: 1
+  IsOneShot: 0
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 246
 --- !u!114 &2011927977527597038
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4087,6 +6042,30 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
+--- !u!114 &2086126056591885378
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/harp_girl_cue/NormalizedDistance
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: NormalizedDistance
+  StudioPath: 
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 4032946360
+    data2: 2700767552
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
 --- !u!114 &2135579588422226038
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4106,9 +6085,8 @@ MonoBehaviour:
     Data3: -161326454
     Data4: 209117433
   Banks:
-  - {fileID: 5915714569042196833}
-  - {fileID: -1471485812431984116}
   - {fileID: -1623506985876570158}
+  - {fileID: -7373783738172781343}
   IsStream: 1
   Is3D: 0
   IsOneShot: 1
@@ -4116,7 +6094,35 @@ MonoBehaviour:
   - {fileID: -1593919867115022682}
   MinDistance: 1
   MaxDistance: 20
-  Length: 10144
+  Length: 3213
+--- !u!114 &2173251125942604138
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/mercenary_attack
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/mercenary_attack
+  Guid:
+    Data1: 1643837809
+    Data2: 1323961476
+    Data3: -526707781
+    Data4: -536056061
+  Banks:
+  - {fileID: -1623506985876570158}
+  - {fileID: -7373783738172781343}
+  IsStream: 0
+  Is3D: 1
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 1460
 --- !u!114 &2213851940792097307
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4138,6 +6144,30 @@ MonoBehaviour:
     data1: 87377771
     data2: 1171044379
   Type: 1
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &2220611423289726240
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/sarsfield_cue/NormalizedDistance
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: NormalizedDistance
+  StudioPath: 
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 4032946360
+    data2: 2700767552
+  Type: 0
   IsGlobal: 0
   Labels: []
   Exists: 1
@@ -4165,7 +6195,7 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
---- !u!114 &2309210780305071889
+--- !u!114 &2241306035816608094
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4174,27 +6204,69 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/honeysuckle_audio
-  m_EditorClassIdentifier: 
-  Path: event:/honeysuckle_audio
-  Guid:
-    Data1: -2034193535
-    Data2: 1157056015
-    Data3: -1850042446
-    Data4: 1521813665
-  Banks:
-  - {fileID: 5915714569042196833}
-  - {fileID: -1471485812431984116}
-  - {fileID: -1623506985876570158}
-  IsStream: 1
-  Is3D: 1
-  IsOneShot: 0
-  Parameters:
-  - {fileID: -6579667040954129151}
-  MinDistance: 1
-  MaxDistance: 20
-  Length: 35982
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter://NormalizedDistance
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: NormalizedDistance
+  StudioPath: 
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 4032946360
+    data2: 2700767552
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &2245794392841772435
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/fox_cue/CueIndex
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: CueIndex
+  StudioPath: 
+  Min: 0
+  Max: 4
+  Default: 0
+  ID:
+    data1: 3753644876
+    data2: 2798513597
+  Type: 1
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &2401262674194027579
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/french_soldier_cue/NormalizedDistance
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: NormalizedDistance
+  StudioPath: 
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 4032946360
+    data2: 2700767552
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
 --- !u!114 &2510504410322664773
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4238,8 +6310,6 @@ MonoBehaviour:
     Data3: -1492882271
     Data4: 1089509511
   Banks:
-  - {fileID: 5915714569042196833}
-  - {fileID: -1471485812431984116}
   - {fileID: -1623506985876570158}
   IsStream: 1
   Is3D: 1
@@ -4277,7 +6347,7 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 29205
---- !u!114 &2797563039548127215
+--- !u!114 &2896846673217918708
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4286,21 +6356,28 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/sergeant_major_audio/Zone
-  m_EditorClassIdentifier: 
-  Name: Zone
-  StudioPath: 
-  Min: 0
-  Max: 3
-  Default: 0
-  ID:
-    data1: 1112535331
-    data2: 2309411790
-  Type: 0
-  IsGlobal: 0
-  Labels: []
-  Exists: 1
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/buckley_cue
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/buckley_cue
+  Guid:
+    Data1: 1144445127
+    Data2: 1179308965
+    Data3: 309922449
+    Data4: 1771768043
+  Banks:
+  - {fileID: -1623506985876570158}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters:
+  - {fileID: 4180452165598840739}
+  - {fileID: -5611147973520375648}
+  - {fileID: 520906851007601373}
+  - {fileID: -167060975179089129}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 3061
 --- !u!114 &3006034800040850118
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4351,7 +6428,7 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
---- !u!114 &3215416244496856989
+--- !u!114 &3206105705955782187
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4361,25 +6438,28 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/combat/mercenary_attack
-  m_EditorClassIdentifier: 
-  Path: event:/combat/mercenary_attack
+  m_Name: event:/fox_cue
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/fox_cue
   Guid:
-    Data1: 1643837809
-    Data2: 1323961476
-    Data3: -526707781
-    Data4: -536056061
+    Data1: 1007505451
+    Data2: 1234355345
+    Data3: -1555042426
+    Data4: 1987950526
   Banks:
-  - {fileID: 7063660329105735970}
-  - {fileID: -6584727833568685771}
-  - {fileID: -8165299445089214531}
+  - {fileID: -1623506985876570158}
+  - {fileID: -7373783738172781343}
   IsStream: 0
-  Is3D: 1
+  Is3D: 0
   IsOneShot: 1
-  Parameters: []
+  Parameters:
+  - {fileID: 2245794392841772435}
+  - {fileID: -854172344703449932}
+  - {fileID: 7273054857882361343}
+  - {fileID: 5877069750904532080}
   MinDistance: 1
   MaxDistance: 20
-  Length: 1460
+  Length: 4750
 --- !u!114 &3219049231609547031
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4409,6 +6489,37 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 17682
+--- !u!114 &3249143491057743658
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/schomberg_cue
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/schomberg_cue
+  Guid:
+    Data1: -1331090048
+    Data2: 1276507501
+    Data3: -1233923961
+    Data4: 541413639
+  Banks:
+  - {fileID: -1623506985876570158}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters:
+  - {fileID: 1516570127645183611}
+  - {fileID: 6378138091723648185}
+  - {fileID: -8326894201236132289}
+  - {fileID: -754988487916761385}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 2822
 --- !u!114 &3267308189402828794
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4433,6 +6544,35 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
+--- !u!114 &3319827696727139728
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/mercenary_encounter
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/mercenary_encounter
+  Guid:
+    Data1: -1263395470
+    Data2: 1272893624
+    Data3: 1061061532
+    Data4: 956329762
+  Banks:
+  - {fileID: -1623506985876570158}
+  - {fileID: -7373783738172781343}
+  IsStream: 1
+  Is3D: 1
+  IsOneShot: 1
+  Parameters:
+  - {fileID: 8304629082869539938}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 69632
 --- !u!114 &3551903945902111711
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4453,6 +6593,54 @@ MonoBehaviour:
   ID:
     data1: 1112535331
     data2: 2309411790
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &3575925959332452103
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/village_woman_cue/CueIndex
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: CueIndex
+  StudioPath: 
+  Min: 0
+  Max: 4
+  Default: 0
+  ID:
+    data1: 3753644876
+    data2: 2798513597
+  Type: 1
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &3622160020524105337
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/village_woman_cue/NormalizedDistance
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: NormalizedDistance
+  StudioPath: 
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 4032946360
+    data2: 2700767552
   Type: 0
   IsGlobal: 0
   Labels: []
@@ -4501,6 +6689,37 @@ MonoBehaviour:
   - Name: Desktop
     Value: 506
   Exists: 1
+--- !u!114 &3729663970918841597
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/modern_child_cue
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/modern_child_cue
+  Guid:
+    Data1: 1077094668
+    Data2: 1292113832
+    Data3: 1988427161
+    Data4: -1008835561
+  Banks:
+  - {fileID: -1623506985876570158}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters:
+  - {fileID: -8729065367875512460}
+  - {fileID: -2917635638055209001}
+  - {fileID: -5378514058410364968}
+  - {fileID: -3530067000227869999}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 2005
 --- !u!114 &3804643956710909573
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4569,6 +6788,378 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
+--- !u!114 &4058182830674969693
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/french_soldier_cue/CueIndex
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: CueIndex
+  StudioPath: 
+  Min: 0
+  Max: 4
+  Default: 0
+  ID:
+    data1: 3753644876
+    data2: 2798513597
+  Type: 1
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &4059192091085653394
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: 
+  Guid:
+    Data1: 1490455798
+    Data2: 1184992550
+    Data3: 126566831
+    Data4: 56866273
+  Banks:
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters:
+  - {fileID: -4546738717714954989}
+  - {fileID: 398061407282301313}
+  - {fileID: -181250039341598711}
+  - {fileID: -5119473269520099862}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 4576
 --- !u!114 &4167923604842590848
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4597,6 +7188,30 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 75181
+--- !u!114 &4180452165598840739
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/buckley_cue/NormalizedDistance
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: NormalizedDistance
+  StudioPath: 
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 4032946360
+    data2: 2700767552
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
 --- !u!114 &4194647336341179629
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4616,10 +7231,10 @@ MonoBehaviour:
     Data3: 39049607
     Data4: -699573844
   Banks:
-  - {fileID: 5915714569042196833}
-  - {fileID: -1471485812431984116}
   - {fileID: -1623506985876570158}
-  IsStream: 1
+  - {fileID: -6723193621704778678}
+  - {fileID: -7373783738172781343}
+  IsStream: 0
   Is3D: 0
   IsOneShot: 1
   Parameters:
@@ -4679,7 +7294,7 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 88742
---- !u!114 &4434701402175005082
+--- !u!114 &4354539599882034981
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4688,26 +7303,53 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/combat/berries_collect
-  m_EditorClassIdentifier: 
-  Path: event:/combat/berries_collect
-  Guid:
-    Data1: -2015602834
-    Data2: 1312012597
-    Data3: 1408835470
-    Data4: 644009244
-  Banks:
-  - {fileID: 7063660329105735970}
-  - {fileID: -6584727833568685771}
-  - {fileID: -8165299445089214531}
-  IsStream: 0
-  Is3D: 0
-  IsOneShot: 1
-  Parameters: []
-  MinDistance: 1
-  MaxDistance: 20
-  Length: 1404
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/barber_surgeon_cue/Direction
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: Direction
+  StudioPath: 
+  Min: 0
+  Max: 7
+  Default: 0
+  ID:
+    data1: 40668191
+    data2: 1578994455
+  Type: 2
+  IsGlobal: 0
+  Labels:
+  - N
+  - NE
+  - E
+  - SE
+  - S
+  - SW
+  - W
+  - NW
+  Exists: 1
+--- !u!114 &4645601734999368301
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter://Trigger
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: Trigger
+  StudioPath: 
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 3182214286
+    data2: 3291611135
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
 --- !u!114 &4657716592082696483
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4748,6 +7390,109 @@ MonoBehaviour:
   ID:
     data1: 1112535331
     data2: 2309411790
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &4810748750648245484
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/battle_child_cue/NormalizedDistance
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: NormalizedDistance
+  StudioPath: 
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 4032946360
+    data2: 2700767552
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &4872593916688506594
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/oak_cue
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/oak_cue
+  Guid:
+    Data1: -1679188760
+    Data2: 1234717385
+    Data3: 2103586710
+    Data4: -1133113130
+  Banks:
+  - {fileID: -1623506985876570158}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters:
+  - {fileID: 7037901019467786717}
+  - {fileID: -4266904560600663020}
+  - {fileID: 6256875355242110278}
+  - {fileID: 476258870302865942}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 5738
+--- !u!114 &4888557766262865626
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/harp_girl_cue/CueIndex
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: CueIndex
+  StudioPath: 
+  Min: 0
+  Max: 4
+  Default: 0
+  ID:
+    data1: 3753644876
+    data2: 2798513597
+  Type: 1
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &4920345956071047589
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/village_woman_cue/Trigger
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: Trigger
+  StudioPath: 
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 3182214286
+    data2: 3291611135
   Type: 0
   IsGlobal: 0
   Labels: []
@@ -4808,7 +7553,7 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 34859
---- !u!114 &5081265754236716729
+--- !u!114 &5089244083287046784
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4818,40 +7563,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/william_nav_cue/Direction
-  m_EditorClassIdentifier: 
-  Name: Direction
-  StudioPath: 
-  Min: 0
-  Max: 7
-  Default: 0
-  ID:
-    data1: 40668191
-    data2: 1578994455
-  Type: 2
-  IsGlobal: 0
-  Labels:
-  - N
-  - NE
-  - E
-  - SE
-  - S
-  - SW
-  - W
-  - NW
-  Exists: 1
---- !u!114 &5094771027455907505
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/nav_cue/Trigger
-  m_EditorClassIdentifier: 
+  m_Name: parameter:/salmon_cue/Trigger
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
   Name: Trigger
   StudioPath: 
   Min: 0
@@ -4888,7 +7601,7 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
---- !u!114 &5461223605076755993
+--- !u!114 &5304305687367647698
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4897,27 +7610,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/redwood_audio
-  m_EditorClassIdentifier: 
-  Path: event:/redwood_audio
-  Guid:
-    Data1: 291763574
-    Data2: 1270957277
-    Data3: -145159549
-    Data4: -981668449
-  Banks:
-  - {fileID: 5915714569042196833}
-  - {fileID: -1471485812431984116}
-  - {fileID: -1623506985876570158}
-  IsStream: 1
-  Is3D: 1
-  IsOneShot: 0
-  Parameters:
-  - {fileID: -5931750605258505324}
-  MinDistance: 1
-  MaxDistance: 20
-  Length: 81342
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/james_cue/Trigger
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: Trigger
+  StudioPath: 
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 3182214286
+    data2: 3291611135
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
 --- !u!114 &5465696178537049345
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4946,7 +7653,7 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 66532
---- !u!114 &5518785553541340501
+--- !u!114 &5484759579803074570
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4956,21 +7663,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/lonely_flower_audio/Zone
-  m_EditorClassIdentifier: 
-  Name: Zone
+  m_Name: parameter:/celtic_child_cue/Trigger
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: Trigger
   StudioPath: 
   Min: 0
-  Max: 3
+  Max: 1
   Default: 0
   ID:
-    data1: 1112535331
-    data2: 2309411790
+    data1: 3182214286
+    data2: 3291611135
   Type: 0
   IsGlobal: 0
   Labels: []
   Exists: 1
---- !u!114 &5587391100911160087
+--- !u!114 &5593292647928558220
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4979,14 +7686,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
-  m_Name: bank:/Sites/BattleOfBoyne/Audio/william.bank
-  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorBankRef
-  Path: Assets/StreamingAssets/Sites/BattleOfBoyne/Audio/william.bank
-  Name: Sites/BattleOfBoyne/Audio/william
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter://NormalizedDistance
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: NormalizedDistance
   StudioPath: 
-  lastModified: 638815112790590550
-  FileSizes: []
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 4032946360
+    data2: 2700767552
+  Type: 0
+  IsGlobal: 0
+  Labels: []
   Exists: 1
 --- !u!114 &5626387497712871280
 MonoBehaviour:
@@ -5012,7 +7725,7 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
---- !u!114 &5723909324413885438
+--- !u!114 &5650147891886099031
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -5021,27 +7734,69 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/morning_glories_audio
-  m_EditorClassIdentifier: 
-  Path: event:/morning_glories_audio
-  Guid:
-    Data1: -1273391050
-    Data2: 1243334695
-    Data3: 458475651
-    Data4: -977101694
-  Banks:
-  - {fileID: 5915714569042196833}
-  - {fileID: -1471485812431984116}
-  - {fileID: -1623506985876570158}
-  IsStream: 1
-  Is3D: 1
-  IsOneShot: 0
-  Parameters:
-  - {fileID: -4852719085836519178}
-  MinDistance: 1
-  MaxDistance: 20
-  Length: 25105
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/battle_child_cue/CueIndex
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: CueIndex
+  StudioPath: 
+  Min: 0
+  Max: 4
+  Default: 0
+  ID:
+    data1: 3753644876
+    data2: 2798513597
+  Type: 1
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &5681022311588935751
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/boyne_cue/CueIndex
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: CueIndex
+  StudioPath: 
+  Min: 0
+  Max: 4
+  Default: 0
+  ID:
+    data1: 3753644876
+    data2: 2798513597
+  Type: 1
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &5877069750904532080
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/fox_cue/Trigger
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: Trigger
+  StudioPath: 
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 3182214286
+    data2: 3291611135
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
 --- !u!114 &5915714569042196833
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5057,56 +7812,8 @@ MonoBehaviour:
   Path: Assets/StreamingAssets/Sites/Debug/Audio/Master.bank
   Name: Sites/Debug/Audio/Master
   StudioPath: bank:/Master
-  lastModified: 639016529471858201
+  lastModified: 639068553667225764
   FileSizes: []
-  Exists: 0
---- !u!114 &5994212761091609300
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/yellow_poppy_audio/Zone
-  m_EditorClassIdentifier: 
-  Name: Zone
-  StudioPath: 
-  Min: 0
-  Max: 3
-  Default: 0
-  ID:
-    data1: 1112535331
-    data2: 2309411790
-  Type: 0
-  IsGlobal: 0
-  Labels: []
-  Exists: 1
---- !u!114 &6030048755087489120
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/celtic_farmer_audio/Zone
-  m_EditorClassIdentifier: 
-  Name: Zone
-  StudioPath: 
-  Min: 0
-  Max: 3
-  Default: 0
-  ID:
-    data1: 1112535331
-    data2: 2309411790
-  Type: 0
-  IsGlobal: 0
-  Labels: []
   Exists: 1
 --- !u!114 &6038185040394527545
 MonoBehaviour:
@@ -5183,7 +7890,7 @@ MonoBehaviour:
   - Forward
   - Backward
   Exists: 1
---- !u!114 &6183188355841637778
+--- !u!114 &6165820553674787502
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -5193,8 +7900,56 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/william_nav_cue/Trigger
-  m_EditorClassIdentifier: 
+  m_Name: parameter://NormalizedDistance
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: NormalizedDistance
+  StudioPath: 
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 4032946360
+    data2: 2700767552
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &6213307581173141643
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/battle_child_cue/Trigger
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: Trigger
+  StudioPath: 
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 3182214286
+    data2: 3291611135
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &6256875355242110278
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/oak_cue/Trigger
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
   Name: Trigger
   StudioPath: 
   Min: 0
@@ -5235,7 +7990,35 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 46592
---- !u!114 &6361671858169058071
+--- !u!114 &6269415904801486502
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/oak_audio
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/oak_audio
+  Guid:
+    Data1: -573735400
+    Data2: 1164887914
+    Data3: 803607699
+    Data4: -1636424172
+  Banks:
+  - {fileID: -1623506985876570158}
+  IsStream: 1
+  Is3D: 1
+  IsOneShot: 0
+  Parameters:
+  - {fileID: -3748323950326470899}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 109474
+--- !u!114 &6317383012276003948
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -5245,16 +8028,64 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/heartsease_audio/Zone
-  m_EditorClassIdentifier: 
-  Name: Zone
+  m_Name: parameter:/raven_cue/CueIndex
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: CueIndex
   StudioPath: 
   Min: 0
-  Max: 3
+  Max: 4
   Default: 0
   ID:
-    data1: 1112535331
-    data2: 2309411790
+    data1: 3753644876
+    data2: 2798513597
+  Type: 1
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &6338213246743839538
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/raven_cue/NormalizedDistance
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: NormalizedDistance
+  StudioPath: 
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 4032946360
+    data2: 2700767552
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &6378138091723648185
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/schomberg_cue/Trigger
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: Trigger
+  StudioPath: 
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 3182214286
+    data2: 3291611135
   Type: 0
   IsGlobal: 0
   Labels: []
@@ -5354,7 +8185,7 @@ MonoBehaviour:
   Name: TimeLayer
   StudioPath: 
   Min: 0
-  Max: 2
+  Max: 4
   Default: 1
   ID:
     data1: 2126995294
@@ -5363,7 +8194,9 @@ MonoBehaviour:
   IsGlobal: 0
   Labels:
   - Neolithic
-  - Battle1690
+  - Fenian Cycle
+  - Early Christian Age
+  - Late Viking Age
   - Modern
   Exists: 1
 --- !u!114 &6736377213202774991
@@ -5394,7 +8227,7 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 98768
---- !u!114 &6909598274578088531
+--- !u!114 &6926678579210091628
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -5403,44 +8236,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
-  m_Name: bank:/Sites/Debug/Audio/surgeon.bank
-  m_EditorClassIdentifier: 
-  Path: Assets/StreamingAssets/Sites/Debug/Audio/surgeon.bank
-  Name: Sites/Debug/Audio/surgeon
-  StudioPath: bank:/surgeon
-  lastModified: 638815112790547021
-  FileSizes: []
-  Exists: 0
---- !u!114 &6958162412499599721
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/combat/berries_music
-  m_EditorClassIdentifier: 
-  Path: event:/combat/berries_music
-  Guid:
-    Data1: 988374413
-    Data2: 1231066701
-    Data3: -1620283763
-    Data4: -935952914
-  Banks:
-  - {fileID: 7063660329105735970}
-  - {fileID: -6584727833568685771}
-  - {fileID: -8165299445089214531}
-  IsStream: 1
-  Is3D: 1
-  IsOneShot: 0
-  Parameters: []
-  MinDistance: 1
-  MaxDistance: 20
-  Length: 45738
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/battle_farmer_cue/CueIndex
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: CueIndex
+  StudioPath: 
+  Min: 0
+  Max: 4
+  Default: 0
+  ID:
+    data1: 3753644876
+    data2: 2798513597
+  Type: 1
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
 --- !u!114 &6971874180647156737
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5464,6 +8274,38 @@ MonoBehaviour:
   Type: 0
   IsGlobal: 0
   Labels: []
+  Exists: 1
+--- !u!114 &7037901019467786717
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/oak_cue/Direction
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: Direction
+  StudioPath: 
+  Min: 0
+  Max: 7
+  Default: 0
+  ID:
+    data1: 40668191
+    data2: 1578994455
+  Type: 2
+  IsGlobal: 0
+  Labels:
+  - N
+  - NE
+  - E
+  - SE
+  - S
+  - SW
+  - W
+  - NW
   Exists: 1
 --- !u!114 &7043200866928059898
 MonoBehaviour:
@@ -5489,24 +8331,6 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
---- !u!114 &7063660329105735970
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
-  m_Name: bank:/Sites/Debug/Audio/Combat.bank
-  m_EditorClassIdentifier: 
-  Path: Assets/StreamingAssets/Sites/Debug/Audio/Combat.bank
-  Name: Sites/Debug/Audio/Combat
-  StudioPath: bank:/Combat
-  lastModified: 639016145802851809
-  FileSizes: []
-  Exists: 0
 --- !u!114 &7063762279769721520
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5526,8 +8350,6 @@ MonoBehaviour:
     Data3: -913172600
     Data4: -836348760
   Banks:
-  - {fileID: 5915714569042196833}
-  - {fileID: -1471485812431984116}
   - {fileID: -1623506985876570158}
   IsStream: 1
   Is3D: 1
@@ -5556,9 +8378,9 @@ MonoBehaviour:
     Data3: -2103075665
     Data4: -1856326545
   Banks:
-  - {fileID: 5915714569042196833}
-  - {fileID: -1471485812431984116}
   - {fileID: -1623506985876570158}
+  - {fileID: -6723193621704778678}
+  - {fileID: -7373783738172781343}
   IsStream: 1
   Is3D: 1
   IsOneShot: 0
@@ -5595,6 +8417,54 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 1404
+--- !u!114 &7273054857882361343
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/fox_cue/NormalizedDistance
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: NormalizedDistance
+  StudioPath: 
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 4032946360
+    data2: 2700767552
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &7273600716888970715
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/goodbye_audio/TestReset
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: TestReset
+  StudioPath: 
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 3090507692
+    data2: 1785002981
+  Type: 1
+  IsGlobal: 1
+  Labels: []
+  Exists: 1
 --- !u!114 &7295068272532622942
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5623,6 +8493,30 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 35982
+--- !u!114 &7364565904899930146
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter://CueIndex
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: CueIndex
+  StudioPath: 
+  Min: 0
+  Max: 4
+  Default: 0
+  ID:
+    data1: 3753644876
+    data2: 2798513597
+  Type: 1
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
 --- !u!114 &7420022013926712054
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5644,6 +8538,30 @@ MonoBehaviour:
     data1: 1112535331
     data2: 2309411790
   Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &7443679660229887855
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/modern_farmer_cue/CueIndex
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: CueIndex
+  StudioPath: 
+  Min: 0
+  Max: 4
+  Default: 0
+  ID:
+    data1: 3753644876
+    data2: 2798513597
+  Type: 1
   IsGlobal: 0
   Labels: []
   Exists: 1
@@ -5671,7 +8589,7 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
---- !u!114 &7816885278939675295
+--- !u!114 &7790590524913344463
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -5680,27 +8598,29 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/the_forest_audio
-  m_EditorClassIdentifier: 
-  Path: event:/the_forest_audio
-  Guid:
-    Data1: -1233517895
-    Data2: 1181162891
-    Data3: -1373806682
-    Data4: 449142386
-  Banks:
-  - {fileID: 5915714569042196833}
-  - {fileID: -1471485812431984116}
-  - {fileID: -1623506985876570158}
-  IsStream: 1
-  Is3D: 1
-  IsOneShot: 0
-  Parameters:
-  - {fileID: -2647591662992922059}
-  MinDistance: 1
-  MaxDistance: 20
-  Length: 53296
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/salmon_cue/Direction
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: Direction
+  StudioPath: 
+  Min: 0
+  Max: 7
+  Default: 0
+  ID:
+    data1: 40668191
+    data2: 1578994455
+  Type: 2
+  IsGlobal: 0
+  Labels:
+  - N
+  - NE
+  - E
+  - SE
+  - S
+  - SW
+  - W
+  - NW
+  Exists: 1
 --- !u!114 &7908589005149596952
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5773,36 +8693,6 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
---- !u!114 &7991416733947286805
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/heartsease_audio
-  m_EditorClassIdentifier: 
-  Path: event:/heartsease_audio
-  Guid:
-    Data1: -903644029
-    Data2: 1083995466
-    Data3: 851358358
-    Data4: 343187846
-  Banks:
-  - {fileID: 5915714569042196833}
-  - {fileID: -1471485812431984116}
-  - {fileID: -1623506985876570158}
-  IsStream: 1
-  Is3D: 1
-  IsOneShot: 0
-  Parameters:
-  - {fileID: 6361671858169058071}
-  MinDistance: 1
-  MaxDistance: 20
-  Length: 34859
 --- !u!114 &8054740853981100843
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5850,6 +8740,114 @@ MonoBehaviour:
   Type: 0
   IsGlobal: 0
   Labels: []
+  Exists: 1
+--- !u!114 &8250456991343072544
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/goodbye_audio
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/goodbye_audio
+  Guid:
+    Data1: -1864276226
+    Data2: 1200081112
+    Data3: 1497180557
+    Data4: -298073828
+  Banks:
+  - {fileID: -1623506985876570158}
+  IsStream: 1
+  Is3D: 0
+  IsOneShot: 1
+  Parameters:
+  - {fileID: 7273600716888970715}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 87606
+--- !u!114 &8304629082869539938
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/mercenary_encounter/CombatType
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: CombatType
+  StudioPath: 
+  Min: 1
+  Max: 5
+  Default: 1
+  ID:
+    data1: 3158361182
+    data2: 3085786482
+  Type: 1
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &8325256632883477195
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/boyne_cue/NormalizedDistance
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: NormalizedDistance
+  StudioPath: 
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 4032946360
+    data2: 2700767552
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &8326212567944771914
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/william_cue/Direction
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: Direction
+  StudioPath: 
+  Min: 0
+  Max: 7
+  Default: 0
+  ID:
+    data1: 40668191
+    data2: 1578994455
+  Type: 2
+  IsGlobal: 0
+  Labels:
+  - N
+  - NE
+  - E
+  - SE
+  - S
+  - SW
+  - W
+  - NW
   Exists: 1
 --- !u!114 &8383362571895565179
 MonoBehaviour:
@@ -5903,36 +8901,6 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
---- !u!114 &8425457123970464139
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/celtic_farmer_audio
-  m_EditorClassIdentifier: 
-  Path: event:/celtic_farmer_audio
-  Guid:
-    Data1: 670137374
-    Data2: 1227847142
-    Data3: 445860019
-    Data4: 1260604156
-  Banks:
-  - {fileID: 5915714569042196833}
-  - {fileID: -1471485812431984116}
-  - {fileID: -1623506985876570158}
-  IsStream: 1
-  Is3D: 1
-  IsOneShot: 0
-  Parameters:
-  - {fileID: 6030048755087489120}
-  MinDistance: 1
-  MaxDistance: 20
-  Length: 74295
 --- !u!114 &8447249208792425948
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5988,24 +8956,6 @@ MonoBehaviour:
   - The Forest
   - Lilac
   Exists: 1
---- !u!114 &8448846116905129152
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
-  m_Name: bank:/surgeon.bank
-  m_EditorClassIdentifier: 
-  Path: Assets/StreamingAssets/surgeon.bank
-  Name: surgeon
-  StudioPath: bank:/surgeon
-  lastModified: 638815112790547020
-  FileSizes: []
-  Exists: 1
 --- !u!114 &8565167282811094332
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6054,7 +9004,7 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
---- !u!114 &8730814462308336216
+--- !u!114 &8601083904743182322
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -6064,51 +9014,48 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/nav_cue/Character_ID
-  m_EditorClassIdentifier: 
-  Name: Character_ID
+  m_Name: parameter:/harp_girl_cue/Trigger
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: Trigger
   StudioPath: 
   Min: 0
-  Max: 30
+  Max: 1
   Default: 0
   ID:
-    data1: 315080306
-    data2: 373379782
-  Type: 2
+    data1: 3182214286
+    data2: 3291611135
+  Type: 0
   IsGlobal: 0
-  Labels:
-  - None
-  - William
-  - Oak
-  - Salmon
-  - Raven
-  - Fox
-  - Louis
-  - James
-  - Sergeant Major
-  - Grenadier
-  - Celtic Farmer
-  - Child Neolithic
-  - Barber Surgeon
-  - Harp Girl
-  - Child Modern
-  - Sarsfield
-  - Schomberg
-  - River Boyne
-  - Battle Farmer
-  - French Soldier
-  - Village Woman
-  - John Buckley
-  - Morning Glories
-  - Heartsease
-  - Mignonette
-  - Honeysuckle
-  - Yellow Poppy
-  - Redwood
-  - Lonely Flower
-  - The Forest
-  - Lilac
+  Labels: []
   Exists: 1
+--- !u!114 &8735481273513925045
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/berries_music
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/berries_music
+  Guid:
+    Data1: 988374413
+    Data2: 1231066701
+    Data3: -1620283763
+    Data4: -935952914
+  Banks:
+  - {fileID: -1623506985876570158}
+  - {fileID: -7373783738172781343}
+  IsStream: 1
+  Is3D: 1
+  IsOneShot: 0
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 45738
 --- !u!114 &8768052866398908895
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6165,7 +9112,7 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 69350
---- !u!114 &8871256283827726374
+--- !u!114 &9188696823279787146
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -6175,17 +9122,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/nav_cue/NormalizedDistance
-  m_EditorClassIdentifier: 
-  Name: NormalizedDistance
-  StudioPath: 
+  m_Name: parameter:/TestReset
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: TestReset
+  StudioPath: parameter:/TestReset
   Min: 0
   Max: 1
   Default: 0
   ID:
-    data1: 4032946360
-    data2: 2700767552
-  Type: 0
-  IsGlobal: 0
+    data1: 3090507692
+    data2: 1785002981
+  Type: 1
+  IsGlobal: 1
   Labels: []
   Exists: 1

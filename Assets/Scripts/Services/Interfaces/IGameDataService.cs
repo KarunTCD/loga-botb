@@ -25,7 +25,7 @@ namespace LoGa.LudoEngine.Services
         // POI Operations
         List<GameDataService.POIData> GetPOIsForTimeLayer(string layerId);
         List<GameDataService.POIData> GetPOIsForTimeLayer(int layerIndex);
-        GameDataService.POIData GetPOIData(int characterId);
+        GameDataService.POIData GetPOIData(string characterId);
 
         // Audio Event Conversion
         EventReference GetAudioEventReference(string eventName);

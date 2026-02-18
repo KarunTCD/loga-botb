@@ -15,7 +15,7 @@ namespace LoGa.LudoEngine.Game
         public ItemType type;           // Character or Artifact
         public string audioClip;
         public string sourceTimeLayer;
-        public int sourceCharacterId;   // Which character gave this item
+        public string sourceCharacterId;   // Which character gave this item
         public bool isNew;
     }
 
