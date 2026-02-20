@@ -68,6 +68,30 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
+--- !u!114 &-9009790920353472848
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter://Trigger
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: Trigger
+  StudioPath: 
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 3182214286
+    data2: 3291611135
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
 --- !u!114 &-8960227262851152707
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -604,6 +628,30 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 2108
+--- !u!114 &-7618990454679334775
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter://CueIndex
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: CueIndex
+  StudioPath: 
+  Min: 0
+  Max: 4
+  Default: 0
+  ID:
+    data1: 3753644876
+    data2: 2798513597
+  Type: 1
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
 --- !u!114 &-7609103010726695882
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -941,9 +989,6 @@ MonoBehaviour:
   - {fileID: 5915714569042196833}
   - {fileID: 5915714569042196833}
   - {fileID: 5915714569042196833}
-  - {fileID: 5915714569042196833}
-  - {fileID: 5915714569042196833}
-  - {fileID: 5915714569042196833}
   - {fileID: -6723193621704778678}
   - {fileID: -6723193621704778678}
   - {fileID: -6723193621704778678}
@@ -963,12 +1008,6 @@ MonoBehaviour:
   - {fileID: -6723193621704778678}
   - {fileID: -6723193621704778678}
   - {fileID: -6723193621704778678}
-  - {fileID: -6723193621704778678}
-  - {fileID: -6723193621704778678}
-  - {fileID: -6723193621704778678}
-  - {fileID: -7373783738172781343}
-  - {fileID: -7373783738172781343}
-  - {fileID: -7373783738172781343}
   - {fileID: -7373783738172781343}
   - {fileID: -7373783738172781343}
   - {fileID: -7373783738172781343}
@@ -1262,7 +1301,7 @@ MonoBehaviour:
   Path: Assets/StreamingAssets/Sites/Flowers/Audio/Master.bank
   Name: Sites/Flowers/Audio/Master
   StudioPath: bank:/Master
-  lastModified: 639068551231187949
+  lastModified: 639071586595307552
   FileSizes: []
   Exists: 1
 --- !u!114 &-6616890126446640730
@@ -1423,30 +1462,6 @@ MonoBehaviour:
   - W
   - NW
   Exists: 1
---- !u!114 &-6391785352436886402
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/greeting_audio/TestReset
-  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
-  Name: TestReset
-  StudioPath: 
-  Min: 0
-  Max: 1
-  Default: 0
-  ID:
-    data1: 3090507692
-    data2: 1785002981
-  Type: 1
-  IsGlobal: 1
-  Labels: []
-  Exists: 1
 --- !u!114 &-6306860814394566348
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1479,9 +1494,6 @@ MonoBehaviour:
   - {fileID: -1623506985876570158}
   - {fileID: -1623506985876570158}
   - {fileID: -1623506985876570158}
-  - {fileID: -1623506985876570158}
-  - {fileID: -1623506985876570158}
-  - {fileID: -1623506985876570158}
   - {fileID: 5915714569042196833}
   - {fileID: 5915714569042196833}
   - {fileID: 5915714569042196833}
@@ -1509,12 +1521,6 @@ MonoBehaviour:
   - {fileID: 5915714569042196833}
   - {fileID: 5915714569042196833}
   - {fileID: 5915714569042196833}
-  - {fileID: 5915714569042196833}
-  - {fileID: 5915714569042196833}
-  - {fileID: 5915714569042196833}
-  - {fileID: -7373783738172781343}
-  - {fileID: -7373783738172781343}
-  - {fileID: -7373783738172781343}
   - {fileID: -7373783738172781343}
   - {fileID: -7373783738172781343}
   - {fileID: -7373783738172781343}
@@ -1752,9 +1758,6 @@ MonoBehaviour:
   - {fileID: 5915714569042196833}
   - {fileID: 5915714569042196833}
   - {fileID: 5915714569042196833}
-  - {fileID: -6723193621704778678}
-  - {fileID: -6723193621704778678}
-  - {fileID: -6723193621704778678}
   - {fileID: -6723193621704778678}
   - {fileID: -6723193621704778678}
   - {fileID: -6723193621704778678}
@@ -3086,6 +3089,30 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
+--- !u!114 &-3726732506883235914
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter://NormalizedDistance
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: NormalizedDistance
+  StudioPath: 
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 4032946360
+    data2: 2700767552
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
 --- !u!114 &-3624488473159465819
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3501,6 +3528,38 @@ MonoBehaviour:
   Type: 0
   IsGlobal: 0
   Labels: []
+  Exists: 1
+--- !u!114 &-2809492531123305007
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter://Direction
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: Direction
+  StudioPath: 
+  Min: 0
+  Max: 7
+  Default: 0
+  ID:
+    data1: 40668191
+    data2: 1578994455
+  Type: 2
+  IsGlobal: 0
+  Labels:
+  - N
+  - NE
+  - E
+  - SE
+  - S
+  - SW
+  - W
+  - NW
   Exists: 1
 --- !u!114 &-2773270567912246794
 MonoBehaviour:
@@ -4692,6 +4751,38 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
+--- !u!114 &-364417150038457356
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter://Direction
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: Direction
+  StudioPath: 
+  Min: 0
+  Max: 7
+  Default: 0
+  ID:
+    data1: 40668191
+    data2: 1578994455
+  Type: 2
+  IsGlobal: 0
+  Labels:
+  - N
+  - NE
+  - E
+  - SE
+  - S
+  - SW
+  - W
+  - NW
+  Exists: 1
 --- !u!114 &-181250039341598711
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4849,8 +4940,7 @@ MonoBehaviour:
   IsStream: 1
   Is3D: 0
   IsOneShot: 1
-  Parameters:
-  - {fileID: -6391785352436886402}
+  Parameters: []
   MinDistance: 1
   MaxDistance: 20
   Length: 87606
@@ -4933,6 +5023,8 @@ MonoBehaviour:
   - {fileID: -1821588441518595626}
   - {fileID: 4059192091085653394}
   - {fileID: -7089891141938989668}
+  - {fileID: 7618374419174548177}
+  - {fileID: 2569386180358129008}
   EditorParameters:
   - {fileID: -518548296048703672}
   - {fileID: 9188696823279787146}
@@ -4944,7 +5036,7 @@ MonoBehaviour:
   StringsBanks:
   - {fileID: -7081113460468726475}
   cacheVersion: 131847
-  cacheTime: 639068553667367596
+  cacheTime: 639071586595410587
   SerializableEventsDict:
   - key: event:/harp_girl_audio
     index: 0
@@ -5737,9 +5829,6 @@ MonoBehaviour:
   - {fileID: 5915714569042196833}
   - {fileID: 5915714569042196833}
   - {fileID: 5915714569042196833}
-  - {fileID: 5915714569042196833}
-  - {fileID: 5915714569042196833}
-  - {fileID: 5915714569042196833}
   IsStream: 0
   Is3D: 0
   IsOneShot: 1
@@ -6319,6 +6408,199 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 70503
+--- !u!114 &2569386180358129008
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: 
+  Guid:
+    Data1: 1490455798
+    Data2: 1184992550
+    Data3: 126566831
+    Data4: 56866273
+  Banks:
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters:
+  - {fileID: -2809492531123305007}
+  - {fileID: -9009790920353472848}
+  - {fileID: -3726732506883235914}
+  - {fileID: 8163777752232212154}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 4576
 --- !u!114 &2660754039230036814
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6932,9 +7214,6 @@ MonoBehaviour:
   - {fileID: 5915714569042196833}
   - {fileID: 5915714569042196833}
   - {fileID: 5915714569042196833}
-  - {fileID: 5915714569042196833}
-  - {fileID: 5915714569042196833}
-  - {fileID: 5915714569042196833}
   - {fileID: -6723193621704778678}
   - {fileID: -6723193621704778678}
   - {fileID: -6723193621704778678}
@@ -6952,12 +7231,6 @@ MonoBehaviour:
   - {fileID: -6723193621704778678}
   - {fileID: -6723193621704778678}
   - {fileID: -6723193621704778678}
-  - {fileID: -6723193621704778678}
-  - {fileID: -6723193621704778678}
-  - {fileID: -6723193621704778678}
-  - {fileID: -7373783738172781343}
-  - {fileID: -7373783738172781343}
-  - {fileID: -7373783738172781343}
   - {fileID: -7373783738172781343}
   - {fileID: -7373783738172781343}
   - {fileID: -7373783738172781343}
@@ -8090,6 +8363,30 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
+--- !u!114 &6423993860615012085
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter://NormalizedDistance
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: NormalizedDistance
+  StudioPath: 
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 4032946360
+    data2: 2700767552
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
 --- !u!114 &6432366638044029968
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8565,6 +8862,354 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
+--- !u!114 &7618374419174548177
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: 
+  Guid:
+    Data1: 1490455798
+    Data2: 1184992550
+    Data3: 126566831
+    Data4: 56866273
+  Banks:
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: 5915714569042196833}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -6723193621704778678}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  - {fileID: -7373783738172781343}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters:
+  - {fileID: -364417150038457356}
+  - {fileID: 8521588573281022569}
+  - {fileID: 6423993860615012085}
+  - {fileID: -7618990454679334775}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 4576
 --- !u!114 &7627976274997881671
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8714,6 +9359,30 @@ MonoBehaviour:
     data1: 1112535331
     data2: 2309411790
   Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &8163777752232212154
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter://CueIndex
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: CueIndex
+  StudioPath: 
+  Min: 0
+  Max: 4
+  Default: 0
+  ID:
+    data1: 3753644876
+    data2: 2798513597
+  Type: 1
   IsGlobal: 0
   Labels: []
   Exists: 1
@@ -8955,6 +9624,30 @@ MonoBehaviour:
   - Lonely Flower
   - The Forest
   - Lilac
+  Exists: 1
+--- !u!114 &8521588573281022569
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter://Trigger
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: Trigger
+  StudioPath: 
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 3182214286
+    data2: 3291611135
+  Type: 0
+  IsGlobal: 0
+  Labels: []
   Exists: 1
 --- !u!114 &8565167282811094332
 MonoBehaviour:

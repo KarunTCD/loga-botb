@@ -14,12 +14,31 @@
           "berryAmbient": "event:/berries_music",
           "berryCollection": "event:/berries_collect"
       },
+      "dynamicTargeting": {
+        "radarAngle": 60.0,
+        "distanceThresholds": [
+          {
+            "minDistance": 100.0,
+            "targetAngle": 60.0,
+            "breakAngle": 90.0
+          },
+          {
+            "minDistance": 50.0,
+            "targetAngle": 45.0,
+            "breakAngle": 75.0
+          },
+          {
+            "minDistance": 0.0,
+            "targetAngle": 35.0,
+            "breakAngle": 65.0
+          }
+        ],
+        "autoSwitchDistanceBuffer": 10.0
+      },
       "proximityRadius": 20.0,
       "dialogueRadius": 10.0,
       "maxCueRadius": 500.0,
       "targetLockTime": 1.0,
-      "targetLockAngle": 30.0,
-      "targetBreakAngle": 45.0,
       "cueStagingDelay": 3.0,
       "cyclePauseDelay": 5.0,
       "baseMaxActiveCues": 1,

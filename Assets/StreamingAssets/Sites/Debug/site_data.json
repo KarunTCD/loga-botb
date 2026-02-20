@@ -18,7 +18,7 @@
       "dialogueRadius": 10.0,
       "maxCueRadius": 500.0,
       "targetLockTime": 1.0,
-      "targetLockAngle": 30.0,
+      "targetLockAngle": 22.5,
       "targetBreakAngle": 45.0,
       "cueStagingDelay": 3.0,
       "cyclePauseDelay": 4.0,

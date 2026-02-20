@@ -423,6 +423,19 @@ namespace LoGa.LudoEngine.Game
             return false;
         }
 
+        /// <summary>
+        /// Stop this POI's navigation cue audio if playing
+        /// </summary>
+        public void StopNavigationCue()
+        {
+            if (AudioService != null && AudioService.IsInstanceValid(navigationCueInstance))
+            {
+                AudioService.StopAudio(navigationCueInstance, false);
+                waitingForCueCompletion = false; // Also clear the waiting flag
+                Debug.Log($"Stopped navigation cue for {characterName}");
+            }
+        }
+
         public bool IsWaitingForCueCompletion()
         {
             return waitingForCueCompletion;

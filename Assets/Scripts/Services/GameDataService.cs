@@ -46,6 +46,7 @@ namespace LoGa.LudoEngine.Services
             public string welcomeGreetingEvent;
             public string rewardAnnouncementEvent;
             public string timePortalAudioEvent;
+            public string targetingFeedbackSound;
             public CombatAudioEvents combatAudioEvents;
         }
 
@@ -98,7 +99,7 @@ namespace LoGa.LudoEngine.Services
             public float latitude;
             public float longitude;
             public string characterAudioEvent;
-            public string navigationCueEvent;    
+            public string navigationCueEvent;
             public int navigationCueCount;
             public string portalType;
             public int portalJumpDistance;
@@ -112,9 +113,9 @@ namespace LoGa.LudoEngine.Services
         [System.Serializable]
         public class POIRewardData
         {
-            public int id;           
-            public string name;       
-            public string audioEvent; 
+            public int id;
+            public string name;
+            public string audioEvent;
         }
 
         #endregion
@@ -434,7 +435,7 @@ namespace LoGa.LudoEngine.Services
                 Debug.Log(message);
             }
         }
-        
+
         #endregion
     }
 }
