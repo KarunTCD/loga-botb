@@ -10,11 +10,12 @@ namespace LoGa.LudoEngine.Services
         // Configuration
         GameDataService.GameConfigurationData GameConfig { get; }
         bool IsDataLoaded { get; }
+        GameDataService.TutorialData Tutorial { get; }
 
         // Data Loading
         Task<bool> LoadGameDataAsync();
         Task<bool> LoadSiteData(string siteFolderName); 
-        void ClearSiteData(); 
+        void ClearSiteData();
 
         // Time Layer Operations
         List<GameDataService.TimeLayerData> GetAllTimeLayerData();

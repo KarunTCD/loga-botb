@@ -191,7 +191,7 @@ namespace LoGa.LudoEngine.Game
 
             Debug.Log($"Transitioning from {previousLayer.layerName} to {newLayer.layerName}");
 
-            GameManager.Instance?.SuspendNavigationAudio("time_portal_transition");
+            GameManager.Instance?.SuspendGameplay(GameManager.SuspensionReason.TimeTravel);
             TimeLayerChanging?.Invoke(previousLayer, newLayer);
 
             yield return new WaitForSeconds(transitionDuration);
@@ -230,7 +230,7 @@ namespace LoGa.LudoEngine.Game
 
         public void OnPOILayerLoadComplete()
         {
-            GameManager.Instance?.ResumeNavigationAudio("poi_layer_load_complete");
+            GameManager.Instance?.ResumeGameplay(GameManager.SuspensionReason.TimeTravel);
             Debug.Log("TimeLayerManager: POI layer loaded, navigation resumed");
         }
 

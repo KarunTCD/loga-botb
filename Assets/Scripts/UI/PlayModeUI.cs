@@ -178,7 +178,6 @@ namespace LoGa.LudoEngine.UI
                 GameManager.GameplayState.Interact => "At Point of Interest",
                 GameManager.GameplayState.Combat => "⚔ COMBAT ACTIVE ",
                 GameManager.GameplayState.Recovery => "Collecting berries",
-                GameManager.GameplayState.Paused => "Game Paused",
                 _ => "Game Active"
             };
 

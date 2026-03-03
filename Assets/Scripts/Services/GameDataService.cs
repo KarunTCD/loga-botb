@@ -21,6 +21,7 @@ namespace LoGa.LudoEngine.Services
         {
             public GameConfigurationData gameConfiguration;
             public List<TimeLayerData> timeLayers;
+            public TutorialData tutorial;
         }
 
         [System.Serializable]
@@ -42,7 +43,6 @@ namespace LoGa.LudoEngine.Services
             public int maxPlayerHealth;
             public GameBoundsData gameBounds;
             public string ambientAudioEvent;
-
             public string welcomeGreetingEvent;
             public string rewardAnnouncementEvent;
             public string timePortalAudioEvent;
@@ -111,6 +111,58 @@ namespace LoGa.LudoEngine.Services
         }
 
         [System.Serializable]
+        public class TutorialSpawnPosition
+        {
+            public string name;
+            public float latitude;
+            public float longitude;
+        }
+
+        [System.Serializable]
+        public class TutorialData
+        {
+            // POI Configuration
+            public bool enabled;
+            public string tutorialType;
+            public string characterId;
+            public string characterName;
+
+            public List<TutorialSpawnPosition> spawnPositions;
+
+            public string navigationCueEvent;
+            public string characterAudioEvent;
+            public int maxNavigationCues;
+
+            // Narrator Configuration
+            public string narratorEvent;
+            public TutorialDialogues dialogues;
+        }
+
+        [System.Serializable]
+        public class TutorialDialogueConfig
+        {
+            public int id;
+            public bool suspendGameplay = true;
+            public float preDelay = 0f;
+            public float postDelay = 0f;
+        }
+
+        [System.Serializable]
+        public class TutorialDialogues
+        {
+            public TutorialDialogueConfig introduction;
+            public TutorialDialogueConfig navigationStart;
+            public TutorialDialogueConfig targetLockSuccess;
+            public TutorialDialogueConfig targetLost;
+            public TutorialDialogueConfig targetRelockSuccess;
+            public TutorialDialogueConfig approaching;
+            public TutorialDialogueConfig proximityReached;
+            public TutorialDialogueConfig characterFound;
+            public TutorialDialogueConfig interactionComplete;
+            public TutorialDialogueConfig complete;
+        }
+
+        [System.Serializable]
         public class POIRewardData
         {
             public int id;
@@ -128,6 +180,7 @@ namespace LoGa.LudoEngine.Services
 
         public GameConfigurationData GameConfig { get; private set; }
         public bool IsDataLoaded { get; private set; }
+        public TutorialData Tutorial { get; private set; }
 
         private GameData rawGameData;
 
@@ -388,6 +441,7 @@ namespace LoGa.LudoEngine.Services
 
                 // Update cached config
                 GameConfig = rawGameData.gameConfiguration;
+                Tutorial = rawGameData.tutorial;
                 IsDataLoaded = true;
 
                 DebugLog($"GameDataService: Loaded site data for {siteFolderName}");
@@ -419,6 +473,7 @@ namespace LoGa.LudoEngine.Services
 
             rawGameData = null;
             GameConfig = null;
+            Tutorial = null; 
             IsDataLoaded = false;
 
             DebugLog("GameDataService: ✓ Site data cleared");

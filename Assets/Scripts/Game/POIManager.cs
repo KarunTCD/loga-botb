@@ -50,6 +50,7 @@ namespace LoGa.LudoEngine.Game
         [Header("References")]
         [SerializeField] private MapManager mapManager;
         [SerializeField] private TextMeshProUGUI debugText;
+        [SerializeField] private TextMeshProUGUI tutorialDebugText;
 
         [Header("POI Prefabs")]
         [SerializeField] private GameObject defaultPOIPrefab;
@@ -76,14 +77,25 @@ namespace LoGa.LudoEngine.Game
         [SerializeField] private TextMeshProUGUI completionText;
         [SerializeField] private TextMeshProUGUI directionDebugText;
 
+        // Tutorial event reporting
+        public event Action<POI> TutorialPOIProximityEntered;
+        public event Action<POI> TutorialPOIProximityExited;
+        public event Action<POI> TutorialPOIInnerZoneEntered;  // 5m dialogue zone
+        public event Action<POI> TutorialPOINarrationComplete;
+        public event Action<POI> TutorialPOITargetLocked;    
+        public event Action<POI> TutorialPOITargetUnlocked;    
+        public event Action<POI, float> TutorialPOIProgressMade; // includes distance progressed
+
         private IGameDataService gameDataService;
 
         private TimeLayer currentLayer;
-        private List<POI> activePOIs = new List<POI>();
-        private Dictionary<POI, POIUpdateData> poiDataCache = new Dictionary<POI, POIUpdateData>();
+        // Made public for TutorialManager access
+        public List<POI> activePOIs = new List<POI>();
+        public Dictionary<POI, POIUpdateData> poiDataCache = new Dictionary<POI, POIUpdateData>();
 
         private List<POI> activeCuePOIs = new List<POI>();
-        private TargetingState targetingState = new TargetingState { mode = TargetingMode.None };
+        // Made public for TutorialManager access
+        public TargetingState targetingState = new TargetingState { mode = TargetingMode.None };
 
         private EventReference welcomeGreetingEvent;
         private EventReference rewardAnnouncementEvent;
@@ -115,6 +127,13 @@ namespace LoGa.LudoEngine.Game
         private IAnalyticsService analyticsService;
 
         public int CurrentMaxActiveCues => currentMaxActiveCues;
+
+        // Tutorial mode state
+        private bool isTutorialMode = false;
+        private POI tutorialPOI = null;
+        private float tutorialPOIDistanceWhenLocked = 0f; 
+        private const float TUTORIAL_PROGRESS_THRESHOLD = 15f;
+        private bool tutorialInnerZoneTriggered = false;
 
         private IStorageService StorageService
         {
@@ -406,12 +425,12 @@ namespace LoGa.LudoEngine.Game
             bool hasPlayedWelcome = StorageService.Load<bool>("HasPlayedWelcomeDialogue");
             if (!hasPlayedWelcome && AudioService.IsInstanceValid(welcomeInstance))
             {
-                GameManager.Instance?.SuspendNavigationAudio("greeting_audio");
+                GameManager.Instance?.SuspendGameplay(GameManager.SuspensionReason.Loading);
                 welcomeInstance.setCallback(OnWelcomeComplete, EVENT_CALLBACK_TYPE.STOPPED);
                 AudioService.PlayAudio(welcomeInstance, Vector3.zero);
                 StorageService.Save("HasPlayedWelcomeDialogue", true);
                 AnalyticsService?.TrackEvent("welcome_greeting_played");
-                Debug.Log("Battle Oak greeting started - navigation suspended");
+                Debug.Log("Welcome greeting started - navigation suspended");
             }
         }
 
@@ -420,7 +439,7 @@ namespace LoGa.LudoEngine.Game
         {
             if (type == EVENT_CALLBACK_TYPE.STOPPED)
             {
-                GameManager.Instance?.ResumeNavigationAudio("oak_greeting_complete");
+                GameManager.Instance?.ResumeGameplay(GameManager.SuspensionReason.Loading);
                 Debug.Log("Oak greeting finished - navigation resumed");
             }
             return FMOD.RESULT.OK;
@@ -457,10 +476,19 @@ namespace LoGa.LudoEngine.Game
         {
             if (!isInitialized) return;
 
-            //Debug.Log($"GameplayState: {GameManager.Instance?.CurrentGameplayState}, POIs: {activePOIs.Count}");
+            // CHECK GAMEMANAGER STATE - Stop all updates when suspended
+            if (GameManager.Instance == null || GameManager.Instance.CurrentGameState != GameManager.GameState.Running)
+            {
+                return;
+            }
 
-            if (TimeLayerManager.Instance.IsTransitioning ||
-                GameManager.Instance?.CurrentMode != GameManager.GameMode.Player)
+            if (TimeLayerManager.Instance.IsTransitioning)
+                return;
+
+            // Allow updates in both Player mode AND Tutorial mode
+            var currentMode = GameManager.Instance?.CurrentMode;
+            if (currentMode != GameManager.GameMode.Player &&
+                currentMode != GameManager.GameMode.Tutorial)
                 return;
 
             if (LocationService == null) return;
@@ -473,7 +501,25 @@ namespace LoGa.LudoEngine.Game
             UpdatePOIDataCache(currentLocation.x, currentLocation.y);
             UpdatePOIProximity();
 
-            if (GameManager.Instance.CurrentGameplayState == GameManager.GameplayState.Wander)
+            if (isTutorialMode && Time.frameCount % 60 == 0)
+            {
+                Debug.Log($"[NAV-CHECK] GameplayState: {GameManager.Instance?.CurrentGameplayState}, " +
+                          $"isTutorialMode: {isTutorialMode}, " +
+                          $"tutorialPOI: {tutorialPOI?.characterName ?? "NULL"}, " +
+                          $"tutorialPOI.isInProximity: {tutorialPOI?.isInProximity ?? false}, " +
+                          $"shouldUpdateNavigation: {(isTutorialMode ? (tutorialPOI == null || !tutorialPOI.isInProximity) : (GameManager.Instance.CurrentGameplayState == GameManager.GameplayState.Wander))}");
+            }
+
+            // Allow navigation/targeting in Wander mode OR Tutorial mode (when not in proximity)
+            bool shouldUpdateNavigation = GameManager.Instance.CurrentGameplayState == GameManager.GameplayState.Wander;
+
+            if (isTutorialMode)
+            {
+                // In tutorial, allow navigation unless tutorial POI is in proximity
+                shouldUpdateNavigation = tutorialPOI == null || !tutorialPOI.isInProximity;
+            }
+
+            if (shouldUpdateNavigation)
             {
                 UpdateNavigationAndTargeting(currentLocation.x, currentLocation.y);
             }
@@ -489,12 +535,15 @@ namespace LoGa.LudoEngine.Game
             {
                 //DebugPOIStatus();
                 UpdateDiscoveryLogic();
+
+                // Check tutorial progress
+                CheckTutorialProgress();
             }
 
-            if (updateFrameCounter % 12 == 0)
-            {
-                UpdateDebugDisplay(currentLocation);
-            }
+            //if (updateFrameCounter % 12 == 0)
+            //{
+            //    UpdateDebugDisplay(currentLocation);
+            //}
         }
 
         public void SilenceAllPOIAudio()
@@ -521,12 +570,6 @@ namespace LoGa.LudoEngine.Game
 
         public void ClearAllNavigationState()
         {
-            // Clear debug text for all POIs
-            foreach (var poi in activePOIs)
-            {
-                poi.ClearDirectionDebug();
-            }
-
             ClearStandardNavigation(forcePause: false); 
             ClearTargeting(false); // No sound (clearing for other reasons)
          
@@ -559,14 +602,45 @@ namespace LoGa.LudoEngine.Game
         private void UpdatePOIProximity()
         {
             bool foundProximityPOI = false;
+
             foreach (var poi in activePOIs)
             {
+                // During tutorial, only update tutorial POI proximity
+                if (isTutorialMode && poi != tutorialPOI)
+                {
+                    continue;  // Skip non-tutorial POIs
+                }
+
                 if (poiDataCache.TryGetValue(poi, out POIUpdateData data))
                 {
                     float zoneValue = CalculateZoneFromDistance(data.distance);
                     bool wasInProximity = poi.isInProximity;
 
                     poi.UpdateProximity(data, zoneValue);
+
+                    // Fire tutorial events when tutorial POI proximity changes
+                    if (isTutorialMode && poi == tutorialPOI)
+                    {
+                        if (poi.isInProximity && !wasInProximity)
+                        {
+                            Debug.Log("POIManager: Tutorial POI entered proximity - firing event");
+                            TutorialPOIProximityEntered?.Invoke(poi);
+                        }
+                        else if (!poi.isInProximity && wasInProximity)
+                        {
+                            Debug.Log("POIManager: Tutorial POI exited proximity - firing event");
+                            TutorialPOIProximityExited?.Invoke(poi);
+                        }
+
+                        // FIRE INNER ZONE when Zone crosses 1.0 (dialogue starts)
+                        // Zone 0-1 = music only, Zone 1-2 = music + dialogue
+                        if (poi.isInProximity && !tutorialInnerZoneTriggered && zoneValue >= 1.0f)
+                        {
+                            Debug.Log($"POIManager: Tutorial POI inner zone entered (Zone: {zoneValue:F2}) - firing event");
+                            TutorialPOIInnerZoneEntered?.Invoke(poi);
+                            tutorialInnerZoneTriggered = true;
+                        }
+                    }
 
                     if (zoneValue > 0 && !wasInProximity && !proximityReachedThisSession.ContainsKey(poi.characterId))
                     {
@@ -635,8 +709,17 @@ namespace LoGa.LudoEngine.Game
 
         private List<POI> GetEligibleNavigationPOIs()
         {
-            return poiDataCache
-                .Where(p => p.Value.distance > proximityRadius && p.Value.distance <= maxCueRadius)
+            var eligible = poiDataCache
+                .Where(p => p.Value.distance > proximityRadius && p.Value.distance <= maxCueRadius);
+
+            // During tutorial mode, ONLY allow tutorial POI
+            if (isTutorialMode)
+            {
+                eligible = eligible.Where(p => p.Key == tutorialPOI);
+                //Debug.Log($"Tutorial mode: Filtering to only tutorial POI");
+            }
+
+            return eligible
                 .OrderBy(p => p.Value.distance)
                 .Take(currentMaxActiveCues)
                 .Select(p => p.Key)
@@ -781,7 +864,7 @@ namespace LoGa.LudoEngine.Game
             var targetPOI = targetingState.targetPOI;
             if (!poiDataCache.TryGetValue(targetPOI, out POIUpdateData data)) return;
 
-            Debug.Log($" Targeted: Waiting={targetPOI.IsWaitingForCueCompletion()}, Completed={targetPOI.CheckNavigationCueCompletion()}, DelayActive={waitingForNextCue}");
+            //Debug.Log($" Targeted: Waiting={targetPOI.IsWaitingForCueCompletion()}, Completed={targetPOI.CheckNavigationCueCompletion()}, DelayActive={waitingForNextCue}");
 
             // Check if previous targeted cue completed
             if (targetPOI.CheckNavigationCueCompletion())
@@ -957,6 +1040,23 @@ namespace LoGa.LudoEngine.Game
                 AnalyticsService?.TrackEvent($"portal_used_{poi.characterId}");
 
                 return; // Don't run normal completion logic - keep portal active
+            }
+
+            // TUTORIAL HANDLING: Allow completion but don't remove
+            if (isTutorialMode && poi == tutorialPOI)
+            {
+                Debug.Log($"Tutorial POI {poi.characterName} narration complete - keeping active");
+
+                // Fire tutorial event for TutorialManager
+                TutorialPOINarrationComplete?.Invoke(poi);
+
+                // Handle reward if present (for long tutorial version)
+                if (poi.hasReward && poi.rewardId > 0)
+                {
+                    HandlePOIReward(poi);
+                }
+
+                return; // Don't mark completed or remove - tutorial controls lifecycle
             }
 
             poi.MarkAsCompleted();
@@ -1180,7 +1280,7 @@ namespace LoGa.LudoEngine.Game
             AudioService.SetParameter(rewardInstance, "RewardID", rewardId);
             AudioService.PlayAudio(rewardInstance, Vector3.zero);
 
-            Debug.Log($"Battle Oak announces reward: ID {rewardId} - navigation cues paused");
+            Debug.Log($"Reward Announcement: ID {rewardId} - navigation cues paused");
         }
 
         [AOT.MonoPInvokeCallback(typeof(EVENT_CALLBACK))]
@@ -1274,6 +1374,17 @@ namespace LoGa.LudoEngine.Game
             targetingState.mode = TargetingMode.Locked;
             targetingState.targetPOI.UpdateTargetingState(true);
 
+            // Record distance when tutorial POI is locked
+            if (isTutorialMode && targetingState.targetPOI == tutorialPOI)
+            {
+                if (poiDataCache.TryGetValue(tutorialPOI, out POIUpdateData data))
+                {
+                    tutorialPOIDistanceWhenLocked = data.distance;
+                    Debug.Log($"POIManager: Recorded tutorial POI lock distance: {tutorialPOIDistanceWhenLocked:F1}m");
+                }
+            }
+
+
             // Clear standard navigation state when locking target
             ClearStandardNavigation(forcePause: false);
 
@@ -1294,6 +1405,13 @@ namespace LoGa.LudoEngine.Game
             AnalyticsService?.TrackEvent($"character_targeted_{targetingState.targetPOI.characterId}");
 
             Debug.Log($"Successfully locked onto {targetingState.targetPOI.characterName} - cleared standard navigation state");
+
+            // Fire tutorial event if tutorial POI was locked
+            if (isTutorialMode && targetingState.targetPOI == tutorialPOI)
+            {
+                Debug.Log("POIManager: Tutorial POI locked - firing event");
+                TutorialPOITargetLocked?.Invoke(targetingState.targetPOI);
+            }
         }
 
         /// <summary>
@@ -1304,6 +1422,9 @@ namespace LoGa.LudoEngine.Game
         {
             if (targetingState.mode == TargetingMode.Locked && targetingState.targetPOI != null)
             {
+                // Store POI reference before clearing
+                POI previousTarget = targetingState.targetPOI;
+
                 targetingState.targetPOI.UpdateTargetingState(false);
                 targetingState.targetPOI.ResetNavigationCueIndex();
 
@@ -1320,6 +1441,13 @@ namespace LoGa.LudoEngine.Game
 
                 // Clear standard navigation with forced pause when returning from locked mode
                 ClearStandardNavigation(forcePause: true);
+
+                // Fire tutorial event if tutorial POI was unlocked
+                if (playUnlockSound && isTutorialMode && previousTarget == tutorialPOI)
+                {
+                    Debug.Log("POIManager: Tutorial POI unlocked - firing event");
+                    TutorialPOITargetUnlocked?.Invoke(previousTarget);
+                }
             }
 
             Debug.Log($"Clearing targeting: {targetingState.targetPOI?.characterName ?? "None"} (playUnlockSound: {playUnlockSound})");
@@ -1405,13 +1533,28 @@ namespace LoGa.LudoEngine.Game
                                $"MaxCues: {currentMaxActiveCues} (Completed: {totalCompletedPOIs})\n" +
                                $"Head: {HeadTrackingService.CurrentHeading:F0}°\n";
             }
-            else
             {
-                debugText.text = $"Layer: {currentLayer.layerName}\n" +
-                               $"POIs: {activePOIs.Count}\n" +
-                               $"MaxCues: {currentMaxActiveCues} (Completed: {totalCompletedPOIs})\n" +
-                               $"Head: {HeadTrackingService.CurrentHeading:F0}°\n" +
-                               $"Location: {location.x:F6}, {location.y:F6}\n";
+                // TUTORIAL MODE: Show distance to tutorial POI
+                if (isTutorialMode && tutorialPOI != null && poiDataCache.TryGetValue(tutorialPOI, out POIUpdateData tutData))
+                {
+                    tutorialDebugText.text = $"TUTORIAL MODE\n" +
+                                   $"Distance to Tutorial POI: {tutData.distance:F1}m\n" +
+                                   $"Proximity Radius: {proximityRadius:F1}m\n" +
+                                   $"Zone: {CalculateZoneFromDistance(tutData.distance):F2}\n" +
+                                   $"In Proximity: {tutorialPOI.isInProximity}\n" +
+                                   $"Player: ({location.x:F6}, {location.y:F6})\n" +
+                                   $"POI: ({tutorialPOI.latitude:F6}, {tutorialPOI.longitude:F6})\n" +
+                                   $"Head: {HeadTrackingService.CurrentHeading:F0}°";
+                }
+                else
+                {
+                    // Normal mode display
+                    debugText.text = $"Layer: {currentLayer.layerName}\n" +
+                                   $"POIs: {activePOIs.Count}\n" +
+                                   $"MaxCues: {currentMaxActiveCues} (Completed: {totalCompletedPOIs})\n" +
+                                   $"Head: {HeadTrackingService.CurrentHeading:F0}°\n" +
+                                   $"Location: {location.x:F6}, {location.y:F6}\n";
+                }
             }
         }
 
@@ -1672,7 +1815,6 @@ namespace LoGa.LudoEngine.Game
                         Vector2 poiPosition = mapManager.GetScreenPosition(poi.latitude, poi.longitude);
                         poi.marker.anchoredPosition = poiPosition;
                     }
-                    poi.SetDirectionDebugText(directionDebugText); // Pass debug text reference to POI
                     successfullyInitialized.Add(poi);
                 }
             }
@@ -1896,6 +2038,297 @@ namespace LoGa.LudoEngine.Game
 
             Debug.Log("POIManager: All POI audio stopped");
         }
+
+        #region Tutorial Mode
+
+        // Tutorial command methods for TutorialManager to use
+        public void TutorialPlayCharacterMusic(POI poi)
+        {
+            if (!isTutorialMode || poi != tutorialPOI) return;
+
+            Debug.Log("POIManager: Tutorial commanded to play character music");
+            // Music already starts automatically when entering proximity
+            // This method exists for explicit control if needed in future
+        }
+
+        public void TutorialPlayCharacterDialogue(POI poi)
+        {
+            if (!isTutorialMode || poi != tutorialPOI) return;
+
+            Debug.Log("POIManager: Tutorial commanded to play character dialogue");
+            // Dialogue already playing - this is just for explicit restart if needed
+            // In current implementation, dialogue auto-plays when in proximity
+        }
+
+        public void TutorialStopCharacterAudio(POI poi)
+        {
+            if (!isTutorialMode || poi != tutorialPOI) return;
+
+            Debug.Log("POIManager: Tutorial commanded to stop character audio");
+            poi.SilenceAudio();
+        }
+
+        // Check if player made progress toward tutorial POI
+        private void CheckTutorialProgress()
+        {
+            if (!isTutorialMode || tutorialPOI == null) return;
+
+            // Only check progress when locked
+            if (targetingState.mode != TargetingMode.Locked || targetingState.targetPOI != tutorialPOI) return;
+
+            if (poiDataCache.TryGetValue(tutorialPOI, out POIUpdateData data))
+            {
+                float progressMade = tutorialPOIDistanceWhenLocked - data.distance;
+
+                if (progressMade >= TUTORIAL_PROGRESS_THRESHOLD)
+                {
+                    Debug.Log($"POIManager: Tutorial progress detected - {progressMade:F1}m closer - firing event");
+                    TutorialPOIProgressMade?.Invoke(tutorialPOI, progressMade);
+
+                    // Reset distance so we don't fire multiple times
+                    tutorialPOIDistanceWhenLocked = data.distance;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Enter tutorial mode - spawn only tutorial POI
+        /// </summary>
+        public void EnterTutorialMode()
+        {
+            Debug.Log("POIManager: Entering tutorial mode");
+
+            isTutorialMode = true;
+            tutorialInnerZoneTriggered = false;
+            // Spawn tutorial POI (layer POIs remain in activePOIs)
+            SpawnTutorialPOI();
+
+            Debug.Log($"POIManager: Tutorial mode active - {activePOIs.Count} total POIs (including tutorial POI)");
+        }
+
+        /// <summary>
+        /// Exit tutorial mode - cleanup tutorial POI
+        /// </summary>
+        public void ExitTutorialMode()
+        {
+            Debug.Log("POIManager: Exiting tutorial mode");
+
+            isTutorialMode = false;
+
+            // Cleanup tutorial POI (layer POIs remain untouched)
+            if (tutorialPOI != null)
+            {
+                tutorialPOI.Cleanup();
+                activePOIs.Remove(tutorialPOI);
+
+                if (poiDataCache.ContainsKey(tutorialPOI))
+                {
+                    poiDataCache.Remove(tutorialPOI);
+                }
+
+                tutorialPOI = null;
+            }
+
+            Debug.Log($"POIManager: Tutorial mode exited - {activePOIs.Count} layer POIs remain active");
+        }
+
+        /// <summary>
+        /// Spawn tutorial POI from JSON configuration
+        /// </summary>
+        private void SpawnTutorialPOI()
+        {
+            if (gameDataService?.Tutorial == null)
+            {
+                Debug.LogError("POIManager: No tutorial configuration found in JSON!");
+                return;
+            }
+
+            var tutorialData = gameDataService.Tutorial;
+
+            if (!tutorialData.enabled)
+            {
+                Debug.LogWarning("POIManager: Tutorial POI is disabled in configuration");
+                return;
+            }
+
+            // SELECT SPAWN POSITION BASED ON PLAYER LOCATION
+            var spawnPosition = SelectTutorialSpawnPosition(tutorialData);
+
+            if (spawnPosition == null)
+            {
+                Debug.LogError("POIManager: Failed to select tutorial spawn position!");
+                return;
+            }
+
+            Debug.Log($"POIManager: Spawning tutorial POI at {spawnPosition.name} ({spawnPosition.latitude}, {spawnPosition.longitude})");
+
+            try
+            {
+                // Create tutorial POI using selected position
+                tutorialPOI = CreateTutorialPOI(tutorialData, spawnPosition);
+
+                if (tutorialPOI != null)
+                {
+                    activePOIs.Add(tutorialPOI);
+
+                    if (tutorialPOI.Initialize(proximityRadius, dialogueRadius))
+                    {
+                        if (mapManager != null && tutorialPOI.marker != null)
+                        {
+                            Vector2 poiPosition = mapManager.GetScreenPosition(tutorialPOI.latitude, tutorialPOI.longitude);
+                            tutorialPOI.marker.anchoredPosition = poiPosition;
+                        }
+
+                        Debug.Log($"POIManager: Tutorial POI spawned successfully at {spawnPosition.name}");
+                    }
+                    else
+                    {
+                        Debug.LogError("POIManager: Failed to initialize tutorial POI");
+                        activePOIs.Remove(tutorialPOI);
+                        tutorialPOI = null;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"POIManager: Error spawning tutorial POI: {e.Message}");
+            }
+        }
+
+        // Select spawn position based on player location
+        private GameDataService.TutorialSpawnPosition SelectTutorialSpawnPosition(GameDataService.TutorialData tutorialData)
+        {
+            if (tutorialData.spawnPositions == null || tutorialData.spawnPositions.Count < 2)
+            {
+                Debug.LogError("POIManager: Tutorial must have at least 2 spawn positions!");
+                return null;
+            }
+
+            // Get player's current location
+            if (LocationService == null)
+            {
+                Debug.LogError("POIManager: LocationService not available!");
+                return null;
+            }
+
+            Vector2 playerLocation = LocationService.GetCurrentLocation();
+
+            if (playerLocation == Vector2.zero)
+            {
+                Debug.LogError("POIManager: Player location not available!");
+                return null;
+            }
+
+            Debug.Log($"POIManager: Player location: ({playerLocation.x:F6}, {playerLocation.y:F6})");
+
+            // Check distance to each spawn position
+            foreach (var spawnPos in tutorialData.spawnPositions)
+            {
+                float distance = CalculateDistance(playerLocation.x, playerLocation.y, spawnPos.latitude, spawnPos.longitude);
+                Debug.Log($"POIManager: Distance to {spawnPos.name}: {distance:F1}m");
+
+                // If this position is far enough from player, use it
+                if (distance >= proximityRadius + 10f) // 10m buffer for safety
+                {
+                    Debug.Log($"POIManager: Selected {spawnPos.name} (distance: {distance:F1}m)");
+                    return spawnPos;
+                }
+            }
+
+            // Fallback: Use the position farthest from player
+            var farthestPosition = tutorialData.spawnPositions
+                .OrderByDescending(pos => CalculateDistance(playerLocation.x, playerLocation.y, pos.latitude, pos.longitude))
+                .First();
+
+            float farthestDistance = CalculateDistance(playerLocation.x, playerLocation.y, farthestPosition.latitude, farthestPosition.longitude);
+            Debug.LogWarning($"POIManager: No position > {proximityRadius + 10f}m found. Using farthest: {farthestPosition.name} ({farthestDistance:F1}m)");
+
+            return farthestPosition;
+        }
+
+        /// <summary>
+        /// Create POI object from tutorial data
+        /// </summary>
+        private POI CreateTutorialPOI(GameDataService.TutorialData tutorialData, GameDataService.TutorialSpawnPosition spawnPosition)
+        {
+            try
+            {
+                GameObject prefab = GetPrefabForCharacter(tutorialData.characterName, tutorialData.characterId);
+                GameObject poiObject = Instantiate(prefab, transform);
+                poiObject.name = $"Tutorial_POI_{tutorialData.characterId}";
+
+                POI poi = new POI();
+
+                poi.characterName = tutorialData.characterName;
+                poi.characterId = tutorialData.characterId;
+
+                // USE SELECTED SPAWN POSITION
+                poi.latitude = spawnPosition.latitude;
+                poi.longitude = spawnPosition.longitude;
+
+                poi.navigationCueEvent = tutorialData.navigationCueEvent;
+                poi.characterAudioEvent = tutorialData.characterAudioEvent;
+
+                poi.hasReward = false;
+                poi.rewardId = 0;
+                poi.rewardName = "";
+                poi.portalType = PortalType.None;
+                poi.hasMultipleVariants = false;
+                poi.narrationVariantCount = 1;
+
+                var poiData = new GameDataService.POIData
+                {
+                    characterId = tutorialData.characterId,
+                    characterName = tutorialData.characterName,
+                    latitude = spawnPosition.latitude,  
+                    longitude = spawnPosition.longitude, 
+                    navigationCueEvent = tutorialData.navigationCueEvent,
+                    characterAudioEvent = tutorialData.characterAudioEvent,
+                    navigationCueCount = tutorialData.maxNavigationCues,
+                    hasReward = false,
+                    reward = null,
+                    portalType = "None",
+                    portalJumpDistance = 0,
+                    portalActivationAudio = "",
+                    hasMultipleVariants = false,
+                    narrationVariantCount = 1
+                };
+
+                poi.InitializeFromData(poiData, poiObject);
+
+                RectTransform markerTransform = poiObject.GetComponentInChildren<RectTransform>();
+                if (markerTransform != null)
+                {
+                    poi.marker = markerTransform;
+                }
+
+                Debug.Log($"POIManager: Created tutorial POI at {spawnPosition.name}");
+                return poi;
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"POIManager: Failed to create tutorial POI: {e.Message}");
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Check if currently in tutorial mode
+        /// </summary>
+        public bool IsTutorialMode()
+        {
+            return isTutorialMode;
+        }
+
+        /// <summary>
+        /// Get the tutorial POI reference
+        /// </summary>
+        public POI GetTutorialPOI()
+        {
+            return tutorialPOI;
+        }
+
+        #endregion
 
         private void OnDestroy()
         {

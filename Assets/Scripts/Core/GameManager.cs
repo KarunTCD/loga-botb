@@ -35,7 +35,8 @@ namespace LoGa.LudoEngine.Core
         {
             Inactive,
             Player,
-            Spectator
+            Spectator,
+            Tutorial
         }
 
         public enum GameState
@@ -50,7 +51,15 @@ namespace LoGa.LudoEngine.Core
             Interact,  // POI dialogue/music
             Combat,    // Mercenary combat
             Recovery,  // Berry collection for health
-            Paused     // Game paused
+        }
+
+        public enum SuspensionReason
+        {
+            None,
+            Tutorial,
+            PauseMenu,
+            TimeTravel,
+            Loading
         }
 
         #endregion
@@ -63,6 +72,8 @@ namespace LoGa.LudoEngine.Core
         [SerializeField] private UIManager uiManager;
         [SerializeField] private MapManager mapManager;
         [SerializeField] private POIManager poiManager;
+        [SerializeField] private HardwareManager hardwareManager;
+        [SerializeField] private TutorialManager tutorialManager;
 
         private EventReference mercenaryEncounterEvent;
         private EventReference mercenaryFootstepsEvent;
@@ -89,6 +100,17 @@ namespace LoGa.LudoEngine.Core
         private GameplayState currentGameplayState = GameplayState.Wander;
         private GameplayState previousGameplayState = GameplayState.Wander;
         private GameState gameState = GameState.Suspended;
+
+        // Suspension tracking
+        private SuspensionReason suspensionReason = SuspensionReason.None;
+
+        // FMOD buses to pause during suspension (all except Voice for tutorial narrator)
+        private readonly string[] pausableBuses = new string[]
+        {
+            "bus:/Music",
+            "bus:/SFX",
+            "bus:/Ambient"
+        };
 
         // Session data
         private string currentSessionId;
@@ -178,6 +200,15 @@ namespace LoGa.LudoEngine.Core
         public float SpectatorHeading => spectatorHeading;
         public bool IsReceivingSpectatorData => isReceivingSpectatorData;
         public bool SystemsReady => systemsReady;
+        /// <summary>
+        /// Check if gameplay is currently suspended
+        /// </summary>
+        public bool IsSuspended => gameState == GameState.Suspended;
+
+        /// <summary>
+        /// Get the reason for current suspension (None if not suspended)
+        /// </summary>
+        public SuspensionReason CurrentSuspensionReason => suspensionReason;
 
         #endregion
 
@@ -218,7 +249,10 @@ namespace LoGa.LudoEngine.Core
         {
             if (!systemsReady) return;
 
-            if (currentMode == GameMode.Player && gameState == GameState.Running)
+            // Stop all gameplay updates when suspended
+            if (gameState != GameState.Running) return;
+
+            if (currentMode == GameMode.Player)
             {
                 UpdateGameplayMode();
             }
@@ -304,7 +338,7 @@ namespace LoGa.LudoEngine.Core
 
             try
             {
-                uiManager.Initialize(this);
+                uiManager.Initialize(this, hardwareManager);  
                 Debug.Log("GameManager: UIManager initialized successfully");
                 return true;
             }
@@ -380,10 +414,10 @@ namespace LoGa.LudoEngine.Core
 
                 Debug.Log("GameManager: AudioService obtained successfully");
 
-                // ✅ Combat audio is completely optional - never blocks initialization
+                // Combat audio is completely optional - never blocks initialization
                 InitializeCombatAudio(); // Don't even check return value
 
-                // ✅ Set audioInitialized regardless of combat events
+                // Set audioInitialized regardless of combat events
                 audioInitialized = true;
                 Debug.Log("GameManager: Audio systems initialized successfully - audioInitialized = TRUE");
 
@@ -640,6 +674,9 @@ namespace LoGa.LudoEngine.Core
         {
             switch (currentPhase)
             {
+                case ApplicationPhase.Tutorial:
+                    // Cleanup handled in ExitTutorial()
+                    break;
                 case ApplicationPhase.PlayerMode:
                     ExitPlayerMode();
                     break;
@@ -656,6 +693,9 @@ namespace LoGa.LudoEngine.Core
                 case ApplicationPhase.MainMenu:
                     EnterMainMenu();
                     break;
+                case ApplicationPhase.Tutorial:
+                    EnterTutorial();  
+                    break;
                 case ApplicationPhase.PlayerMode:
                     EnterPlayerMode();
                     break;
@@ -669,6 +709,12 @@ namespace LoGa.LudoEngine.Core
         {
             Debug.Log("GameManager: Entering MainMenu phase");
             SuspendGameplaySystems();
+        }
+
+        private void EnterTutorial()
+        {
+            Debug.Log("GameManager: Entering Tutorial phase");
+            // Tutorial activation is handled by UIManager calling StartGameplayTutorial()
         }
 
         private void EnterPlayerMode()
@@ -690,6 +736,13 @@ namespace LoGa.LudoEngine.Core
         private void ExitPlayerMode()
         {
             Debug.Log("GameManager: Exiting PlayerMode - triggering complete site unload");
+
+            // Stop hardware services
+            if (hardwareManager != null)
+            {
+                hardwareManager.StopServices();
+                Debug.Log("GameManager: Hardware services stopped");
+            }
 
             // CRITICAL: Unload site first (triggers complete reset)
             if (SiteManager.Instance != null)
@@ -718,10 +771,12 @@ namespace LoGa.LudoEngine.Core
             if (poiManager != null) poiManager.enabled = false;
             if (mapManager != null) mapManager.enabled = false;
 
-            currentGameplayState = GameplayState.Paused;
             gameState = GameState.Suspended;
 
-            Debug.Log("GameManager: Gameplay systems suspended");
+            // Don't change currentGameplayState - it stays as Wander/Interact/etc
+            // This allows us to return to the correct state when resuming
+
+            Debug.Log($"GameManager: Gameplay systems suspended (state remains {currentGameplayState})");
         }
 
         private void ActivateGameplaySystems()
@@ -751,6 +806,19 @@ namespace LoGa.LudoEngine.Core
 
             try
             {
+                // Verify hardware services are running (should be from hardware setup)
+                if (hardwareManager != null && !hardwareManager.AreServicesRunning)
+                {
+                    Debug.LogWarning("GameManager: Services not running - attempting restart");
+                    bool setupSuccess = await hardwareManager.BeginSetup();
+
+                    if (!setupSuccess)
+                    {
+                        Debug.LogError("GameManager: Failed to start hardware services");
+                        return false;
+                    }
+                }
+
                 currentSessionId = System.Guid.NewGuid().ToString();
                 Debug.Log($"GameManager: Generated session ID: {currentSessionId}");
 
@@ -765,18 +833,6 @@ namespace LoGa.LudoEngine.Core
                 if (!sessionInitialized)
                 {
                     Debug.LogError("GameManager: Failed to initialize Firebase session");
-                    return false;
-                }
-
-                if (!await InitializeLocationServices())
-                {
-                    Debug.LogError("GameManager: Failed to initialize location services");
-                    return false;
-                }
-
-                if (!await InitializeHeadTracking())
-                {
-                    Debug.LogError("GameManager: Failed to initialize head tracking");
                     return false;
                 }
 
@@ -855,16 +911,30 @@ namespace LoGa.LudoEngine.Core
             TransitionToPhase(ApplicationPhase.HardwareSetup);
         }
 
+        public void CompleteHardwareSetup()
+        {
+            Debug.Log("GameManager: Hardware setup completed");
+
+            // Services are already started by HardwareManager during setup
+            // Just verify they're running
+            if (hardwareManager != null)
+            {
+                var status = hardwareManager.GetStatus();
+                Debug.Log($"GameManager: Hardware status - Location: {status.locationActive}, HeadTracking: {status.headTrackingActive}");
+
+                if (!status.servicesRunning)
+                {
+                    Debug.LogWarning("GameManager: Services not fully running after hardware setup");
+                }
+            }
+
+            TransitionToPhase(ApplicationPhase.SiteSelection);
+        }
+
         public void StartTutorial()
         {
             Debug.Log("GameManager: Starting tutorial");
             TransitionToPhase(ApplicationPhase.Tutorial);
-        }
-
-        public void CompleteHardwareSetup()
-        {
-            Debug.Log("GameManager: Hardware setup completed");
-            TransitionToPhase(ApplicationPhase.SiteSelection);
         }
 
         public void CompleteSiteSelection()
@@ -888,11 +958,16 @@ namespace LoGa.LudoEngine.Core
 
         public void CompleteTutorial()
         {
-            Debug.Log("GameManager: Tutorial completed");
+            Debug.Log("GameManager: Tutorial completed successfully");
 
+            // Mark as completed
             PlayerPrefs.SetString("TutorialCompleted", "true");
             PlayerPrefs.Save();
 
+            // Cleanup tutorial mode
+            ExitTutorial();
+
+            // Transition to mode selection
             TransitionToPhase(ApplicationPhase.ModeSelection);
         }
 
@@ -900,142 +975,25 @@ namespace LoGa.LudoEngine.Core
         {
             if (gameState == GameState.Running)
             {
-                previousGameplayState = currentGameplayState; // store current state
-                TransitionToGameplayState(GameplayState.Paused);
-                gameState = GameState.Suspended;
-                Debug.Log("Game paused");
+                // Save current gameplay state (Wander/Interact/Combat/Recovery)
+                previousGameplayState = currentGameplayState;
+
+                // Suspend gameplay (stops updates, pauses audio)
+                SuspendGameplay(SuspensionReason.PauseMenu);
+
+                Debug.Log($"Game paused (was in {previousGameplayState} state)");
             }
-            else if (gameState == GameState.Suspended)
+            else if (gameState == GameState.Suspended && suspensionReason == SuspensionReason.PauseMenu)
             {
-                gameState = GameState.Running;
-                // Resume previous state
-                TransitionToGameplayState(previousGameplayState);
-                Debug.Log("Game resumed");
+                // Resume gameplay
+                ResumeGameplay(SuspensionReason.PauseMenu);
+
+                Debug.Log($"Game resumed (returning to {currentGameplayState} state)");
             }
         }
 
         #endregion
 
-        #region Pause Management
-
-        private bool isPaused = false;
-        public bool IsPaused => isPaused;
-
-        /// <summary>
-        /// Pause or unpause the game
-        /// </summary>
-        public void SetPaused(bool paused)
-        {
-            if (isPaused == paused) return;
-
-            isPaused = paused;
-
-            if (paused)
-            {
-                PauseGame();
-            }
-            else
-            {
-                ResumeGame();
-            }
-
-            Debug.Log($"GameManager: Game {(paused ? "PAUSED" : "RESUMED")}");
-        }
-
-        /// <summary>
-        /// Toggle pause state
-        /// </summary>
-        private void PauseGame()
-        {
-            isPaused = true;
-
-            // Suspend navigation audio (using your existing methods)
-            SuspendNavigationAudio("game_paused");
-
-            Debug.Log("GameManager: Game paused - audio suspended");
-        }
-
-        private void ResumeGame()
-        {
-            isPaused = false;
-
-            // Resume navigation audio (using your existing methods)
-            ResumeNavigationAudio("game_resumed");
-
-            Debug.Log("GameManager: Game resumed - audio resumed");
-        }
-
-        #endregion
-
-
-        #region Service Helpers
-
-        private async Task<bool> InitializeLocationServices()
-        {
-            try
-            {
-                var locationService = await ServiceLocator.GetInitializedService<ILocationService>();
-                if (locationService == null)
-                {
-                    Debug.LogError("GameManager: Location service not available");
-                    return false;
-                }
-
-                if (!locationService.IsRunning)
-                {
-                    locationService.StartLocationUpdates();
-                }
-
-                Debug.Log("GameManager: Location services initialized");
-                return true;
-            }
-            catch (Exception e)
-            {
-                Debug.LogError($"GameManager: Location service initialization error - {e.Message}");
-                return false;
-            }
-        }
-
-        private async Task<bool> InitializeHeadTracking()
-        {
-            try
-            {
-                var headTrackingService = await ServiceLocator.GetInitializedService<IHeadTrackingService>();
-                if (headTrackingService == null)
-                {
-                    Debug.LogError("GameManager: Head tracking service not available");
-                    return false;
-                }
-
-                bool isCurrentlyTracking = !string.IsNullOrEmpty(headTrackingService.ActiveProviderName) &&
-                                          headTrackingService.ActiveProviderName != "None";
-
-                if (!isCurrentlyTracking)
-                {
-                    headTrackingService.StartTracking();
-                }
-
-                Debug.Log("GameManager: Head tracking initialized");
-                return true;
-            }
-            catch (Exception e)
-            {
-                Debug.LogError($"GameManager: Head tracking initialization error - {e.Message}");
-                return false;
-            }
-        }
-
-        public bool IsPlayerWithinGameBounds(float latitude, float longitude)
-        {
-            if (GameDataService?.GameConfig?.gameBounds == null)
-            {
-                return true;
-            }
-
-            return GameDataService.GameConfig.gameBounds.IsWithinBounds(latitude, longitude);
-        }
-
-        #endregion
 
         #region Session Cleanup
 
@@ -1137,18 +1095,6 @@ namespace LoGa.LudoEngine.Core
             {
                 Debug.LogError($"GameManager: Failed to stop ambient music - {e.Message}");
             }
-        }
-
-        public void SuspendNavigationAudio(string reason)
-        {
-            Debug.Log($"GameManager: Suspending navigation audio - {reason}");
-            TransitionToGameplayState(GameplayState.Paused);
-        }
-
-        public void ResumeNavigationAudio(string reason)
-        {
-            Debug.Log($"GameManager: Resuming navigation audio - {reason}");
-            TransitionToGameplayState(GameplayState.Wander);
         }
 
         private void OnTimeLayerChanged(TimeLayer newLayer)
@@ -1373,8 +1319,6 @@ namespace LoGa.LudoEngine.Core
                 (GameplayState.Combat, GameplayState.Recovery) => true,
                 (GameplayState.Combat, GameplayState.Wander) => true,
                 (GameplayState.Recovery, GameplayState.Wander) => true,
-                (_, GameplayState.Paused) => true,
-                (GameplayState.Paused, _) => true,
                 _ => false
             };
         }
@@ -1874,6 +1818,104 @@ namespace LoGa.LudoEngine.Core
 
         #endregion
 
+        #region Tutorial Mode
+
+        /// <summary>
+        /// Start gameplay tutorial
+        /// Called by UIManager when entering tutorial phase
+        /// </summary>
+        public void StartGameplayTutorial()
+        {
+            Debug.Log("GameManager: Starting gameplay tutorial");
+
+            try
+            {
+                // Set tutorial mode
+                SetInternalGameMode(GameMode.Tutorial);
+
+                // Verify hardware services are running (should be from hardware setup)
+                if (hardwareManager != null && !hardwareManager.AreServicesRunning)
+                {
+                    Debug.LogWarning("GameManager: Services not running for tutorial - they should have been started in hardware setup");
+                }
+
+                // Activate gameplay systems
+                ActivateGameplaySystems();
+
+                // Tell POIManager to enter tutorial mode (spawns only tutorial POI)
+                if (poiManager != null)
+                {
+                    poiManager.EnterTutorialMode();
+                    Debug.Log("GameManager: POIManager entered tutorial mode");
+                }
+                else
+                {
+                    Debug.LogError("GameManager: POIManager reference not set - tutorial cannot start");
+                    ExitTutorial();
+                    return;
+                }
+
+                // Tell TutorialManager to start tutorial sequence
+                if (tutorialManager != null)
+                {
+                    tutorialManager.StartTutorial();
+                    Debug.Log("GameManager: TutorialManager started");
+                }
+                else
+                {
+                    Debug.LogError("GameManager: TutorialManager reference not set - tutorial cannot start");
+                    ExitTutorial();
+                    return;
+                }
+
+                Debug.Log("GameManager: Gameplay tutorial started successfully");
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"GameManager: Failed to start gameplay tutorial - {e.Message}");
+                ExitTutorial();
+            }
+        }
+
+        /// <summary>
+        /// Exit tutorial mode and cleanup
+        /// Called when player presses back button or tutorial fails
+        /// </summary>
+        public void ExitTutorial()
+        {
+            Debug.Log("GameManager: Exiting tutorial mode");
+
+            try
+            {
+
+                // Stop tutorial manager
+                if (tutorialManager != null)
+                {
+                    tutorialManager.StopTutorial();
+                }
+
+                // Exit tutorial mode in POI manager
+                if (poiManager != null)
+                {
+                    poiManager.ExitTutorialMode();
+                }
+
+                // Suspend gameplay systems
+                SuspendGameplaySystems();
+
+                // Reset mode
+                SetInternalGameMode(GameMode.Inactive);
+
+                Debug.Log("GameManager: Tutorial mode exited");
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"GameManager: Error exiting tutorial - {e.Message}");
+            }
+        }
+
+        #endregion
+
         #region Recovery System
 
         private void StartRecovery()
@@ -1985,6 +2027,12 @@ namespace LoGa.LudoEngine.Core
             // Stop ALL audio
             StopAllGameplayAudio();
 
+            // Reset tutorial manager
+            if (tutorialManager != null)
+            {
+                tutorialManager.Reset();
+            }
+
             // Reset all gameplay state
             currentGameplayState = GameplayState.Wander;
             gameState = GameState.Suspended;
@@ -2035,6 +2083,80 @@ namespace LoGa.LudoEngine.Core
         {
             if (poiManager != null)
                 poiManager.UpdateUnlockedPOIs(characterIds);
+        }
+
+        #endregion
+
+        #region Suspension System
+
+        /// <summary>
+        /// Suspend all gameplay - stops manager updates, pauses audio buses
+        /// </summary>
+        public void SuspendGameplay(SuspensionReason reason)
+        {
+            Debug.Log($"   SuspendGameplay CALLED - Reason: {reason}");
+            Debug.Log($"   Current gameState: {gameState}");
+            Debug.Log($"   Current suspensionReason: {suspensionReason}");
+            if (gameState == GameState.Suspended)
+            {
+                Debug.LogWarning($"GameManager: Already suspended by {suspensionReason}, ignoring suspension request from {reason}");
+                return;
+            }
+
+            gameState = GameState.Suspended;
+            suspensionReason = reason;
+
+            Debug.Log($" SUSPENDED - gameState set to: {gameState}, suspensionReason set to: {suspensionReason}");
+
+            // Pause FMOD buses (except Voice bus for tutorial narrator)
+            if (AudioService != null)
+            {
+                foreach (string bus in pausableBuses)
+                {
+                    AudioService.PauseBus(bus);
+                }
+            }
+
+            Debug.Log($"GameManager: Gameplay SUSPENDED by {reason} - all managers will stop updating");
+        }
+
+        /// <summary>
+        /// Resume gameplay - restarts manager updates, resumes audio buses
+        /// </summary>
+        public void ResumeGameplay(SuspensionReason reason)
+        {
+            Debug.Log($"   ResumeGameplay CALLED - Reason: {reason}");
+            Debug.Log($"   Current gameState: {gameState}");
+            Debug.Log($"   Current suspensionReason: {suspensionReason}");
+            Debug.Log($"   Reasons match? {suspensionReason == reason}");
+
+            if (gameState == GameState.Running)
+            {
+                Debug.LogWarning($"GameManager: Already running, ignoring resume request from {reason}");
+                return;
+            }
+
+            if (suspensionReason != reason)
+            {
+                Debug.LogWarning($"GameManager: Cannot resume - suspended by {suspensionReason}, not by {reason}");
+                return;
+            }
+
+            gameState = GameState.Running;
+            suspensionReason = SuspensionReason.None;
+
+            Debug.Log($" RESUMED - gameState set to: {gameState}, suspensionReason set to: {suspensionReason}");
+
+            // Resume FMOD buses
+            if (AudioService != null)
+            {
+                foreach (string bus in pausableBuses)
+                {
+                    AudioService.ResumeBus(bus);
+                }
+            }
+
+            Debug.Log($"GameManager: Gameplay RESUMED from {reason} - all managers will resume updating");
         }
 
         #endregion

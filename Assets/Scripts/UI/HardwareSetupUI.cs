@@ -8,8 +8,8 @@ using LoGa.LudoEngine.Core;
 namespace LoGa.LudoEngine.UI
 {
     /// <summary>
-    /// Hardware Setup UI Component - APP STORE SAFE VERSION
-    /// FIXED: Race conditions, coroutine leaks, state desync
+    /// Hardware Setup UI Component - SIMPLIFIED VERSION
+    /// Pure UI - All business logic delegated to HardwareManager
     /// </summary>
     public class HardwareSetupUI : MonoBehaviour
     {
@@ -31,11 +31,6 @@ namespace LoGa.LudoEngine.UI
         [SerializeField] private Button forceConnectButton;
         [SerializeField] private Button backButton;
 
-        [Header("Validation Settings")]
-        [SerializeField] private float headMovementThreshold = 15f;
-        [SerializeField] private float validationTimeout = 12f;
-        [SerializeField] private bool enableValidation = true;
-
         [Header("Development Settings")]
         [SerializeField] private bool fieldTestMode = false;
         [SerializeField] private float autoProgressDelay = 2f;
@@ -44,20 +39,20 @@ namespace LoGa.LudoEngine.UI
 
         public enum SetupState
         {
-            Idle,            // NEW: Not active
+            Idle,
             Initializing,
             ValidatingServices,
             DetectingHardware,
             Connected,
-            Validating,
             Complete,
             Error,
             Skipped,
-            Cancelled        // NEW: Explicitly cancelled
+            Cancelled
         }
 
         private SetupState currentState = SetupState.Idle;
         private UIManager uiManager;
+        private HardwareManager hardwareManager;
 
         // CRITICAL: Session tracking
         private int currentSessionId = 0;
@@ -65,28 +60,10 @@ namespace LoGa.LudoEngine.UI
 
         #endregion
 
-        #region Service References
+        #region State
 
-        private IHeadTrackingService headTrackingService;
-        private IAudioService audioService;
-        private ILocationService locationService;
-        private IStorageService storageService;
-
-        #endregion
-
-        #region Validation State
-
-        private bool isValidating = false;
-        private float initialHeading;
-        private float maxMovementDetected;
-        private float validationStartTime;
-        private string connectedProviderName = "";
-
-        // CRITICAL: Track all active coroutines
+        // CRITICAL: Track setup coroutine
         private Coroutine setupSequenceCoroutine;
-        private Coroutine validationCoroutine;
-        private Coroutine timeoutCoroutine;
-        private Coroutine connectionPollingCoroutine;
 
         #endregion
 
@@ -102,6 +79,12 @@ namespace LoGa.LudoEngine.UI
         {
             this.uiManager = uiManager;
             Debug.Log("HardwareSetupUI: UIManager reference set");
+        }
+
+        public void SetHardwareManager(HardwareManager manager)
+        {
+            this.hardwareManager = manager;
+            Debug.Log("HardwareSetupUI: HardwareManager reference set");
         }
 
         private void InitializeUI()
@@ -128,7 +111,7 @@ namespace LoGa.LudoEngine.UI
 
         #endregion
 
-        #region Main Hardware Setup Flow - FIXED
+        #region Main Hardware Setup Flow - SIMPLIFIED
 
         public void StartHardwareSetup()
         {
@@ -151,6 +134,15 @@ namespace LoGa.LudoEngine.UI
             UpdateStatus("Initializing hardware setup...");
             UpdateInstructions("Please wait while we prepare the system");
 
+            // Subscribe to HardwareManager events
+            if (hardwareManager != null)
+            {
+                hardwareManager.OnSetupComplete += OnHardwareSetupComplete;
+                hardwareManager.OnSetupFailed += OnHardwareSetupFailed;
+                hardwareManager.OnStatusUpdate += OnHardwareStatusUpdate;
+                hardwareManager.OnProviderDetected += OnHardwareProviderDetected;
+            }
+
             // Start the setup sequence
             setupSequenceCoroutine = StartCoroutine(BeginSetupSequence(currentSessionId));
         }
@@ -164,210 +156,102 @@ namespace LoGa.LudoEngine.UI
             // CHECK: Session still valid?
             if (!IsSessionValid(sessionId))
             {
-                Debug.Log($"HardwareSetupUI: Session {sessionId} cancelled before validation");
+                Debug.Log($"HardwareSetupUI: Session {sessionId} cancelled before setup");
                 yield break;
             }
 
-            // Step 1: Validate services
-            TransitionToState(SetupState.ValidatingServices);
-            bool servicesValid = ValidateServicesSync();
-
-            if (!servicesValid)
+            // Just call HardwareManager and let it handle everything
+            if (hardwareManager != null)
             {
-                if (IsSessionValid(sessionId))
-                {
-                    ShowError("Service validation failed");
-                    TransitionToState(SetupState.Error);
-                }
-                yield break;
+                TransitionToState(SetupState.ValidatingServices);
+
+                // Start async setup (events will notify us)
+                _ = hardwareManager.BeginSetup();
             }
-
-            yield return new WaitForSeconds(1f);
-
-            // CHECK: Session still valid?
-            if (!IsSessionValid(sessionId))
+            else
             {
-                Debug.Log($"HardwareSetupUI: Session {sessionId} cancelled after validation");
-                yield break;
-            }
-
-            // Step 2: Start hardware detection
-            yield return StartCoroutine(DetectAndConnectHardware(sessionId));
-        }
-
-        #endregion
-
-        #region Service Validation - SIMPLIFIED
-
-        private bool ValidateServicesSync()
-        {
-            UpdateStatus("Validating system services...");
-            UpdateInstructions("Checking audio, location, and head tracking systems");
-
-            try
-            {
-                // Get service references
-                headTrackingService = ServiceLocator.GetService<IHeadTrackingService>();
-                audioService = ServiceLocator.GetService<IAudioService>();
-                locationService = ServiceLocator.GetService<ILocationService>();
-                storageService = ServiceLocator.GetService<IStorageService>();
-
-                // Check for missing services
-                if (headTrackingService == null || audioService == null ||
-                    locationService == null || storageService == null)
-                {
-                    Debug.LogError("HardwareSetupUI: Missing critical services");
-                    return false;
-                }
-
-                UpdateStatus("Services validated successfully");
-                return true;
-            }
-            catch (System.Exception e)
-            {
-                Debug.LogError($"HardwareSetupUI: Service validation error - {e.Message}");
-                return false;
+                Debug.LogError("HardwareSetupUI: HardwareManager not assigned!");
+                ShowError("Hardware manager not available");
+                TransitionToState(SetupState.Error);
             }
         }
 
         #endregion
 
-        #region Hardware Detection - FIXED
+        #region HardwareManager Event Handlers
 
-        private IEnumerator DetectAndConnectHardware(int sessionId)
+        /// <summary>
+        /// Called when HardwareManager completes setup successfully
+        /// </summary>
+        private void OnHardwareSetupComplete()
         {
-            if (!IsSessionValid(sessionId)) yield break;
-
-            TransitionToState(SetupState.DetectingHardware);
-            UpdateStatus("Scanning for MMRL headphones...");
-
-            if (headTrackingService != null)
+            if (!IsSessionValid(currentSessionId))
             {
-                // Check if already connected FIRST
-                string currentProvider = headTrackingService.ActiveProviderName;
-                if (!string.IsNullOrEmpty(currentProvider) && currentProvider != "None")
-                {
-                    Debug.Log($"HardwareSetupUI: Provider already active: {currentProvider}");
-                    OnProviderChanged(currentProvider, sessionId);
-                    yield break;
-                }
-
-                // Subscribe to events
-                headTrackingService.ActiveProviderChanged += OnProviderChangedEvent;
-                headTrackingService.HeadingUpdated += OnHeadingUpdated;
-                headTrackingService.StartTracking();
-
-                // Start timeout
-                timeoutCoroutine = StartCoroutine(HandleConnectionTimeout(sessionId));
-
-                // Start polling as backup
-                connectionPollingCoroutine = StartCoroutine(PollForConnection(sessionId));
-            }
-
-            yield return null;
-        }
-
-        private void OnProviderChangedEvent(string providerName)
-        {
-            // This is called by the event - pass current session ID
-            OnProviderChanged(providerName, currentSessionId);
-        }
-
-        private IEnumerator PollForConnection(int sessionId)
-        {
-            while (IsSessionValid(sessionId) && currentState == SetupState.DetectingHardware)
-            {
-                if (headTrackingService != null)
-                {
-                    string provider = headTrackingService.ActiveProviderName;
-                    if (!string.IsNullOrEmpty(provider) && provider != "None")
-                    {
-                        Debug.Log($"HardwareSetupUI: Provider detected via polling: {provider}");
-                        OnProviderChanged(provider, sessionId);
-                        yield break;
-                    }
-                }
-
-                yield return new WaitForSeconds(1f);
-            }
-        }
-
-        private IEnumerator HandleConnectionTimeout(int sessionId)
-        {
-            yield return new WaitForSeconds(15f);
-
-            if (!IsSessionValid(sessionId)) yield break;
-
-            if (currentState == SetupState.DetectingHardware)
-            {
-                if (!string.IsNullOrEmpty(connectedProviderName))
-                {
-                    Debug.Log("HardwareSetupUI: Timeout but provider available - proceeding");
-                    OnConnectionEstablished(sessionId);
-                }
-                else
-                {
-                    Debug.Log("HardwareSetupUI: Connection timeout with no provider");
-                    ShowError("No compatible devices found");
-                    TransitionToState(SetupState.Error);
-                }
-            }
-        }
-
-        private void OnProviderChanged(string providerName, int sessionId)
-        {
-            if (!IsSessionValid(sessionId))
-            {
-                Debug.Log($"HardwareSetupUI: Ignoring provider change - session {sessionId} invalid");
+                Debug.Log("HardwareSetupUI: Ignoring setup complete - session invalid");
                 return;
             }
 
-            Debug.Log($"HardwareSetupUI: Provider changed to '{providerName}' (Session: {sessionId})");
+            Debug.Log("HardwareSetupUI: Hardware setup completed");
 
-            connectedProviderName = providerName;
+            TransitionToState(SetupState.Complete);
+            UpdateStatus("Hardware setup complete!");
+            UpdateInstructions("Device ready for gameplay");
+
+            StartCoroutine(AutoCompleteSetup(currentSessionId));
+        }
+
+        /// <summary>
+        /// Called when HardwareManager fails
+        /// </summary>
+        private void OnHardwareSetupFailed(string error)
+        {
+            if (!IsSessionValid(currentSessionId))
+            {
+                Debug.Log("HardwareSetupUI: Ignoring setup failed - session invalid");
+                return;
+            }
+
+            Debug.LogError($"HardwareSetupUI: Hardware setup failed - {error}");
+
+            ShowError(error);
+            TransitionToState(SetupState.Error);
+        }
+
+        /// <summary>
+        /// Called when HardwareManager updates status
+        /// </summary>
+        private void OnHardwareStatusUpdate(string status)
+        {
+            if (!IsSessionValid(currentSessionId))
+            {
+                return;
+            }
+
+            UpdateStatus(status);
+        }
+
+        /// <summary>
+        /// Called when HardwareManager detects a provider
+        /// </summary>
+        private void OnHardwareProviderDetected(string providerName)
+        {
+            if (!IsSessionValid(currentSessionId))
+            {
+                return;
+            }
+
+            Debug.Log($"HardwareSetupUI: Provider detected - {providerName}");
             UpdateProvider(providerName);
 
-            if (string.IsNullOrEmpty(providerName) || providerName == "None")
+            if (!string.IsNullOrEmpty(providerName) && providerName != "None")
             {
-                UpdateStatus("No device connected...");
-                return;
+                TransitionToState(SetupState.Connected);
             }
-
-            // Stop timeout
-            StopCoroutineSafely(ref timeoutCoroutine);
-            StopCoroutineSafely(ref connectionPollingCoroutine);
-
-            // Update status
-            UpdateStatus($"Connected to {providerName}");
-            UpdateInstructions("Head tracking device connected");
-
-            // Proceed
-            StartCoroutine(DelayedConnectionEstablished(sessionId));
-        }
-
-        private IEnumerator DelayedConnectionEstablished(int sessionId)
-        {
-            yield return new WaitForSeconds(1f);
-
-            if (IsSessionValid(sessionId))
-            {
-                OnConnectionEstablished(sessionId);
-            }
-        }
-
-        private void OnConnectionEstablished(int sessionId)
-        {
-            if (!IsSessionValid(sessionId)) return;
-
-            TransitionToState(SetupState.Connected);
-
-            // Skip validation for simplicity (or enable if needed)
-            StartCoroutine(AutoCompleteSetup(sessionId));
         }
 
         #endregion
 
-        #region Setup Completion - FIXED
+        #region Setup Completion
 
         private IEnumerator AutoCompleteSetup(int sessionId)
         {
@@ -405,7 +289,7 @@ namespace LoGa.LudoEngine.UI
 
         #endregion
 
-        #region Button Event Handlers - FIXED
+        #region Button Event Handlers
 
         private void OnRetryButtonPressed()
         {
@@ -462,7 +346,7 @@ namespace LoGa.LudoEngine.UI
 
         #endregion
 
-        #region Session Management - CRITICAL
+        #region Session Management
 
         /// <summary>
         /// Check if a session ID is still valid (not cancelled)
@@ -488,6 +372,12 @@ namespace LoGa.LudoEngine.UI
 
             isSessionActive = false;
 
+            // Cancel hardware manager setup
+            if (hardwareManager != null)
+            {
+                hardwareManager.CancelSetup();
+            }
+
             // Stop ALL coroutines
             StopAllCoroutinesSafely();
 
@@ -508,9 +398,6 @@ namespace LoGa.LudoEngine.UI
             int stoppedCount = 0;
 
             if (StopCoroutineSafely(ref setupSequenceCoroutine)) stoppedCount++;
-            if (StopCoroutineSafely(ref validationCoroutine)) stoppedCount++;
-            if (StopCoroutineSafely(ref timeoutCoroutine)) stoppedCount++;
-            if (StopCoroutineSafely(ref connectionPollingCoroutine)) stoppedCount++;
 
             Debug.Log($"HardwareSetupUI: Stopped {stoppedCount} coroutines");
         }
@@ -534,13 +421,13 @@ namespace LoGa.LudoEngine.UI
         /// </summary>
         private void CleanupSession()
         {
-            isValidating = false;
-
-            // Unsubscribe from events
-            if (headTrackingService != null)
+            // Unsubscribe from HardwareManager events
+            if (hardwareManager != null)
             {
-                headTrackingService.ActiveProviderChanged -= OnProviderChangedEvent;
-                headTrackingService.HeadingUpdated -= OnHeadingUpdated;
+                hardwareManager.OnSetupComplete -= OnHardwareSetupComplete;
+                hardwareManager.OnSetupFailed -= OnHardwareSetupFailed;
+                hardwareManager.OnStatusUpdate -= OnHardwareStatusUpdate;
+                hardwareManager.OnProviderDetected -= OnHardwareProviderDetected;
             }
 
             SetProgressVisibility(false);
@@ -563,7 +450,7 @@ namespace LoGa.LudoEngine.UI
         private void UpdateButtonVisibility()
         {
             bool showRetry = (currentState == SetupState.Error);
-            bool showSkip = (currentState == SetupState.DetectingHardware || currentState == SetupState.Validating);
+            bool showSkip = (currentState == SetupState.DetectingHardware);
             bool showForce = fieldTestMode && (currentState != SetupState.Complete);
             bool showBack = (currentState != SetupState.ValidatingServices &&
                            currentState != SetupState.Complete &&
@@ -607,7 +494,6 @@ namespace LoGa.LudoEngine.UI
         {
             if (statusText != null)
             {
-                // Replace checkmark with [OK] for font compatibility
                 message = message.Replace("✓", "[OK]").Replace("⚠️", "[!]");
                 statusText.text = message;
             }
@@ -652,16 +538,7 @@ namespace LoGa.LudoEngine.UI
 
         #endregion
 
-        #region Unused Validation Methods (Keep for reference)
-
-        private void OnHeadingUpdated(float heading)
-        {
-            // Not used currently
-        }
-
-        #endregion
-
-        #region Lifecycle - FIXED
+        #region Lifecycle
 
         private void OnDisable()
         {

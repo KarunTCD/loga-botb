@@ -325,6 +325,60 @@ namespace LoGa.LudoEngine.Services
             return Mathf.Approximately(currentValue, parameterValue);
         }
 
+        #region Bus Control
+
+        /// <summary>
+        /// Pause an FMOD bus (e.g., bus:/Music, bus:/SFX)
+        /// </summary>
+        public void PauseBus(string busPath)
+        {
+            try
+            {
+                Bus bus = RuntimeManager.GetBus(busPath);
+
+                if (bus.isValid())
+                {
+                    bus.setPaused(true);
+                    Debug.Log($"AudioService: Paused bus: {busPath}");
+                }
+                else
+                {
+                    Debug.LogWarning($"AudioService: Bus {busPath} is not valid - cannot pause");
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"AudioService: Failed to pause bus {busPath}: {e.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Resume an FMOD bus
+        /// </summary>
+        public void ResumeBus(string busPath)
+        {
+            try
+            {
+                Bus bus = RuntimeManager.GetBus(busPath);
+
+                if (bus.isValid())
+                {
+                    bus.setPaused(false);
+                    Debug.Log($"AudioService: Resumed bus: {busPath}");
+                }
+                else
+                {
+                    Debug.LogWarning($"AudioService: Bus {busPath} is not valid - cannot resume");
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"AudioService: Failed to resume bus {busPath}: {e.Message}");
+            }
+        }
+
+        #endregion
+
         public void Reset()
         {
             Debug.Log("AudioService: Reset called");

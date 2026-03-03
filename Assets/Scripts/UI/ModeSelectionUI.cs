@@ -322,18 +322,16 @@ namespace LoGa.LudoEngine.UI
 
         private void OnRunTutorialButtonPressed()
         {
-            if (!isInteractable) return;
 
-            Debug.Log("ModeSelectionUI: Run tutorial button pressed");
-            StartCoroutine(AnimateButtonPress(runTutorialButton));
+            Debug.Log("ModeSelectionUI: Tutorial button pressed - restarting tutorial");
 
             if (uiManager != null)
             {
-                uiManager.OnRunTutorialAgain();
+                uiManager.StartTutorialAgain();  
             }
             else
             {
-                Debug.LogError("ModeSelectionUI: UIManager reference not set");
+                Debug.LogError("ModeSelectionUI: UIManager reference not set!");
             }
         }
 

@@ -80,6 +80,7 @@ namespace LoGa.LudoEngine.Core
 
         // GameManager reference
         private GameManager gameManager;
+        private HardwareManager hardwareManager;
 
         // Properties
         public AppState CurrentState => currentState;
@@ -95,10 +96,11 @@ namespace LoGa.LudoEngine.Core
         /// <summary>
         /// Initialize UIManager with GameManager reference
         /// </summary>
-        public void Initialize(GameManager manager)
+        public void Initialize(GameManager manager, HardwareManager hwManager)  
         {
             gameManager = manager;
-            Debug.Log("[UIManager] Initialized with GameManager reference");
+            hardwareManager = hwManager;  
+            Debug.Log("[UIManager] Initialized with GameManager and HardwareManager references");
         }
 
         /// <summary>
@@ -150,7 +152,19 @@ namespace LoGa.LudoEngine.Core
                 mainMenuUI.SetUIManager(this);
 
             if (hardwareSetupUI != null)
+            {
                 hardwareSetupUI.SetUIManager(this);
+
+                if (hardwareManager != null)
+                {
+                    hardwareSetupUI.SetHardwareManager(hardwareManager);
+                    Debug.Log("[UIManager] HardwareManager reference set in HardwareSetupUI");
+                }
+                else
+                {
+                    Debug.LogWarning("[UIManager] HardwareManager reference not available");
+                }
+            }
 
             if (siteSelectionUI != null)
                 siteSelectionUI.SetUIManager(this);
@@ -458,14 +472,24 @@ namespace LoGa.LudoEngine.Core
 
             yield return null;
 
-            // Start tutorial
+            // Show minimal tutorial UI (just status text)
             if (tutorialUI != null)
             {
-                tutorialUI.StartTutorial();
+                tutorialUI.ShowTutorialInProgress();
             }
             else
             {
-                Debug.LogError("TutorialUI not assigned!");
+                Debug.LogWarning("TutorialUI not assigned - continuing without UI");
+            }
+
+            // Start gameplay tutorial via GameManager
+            if (gameManager != null)
+            {
+                gameManager.StartGameplayTutorial();
+            }
+            else
+            {
+                Debug.LogError("GameManager reference not set - cannot start tutorial!");
                 OnTutorialComplete();
             }
         }
@@ -739,13 +763,15 @@ namespace LoGa.LudoEngine.Core
                     break;
 
                 case AppState.Tutorial:
+                    // Exit tutorial and go to mode selection
                     if (gameManager != null)
                     {
-                        gameManager.TransitionToPhase(GameManager.ApplicationPhase.SiteSelection);  
+                        gameManager.ExitTutorial();  // Cleanup tutorial state
+                        gameManager.TransitionToPhase(GameManager.ApplicationPhase.ModeSelection);  // ← FIXED
                     }
                     else
                     {
-                        TransitionToState(AppState.SiteSelection);
+                        TransitionToState(AppState.ModeSelection);
                     }
                     break;
 
@@ -802,6 +828,23 @@ namespace LoGa.LudoEngine.Core
         {
             LogDebug("Returning to mode selection");
             TransitionToState(AppState.ModeSelection);
+        }
+
+        /// <summary>
+        /// Start tutorial again (from "Run Tutorial Again" button)
+        /// </summary>
+        public void StartTutorialAgain()
+        {
+            LogDebug("Starting tutorial again from mode selection");
+
+            if (gameManager != null)
+            {
+                gameManager.TransitionToPhase(GameManager.ApplicationPhase.Tutorial);
+            }
+            else
+            {
+                TransitionToState(AppState.Tutorial);
+            }
         }
 
         public void HandleServiceError(string serviceName, string error)
@@ -893,7 +936,7 @@ namespace LoGa.LudoEngine.Core
             // Pause the game via GameManager
             if (gameManager != null)
             {
-                gameManager.SetPaused(true);
+                gameManager.TogglePause();
             }
             else
             {
@@ -921,7 +964,7 @@ namespace LoGa.LudoEngine.Core
             // Resume the game via GameManager
             if (gameManager != null)
             {
-                gameManager.SetPaused(false);
+                gameManager.TogglePause();
             }
             else
             {
@@ -957,7 +1000,7 @@ namespace LoGa.LudoEngine.Core
                 gameManager.StopAllGameplayAudio();
 
                 // Unpause the game state
-                gameManager.SetPaused(false);
+                gameManager.TogglePause();
 
                 // Transition back to main menu
                 gameManager.TransitionToPhase(GameManager.ApplicationPhase.MainMenu);

@@ -118,7 +118,6 @@ namespace LoGa.LudoEngine.Game
                 return audioService;
             }
         }
-        private TextMeshProUGUI directionDebugText;
 
         /// <summary>
         /// Initialize POI from JSON data
@@ -358,17 +357,6 @@ namespace LoGa.LudoEngine.Game
             float distance = Vector3.Distance(Vector3.zero, position);
             float normalizedDistance = distance / config.maxDistance;
 
-            if (directionDebugText != null)
-            {
-                string[] directionNames = { "North", "Northeast", "East", "Southeast", "South", "Southwest", "West", "Northwest" };
-                directionDebugText.text = $" {characterName}\n" +
-                                         $"Angle: {angle:F1}°\n" +
-                                         $"Direction: {direction} ({directionNames[direction]})\n" +
-                                         $"Distance: {distance:F1}m\n" +
-                                         $"3D Pos: X={position.x:F1}, Z={position.z:F1}\n" +
-                                         $"Cue Index: {config.cueIndex}";
-            }
-
             // Use updated AudioService method (encapsulates all FMOD calls)
             AudioService.PlayNavigationCue(navigationCueInstance, position, config.cueIndex, direction, normalizedDistance);
 
@@ -605,19 +593,6 @@ namespace LoGa.LudoEngine.Game
             {
                 AudioService.PlayAudio(characterAudioInstance, audioPosition);
                 wasPlayingBeforeSilence = false;
-            }
-        }
-
-        public void SetDirectionDebugText(TextMeshProUGUI debugText)
-        {
-            directionDebugText = debugText;
-        }
-
-        public void ClearDirectionDebug()
-        {
-            if (directionDebugText != null)
-            {
-                directionDebugText.text = "";
             }
         }
 

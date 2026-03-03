@@ -13,6 +13,8 @@ namespace LoGa.LudoEngine.Services
         void StopAudio(EventInstance instance, bool allowFadeOut = true);
         void StopAudioDelayed(EventInstance instance, float delay);
         void ReleaseAudio(EventInstance instance);
+        void PauseBus(string busPath);
+        void ResumeBus(string busPath);
         void Update3DAttributes(EventInstance instance, Vector3 position);
         void SetParameter(EventInstance instance, string paramName, float value);
         bool IsInstanceValid(EventInstance instance);

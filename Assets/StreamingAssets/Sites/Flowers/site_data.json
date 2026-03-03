@@ -17,12 +17,12 @@
     },
     "proximityRadius": 20.0,
     "dialogueRadius": 10.0,
-    "maxCueRadius": 500000.0,
+    "maxCueRadius": 50000.0,
     "targetLockTime": 2.0,
     "targetLockAngle": 22.5,
     "targetBreakAngle": 45.0,
     "cueStagingDelay": 4.0,
-    "cyclePauseDelay": 6.0,
+    "cyclePauseDelay": 4.0,
     "baseMaxActiveCues": 2,
     "maxMaxActiveCues": 2,
     "navigationUpgradeThreshold": 2,
@@ -227,6 +227,89 @@
             }
           ]
       }
-  ]
+  ],
+  "tutorial": {
+      "enabled": true,
+      "characterId": "tutorial_character",
+      "characterName": "Tutorial Character",
+      "spawnPositions": [
+        {
+          "name": "Position A",
+          "latitude": 53.37178,
+          "longitude": -6.27009
+        },
+        {
+          "name": "Position B",
+          "latitude": 53.37193,
+          "longitude": -6.26975
+        }
+      ],
+      "navigationCueEvent": "event:/tutorial_character_cue",
+      "characterAudioEvent": "event:/tutorial_character_audio",
+      "maxNavigationCues": 3,
+      "narratorEvent": "event:/tutorial_narration",
+      "dialogues": {
+        "introduction": {
+          "id": 0,
+          "suspendGameplay": true,
+          "preDelay": 3,
+          "postDelay": 0
+        },
+        "navigationStart": {
+          "id": 1,
+          "suspendGameplay": true,
+          "preDelay": 3,
+          "postDelay": 0
+        },
+        "targetLockSuccess": {
+          "id": 2,
+          "suspendGameplay": false,
+          "preDelay": 0.5,
+          "postDelay": 0
+        },
+        "targetLost": {
+          "id": 3,
+          "suspendGameplay": false,
+          "preDelay": 0.5,
+          "postDelay": 0
+        },
+        "targetRelockSuccess": {
+          "id": 4,
+          "suspendGameplay": false,
+          "preDelay": 0.5,
+          "postDelay": 0
+        },
+        "approaching": {
+          "id": 5,
+          "suspendGameplay": true,
+          "preDelay": 0,
+          "postDelay": 0
+        },
+        "proximityReached": {
+          "id": 6,
+          "suspendGameplay": true,
+          "preDelay": 0,
+          "postDelay": 0
+        },
+        "characterFound": {
+          "id": 7,
+          "suspendGameplay": true,
+          "preDelay": 0,
+          "postDelay": 0
+        },
+        "interactionComplete": {
+          "id": 8,
+          "suspendGameplay": true,
+          "preDelay": 0,
+          "postDelay": 0
+        },
+        "complete": {
+          "id": 23,
+          "suspendGameplay": true,
+          "preDelay": 0,
+          "postDelay": 0
+        }
+      }
+    }
 }
 
