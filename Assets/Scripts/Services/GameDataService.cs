@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using System.Linq;
 using FMODUnity;
+using LoGa.LudoEngine.Utilities;
 
 namespace LoGa.LudoEngine.Services
 {
@@ -220,7 +221,11 @@ namespace LoGa.LudoEngine.Services
             {
                 InitializationProgress = 0.3f;
 
-                string jsonText = await LoadJsonFile(jsonFileName);
+                string jsonText = await StreamingAssetsHelper.LoadTextFileAsync(jsonFileName);
+                if (string.IsNullOrEmpty(jsonText))
+                {
+                    throw new Exception($"Failed to load {jsonFileName}");
+                }
                 InitializationProgress = 0.7f;
 
                 rawGameData = JsonUtility.FromJson<GameData>(jsonText);
@@ -365,49 +370,6 @@ namespace LoGa.LudoEngine.Services
         #region File Loading
 
         /// <summary>
-        /// SINGLE FILE READING METHOD - Used by all data loading methods
-        /// Handles Android, PC, and Resources fallback
-        /// </summary>
-        private async Task<string> LoadJsonFile(string fileName)
-        {
-            string path = System.IO.Path.Combine(Application.streamingAssetsPath, fileName);
-
-            // Android platform
-            if (Application.platform == RuntimePlatform.Android)
-            {
-                using (var www = UnityEngine.Networking.UnityWebRequest.Get(path))
-                {
-                    var operation = www.SendWebRequest();
-                    while (!operation.isDone) await Task.Yield();
-
-                    if (www.result == UnityEngine.Networking.UnityWebRequest.Result.Success)
-                    {
-                        DebugLog($"GameDataService: Loaded JSON from StreamingAssets (Android): {fileName}");
-                        return www.downloadHandler.text;
-                    }
-                }
-            }
-            // Other platforms
-            else if (System.IO.File.Exists(path))
-            {
-                string content = await Task.Run(() => System.IO.File.ReadAllText(path));
-                DebugLog($"GameDataService: Loaded JSON from StreamingAssets: {fileName}");
-                return content;
-            }
-
-            // Fallback to Resources
-            string resourceName = System.IO.Path.GetFileNameWithoutExtension(fileName);
-            TextAsset asset = Resources.Load<TextAsset>(resourceName);
-            if (asset != null)
-            {
-                DebugLog($"GameDataService: Loaded JSON from Resources folder: {fileName}");
-                return asset.text;
-            }
-
-            throw new Exception($"Could not load {fileName} from StreamingAssets or Resources");
-        }
-
-        /// <summary>
         /// Load data from a specific site folder
         /// Called by SiteManager when site is selected
         /// Uses LoadJsonFile() for platform compatibility
@@ -418,11 +380,14 @@ namespace LoGa.LudoEngine.Services
             {
                 Debug.Log($"GameDataService: Loading site data for: {siteFolderName}");
 
-                // Build relative path for LoadJsonFile
-                string relativePath = System.IO.Path.Combine("Sites", siteFolderName, "site_data.json");
+                string relativePath = $"Sites/{siteFolderName}/site_data.json";
+                string json = await StreamingAssetsHelper.LoadTextFileAsync(relativePath);
 
-                // Use the existing LoadJsonFile helper (handles Android, PC, Resources)
-                string json = await LoadJsonFile(relativePath);
+                if (string.IsNullOrEmpty(json))
+                {
+                    Debug.LogError($"GameDataService: Failed to load site data for {siteFolderName}");
+                    return false;
+                }
 
                 // Parse JSON
                 rawGameData = JsonUtility.FromJson<GameData>(json);

@@ -6,8 +6,8 @@
       "description": "Historical battle site 1690",
       "folderName": "BattleOfBoyne",
       "centerLocation": {
-        "latitude": 53.7045,
-        "longitude": -6.4658
+        "latitude": 53.722277,
+        "longitude": -6.420376
       },
       "activationRadius": 5000,
       "isDebug": false
@@ -18,10 +18,10 @@
       "description": "Historical journey through the Hill of Tara",
       "folderName": "HillOfTara",
       "centerLocation": {
-        "latitude": 53.7045,
-        "longitude": -6.4658
+        "latitude": 53.579667,
+        "longitude": -6.611418
       },
-      "activationRadius": 5000,
+      "activationRadius": 2000,
       "isDebug": false
     },
     {
@@ -30,10 +30,10 @@
       "description": "Mythical journey in the botanic garden.",
       "folderName": "Flowers",
       "centerLocation": {
-        "latitude": 53.7045,
-        "longitude": -6.4658
+        "latitude": 53.372114,
+        "longitude": -6.271395
       },
-      "activationRadius": 5000,
+      "activationRadius": 2000,
       "isDebug": false
     },
     {
@@ -42,10 +42,10 @@
       "description": "Local testing site",
       "folderName": "Debug",
       "centerLocation": {
-        "latitude": 53.349805,
-        "longitude": -6.260310
+        "latitude": 53.349030,
+        "longitude": -6.249124
       },
-      "activationRadius": 50000,
+      "activationRadius": 2000,
       "isDebug": true
     }
   ]

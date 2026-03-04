@@ -35,26 +35,40 @@ namespace LoGa.LudoEngine.Services
             {
                 Debug.Log("AnalyticsService: Initializing Firebase Analytics");
 
-                var firebase = Firebase.FirebaseApp.DefaultInstance;
-                if (firebase == null)
+                // Add timeout to Firebase check
+                try
                 {
-                    Debug.LogError("AnalyticsService: Firebase not initialized");
-                    return false;
+                    var dependencyTask = Firebase.FirebaseApp.CheckAndFixDependenciesAsync();
+                    var timeoutTask = Task.Delay(3000); // 3 second timeout
+
+                    var completedTask = await Task.WhenAny(dependencyTask, timeoutTask);
+
+                    if (completedTask == timeoutTask)
+                    {
+                        Debug.LogWarning("AnalyticsService: Firebase dependency check timed out - likely offline");
+                        IsInitialized = false;
+                        return false; // Don't block game, just mark as not initialized
+                    }
+
+                    var dependencyResult = await dependencyTask;
+                    
+                    if (dependencyResult != Firebase.DependencyStatus.Available)
+                    {
+                        Debug.LogWarning($"AnalyticsService: Firebase Analytics dependencies not available: {dependencyResult}");
+                        IsInitialized = false;
+                        return false; // Don't block game
+                    }
+
+                    Debug.Log("AnalyticsService: Firebase Analytics dependencies available");
+                }
+                catch (Exception firebaseEx)
+                {
+                    Debug.LogWarning($"AnalyticsService: Firebase check failed (likely offline): {firebaseEx.Message}");
+                    IsInitialized = false;
+                    return false; // Don't block game
                 }
 
-                await Firebase.FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task =>
-                {
-                    if (task.Result == Firebase.DependencyStatus.Available)
-                    {
-                        Debug.Log("AnalyticsService: Firebase Analytics dependencies available");
-                    }
-                    else
-                    {
-                        Debug.LogError($"AnalyticsService: Firebase Analytics dependencies not available: {task.Result}");
-                    }
-                });
-
-                // Always enable for debug mode
+                // Enable for debug mode
                 if (enableDebugLogging)
                 {
                     FirebaseAnalytics.SetAnalyticsCollectionEnabled(true);
@@ -79,10 +93,12 @@ namespace LoGa.LudoEngine.Services
             }
             catch (Exception e)
             {
-                Debug.LogError($"AnalyticsService: Initialization failed - {e.Message}");
-                return false;
+                Debug.LogWarning($"AnalyticsService: Initialization failed (continuing without analytics): {e.Message}");
+                IsInitialized = false;
+                return false; // Return false but don't crash
             }
         }
+
 
         public void TrackEvent(string eventName)
         {

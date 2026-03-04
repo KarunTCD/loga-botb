@@ -5,6 +5,7 @@ using System;
 using System.Threading.Tasks;
 using LoGa.LudoEngine.Services;
 using LoGa.LudoEngine.Game;
+using LoGa.LudoEngine.Utilities;
 
 namespace LoGa.LudoEngine.Core
 {
@@ -68,42 +69,26 @@ namespace LoGa.LudoEngine.Core
 
         /// <summary>
         /// Load site_metadata.json to get list of available sites
+        /// Uses StreamingAssetsHelper for cross-platform compatibility
         /// </summary>
-        private void LoadSiteMetadata()
+        private async void LoadSiteMetadata()
         {
             try
             {
-                string path = Path.Combine(
-                    Application.streamingAssetsPath,
-                    "Sites",
-                    "site_metadata.json"
-                );
+                Debug.Log($"SiteManager: Loading site metadata");
+                Debug.Log($"SiteManager: Platform: {Application.platform}");
 
-                Debug.Log($"SiteManager: Loading site metadata from: {path}");
-                Debug.Log($"SiteManager: StreamingAssetsPath = {Application.streamingAssetsPath}");
+                // Use the proven approach from GameDataService
+                string json = await StreamingAssetsHelper.LoadTextFileAsync("Sites/site_metadata.json");
 
-                if (!File.Exists(path))
+                if (string.IsNullOrEmpty(json))
                 {
-                    Debug.LogError($"SiteManager: site_metadata.json not found at: {path}");
-
-                    // Check if Sites folder exists
-                    string sitesFolder = Path.Combine(Application.streamingAssetsPath, "Sites");
-                    Debug.LogError($"SiteManager: Sites folder exists? {Directory.Exists(sitesFolder)}");
-
-                    if (Directory.Exists(sitesFolder))
-                    {
-                        string[] files = Directory.GetFiles(sitesFolder);
-                        Debug.LogError($"SiteManager: Files in Sites folder: {string.Join(", ", files)}");
-                    }
-
+                    Debug.LogError($"SiteManager: Failed to load site_metadata.json");
                     availableSites = new List<Site>();
                     return;
                 }
 
-                Debug.Log($"SiteManager: File exists, reading...");
-                string json = File.ReadAllText(path);
                 Debug.Log($"SiteManager: JSON length: {json.Length} characters");
-                Debug.Log($"SiteManager: JSON content: {json}");
 
                 SiteMetadataList metadata = JsonUtility.FromJson<SiteMetadataList>(json);
                 Debug.Log($"SiteManager: Parsed metadata, sites = {metadata?.sites?.Count ?? 0}");

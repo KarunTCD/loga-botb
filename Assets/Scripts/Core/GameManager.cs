@@ -822,20 +822,47 @@ namespace LoGa.LudoEngine.Core
                 currentSessionId = System.Guid.NewGuid().ToString();
                 Debug.Log($"GameManager: Generated session ID: {currentSessionId}");
 
-                var firebaseService = await ServiceLocator.GetInitializedService<IFirebaseService>();
-                if (firebaseService == null)
+                // Make Firebase optional with timeout
+                bool firebaseAvailable = false;
+                try
                 {
-                    Debug.LogError("GameManager: Firebase service not available");
-                    return false;
+                    // Try to get Firebase with 5 second timeout
+                    var firebaseTask = ServiceLocator.GetInitializedService<IFirebaseService>();
+                    var timeoutTask = Task.Delay(5000); // 5 second timeout
+
+                    var completedTask = await Task.WhenAny(firebaseTask, timeoutTask);
+
+                    if (completedTask == firebaseTask && firebaseTask.Result != null)
+                    {
+                        var firebaseService = firebaseTask.Result;
+                        
+                        // Try to initialize session with timeout
+                        var sessionTask = firebaseService.InitializeSession(currentSessionId, "Player");
+                        var sessionTimeoutTask = Task.Delay(3000);
+                        
+                        var sessionCompleted = await Task.WhenAny(sessionTask, sessionTimeoutTask);
+                        
+                        if (sessionCompleted == sessionTask && sessionTask.Result)
+                        {
+                            firebaseAvailable = true;
+                            Debug.Log("GameManager: Firebase session initialized successfully");
+                        }
+                        else
+                        {
+                            Debug.LogWarning("GameManager: Firebase session initialization timed out or failed - continuing offline");
+                        }
+                    }
+                    else
+                    {
+                        Debug.LogWarning("GameManager: Firebase service not available or timed out - continuing offline");
+                    }
+                }
+                catch (Exception e)
+                {
+                    Debug.LogWarning($"GameManager: Firebase initialization failed - continuing offline: {e.Message}");
                 }
 
-                bool sessionInitialized = await firebaseService.InitializeSession(currentSessionId, "Player");
-                if (!sessionInitialized)
-                {
-                    Debug.LogError("GameManager: Failed to initialize Firebase session");
-                    return false;
-                }
-
+                // Start player mode regardless of Firebase status
                 TransitionToPhase(ApplicationPhase.PlayerMode);
 
                 if (poiManager != null)
@@ -843,7 +870,7 @@ namespace LoGa.LudoEngine.Core
                     poiManager.PlayWelcomeGreeting();
                 }
 
-                Debug.Log("GameManager: Player mode started successfully");
+                Debug.Log($"GameManager: Player mode started successfully (Firebase: {(firebaseAvailable ? "Online" : "Offline")})");
                 return true;
             }
             catch (Exception e)
@@ -853,6 +880,7 @@ namespace LoGa.LudoEngine.Core
                 return false;
             }
         }
+
 
         public async Task<bool> StartSpectatorMode(string sessionId)
         {
