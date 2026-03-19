@@ -12,6 +12,7 @@ namespace LoGa.LudoEngine.UI
         [Header("UI Elements")]
         [SerializeField] private Button playButton;
         [SerializeField] private Button settingsButton;
+        [SerializeField] private Button inventoryButton;
         [SerializeField] private Button feedbackButton;
         [SerializeField] private Button resetProgressButton;
         [SerializeField] private Button exitButton;
@@ -48,6 +49,8 @@ namespace LoGa.LudoEngine.UI
                 playButton.onClick.AddListener(OnPlayButtonClick);
             if (settingsButton != null)
                 settingsButton.onClick.AddListener(OnSettingsButtonClick);
+            if (inventoryButton != null)
+                inventoryButton.onClick.AddListener(OnInventoryButtonClick);
             if (feedbackButton != null)
                 feedbackButton.onClick.AddListener(OnFeedbackButtonClick);
             if (resetProgressButton != null)
@@ -113,6 +116,19 @@ namespace LoGa.LudoEngine.UI
             if (uiManager != null)
             {
                 uiManager.OnSettingsButtonPressed();
+            }
+            else
+            {
+                Debug.LogError("UIManager reference not set in MainMenuUI");
+            }
+        }
+
+        private void OnInventoryButtonClick()
+        {
+            Debug.Log("Main Menu: Inventory button clicked");
+            if (uiManager != null)
+            {
+                uiManager.OnInventoryButtonPressed();
             }
             else
             {
@@ -218,6 +234,8 @@ namespace LoGa.LudoEngine.UI
                 playButton.onClick.RemoveListener(OnPlayButtonClick);
             if (settingsButton != null)
                 settingsButton.onClick.RemoveListener(OnSettingsButtonClick);
+            if (inventoryButton != null)
+                inventoryButton.onClick.RemoveListener(OnInventoryButtonClick);
             if (feedbackButton != null)
                 feedbackButton.onClick.RemoveListener(OnFeedbackButtonClick);
             if (resetProgressButton != null)

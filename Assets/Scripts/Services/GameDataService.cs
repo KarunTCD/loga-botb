@@ -21,6 +21,7 @@ namespace LoGa.LudoEngine.Services
         private class GameData
         {
             public GameConfigurationData gameConfiguration;
+            public CombatConfiguration combatConfiguration;
             public List<TimeLayerData> timeLayers;
             public TutorialData tutorial;
         }
@@ -36,6 +37,8 @@ namespace LoGa.LudoEngine.Services
             public float targetLockAngle;
             public float targetBreakAngle;
             public float cueStagingDelay;
+            public float targetedCueStagingDelay;
+            public float narrationCompleteDelay;
             public float cyclePauseDelay;
             public int baseMaxActiveCues;
             public int maxMaxActiveCues;
@@ -48,7 +51,6 @@ namespace LoGa.LudoEngine.Services
             public string rewardAnnouncementEvent;
             public string timePortalAudioEvent;
             public string targetingFeedbackSound;
-            public CombatAudioEvents combatAudioEvents;
         }
 
         [System.Serializable]
@@ -58,9 +60,27 @@ namespace LoGa.LudoEngine.Services
             public string mercenaryFootsteps;
             public string mercenaryAttack;
             public string attackImpact;
+            public string mercenaryDefeat;
             public string heartbeat;
             public string berryAmbient;
             public string berryCollection;
+        }
+
+        [System.Serializable]
+        public class CombatEncounter
+        {
+            public int combatType;
+            public List<int> requiredRewards;
+        }
+
+        [System.Serializable]
+        public class CombatConfiguration
+        {
+            public float approachDuration = 4f;
+            public float attackDelayAfterIntro = 3f;
+            public int attackCount = 3;
+            public CombatAudioEvents audioEvents; 
+            public List<CombatEncounter> encounters;
         }
 
         [System.Serializable]
@@ -160,6 +180,20 @@ namespace LoGa.LudoEngine.Services
             public TutorialDialogueConfig proximityReached;
             public TutorialDialogueConfig characterFound;
             public TutorialDialogueConfig interactionComplete;
+            public TutorialDialogueConfig rewardExplanation;
+            public TutorialDialogueConfig mercenaryWarning;
+            public TutorialDialogueConfig afterFirstHit;
+            public TutorialDialogueConfig attackIncoming2;
+            public TutorialDialogueConfig defenseSuccess1;
+            public TutorialDialogueConfig defenseFail1;
+            public TutorialDialogueConfig attackIncoming3;
+            public TutorialDialogueConfig defenseSuccessFinal;
+            public TutorialDialogueConfig defenseFail2;
+            public TutorialDialogueConfig defenseFail3;
+            public TutorialDialogueConfig defenseFail4;
+            public TutorialDialogueConfig combatComplete;
+            public TutorialDialogueConfig lowHealthBerryIntro;
+            public TutorialDialogueConfig berryCollected;
             public TutorialDialogueConfig complete;
         }
 
@@ -180,6 +214,7 @@ namespace LoGa.LudoEngine.Services
         public float InitializationProgress { get; private set; }
 
         public GameConfigurationData GameConfig { get; private set; }
+        public CombatConfiguration CombatConfig { get; private set; }
         public bool IsDataLoaded { get; private set; }
         public TutorialData Tutorial { get; private set; }
 
@@ -406,6 +441,7 @@ namespace LoGa.LudoEngine.Services
 
                 // Update cached config
                 GameConfig = rawGameData.gameConfiguration;
+                CombatConfig = rawGameData.combatConfiguration;
                 Tutorial = rawGameData.tutorial;
                 IsDataLoaded = true;
 
@@ -438,6 +474,7 @@ namespace LoGa.LudoEngine.Services
 
             rawGameData = null;
             GameConfig = null;
+            CombatConfig = null;
             Tutorial = null; 
             IsDataLoaded = false;
 

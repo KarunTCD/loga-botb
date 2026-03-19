@@ -24,36 +24,20 @@ namespace LoGa.LudoEngine.UI
         [SerializeField] private TextMeshProUGUI titleText;
 
         private UIManager uiManager;
-        private bool isVisible = false;
+
+        public bool IsVisible => pauseMenuPanel != null && pauseMenuPanel.activeSelf;
 
         private void Start()
         {
-            InitializeUI();
             SetupButtonListeners();
+            
+            if (titleText != null)
+                titleText.text = "Game Paused";
         }
 
         public void SetUIManager(UIManager manager)
         {
             uiManager = manager;
-            Debug.Log("PauseMenuUI: UIManager reference set");
-        }
-
-        private void InitializeUI()
-        {
-            // Start hidden
-            HidePauseMenu();
-
-            // Set title if available
-            if (titleText != null)
-                titleText.text = "Game Paused";
-
-            // Setup canvas group if available
-            if (panelGroup != null)
-            {
-                panelGroup.alpha = 0f;
-                panelGroup.interactable = false;
-                panelGroup.blocksRaycasts = false;
-            }
         }
 
         private void SetupButtonListeners()
@@ -71,18 +55,37 @@ namespace LoGa.LudoEngine.UI
                 exitButton.onClick.AddListener(OnExit);
         }
 
-        public void ShowPauseMenu()
+        public bool Show()
         {
-            if (isVisible) return;
+            if (pauseMenuPanel == null)
+            {
+                Debug.LogError("PauseMenuUI: pauseMenuPanel not assigned - cannot show!");
+                return false;
+            }
 
-            Debug.Log("PauseMenuUI: Showing pause menu");
-            isVisible = true;
+            if (pauseMenuPanel.activeSelf)
+                return true;
 
-            // Show panel
-            if (pauseMenuPanel != null)
-                pauseMenuPanel.SetActive(true);
+            pauseMenuPanel.SetActive(true);
 
-            // Fade in canvas group
+            if (!pauseMenuPanel.activeSelf)
+            {
+                Debug.LogError("PauseMenuUI: Failed to activate pause menu panel!");
+                return false;
+            }
+
+            pauseMenuPanel.transform.SetAsLastSibling();
+
+            if (panelGroup == null)
+            {
+                panelGroup = pauseMenuPanel.GetComponent<CanvasGroup>();
+                
+                if (panelGroup == null)
+                {
+                    panelGroup = pauseMenuPanel.AddComponent<CanvasGroup>();
+                }
+            }
+
             if (panelGroup != null)
             {
                 panelGroup.alpha = 1f;
@@ -90,7 +93,6 @@ namespace LoGa.LudoEngine.UI
                 panelGroup.blocksRaycasts = true;
             }
 
-            // Dim background
             if (backgroundDimmer != null)
             {
                 Color dimColor = backgroundDimmer.color;
@@ -99,23 +101,21 @@ namespace LoGa.LudoEngine.UI
                 backgroundDimmer.gameObject.SetActive(true);
             }
 
-            // Make sure buttons are interactable
             SetButtonsInteractable(true);
+
+            return true;
         }
 
-        public void HidePauseMenu()
+        public void Hide()
         {
-            if (!isVisible && pauseMenuPanel != null && !pauseMenuPanel.activeSelf)
+            if (pauseMenuPanel == null)
                 return;
 
-            Debug.Log("PauseMenuUI: Hiding pause menu");
-            isVisible = false;
+            if (!pauseMenuPanel.activeSelf)
+                return;
 
-            // Hide panel
-            if (pauseMenuPanel != null)
-                pauseMenuPanel.SetActive(false);
+            pauseMenuPanel.SetActive(false);
 
-            // Fade out canvas group
             if (panelGroup != null)
             {
                 panelGroup.alpha = 0f;
@@ -123,7 +123,6 @@ namespace LoGa.LudoEngine.UI
                 panelGroup.blocksRaycasts = false;
             }
 
-            // Remove dimmer
             if (backgroundDimmer != null)
             {
                 backgroundDimmer.gameObject.SetActive(false);
@@ -132,57 +131,33 @@ namespace LoGa.LudoEngine.UI
 
         private void OnResume()
         {
-            Debug.Log("PauseMenuUI: Resume button pressed");
-
             if (uiManager != null)
             {
                 uiManager.OnPauseResume();
-            }
-            else
-            {
-                Debug.LogError("PauseMenuUI: UIManager reference not set");
             }
         }
 
         private void OnShare()
         {
-            Debug.Log("PauseMenuUI: Share button pressed");
-
             if (uiManager != null)
             {
                 uiManager.OnPauseShare();
-            }
-            else
-            {
-                Debug.LogError("PauseMenuUI: UIManager reference not set");
             }
         }
 
         private void OnSettings()
         {
-            Debug.Log("PauseMenuUI: Settings button pressed");
-
             if (uiManager != null)
             {
                 uiManager.OnPauseSettings();
-            }
-            else
-            {
-                Debug.LogError("PauseMenuUI: UIManager reference not set");
             }
         }
 
         private void OnExit()
         {
-            Debug.Log("PauseMenuUI: Exit button pressed");
-
             if (uiManager != null)
             {
                 uiManager.OnPauseExit();
-            }
-            else
-            {
-                Debug.LogError("PauseMenuUI: UIManager reference not set");
             }
         }
 
@@ -208,8 +183,6 @@ namespace LoGa.LudoEngine.UI
                 settingsButton.onClick.RemoveListener(OnSettings);
             if (exitButton != null)
                 exitButton.onClick.RemoveListener(OnExit);
-
-            Debug.Log("PauseMenuUI: Cleanup completed");
         }
     }
 }

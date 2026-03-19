@@ -12,6 +12,7 @@ namespace LoGa.LudoEngine.Core
     /// UI Manager that handles all UI states in GameScene
     /// Coordinates with GameManager for proper phase synchronization
     /// Services are pre-initialized by LoadingScene before this scene loads
+    /// ROBUST PAUSE IMPLEMENTATION: Atomic state changes, validated operations, no timers
     /// </summary>
     public class UIManager : MonoBehaviour
     {
@@ -26,6 +27,9 @@ namespace LoGa.LudoEngine.Core
         [SerializeField] private GameObject debugPanel;
         [SerializeField] private GameObject mapPanel;
         [SerializeField] private GameObject feedbackPanel;
+        [SerializeField] private GameObject inventoryPanel;
+        [SerializeField] private GameObject settingsPanel;
+        [SerializeField] private GameObject sharePanel;
 
         [Header("UI Component References")]
         [SerializeField] private MainMenuUI mainMenuUI;
@@ -37,6 +41,9 @@ namespace LoGa.LudoEngine.Core
         [SerializeField] private SpectatorModeUI spectatorModeUI_Script;
         [SerializeField] private FeedbackUI feedbackUI;
         [SerializeField] private PauseMenuUI pauseMenuUI;
+        [SerializeField] private InventoryUI inventoryUI;
+        [SerializeField] private SettingsUI settingsUI;
+        [SerializeField] private ShareUI shareUI;
 
         [Header("Map References")]
         [SerializeField] private RectTransform mapBackground;
@@ -78,6 +85,9 @@ namespace LoGa.LudoEngine.Core
         private bool tutorialCompleted = false;
         private bool isSyncingWithGameManager = false;
 
+        // ROBUST PAUSE STATE: Single source of truth, no toggles
+        private bool isGamePaused = false;
+
         // GameManager reference
         private GameManager gameManager;
         private HardwareManager hardwareManager;
@@ -88,6 +98,7 @@ namespace LoGa.LudoEngine.Core
         public bool AreServicesInitialized => servicesInitialized;
         public bool IsHardwareSetupCompleted => hardwareSetupCompleted;
         public bool IsTutorialCompleted => tutorialCompleted;
+        public bool IsGamePaused => isGamePaused;
 
         public bool IsReadyForGameplay =>
             servicesInitialized &&
@@ -139,6 +150,9 @@ namespace LoGa.LudoEngine.Core
             SetPanelActive(debugPanel, false);
             SetPanelActive(mapPanel, false);
             SetPanelActive(feedbackPanel, false);
+            SetPanelActive(inventoryPanel, false);
+            SetPanelActive(settingsPanel, false);
+            SetPanelActive(sharePanel, false);
 
             Debug.Log("[UIManager] All panels disabled at startup");
         }
@@ -186,6 +200,15 @@ namespace LoGa.LudoEngine.Core
 
             if (pauseMenuUI != null)
                 pauseMenuUI.SetUIManager(this);
+            
+            if (inventoryUI != null)
+                inventoryUI.SetUIManager(this);
+
+            if (settingsUI != null)
+                settingsUI.SetUIManager(this);
+            
+            if (shareUI != null)
+                shareUI.SetUIManager(this);
 
             Debug.Log("[UIManager] UI component references set up");
         }
@@ -513,12 +536,6 @@ namespace LoGa.LudoEngine.Core
             SetPanelActive(debugPanel, false); // Hidden by default in audio mode
             SetPanelActive(mapPanel, false);   // No map in audio-focused mode
 
-            // Update session ID display
-            if (audioPlayModeUI != null && gameManager != null)
-            {
-                audioPlayModeUI.UpdateSessionId(gameManager.CurrentSessionId);
-            }
-
             // Start service health monitoring
             StartCoroutine(MonitorServiceHealth());
 
@@ -580,8 +597,16 @@ namespace LoGa.LudoEngine.Core
 
         public void OnSettingsButtonPressed()
         {
-            LogDebug("Settings button pressed");
-            // TODO: Implement settings panel
+            Debug.Log("[UIManager] Settings button pressed");
+            
+            if (settingsUI != null)
+            {
+                settingsUI.Show();
+            }
+            else
+            {
+                Debug.LogError("[UIManager] SettingsUI not assigned!");
+            }
         }
 
         public void OnFeedbackButtonPressed()
@@ -594,6 +619,26 @@ namespace LoGa.LudoEngine.Core
         {
             LogDebug("Feedback closed - returning to previous state");
             TransitionToState(previousState);
+        }
+
+        public void OnSettingsClose()
+        {
+            Debug.Log("[UIManager] Settings closed");
+            
+            if (settingsUI != null)
+            {
+                settingsUI.Hide();
+            }
+        }
+
+        public void OnShareClose()
+        {
+            Debug.Log("[UIManager] Share panel closed");
+            
+            if (shareUI != null)
+            {
+                shareUI.Hide();
+            }
         }
 
         public void OnExitToMainMenu()
@@ -767,7 +812,7 @@ namespace LoGa.LudoEngine.Core
                     if (gameManager != null)
                     {
                         gameManager.ExitTutorial();  // Cleanup tutorial state
-                        gameManager.TransitionToPhase(GameManager.ApplicationPhase.ModeSelection);  // ← FIXED
+                        gameManager.TransitionToPhase(GameManager.ApplicationPhase.ModeSelection);
                     }
                     else
                     {
@@ -915,100 +960,205 @@ namespace LoGa.LudoEngine.Core
         }
 
         // ===============================================
-        // Pause Menu Methods
+        // ROBUST PAUSE MENU METHODS - NO TIMERS, ATOMIC OPERATIONS
         // ===============================================
 
-        public void ShowPauseMenu()
+        /// <summary>
+        /// Pause the game - NOT a toggle, explicit pause operation
+        /// ROBUST: Menu must show successfully before game pauses
+        /// </summary>
+        public void PauseGame()
         {
-            Debug.Log("UIManager: Showing pause menu");
-
-            // Show the pause menu UI
-            if (pauseMenuUI != null)
+            // Validate we can pause
+            if (isGamePaused)
             {
-                pauseMenuUI.ShowPauseMenu();
-            }
-            else
-            {
-                Debug.LogError("UIManager: PauseMenuUI not assigned!");
+                Debug.LogWarning("UIManager: Game already paused - ignoring");
                 return;
             }
 
-            // Pause the game via GameManager
-            if (gameManager != null)
+            if (gameManager == null)
             {
-                gameManager.TogglePause();
+                Debug.LogError("UIManager: Cannot pause - GameManager not assigned!");
+                return;
             }
-            else
+
+            if (pauseMenuUI == null)
             {
-                Debug.LogError("UIManager: GameManager reference not set!");
+                Debug.LogError("UIManager: Cannot pause - PauseMenuUI not assigned!");
+                return;
             }
+
+            Debug.Log("UIManager: Pausing game");
+
+            // ATOMIC OPERATION: Menu MUST show successfully before we pause
+            bool menuShown = pauseMenuUI.Show();
+
+            if (!menuShown)
+            {
+                Debug.LogError("UIManager: Failed to show pause menu - aborting pause!");
+                return;
+            }
+
+            // Menu shown successfully - now pause the game
+            gameManager.Pause();
+            isGamePaused = true;
+
+            // Hide pause button from play mode UI
+            if (audioPlayModeUI != null)
+            {
+                audioPlayModeUI.OnGamePaused();
+            }
+
+            Debug.Log("UIManager: Game paused successfully");
         }
 
-        public void HidePauseMenu()
+        /// <summary>
+        /// Resume the game - NOT a toggle, explicit resume operation
+        /// ROBUST: Always safe to call, validates state before resuming
+        /// </summary>
+        public void ResumeGame()
         {
-            Debug.Log("UIManager: Hiding pause menu");
+            // Validate we can resume
+            if (!isGamePaused)
+            {
+                Debug.LogWarning("UIManager: Game not paused - ignoring resume");
+                return;
+            }
 
+            if (gameManager == null)
+            {
+                Debug.LogError("UIManager: Cannot resume - GameManager not assigned!");
+                return;
+            }
+
+            Debug.Log("UIManager: Resuming game");
+
+            // Hide pause menu
             if (pauseMenuUI != null)
             {
-                pauseMenuUI.HidePauseMenu();
+                pauseMenuUI.Hide();
             }
+
+            // Resume game
+            gameManager.Resume();
+            isGamePaused = false;
+
+            // Show pause button in play mode UI
+            if (audioPlayModeUI != null)
+            {
+                audioPlayModeUI.OnGameResumed();
+            }
+
+            Debug.Log("UIManager: Game resumed successfully");
         }
 
+        /// <summary>
+        /// Called by Resume button in pause menu
+        /// </summary>
         public void OnPauseResume()
         {
-            Debug.Log("UIManager: Resume requested from pause menu");
+            Debug.Log("UIManager: Resume button pressed in pause menu");
+            ResumeGame();
+        }
 
-            // Hide the pause menu
-            HidePauseMenu();
-
-            // Resume the game via GameManager
-            if (gameManager != null)
+        /// <summary>
+        /// Called by Share button in pause menu
+        /// </summary>
+        public void OnPauseShare()
+        {
+            Debug.Log("[UIManager] Share button pressed from pause menu");
+            
+            // Get current session ID from GameManager
+            if (GameManager.Instance == null || string.IsNullOrEmpty(GameManager.Instance.CurrentSessionId))
             {
-                gameManager.TogglePause();
+                Debug.LogWarning("[UIManager] No active session to share");
+                // Could show an error message to user here
+                return;
+            }
+            
+            string sessionId = GameManager.Instance.CurrentSessionId;
+
+            if (shareUI != null)
+            {
+                shareUI.Show(sessionId);
             }
             else
             {
-                Debug.LogError("UIManager: GameManager reference not set!");
+                Debug.LogError("[UIManager] ShareUI not assigned!");
             }
         }
 
-        public void OnPauseShare()
-        {
-            Debug.Log("PauseMenu: Share button pressed (TODO: implement share flow)");
-            // TODO: Implement sharing session ID or game state
-    
-        }
-
+        /// <summary>
+        /// Called by Settings button in pause menu
+        /// </summary>
         public void OnPauseSettings()
         {
-            Debug.Log("PauseMenu: Settings button pressed (TODO: show settings menu)");
-            // TODO: Implement settings panel overlay on pause menu
+            Debug.Log("[UIManager] Settings button pressed from pause menu");
 
+            OnSettingsButtonPressed(); // Reuse same settings panel
         }
 
+        /// <summary>
+        /// Called by Exit button in pause menu
+        /// </summary>
         public void OnPauseExit()
         {
-            Debug.Log("PauseMenu: Exit to main menu");
+            Debug.Log("UIManager: Exit to main menu from pause menu");
 
-            // Hide pause menu first
-            HidePauseMenu();
+            // Resume game first to clean up state
+            if (isGamePaused)
+            {
+                ResumeGame();
+            }
 
-            // NOTE: Stop all audio BEFORE transitioning
+            // Stop all gameplay audio
             if (gameManager != null)
             {
-                // Stop all gameplay audio
                 gameManager.StopAllGameplayAudio();
-
-                // Unpause the game state
-                gameManager.TogglePause();
-
-                // Transition back to main menu
                 gameManager.TransitionToPhase(GameManager.ApplicationPhase.MainMenu);
             }
             else
             {
-                Debug.LogError("UIManager: GameManager reference not set!");
                 TransitionToState(AppState.MainMenu);
+            }
+        }
+
+        // DEPRECATED - These old methods should not be used anymore
+        // Kept for backward compatibility but log warnings
+        public void ShowPauseMenu()
+        {
+            Debug.LogWarning("UIManager: ShowPauseMenu() is deprecated - use PauseGame() instead");
+            PauseGame();
+        }
+
+        public void HidePauseMenu()
+        {
+            Debug.LogWarning("UIManager: HidePauseMenu() is deprecated - use ResumeGame() instead");
+            ResumeGame();
+        }
+
+        // ===============================================
+        // Inventory Methods
+        // ===============================================
+        public void OnInventoryButtonPressed()
+    {
+        Debug.Log("[UIManager] Inventory button pressed - opening inventory");
+        
+        // Show inventory
+        if (inventoryUI != null)
+        {
+            inventoryUI.Show();
+        }
+    }
+
+        public void OnInventoryClose()
+        {
+            Debug.Log("[UIManager] Inventory closed");
+            
+            // Hide inventory
+            if (inventoryUI != null)
+            {
+                inventoryUI.Hide();
             }
         }
 
@@ -1099,95 +1249,3 @@ namespace LoGa.LudoEngine.Core
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -193,6 +193,38 @@ namespace LoGa.LudoEngine.Core
         }
 
         /// <summary>
+        /// Ensure services are running - restart if needed
+        /// Called before entering gameplay to guarantee services are active
+        /// </summary>
+        public async Task<bool> EnsureServicesRunning()
+        {
+            Debug.Log("HardwareManager: Ensuring services are running");
+
+            // Services should always be running after Hardware Setup
+            // This is just a safety check
+            if (AreServicesRunning)
+            {
+                Debug.Log("HardwareManager: Services confirmed running");
+                return true;
+            }
+
+            // If services not running, something went wrong - restart them
+            Debug.LogWarning("HardwareManager: Services not running - restarting (this shouldn't happen)");
+
+            bool locationStarted = await StartLocationService();
+            bool headTrackingStarted = await StartHeadTrackingService();
+
+            if (locationStarted && headTrackingStarted)
+            {
+                Debug.Log("HardwareManager: Services restarted successfully");
+                return true;
+            }
+
+            Debug.LogError("HardwareManager: Failed to restart services");
+            return false;
+        }
+
+        /// <summary>
         /// Get current hardware status
         /// </summary>
         public HardwareSetupStatus GetStatus()

@@ -175,12 +175,13 @@ namespace LoGa.LudoEngine.Services
             instance.setParameterByName("CueIndex", cueIndex);
             instance.setParameterByName("Direction", direction);
             instance.setParameterByName("NormalizedDistance", normalizedDistance);
-            instance.setParameterByName("Trigger", 1.0f);
 
             // Start the instance
             FMOD.RESULT result = instance.start();
 
-            Debug.Log($"🎵 Navigation cue started: Cue={cueIndex}, Dir={direction}, Dist={normalizedDistance:F3}, Result={result}");
+            instance.setParameterByName("Trigger", 1.0f); // set trigger after start so the behaviour is not affected by race conditions(set back using command instrument)
+
+            Debug.Log($" Navigation cue started: Cue={cueIndex}, Dir={direction}, Dist={normalizedDistance:F3}, Result={result}");
         }
 
         // Play regular audio
@@ -351,6 +352,34 @@ namespace LoGa.LudoEngine.Services
                 Debug.LogWarning($"AudioService: Failed to pause bus {busPath}: {e.Message}");
             }
         }
+
+        /// <summary>
+        /// Set volume for an FMOD bus
+        /// </summary>
+        /// <param name="busPath">Bus path (e.g., "bus:/", "bus:/SFX", "bus:/Ambient")</param>
+        /// <param name="volume">Volume level (0.0 to 1.0)</param>
+        public void SetBusVolume(string busPath, float volume)
+        {        
+            try
+            {
+                Bus bus = RuntimeManager.GetBus(busPath);
+                
+                if (bus.isValid())
+                {
+                    bus.setVolume(volume);
+                    Debug.Log($"AudioService: Set {busPath} volume to {volume:F2}");
+                }
+                else
+                {
+                    Debug.LogWarning($"AudioService: Bus '{busPath}' not found");
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"AudioService: Error setting bus volume - {e.Message}");
+            }
+        }
+
 
         /// <summary>
         /// Resume an FMOD bus

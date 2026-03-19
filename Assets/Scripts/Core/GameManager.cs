@@ -76,6 +76,7 @@ namespace LoGa.LudoEngine.Core
         [SerializeField] private TutorialManager tutorialManager;
 
         private EventReference mercenaryEncounterEvent;
+        private EventReference mercenaryDefeatEvent;
         private EventReference mercenaryFootstepsEvent;
         private EventReference mercenaryAttackEvent;
         private EventReference attackImpactEvent;
@@ -100,6 +101,7 @@ namespace LoGa.LudoEngine.Core
         private GameplayState currentGameplayState = GameplayState.Wander;
         private GameplayState previousGameplayState = GameplayState.Wander;
         private GameState gameState = GameState.Suspended;
+        private bool isPaused = false;
 
         // Suspension tracking
         private SuspensionReason suspensionReason = SuspensionReason.None;
@@ -131,6 +133,7 @@ namespace LoGa.LudoEngine.Core
 
         private EventInstance mainAmbientInstance;
         private EventInstance mercenaryEncounterInstance;
+        private EventInstance mercenaryDefeatInstance;
         private EventInstance currentFootstepsInstance;
         private EventInstance currentAttackInstance;
         private EventInstance sharedBerryInstance;
@@ -139,21 +142,20 @@ namespace LoGa.LudoEngine.Core
         #endregion
 
         #region Combat System
-
         private List<Mercenary> activeMercenaries = new List<Mercenary>();
         private List<Berry> activeBerries = new List<Berry>();
         private float combatCheckTimer = 0f;
         private bool isInCombat = false;
         private int currentAttackIndex = 0;
-        private int currentCombatType = 0;
         private Mercenary currentAttackingMercenary;
-
-        // Combat artifact combinations based on rewards from JSON
-        private readonly Dictionary<string, List<int>> combatTriggers = new Dictionary<string, List<int>>
-        {
-            { "combat_oak_crops", new List<int> { 1, 4 } },               // Oak (1) + Modern Crops (4)
-            { "combat_royal_artifacts", new List<int> { 9, 10 } }         // Royal Seal (9) + Golden Sun (10)
-        };
+        private GameDataService.CombatConfiguration combatConfig;
+        private GameDataService.CombatEncounter currentCombatEncounter;
+        private float playerHeadingAtAttackStart = 0f;
+        
+        // Tutorial combat state
+        private bool isTutorialCombat = false;
+        private int tutorialAttackNumber = 0;
+        private int consecutiveDefenses = 0;
 
         #endregion
 
@@ -200,6 +202,8 @@ namespace LoGa.LudoEngine.Core
         public float SpectatorHeading => spectatorHeading;
         public bool IsReceivingSpectatorData => isReceivingSpectatorData;
         public bool SystemsReady => systemsReady;
+        public bool IsPaused => isPaused;
+
         /// <summary>
         /// Check if gameplay is currently suspended
         /// </summary>
@@ -212,6 +216,16 @@ namespace LoGa.LudoEngine.Core
 
         #endregion
 
+        #region Public Events
+        public event Action OnGamePaused;
+        public event Action OnGameResumed;
+        // Tutorial events for TutorialManager to listen to
+        public event Action<int, bool, int> TutorialAttackCompleted;  // (attackNumber, wasDefended, consecutiveDefenses)
+        public event Action TutorialCombatCompleted;
+        public event Action TutorialBerryCollected;
+
+        #endregion
+
         #region Unity Lifecycle
 
         private void Awake()
@@ -219,6 +233,7 @@ namespace LoGa.LudoEngine.Core
             if (Instance == null)
             {
                 Instance = this;
+                Screen.sleepTimeout = SleepTimeout.NeverSleep; // keep the screens on
                 LoadHealthFromPreferences();
                 Debug.Log("GameManager: Instance created");
             }
@@ -232,7 +247,7 @@ namespace LoGa.LudoEngine.Core
         private async void Start()
         {
             Debug.Log("GameManager: Starting master controller initialization");
-
+    
             try
             {
                 await InitializeSystems();
@@ -252,7 +267,7 @@ namespace LoGa.LudoEngine.Core
             // Stop all gameplay updates when suspended
             if (gameState != GameState.Running) return;
 
-            if (currentMode == GameMode.Player)
+            if (currentMode == GameMode.Player  || currentMode == GameMode.Tutorial)
             {
                 UpdateGameplayMode();
             }
@@ -326,6 +341,33 @@ namespace LoGa.LudoEngine.Core
 
             Debug.Log($"GameManager: Default time layer: {config.defaultTimeLayer}");
             Debug.Log($"GameManager: Navigation settings - Base cues: {config.baseMaxActiveCues}, Max cues: {config.maxMaxActiveCues}");
+            
+            // Load combat configuration
+            ApplyCombatConfiguration(GameDataService?.CombatConfig);
+        }
+
+        private void ApplyCombatConfiguration(GameDataService.CombatConfiguration config)
+        {
+            if (config == null)
+            {
+                Debug.Log("GameManager: No combat configuration - combat system disabled for this site");
+                return;
+            }
+            
+            combatConfig = config;
+            
+            int encounterCount = combatConfig.encounters?.Count ?? 0;
+            Debug.Log($"GameManager: Loaded combat config - approachDuration: {combatConfig.approachDuration}s, " +
+                    $"attackDelay: {combatConfig.attackDelayAfterIntro}s, attackCount: {combatConfig.attackCount}, " +
+                    $"encounters: {encounterCount}");
+            
+            if (encounterCount == 0)
+            {
+                Debug.LogWarning("GameManager: No combat encounters in configuration!");
+            }
+
+            // INITIALIZE COMBAT AUDIO NOW (after config is loaded)
+            InitializeCombatAudio();
         }
 
         private bool InitializeUIManager()
@@ -414,9 +456,6 @@ namespace LoGa.LudoEngine.Core
 
                 Debug.Log("GameManager: AudioService obtained successfully");
 
-                // Combat audio is completely optional - never blocks initialization
-                InitializeCombatAudio(); // Don't even check return value
-
                 // Set audioInitialized regardless of combat events
                 audioInitialized = true;
                 Debug.Log("GameManager: Audio systems initialized successfully - audioInitialized = TRUE");
@@ -441,18 +480,18 @@ namespace LoGa.LudoEngine.Core
             }
 
             // LOAD from JSON instead of inspector
-            var config = GameDataService?.GameConfig;
-            if (config?.combatAudioEvents == null)
+            if (combatConfig?.audioEvents == null) 
             {
-                Debug.Log("GameManager: No combat audio events in JSON - skipping combat audio");
+                Debug.Log("GameManager: No combat audio events in config - skipping combat audio");
                 return true; // Don't fail, just skip
             }
 
-            var combatEvents = config.combatAudioEvents;
+            var combatEvents = combatConfig.audioEvents;
             int successCount = 0;
 
             // Combat sequence events need persistent instances
             LoadCombatEventWithInstance(combatEvents.mercenaryEncounter, ref mercenaryEncounterEvent, ref mercenaryEncounterInstance, "mercenary encounter", ref successCount);
+            LoadCombatEventWithInstance(combatEvents.mercenaryDefeat, ref mercenaryDefeatEvent, ref mercenaryDefeatInstance, "mercenary defeat", ref successCount); 
             LoadCombatEventWithInstance(combatEvents.heartbeat, ref heartbeatEvent, ref heartbeatInstance, "heartbeat", ref successCount);
             LoadCombatEventWithInstance(combatEvents.berryAmbient, ref berryAmbientEvent, ref sharedBerryInstance, "berry ambient", ref successCount);
 
@@ -462,7 +501,7 @@ namespace LoGa.LudoEngine.Core
             LoadCombatEventRef(combatEvents.attackImpact, ref attackImpactEvent, "attack impact", ref successCount);
             LoadCombatEventRef(combatEvents.berryCollection, ref berryCollectionEvent, "berry collection", ref successCount);
 
-            Debug.Log($"GameManager: Combat audio initialization complete - {successCount}/7 events loaded");
+            Debug.Log($"GameManager: Combat audio initialization complete - {successCount}/8 events loaded"); 
             return true; // Always succeed, even if 0 events loaded
         }
 
@@ -547,6 +586,18 @@ namespace LoGa.LudoEngine.Core
                         Debug.LogError("GameManager: Failed to create ambient music instance");
                         return false;
                     }
+
+                    if (TimeLayerManager.Instance != null && TimeLayerManager.Instance.CurrentLayer != null)
+                    {
+                        int layerIndex = TimeLayerManager.Instance.CurrentLayer.layerIndex;
+                        AudioService.SetParameter(mainAmbientInstance, "TimeLayer", layerIndex);
+                        Debug.Log($"GameManager: Ambient instance created with TimeLayer {layerIndex}");
+                    }
+                    else
+                    {
+                        Debug.LogWarning("GameManager: Ambient instance created without TimeLayer set");
+                    }
+
                     Debug.Log("GameManager: Ambient music initialized");
                     return true;
                 }
@@ -737,13 +788,6 @@ namespace LoGa.LudoEngine.Core
         {
             Debug.Log("GameManager: Exiting PlayerMode - triggering complete site unload");
 
-            // Stop hardware services
-            if (hardwareManager != null)
-            {
-                hardwareManager.StopServices();
-                Debug.Log("GameManager: Hardware services stopped");
-            }
-
             // CRITICAL: Unload site first (triggers complete reset)
             if (SiteManager.Instance != null)
             {
@@ -806,17 +850,11 @@ namespace LoGa.LudoEngine.Core
 
             try
             {
-                // Verify hardware services are running (should be from hardware setup)
-                if (hardwareManager != null && !hardwareManager.AreServicesRunning)
+                // Services should already be running - just verify
+                if (hardwareManager == null || !await hardwareManager.EnsureServicesRunning())
                 {
-                    Debug.LogWarning("GameManager: Services not running - attempting restart");
-                    bool setupSuccess = await hardwareManager.BeginSetup();
-
-                    if (!setupSuccess)
-                    {
-                        Debug.LogError("GameManager: Failed to start hardware services");
-                        return false;
-                    }
+                    Debug.LogError("GameManager: Hardware services not available");
+                    return false;
                 }
 
                 currentSessionId = System.Guid.NewGuid().ToString();
@@ -826,9 +864,8 @@ namespace LoGa.LudoEngine.Core
                 bool firebaseAvailable = false;
                 try
                 {
-                    // Try to get Firebase with 5 second timeout
                     var firebaseTask = ServiceLocator.GetInitializedService<IFirebaseService>();
-                    var timeoutTask = Task.Delay(5000); // 5 second timeout
+                    var timeoutTask = Task.Delay(5000);
 
                     var completedTask = await Task.WhenAny(firebaseTask, timeoutTask);
 
@@ -836,7 +873,6 @@ namespace LoGa.LudoEngine.Core
                     {
                         var firebaseService = firebaseTask.Result;
                         
-                        // Try to initialize session with timeout
                         var sessionTask = firebaseService.InitializeSession(currentSessionId, "Player");
                         var sessionTimeoutTask = Task.Delay(3000);
                         
@@ -849,12 +885,12 @@ namespace LoGa.LudoEngine.Core
                         }
                         else
                         {
-                            Debug.LogWarning("GameManager: Firebase session initialization timed out or failed - continuing offline");
+                            Debug.LogWarning("GameManager: Firebase session initialization timed out - continuing offline");
                         }
                     }
                     else
                     {
-                        Debug.LogWarning("GameManager: Firebase service not available or timed out - continuing offline");
+                        Debug.LogWarning("GameManager: Firebase service not available - continuing offline");
                     }
                 }
                 catch (Exception e)
@@ -862,7 +898,6 @@ namespace LoGa.LudoEngine.Core
                     Debug.LogWarning($"GameManager: Firebase initialization failed - continuing offline: {e.Message}");
                 }
 
-                // Start player mode regardless of Firebase status
                 TransitionToPhase(ApplicationPhase.PlayerMode);
 
                 if (poiManager != null)
@@ -876,7 +911,6 @@ namespace LoGa.LudoEngine.Core
             catch (Exception e)
             {
                 Debug.LogError($"GameManager: StartPlayerMode failed - {e.Message}");
-                CleanupFailedPlayerStart();
                 return false;
             }
         }
@@ -972,6 +1006,8 @@ namespace LoGa.LudoEngine.Core
             // Apply game configuration from loaded site data
             ApplyGameDataConfiguration();
 
+            LoadHealthFromPreferences();
+
             // initialize and start ambient audio
             InitializeAndStartAmbientAudio();
 
@@ -999,27 +1035,51 @@ namespace LoGa.LudoEngine.Core
             TransitionToPhase(ApplicationPhase.ModeSelection);
         }
 
-        public void TogglePause()
+        /// <summary>
+        /// Pause the game - NOT a toggle, explicit pause operation
+        /// ROBUST: Safe to call multiple times, validates state before pausing
+        /// </summary>
+        public void Pause()
         {
-            if (gameState == GameState.Running)
+            if (isPaused)
             {
-                // Save current gameplay state (Wander/Interact/Combat/Recovery)
-                previousGameplayState = currentGameplayState;
-
-                // Suspend gameplay (stops updates, pauses audio)
-                SuspendGameplay(SuspensionReason.PauseMenu);
-
-                Debug.Log($"Game paused (was in {previousGameplayState} state)");
+                Debug.LogWarning("GameManager: Already paused - ignoring");
+                return;
             }
-            else if (gameState == GameState.Suspended && suspensionReason == SuspensionReason.PauseMenu)
-            {
-                // Resume gameplay
-                ResumeGameplay(SuspensionReason.PauseMenu);
 
-                Debug.Log($"Game resumed (returning to {currentGameplayState} state)");
-            }
+            Debug.Log("GameManager: Pausing game");
+
+            isPaused = true;
+            SuspendGameplay(SuspensionReason.PauseMenu);
+
+            // Notify listeners (e.g., UI)
+            OnGamePaused?.Invoke();
+
+            Debug.Log("GameManager: Game paused successfully");
         }
 
+        /// <summary>
+        /// Resume the game - NOT a toggle, explicit resume operation
+        /// ROBUST: Safe to call multiple times, validates state before resuming
+        /// </summary>
+        public void Resume()
+        {
+            if (!isPaused)
+            {
+                Debug.LogWarning("GameManager: Not paused - ignoring resume");
+                return;
+            }
+
+            Debug.Log("GameManager: Resuming game");
+
+            isPaused = false;
+            ResumeGameplay(SuspensionReason.PauseMenu);
+
+            // Notify listeners (e.g., UI)
+            OnGameResumed?.Invoke();
+
+            Debug.Log("GameManager: Game resumed successfully");
+        }
         #endregion
 
 
@@ -1036,27 +1096,6 @@ namespace LoGa.LudoEngine.Core
             isReceivingSpectatorData = false;
             spectatorLocation = Vector2.zero;
             spectatorHeading = 0f;
-        }
-
-        private void CleanupPlayerSession()
-        {
-            if (LocationService != null && LocationService.IsRunning)
-            {
-                LocationService.StopLocationUpdates();
-            }
-
-            if (HeadTrackingService != null)
-            {
-                bool isCurrentlyTracking = !string.IsNullOrEmpty(HeadTrackingService.ActiveProviderName) &&
-                                          HeadTrackingService.ActiveProviderName != "None";
-
-                if (isCurrentlyTracking)
-                {
-                    HeadTrackingService.StopTracking();
-                }
-            }
-
-            currentSessionId = null;
         }
 
         private void CleanupSpectatorSession()
@@ -1241,11 +1280,10 @@ namespace LoGa.LudoEngine.Core
             {
                 playerHealth--;
                 SaveHealthToPreferences();
+                
                 UpdateHeartbeat();
 
-                // Single damage event
                 AnalyticsService?.TrackEvent($"player_hit_health_{playerHealth}");
-
                 Debug.Log($"GameManager: Player took damage. Health: {playerHealth}");
             }
         }
@@ -1273,46 +1311,53 @@ namespace LoGa.LudoEngine.Core
 
         private void UpdateHeartbeat()
         {
-            if (!audioInitialized || AudioService == null) return;
-
-            // Check if heartbeat instance exists before using
-            if (heartbeatInstance.handle == IntPtr.Zero)
+            if (!audioInitialized || AudioService == null) 
             {
-                Debug.LogWarning("GameManager: Heartbeat instance not available - skipping heartbeat update");
+                Debug.LogWarning("[HEARTBEAT-DEBUG] UpdateHeartbeat() ABORTED - audio not ready");
                 return;
             }
 
+            if (heartbeatInstance.handle == IntPtr.Zero)
+            {
+                Debug.LogWarning("[HEARTBEAT-DEBUG] UpdateHeartbeat() ABORTED - heartbeat instance null");
+                return;
+            }
 
             try
             {
                 if (!AudioService.IsInstanceValid(heartbeatInstance))
                 {
-                    Debug.Log("GameManager: Heartbeat instance invalid - skipping update");
+                    Debug.LogWarning("[HEARTBEAT-DEBUG] UpdateHeartbeat() ABORTED - instance invalid");
                     return;
                 }
 
                 AudioService.SetParameter(heartbeatInstance, "Health", playerHealth);
                 Debug.Log($"GameManager: Heartbeat parameter set to: {playerHealth}");
 
-                if (playerHealth < maxHealth && currentGameplayState != GameplayState.Wander)
+                if (playerHealth < maxHealth)
                 {
                     PLAYBACK_STATE playbackState;
                     heartbeatInstance.getPlaybackState(out playbackState);
+                    
                     if (playbackState != PLAYBACK_STATE.PLAYING)
                     {
                         AudioService.PlayAudio(heartbeatInstance, Vector3.zero);
-                        Debug.Log("GameManager: Heartbeat audio started");
+                        Debug.Log("[HEARTBEAT-DEBUG] Heartbeat audio STARTED");
+                    }
+                    else
+                    {
+                        Debug.Log("[HEARTBEAT-DEBUG] Heartbeat already playing - skipping start");
                     }
                 }
                 else
-                {
+                {  
                     AudioService.StopAudio(heartbeatInstance, true);
                     Debug.Log("GameManager: Heartbeat audio stopped");
                 }
             }
             catch (Exception e)
             {
-                Debug.LogError($"GameManager: Error updating heartbeat - {e.Message}");
+                Debug.LogError($"[HEARTBEAT-DEBUG] Exception in UpdateHeartbeat: {e.Message}\n{e.StackTrace}");
             }
         }
 
@@ -1387,7 +1432,6 @@ namespace LoGa.LudoEngine.Core
 
                 case GameplayState.Recovery:
                     StartRecovery();
-                    UpdateHeartbeat();
                     break;
             }
         }
@@ -1487,45 +1531,53 @@ namespace LoGa.LudoEngine.Core
         private void CheckForCombatTriggers()
         {
             if (StorageService == null) return;
-
             if (isInCombat) return;
+            Debug.Log($"[COMBAT-CHECK] combatConfig null? {combatConfig == null}");
+            Debug.Log($"[COMBAT-CHECK] encounters null? {combatConfig?.encounters == null}");
+            Debug.Log($"[COMBAT-CHECK] encounter count: {combatConfig?.encounters?.Count ?? 0}");
 
-            foreach (var trigger in combatTriggers)
+            // Check if combat configuration exists
+            if (combatConfig?.encounters == null || combatConfig.encounters.Count == 0)
             {
-                string combatId = trigger.Key;
+                Debug.LogWarning("[COMBAT-CHECK] No combat config - returning"); 
+                return;
+            }
+            
+            Debug.Log("[COMBAT-CHECK] Checking encounters...");
 
-                if (StorageService.Load<bool>($"{combatId}_completed"))
-                    continue;
+            // Check each combat encounter from JSON
+            foreach (var encounter in combatConfig.encounters)
+            {
+                // Check if already completed
+                string completionKey = $"combat_type_{encounter.combatType}_completed";
+                bool isCompleted = StorageService.Load<bool>(completionKey);
 
-                bool allRewardsUnlocked = trigger.Value.All(rewardId =>
-                    StorageService.Load<bool>($"Reward{rewardId}Unlocked"));
-
-                if (allRewardsUnlocked)
+                if (isCompleted)
                 {
-                    Debug.Log($"GameManager: Combat trigger activated: {combatId}");
-                    Debug.Log($"Required rewards unlocked: {string.Join(", ", trigger.Value)}");
+                    continue; // Skip completed encounters
+                }
 
-                    StorageService.Save($"{combatId}_completed", true);
-                    currentCombatType = GetCombatTypeIndex(combatId);
+                // Check if player has all required rewards (UPDATED KEY FORMAT)
+                bool hasAllRewards = encounter.requiredRewards.All(rewardId => 
+                    StorageService.Load<bool>($"reward_{rewardId}_collected")
+                );
 
-                    // Track specific combat trigger with reward IDs
-                    string rewardList = string.Join("_", trigger.Value);
-                    AnalyticsService?.TrackEvent($"combat_triggered_{combatId}_rewards_{rewardList}");
+                if (hasAllRewards)
+                {
+                    Debug.Log($"GameManager: Combat trigger activated for type {encounter.combatType}!");
+                    Debug.Log($"Required rewards collected: {string.Join(", ", encounter.requiredRewards)}");
+                    
+                    // Store current encounter
+                    currentCombatEncounter = encounter;
+                    
+                    // Track specific combat trigger
+                    string rewardList = string.Join("_", encounter.requiredRewards);
+                    AnalyticsService?.TrackEvent($"combat_triggered_type_{encounter.combatType}_rewards_{rewardList}");
 
                     TransitionToGameplayState(GameplayState.Combat);
-                    return;
+                    return; // Only trigger one combat at a time
                 }
             }
-        }
-
-        private int GetCombatTypeIndex(string combatId)
-        {
-            return combatId switch
-            {
-                "combat_oak_crops" => 1,
-                "combat_royal_artifacts" => 2,
-                _ => 1
-            };
         }
 
         private void StartCombat()
@@ -1541,8 +1593,22 @@ namespace LoGa.LudoEngine.Core
             currentAttackIndex = 0;
             activeMercenaries.Clear();
 
-            Debug.Log("GameManager: Starting combat sequence");
-            StartMercenaryEncounter();
+            if (isTutorialCombat)
+            {
+                tutorialAttackNumber = 0;
+                consecutiveDefenses = 0;
+                Debug.Log("GameManager: Tutorial combat - skipping intro, starting attacks immediately");
+                
+                // Tutorial: Skip intro dialogue, start attacks after delay
+                float attackDelay = combatConfig?.attackDelayAfterIntro ?? 3f;
+                StartCoroutine(StartAttackAfterDelay(attackDelay));
+            }
+            else
+            {
+                // Normal combat: Play intro dialogue first
+                Debug.Log("GameManager: Normal combat - playing intro dialogue");
+                StartMercenaryEncounter();
+            }
         }
 
         private void StartMercenaryEncounter()
@@ -1552,15 +1618,41 @@ namespace LoGa.LudoEngine.Core
             try
             {
                 mercenaryEncounterInstance = AudioService.CreateAudioInstance(mercenaryEncounterEvent);
-                AudioService.SetParameter(mercenaryEncounterInstance, "CombatType", currentCombatType);
+                
+                // Use combat type from current encounter
+                if (currentCombatEncounter != null)
+                {
+                    AudioService.SetParameter(mercenaryEncounterInstance, "CombatType", currentCombatEncounter.combatType);
+                }
+                
                 mercenaryEncounterInstance.setCallback(OnMercenaryDialogueComplete, EVENT_CALLBACK_TYPE.TIMELINE_MARKER);
                 mercenaryEncounterInstance.start();
-                Debug.Log($"GameManager: Mercenary encounter started - Combat Type: {currentCombatType}");
+                Debug.Log($"GameManager: Mercenary encounter started - Combat Type: {currentCombatEncounter?.combatType ?? 0}");
             }
             catch (Exception e)
             {
                 Debug.LogError($"GameManager: Error starting mercenary encounter - {e.Message}");
             }
+        }
+
+        /// <summary>
+        /// Start tutorial combat - same as real combat but with tutorial flag
+        /// </summary>
+        public void StartTutorialCombat()
+        {
+            Debug.Log("GameManager: Starting tutorial combat");
+            isTutorialCombat = true;
+            tutorialAttackNumber = 0;
+            TransitionToGameplayState(GameplayState.Combat);
+        }
+
+        /// <summary>
+        /// Start tutorial recovery (berry spawning) - reuses existing recovery system
+        /// </summary>
+        public void StartTutorialRecovery()
+        {
+            Debug.Log("GameManager: Starting tutorial recovery");
+            TransitionToGameplayState(GameplayState.Recovery);
         }
 
         private void UpdateCombatMode()
@@ -1581,7 +1673,9 @@ namespace LoGa.LudoEngine.Core
 
         private IEnumerator StartAttackAfterDelay(float delay)
         {
-            yield return new WaitForSeconds(delay);
+            // Use delay from combat config
+            float attackDelay = combatConfig?.attackDelayAfterIntro ?? 3f;
+            yield return new WaitForSeconds(attackDelay);
             StartAttackSequence();
         }
 
@@ -1594,12 +1688,19 @@ namespace LoGa.LudoEngine.Core
 
         private void ExecuteNextAttack()
         {
-            if (currentAttackIndex >= 3)
+            // NORMAL COMBAT: Check max attack limit
+            if (!isTutorialCombat)
             {
-                Debug.Log("GameManager: All 3 attacks completed - concluding combat");
-                ConcludeCombat();
-                return;
+                int maxAttacks = combatConfig?.attackCount ?? 3;
+                
+                if (currentAttackIndex >= maxAttacks)
+                {
+                    Debug.Log($"GameManager: All {maxAttacks} attacks completed - concluding combat");
+                    ConcludeCombat();
+                    return;
+                }
             }
+            // TUTORIAL COMBAT: No limit, continues until 2 consecutive defenses
 
             var attackingMercenary = CreateMercenaryForAttack();
             if (attackingMercenary == null)
@@ -1609,7 +1710,15 @@ namespace LoGa.LudoEngine.Core
             }
 
             activeMercenaries.Add(attackingMercenary);
-            Debug.Log($"GameManager: Executing attack {currentAttackIndex + 1}/3 from {attackingMercenary.id}");
+            
+            if (isTutorialCombat)
+            {
+                Debug.Log($"GameManager: Executing tutorial attack {tutorialAttackNumber + 1} (consecutive defenses: {consecutiveDefenses})");
+            }
+            else
+            {
+                Debug.Log($"GameManager: Executing attack {currentAttackIndex + 1}");
+            }
 
             StartCoroutine(ExecuteAttackCoroutine(attackingMercenary));
             currentAttackIndex++;
@@ -1624,7 +1733,7 @@ namespace LoGa.LudoEngine.Core
             }
 
             float playerHeading = HeadTrackingService.CurrentHeading;
-            float[] possibleOffsets = { -60f, 0f, 60f };
+            float[] possibleOffsets = { -90f, 90f }; // Only spawn left (-90°) or right (+90°)
             float randomOffset = possibleOffsets[UnityEngine.Random.Range(0, possibleOffsets.Length)];
             float attackBearing = NormalizeAngle(playerHeading + randomOffset);
 
@@ -1645,6 +1754,13 @@ namespace LoGa.LudoEngine.Core
         {
             currentAttackingMercenary = attacker;
             attacker.StartApproach();
+            
+            // Record player heading when attack starts
+            if (HeadTrackingService != null)
+            {
+                playerHeadingAtAttackStart = HeadTrackingService.CurrentHeading;
+                Debug.Log($"GameManager: Attack starting - player heading: {playerHeadingAtAttackStart:F0}°");
+            }
 
             currentFootstepsInstance = new EventInstance();
             currentAttackInstance = new EventInstance();
@@ -1660,6 +1776,9 @@ namespace LoGa.LudoEngine.Core
                 }
             }
 
+            // Use approach duration from combat config
+            float approachDuration = combatConfig?.approachDuration ?? 4f;
+            
             for (float t = 0; t < approachDuration; t += Time.deltaTime)
             {
                 float progress = t / approachDuration;
@@ -1728,13 +1847,40 @@ namespace LoGa.LudoEngine.Core
         {
             if (HeadTrackingService == null) return false;
 
-            float playerHeading = HeadTrackingService.CurrentHeading;
-            float angleDifference = Mathf.Abs(Mathf.DeltaAngle(playerHeading, attackBearing));
-            bool playerSucceeded = angleDifference <= 30f;
+            // Tutorial first attack is ALWAYS unavoidable
+            if (isTutorialCombat && tutorialAttackNumber == 0)
+            {
+                Debug.Log($"[HEARTBEAT-DEBUG] Tutorial attack {tutorialAttackNumber} - FORCED HIT (unavoidable)");
+        
+                Debug.Log("GameManager: Tutorial first attack - unavoidable");
+                return false;
+            }
 
-            Debug.Log($"GameManager: Defense check - Attack from: {attackBearing}°, Player facing: {playerHeading}°, Success: {playerSucceeded}");
+            float currentPlayerHeading = HeadTrackingService.CurrentHeading;
+            
+            // Calculate which side mercenary is on relative to starting position
+            float angleToMercenary = Mathf.DeltaAngle(playerHeadingAtAttackStart, attackBearing);
+            bool mercenaryOnLeft = angleToMercenary < 0; // Negative = left side
+            
+            // Calculate how much player turned from starting position
+            float playerTurnAmount = Mathf.DeltaAngle(playerHeadingAtAttackStart, currentPlayerHeading);
+            
+            // Player needs to turn 10° or more in correct direction
+            const float TURN_THRESHOLD = 10f;
+            
+            bool playerTurnedLeft = playerTurnAmount < -TURN_THRESHOLD;
+            bool playerTurnedRight = playerTurnAmount > TURN_THRESHOLD;
+            
+            bool playerSucceeded = (mercenaryOnLeft && playerTurnedLeft) || (!mercenaryOnLeft && playerTurnedRight);
+            
+            Debug.Log($"GameManager: Defense check - " +
+                    $"Mercenary on {(mercenaryOnLeft ? "LEFT" : "RIGHT")}, " +
+                    $"Player turned {playerTurnAmount:F1}° ({(playerTurnAmount < 0 ? "LEFT" : "RIGHT")}), " +
+                    $"Result: {(playerSucceeded ? "DEFENDED" : "HIT")}");
+            
             return playerSucceeded;
         }
+
 
         private void PlayImpactSound(bool playerBlocked, Vector3 position)
         {
@@ -1751,7 +1897,18 @@ namespace LoGa.LudoEngine.Core
         {
             if (playerSucceeded)
             {
-                Debug.Log("GameManager: Player BLOCKED the attack!");
+                Debug.Log("GameManager: Player DEFENDED the attack!");
+            }
+            else
+            {
+                Debug.Log("GameManager: Player was HIT!");
+                TakeDamage();
+                
+            }
+
+            if (playerSucceeded)
+            {
+                Debug.Log("GameManager: Player DEFENDED the attack!");
             }
             else
             {
@@ -1759,9 +1916,61 @@ namespace LoGa.LudoEngine.Core
                 TakeDamage();
             }
 
-            if (currentAttackIndex < 3)
+            // TUTORIAL COMBAT: Track consecutive defenses
+            if (isTutorialCombat)
             {
-                Debug.Log($"GameManager: Combat continues - attack {currentAttackIndex + 1}/3 next");
+                tutorialAttackNumber++;
+                
+                if (playerSucceeded)
+                {
+                    consecutiveDefenses++;
+                    Debug.Log($"GameManager: Tutorial - consecutive defenses: {consecutiveDefenses}/2");
+                    
+                    // END COMBAT: 2 consecutive defenses achieved
+                    if (consecutiveDefenses >= 2)
+                    {
+                        Debug.Log("GameManager: Tutorial combat complete - 2 consecutive defenses!");
+                        
+                        // Fire event for TutorialManager
+                        TutorialCombatCompleted?.Invoke();
+                        
+                        // SKIP normal combat conclusion (no outro dialogue)
+                        CleanupCombat();
+                        isTutorialCombat = false;
+                        consecutiveDefenses = 0;
+                        
+                        // Transition based on health
+                        if (playerHealth >= maxHealth)
+                        {
+                            TransitionToGameplayState(GameplayState.Wander);
+                        }
+                        else
+                        {
+                            TransitionToGameplayState(GameplayState.Recovery);
+                        }
+                        return; // Exit here, don't continue to normal combat logic
+                    }
+                }
+                else
+                {
+                    consecutiveDefenses = 0; // Reset on failure
+                    Debug.Log("GameManager: Tutorial - defense failed, consecutive counter reset");
+                }
+                
+                // Fire attack completed event
+                TutorialAttackCompleted?.Invoke(tutorialAttackNumber, playerSucceeded, consecutiveDefenses);
+                
+                // Continue attacking (no limit)
+                Invoke(nameof(ExecuteNextAttack), 1f);
+                return; // Exit here, tutorial has its own flow
+            }
+
+            // NORMAL COMBAT: Fixed number of attacks
+            int maxAttacks = combatConfig?.attackCount ?? 3;
+            
+            if (currentAttackIndex < maxAttacks)
+            {
+                Debug.Log($"GameManager: Combat continues - attack {currentAttackIndex + 1}/{maxAttacks} next");
                 Invoke(nameof(ExecuteNextAttack), 1f);
             }
             else
@@ -1780,13 +1989,72 @@ namespace LoGa.LudoEngine.Core
             // Track combat result
             AnalyticsService?.TrackEvent($"combat_completed_{(playerWon ? "won" : "lost")}_health_{playerHealth}");
 
-            // Store combat completion
-            if (StorageService != null)
+            // Save completion using combatType
+            if (currentCombatEncounter != null)
             {
-                string combatKey = $"CombatCompleted_{currentCombatType}";
-                StorageService.Save(combatKey, true);
+                string completionKey = $"combat_type_{currentCombatEncounter.combatType}_completed";
+                StorageService?.Save(completionKey, true);
+                Debug.Log($"GameManager: Saved combat completion: {completionKey}");
             }
 
+            // Play defeat dialogue first, then transition
+            PlayMercenaryDefeatDialogue();
+        }
+
+        private void PlayMercenaryDefeatDialogue()
+        {
+            if (AudioService == null || mercenaryDefeatEvent.IsNull || !AudioService.IsInstanceValid(mercenaryDefeatInstance))
+            {
+                Debug.LogWarning("GameManager: Mercenary defeat audio not available - skipping to transition");
+                FinalizeCombatConclusion();
+                return;
+            }
+
+            try
+            {
+                // Set CombatType parameter
+                if (currentCombatEncounter != null)
+                {
+                    AudioService.SetParameter(mercenaryDefeatInstance, "CombatType", currentCombatEncounter.combatType);
+                }
+
+                mercenaryDefeatInstance.setCallback(OnMercenaryDefeatComplete, EVENT_CALLBACK_TYPE.TIMELINE_MARKER);
+
+                // Play defeat dialogue
+                AudioService.PlayAudio(mercenaryDefeatInstance, Vector3.zero);
+                Debug.Log($"GameManager: Playing mercenary defeat dialogue - Combat Type: {currentCombatEncounter?.combatType ?? 0}");
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"GameManager: Error playing defeat dialogue - {e.Message}");
+                FinalizeCombatConclusion();
+            }
+        }
+
+        [AOT.MonoPInvokeCallback(typeof(EVENT_CALLBACK))]
+        private static FMOD.RESULT OnMercenaryDefeatComplete(EVENT_CALLBACK_TYPE type, IntPtr instancePtr, IntPtr parameterPtr)
+        {
+            if (type == EVENT_CALLBACK_TYPE.TIMELINE_MARKER && Instance != null) // Changed to TIMELINE_MARKER
+            {
+                Debug.Log("GameManager: Mercenary defeat dialogue completed via TIMELINE_MARKER - finalizing combat");
+                Instance.FinalizeCombatConclusion();
+            }
+            return FMOD.RESULT.OK;
+        }
+
+        private void FinalizeCombatConclusion()
+        {
+            Debug.Log("GameManager: Finalizing combat conclusion");
+
+            // Fire tutorial completion event
+            if (isTutorialCombat)
+            {
+                Debug.Log("GameManager: Tutorial combat complete - firing event");
+                TutorialCombatCompleted?.Invoke();
+                isTutorialCombat = false; // Reset tutorial flag
+            }
+
+            // Transition based on health
             if (playerHealth >= maxHealth)
             {
                 Debug.Log("GameManager: Player at full health - returning to wander mode");
@@ -1797,6 +2065,9 @@ namespace LoGa.LudoEngine.Core
                 Debug.Log("GameManager: Player damaged - entering recovery mode");
                 TransitionToGameplayState(GameplayState.Recovery);
             }
+
+            // Clear current encounter
+            currentCombatEncounter = null;
         }
 
         private void CleanupCombat()
@@ -1806,6 +2077,7 @@ namespace LoGa.LudoEngine.Core
             isInCombat = false;
             activeMercenaries.Clear();
             currentAttackingMercenary = null;
+            currentCombatEncounter = null; 
 
             if (AudioService == null) return;
 
@@ -1815,6 +2087,14 @@ namespace LoGa.LudoEngine.Core
                 {
                     AudioService.StopAudio(mercenaryEncounterInstance, true);
                     AudioService.ReleaseAudio(mercenaryEncounterInstance);
+                }
+
+                // Cleanup defeat instance
+                if (AudioService.IsInstanceValid(mercenaryDefeatInstance))
+                {
+                    mercenaryDefeatInstance.setCallback(null, EVENT_CALLBACK_TYPE.STOPPED);
+                    AudioService.StopAudio(mercenaryDefeatInstance, true);
+                    AudioService.ReleaseAudio(mercenaryDefeatInstance);
                 }
 
                 if (currentFootstepsInstance.handle != IntPtr.Zero)
@@ -1852,7 +2132,7 @@ namespace LoGa.LudoEngine.Core
         /// Start gameplay tutorial
         /// Called by UIManager when entering tutorial phase
         /// </summary>
-        public void StartGameplayTutorial()
+        public async void StartGameplayTutorial()
         {
             Debug.Log("GameManager: Starting gameplay tutorial");
 
@@ -1860,13 +2140,16 @@ namespace LoGa.LudoEngine.Core
             {
                 // Set tutorial mode
                 SetInternalGameMode(GameMode.Tutorial);
+                playerHealth = maxHealth;
+                SaveHealthToPreferences();
 
                 // Verify hardware services are running (should be from hardware setup)
-                if (hardwareManager != null && !hardwareManager.AreServicesRunning)
+                if (hardwareManager == null || !await hardwareManager.EnsureServicesRunning())
                 {
-                    Debug.LogWarning("GameManager: Services not running for tutorial - they should have been started in hardware setup");
+                    Debug.LogError("GameManager: Hardware services not available for tutorial");
+                    ExitTutorial();
+                    return;
                 }
-
                 // Activate gameplay systems
                 ActivateGameplaySystems();
 
@@ -1915,7 +2198,15 @@ namespace LoGa.LudoEngine.Core
 
             try
             {
+                StopAllGameplayAudio();
 
+                // resume gameplay so the buses can resume
+                if (gameState == GameState.Suspended && suspensionReason == SuspensionReason.Tutorial)
+                {
+                    ResumeGameplay(SuspensionReason.Tutorial);
+                    Debug.Log("GameManager: Resumed gameplay and unpaused audio buses");
+                }
+                
                 // Stop tutorial manager
                 if (tutorialManager != null)
                 {
@@ -1927,9 +2218,6 @@ namespace LoGa.LudoEngine.Core
                 {
                     poiManager.ExitTutorialMode();
                 }
-
-                // Suspend gameplay systems
-                SuspendGameplaySystems();
 
                 // Reset mode
                 SetInternalGameMode(GameMode.Inactive);
@@ -2029,7 +2317,16 @@ namespace LoGa.LudoEngine.Core
             // Track berry collection
             AnalyticsService?.TrackEvent("berry_collected");
 
-            RestoreHealth(1);
+            // Restore full health
+            int healthToRestore = maxHealth - playerHealth;
+            RestoreHealth(healthToRestore);
+
+            // Fire tutorial berry collected event
+            if (currentMode == GameMode.Tutorial)
+            {
+                Debug.Log("GameManager: Tutorial berry collected - firing event");
+                TutorialBerryCollected?.Invoke();
+            }
 
             if (currentGameplayState == GameplayState.Recovery && playerHealth < maxHealth)
             {
@@ -2073,8 +2370,7 @@ namespace LoGa.LudoEngine.Core
             CleanupCombat();
             CleanupRecovery();
 
-            // Reset session
-            CleanupPlayerSession();
+            currentSessionId = null;
 
             Debug.Log("GameManager: Complete reset finished");
         }
@@ -2196,6 +2492,12 @@ namespace LoGa.LudoEngine.Core
             try
             {
                 Debug.Log("GameManager: Application quitting - performing cleanup");
+                
+                if (hardwareManager != null)
+                {
+                    hardwareManager.StopServices();
+                    Debug.Log("GameManager: Hardware services stopped");
+                }
 
                 var firebaseService = ServiceLocator.GetService<IFirebaseService>();
 

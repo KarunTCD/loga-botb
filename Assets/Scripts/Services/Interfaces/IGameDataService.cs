@@ -9,6 +9,7 @@ namespace LoGa.LudoEngine.Services
     {
         // Configuration
         GameDataService.GameConfigurationData GameConfig { get; }
+        GameDataService.CombatConfiguration CombatConfig { get; }
         bool IsDataLoaded { get; }
         GameDataService.TutorialData Tutorial { get; }
 

@@ -12,7 +12,7 @@ namespace LoGa.LudoEngine.Services
     {
         [Header("Provider Configuration")]
         [SerializeField] private List<GameObject> providerPrefabs = new List<GameObject>();
-        [SerializeField] private float providerSwitchDelay = 2f;
+        [SerializeField] private float providerSwitchDelay = 0.5f;
         [SerializeField] private bool enableAutomaticSwitching = true;
         [SerializeField] private bool enableDebugLogging = true;
 
@@ -73,11 +73,47 @@ namespace LoGa.LudoEngine.Services
 
         public void StartTracking()
         {
-            if (activeProvider != null)
+            if (activeProvider == null)
             {
-                activeProvider.StartTracking();
-                if (enableDebugLogging)
-                    Debug.Log($"Started tracking with {activeProvider.ProviderName}");
+                Debug.LogError("HeadTrackingService: Cannot start tracking - no active provider!");
+                SelectBestProvider();
+                
+                if (activeProvider == null)
+                {
+                    Debug.LogError("HeadTrackingService: No providers available!");
+                    return;
+                }
+            }
+
+            // ALWAYS acquire resources (enables compass if needed)
+            AcquireSharedResources(activeProvider);
+            
+            // Ensure provider GameObject is active and enabled
+            if (activeProvider is MonoBehaviour providerMono)
+            {
+                if (!providerMono.gameObject.activeSelf)
+                {
+                    providerMono.gameObject.SetActive(true);
+                    if (enableDebugLogging)
+                        Debug.Log($"HeadTrackingService: Activated provider GameObject: {activeProvider.ProviderName}");
+                }
+                
+                if (!providerMono.enabled)
+                {
+                    providerMono.enabled = true;
+                    if (enableDebugLogging)
+                        Debug.Log($"HeadTrackingService: Enabled provider component: {activeProvider.ProviderName}");
+                }
+            }
+            
+            // Start tracking
+            activeProvider.StartTracking();
+            
+            if (enableDebugLogging)
+            {
+                Debug.Log($"HeadTrackingService: Started tracking with {activeProvider.ProviderName}");
+                Debug.Log($"HeadTrackingService: Compass enabled: {Input.compass.enabled}");
+                Debug.Log($"HeadTrackingService: Initial heading: {activeProvider.CurrentHeading:F1}°");
             }
         }
 
@@ -360,7 +396,7 @@ namespace LoGa.LudoEngine.Services
         {
             if (enableDebugLogging)
             {
-                Debug.Log($"[{activeProvider?.ProviderName}] {message}");
+                Debug.Log(message);
             }
         }
 

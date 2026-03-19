@@ -24,7 +24,7 @@ namespace LoGa.LudoEngine.Services
         [SerializeField] private float poorAccuracyThreshold = 25f;
 
         [Header("GPS Update Settings - ONLY affects GPS accuracy")]
-        [SerializeField] private float gpsUpdateInterval = 1.0f;      // GPS polling rate
+        [SerializeField] private float gpsUpdateInterval = 0.5f;      // GPS polling rate
         [SerializeField] private float significantMoveThreshold = 1.0f; // Meters - when to trigger LocationChanged event
 
         // PUBLIC PROPERTIES 
@@ -144,6 +144,9 @@ namespace LoGa.LudoEngine.Services
                 LocationAvailabilityChanged?.Invoke(true);
 
                 Debug.Log($"Location services initialized: {CurrentLocation.x:F8}, {CurrentLocation.y:F8}, accuracy: {PositionAccuracy:F1}m");
+                // AUTO-START location updates (like HeadTracking auto-starts)
+                StartLocationUpdates();
+                Debug.Log("LocationService: Auto-started location updates after initialization");
                 tcs.SetResult(true);
             }
             else
@@ -176,7 +179,7 @@ namespace LoGa.LudoEngine.Services
             IsRunning = false;
         }
 
-        // ✅ PUBLIC ACCESS METHODS - Like HeadTrackingService
+        // PUBLIC ACCESS METHODS - Like HeadTrackingService
         public Vector2 GetCurrentLocation()
         {
             return CurrentLocation;
@@ -192,7 +195,7 @@ namespace LoGa.LudoEngine.Services
             return PositionAccuracy;
         }
 
-        // ✅ REMOVED DEPENDENCY - This is now ONLY for GPS accuracy, not game timing
+        // REMOVED DEPENDENCY - This is now ONLY for GPS accuracy, not game timing
         private IEnumerator UpdateLocationRoutine()
         {
             while (true)
@@ -225,7 +228,7 @@ namespace LoGa.LudoEngine.Services
             }
         }
 
-        // ✅ CORE FIX - Only updates internal location data, rarely triggers events
+        // CORE FIX - Only updates internal location data, rarely triggers events
         private void UpdateGPSLocation()
         {
             if (Input.location.status != LocationServiceStatus.Running)
@@ -264,7 +267,7 @@ namespace LoGa.LudoEngine.Services
             lastUpdateTime = Time.time;
 
             // Only trigger LocationChanged event for SIGNIFICANT movement
-            float distanceMoved = Vector2.Distance(newLocation, lastSignificantLocation) * 111320f; // Convert to meters
+            float distanceMoved = GetDistanceMeters(newLocation, lastSignificantLocation);
 
             if (distanceMoved >= significantMoveThreshold)
             {
@@ -289,6 +292,27 @@ namespace LoGa.LudoEngine.Services
             {
                 return measurementNoise * 10f;
             }
+        }
+
+        private float GetDistanceMeters(Vector2 a, Vector2 b)
+        {
+            const float earthRadius = 6378137f;
+
+            float lat1 = a.x * Mathf.Deg2Rad;
+            float lat2 = b.x * Mathf.Deg2Rad;
+            float dLat = (b.x - a.x) * Mathf.Deg2Rad;
+            float dLon = (b.y - a.y) * Mathf.Deg2Rad;
+
+            float sinLat = Mathf.Sin(dLat * 0.5f);
+            float sinLon = Mathf.Sin(dLon * 0.5f);
+
+            float h = sinLat * sinLat +
+                    Mathf.Cos(lat1) * Mathf.Cos(lat2) *
+                    sinLon * sinLon;
+
+            float c = 2f * Mathf.Atan2(Mathf.Sqrt(h), Mathf.Sqrt(1f - h));
+
+            return earthRadius * c;
         }
 
         public void Reset()

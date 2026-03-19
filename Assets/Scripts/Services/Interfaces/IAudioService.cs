@@ -24,5 +24,6 @@ namespace LoGa.LudoEngine.Services
         // Multi-site bank management
         bool LoadBanksForSite(string siteId);
         void UnloadAllBanks();
+        void SetBusVolume(string busPath, float volume);
     }
 }

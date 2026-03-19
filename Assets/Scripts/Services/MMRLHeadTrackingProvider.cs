@@ -8,7 +8,7 @@ using LoGa.LudoEngine.Services;
 namespace LoGa.LudoEngine.Services
 {
     /// <summary>
-    /// MMRL Head Tracking Provider - Only timeout fixes applied
+    /// MMRL Head Tracking Provider - Full fix for Bluetooth disconnections and auto-reconnection
     /// </summary>
     public class MMRLHeadTrackingProvider : MonoBehaviour, IHeadTrackingProvider
     {
@@ -23,7 +23,17 @@ namespace LoGa.LudoEngine.Services
         [SerializeField] private string targetDeviceName = "MetaWear";
         [SerializeField] private bool enableDebugLogging = true;
         [SerializeField] private bool enableRawDataLogging = false;
-        [SerializeField] private float scanTimeoutDuration = 5f; // TIMEOUT FIX: Configurable timeout
+        [SerializeField] private float scanTimeoutDuration = 5f;
+
+        [Header("Reconnection Settings")]
+        [SerializeField] private bool enableAutoReconnect = true;
+        [SerializeField] private int maxAutoReconnectAttempts = 3;
+        [SerializeField] private float reconnectBackoffTime = 5f;
+        [SerializeField] private float bluetoothCheckInterval = 2f;
+
+        [Header("Connection Health Monitoring")]
+        [SerializeField] private float dataTimeoutDuration = 5f;
+        [SerializeField] private float keepAliveInterval = 10f;
 
         [Header("Initialization Method")]
         [SerializeField] private bool useMetaWearAppSequence = true;
@@ -52,7 +62,13 @@ namespace LoGa.LudoEngine.Services
         private float timeout = 0f;
         private ConnectionState currentState = ConnectionState.None;
         private float currentHeading = 0f;
-        private Coroutine scanTimeoutCoroutine; // TIMEOUT FIX: Track timeout coroutine
+        private Coroutine scanTimeoutCoroutine;
+        private Coroutine keepAliveCoroutine;
+        private Coroutine bluetoothMonitorCoroutine;
+
+        // Reconnection tracking
+        private int autoReconnectAttempts = 0;
+        private float lastDataReceivedTime = 0f;
 
         // OLD FUSION COMMANDS (kept for fallback)
         private readonly byte[] CMD_FUSION_SET_NDOF_MODE = { 0x19, 0x02, 0x01 };
@@ -156,11 +172,23 @@ namespace LoGa.LudoEngine.Services
         {
             StatusMessage?.Invoke("MMRL tracking stopped");
 
-            // TIMEOUT FIX: Clean up any ongoing scan
+            // Clean up coroutines
             if (scanTimeoutCoroutine != null)
             {
                 StopCoroutine(scanTimeoutCoroutine);
                 scanTimeoutCoroutine = null;
+            }
+
+            if (keepAliveCoroutine != null)
+            {
+                StopCoroutine(keepAliveCoroutine);
+                keepAliveCoroutine = null;
+            }
+
+            if (bluetoothMonitorCoroutine != null)
+            {
+                StopCoroutine(bluetoothMonitorCoroutine);
+                bluetoothMonitorCoroutine = null;
             }
         }
 
@@ -174,11 +202,22 @@ namespace LoGa.LudoEngine.Services
             StopTracking();
             DisconnectDevice();
 
-            // TIMEOUT FIX: Clean up timeout coroutine
             if (scanTimeoutCoroutine != null)
             {
                 StopCoroutine(scanTimeoutCoroutine);
                 scanTimeoutCoroutine = null;
+            }
+
+            if (keepAliveCoroutine != null)
+            {
+                StopCoroutine(keepAliveCoroutine);
+                keepAliveCoroutine = null;
+            }
+
+            if (bluetoothMonitorCoroutine != null)
+            {
+                StopCoroutine(bluetoothMonitorCoroutine);
+                bluetoothMonitorCoroutine = null;
             }
 
             isInitialized = false;
@@ -208,6 +247,18 @@ namespace LoGa.LudoEngine.Services
         {
             if (!isInitialized) return;
 
+            // Monitor for data stalls when streaming
+            if (IsConnected && currentState == ConnectionState.Streaming)
+            {
+                if (Time.time - lastDataReceivedTime > dataTimeoutDuration)
+                {
+                    Debug.LogWarning($"MMRL data stalled for {dataTimeoutDuration}s - reconnecting");
+                    OnDeviceDisconnected();
+                    return;
+                }
+            }
+
+            // Handle state timeouts
             if (timeout > 0f)
             {
                 timeout -= Time.deltaTime;
@@ -224,6 +275,7 @@ namespace LoGa.LudoEngine.Services
             switch (currentState)
             {
                 case ConnectionState.Scanning:
+                
                     StartDeviceScan();
                     break;
 
@@ -246,6 +298,21 @@ namespace LoGa.LudoEngine.Services
 
         private void StartDeviceScan()
         {
+            // Check if Bluetooth is actually enabled
+            if (!IsBluetoothEnabled())
+            {
+                StatusMessage?.Invoke("Bluetooth is OFF - cannot scan");
+                currentState = ConnectionState.None;
+                
+                // Start monitoring for BT to turn back on
+                if (bluetoothMonitorCoroutine != null)
+                {
+                    StopCoroutine(bluetoothMonitorCoroutine);
+                }
+                bluetoothMonitorCoroutine = StartCoroutine(MonitorBluetoothState());
+                return;
+            }
+
             StatusMessage?.Invoke("Scanning for MMRL device...");
 
             BluetoothLEHardwareInterface.ScanForPeripheralsWithServices(null, (address, deviceName) =>
@@ -258,7 +325,6 @@ namespace LoGa.LudoEngine.Services
                     StatusMessage?.Invoke($"Found MMRL device: {deviceName}");
                     BluetoothLEHardwareInterface.StopScan();
 
-                    // TIMEOUT FIX: Clean up timeout coroutine
                     if (scanTimeoutCoroutine != null)
                     {
                         StopCoroutine(scanTimeoutCoroutine);
@@ -270,7 +336,7 @@ namespace LoGa.LudoEngine.Services
                 }
             }, null, true);
 
-            // TIMEOUT FIX: Start timeout coroutine
+            // Start timeout coroutine
             if (scanTimeoutCoroutine != null)
             {
                 StopCoroutine(scanTimeoutCoroutine);
@@ -278,7 +344,6 @@ namespace LoGa.LudoEngine.Services
             scanTimeoutCoroutine = StartCoroutine(ScanTimeoutCoroutine());
         }
 
-        // TIMEOUT FIX: Proper scan timeout handling
         private IEnumerator ScanTimeoutCoroutine()
         {
             yield return new WaitForSeconds(scanTimeoutDuration);
@@ -291,10 +356,63 @@ namespace LoGa.LudoEngine.Services
                 BluetoothLEHardwareInterface.StopScan();
                 StatusMessage?.Invoke("MMRL scan timeout - no MetaWear device found");
 
-                // Don't mark as failed - just stop scanning and leave disconnected
                 currentState = ConnectionState.None;
                 scanTimeoutCoroutine = null;
             }
+        }
+
+        // Check if Bluetooth is enabled (Android only)
+        private bool IsBluetoothEnabled()
+        {
+#if UNITY_ANDROID && !UNITY_EDITOR
+            try
+            {
+                using (AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
+                using (AndroidJavaObject activity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity"))
+                {
+                    // Get BluetoothManager
+                    AndroidJavaObject bluetoothManager = activity.Call<AndroidJavaObject>("getSystemService", "bluetooth");
+                    
+                    if (bluetoothManager != null)
+                    {
+                        // Get BluetoothAdapter
+                        AndroidJavaObject bluetoothAdapter = bluetoothManager.Call<AndroidJavaObject>("getAdapter");
+                        
+                        if (bluetoothAdapter != null)
+                        {
+                            bool enabled = bluetoothAdapter.Call<bool>("isEnabled");
+                            return enabled;
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Error checking Bluetooth state: {e.Message}");
+            }
+            return false;
+#elif UNITY_IOS
+            // iOS doesn't provide direct BT state access
+            // Assume enabled and rely on connection failures
+            return true;
+#else
+            return true;
+#endif
+        }
+
+        // Monitor for Bluetooth to turn back on
+        private IEnumerator MonitorBluetoothState()
+        {
+            StatusMessage?.Invoke("Waiting for Bluetooth to turn on...");
+            
+            while (!IsBluetoothEnabled())
+            {
+                yield return new WaitForSeconds(bluetoothCheckInterval);
+            }
+            
+            StatusMessage?.Invoke("Bluetooth enabled - resuming scan");
+            bluetoothMonitorCoroutine = null;
+            SetState(ConnectionState.Scanning, 0.5f);
         }
 
         private void AttemptConnection()
@@ -330,31 +448,82 @@ namespace LoGa.LudoEngine.Services
 
         private void OnDeviceConnected()
         {
+            autoReconnectAttempts = 0;
             UpdateConnectionStatus(true);
-            StatusMessage?.Invoke("MMRL connected! Configuring fusion...");
+            StatusMessage?.Invoke("MMRL connected! Configuring...");
 
+            // Try to request MTU, but don't wait for it or fail if it doesn't work
+            try
+            {
+                BluetoothLEHardwareInterface.RequestMtu(deviceAddress, 512, (address, mtu) =>
+                {
+                    if (enableDebugLogging)
+                        Debug.Log($"MTU set to: {mtu} bytes");
+                });
+            }
+            catch (Exception e)
+            {
+                if (enableDebugLogging)
+                    Debug.Log($"MTU request failed (non-critical): {e.Message}");
+            }
+            
+            // Continue with subscription regardless of MTU
             SubscribeToDataUpdates();
             SetState(ConnectionState.ConfiguringFusion, 2f);
         }
 
         private void OnDeviceDisconnected()
         {
-            UpdateConnectionStatus(false);
-            StatusMessage?.Invoke("Reconnecting...");
-            SetState(ConnectionState.Scanning, 3f);
+            // Stop keep-alive coroutine
+            if (keepAliveCoroutine != null)
+            {
+                StopCoroutine(keepAliveCoroutine);
+                keepAliveCoroutine = null;
+            }
+
+            UpdateConnectionStatus(false);  // Fires event -> HeadTrackingService switches to Phone
+            
+            // Check if auto-reconnect is enabled
+            if (!enableAutoReconnect)
+            {
+                StatusMessage?.Invoke("MMRL disconnected - manual reconnection required");
+                currentState = ConnectionState.None;
+                return;
+            }
+            
+            // Check reconnection attempts
+            if (autoReconnectAttempts >= maxAutoReconnectAttempts)
+            {
+                StatusMessage?.Invoke($"Max reconnection attempts ({maxAutoReconnectAttempts}) reached");
+                currentState = ConnectionState.None;
+                autoReconnectAttempts = 0;  // Reset for future manual attempts
+                return;
+            }
+            
+            // Increment attempt counter
+            autoReconnectAttempts++;
+            
+            // Calculate backoff delay (5s, 10s, 15s)
+            float backoffDelay = reconnectBackoffTime * autoReconnectAttempts;
+            
+            StatusMessage?.Invoke($"Reconnecting... (attempt {autoReconnectAttempts}/{maxAutoReconnectAttempts})");
+            SetState(ConnectionState.Scanning, backoffDelay);
         }
 
         private void SubscribeToDataUpdates()
         {
             StatusMessage?.Invoke("Subscribing to data stream...");
 
+            // Enable notifications with write confirmation
             BluetoothLEHardwareInterface.WriteCharacteristic(
                 deviceAddress, serviceUUID, subscribeCharacteristicUUID,
-                new byte[] { 0x01, 0x00 }, 2, false,
+                new byte[] { 0x01, 0x00 }, 2, true,  // true = wait for confirmation
                 (characteristicUUID) =>
                 {
                     if (enableDebugLogging)
-                        Debug.Log("Notifications enabled successfully");
+                        Debug.Log("Notifications enabled - CONFIRMED by device");
+                    
+                    lastDataReceivedTime = Time.time;  // Start timeout clock
                 });
 
             BluetoothLEHardwareInterface.SubscribeCharacteristicWithDeviceAddress(
@@ -363,6 +532,23 @@ namespace LoGa.LudoEngine.Services
                 {
                     OnDataReceived(bytes);
                 });
+        }
+
+        // -----------------------------------------------
+        // Keep-Alive Heartbeat
+        // -----------------------------------------------
+
+        private IEnumerator KeepAliveHeartbeat()
+        {
+            while (IsConnected && currentState == ConnectionState.Streaming)
+            {
+                yield return new WaitForSeconds(keepAliveInterval);
+                
+                // Send status check to keep connection alive
+                SendCommand(CMD_READ_FUSION_STATUS, "Keep-alive heartbeat");
+            }
+            
+            keepAliveCoroutine = null;
         }
 
         // -----------------------------------------------
@@ -483,7 +669,7 @@ namespace LoGa.LudoEngine.Services
             }
         }
 
-        // Data Processing (same as original)
+        // Data Processing
         private void OnDataReceived(byte[] bytes)
         {
             if (bytes == null || bytes.Length == 0) return;
@@ -511,7 +697,6 @@ namespace LoGa.LudoEngine.Services
             switch (register)
             {
                 case 0x07:
-                    Debug.Log("=== QUATERNION DATA RECEIVED! ===");
                     ParseQuaternionData(bytes);
                     break;
 
@@ -523,7 +708,8 @@ namespace LoGa.LudoEngine.Services
                     if (bytes.Length >= 3)
                     {
                         bool isRunning = bytes[2] == 1;
-                        Debug.Log($"Fusion status: {(isRunning ? "RUNNING" : "STOPPED")}");
+                        if (enableDebugLogging)
+                            Debug.Log($"Fusion status: {(isRunning ? "RUNNING" : "STOPPED")}");
                     }
                     break;
 
@@ -542,7 +728,8 @@ namespace LoGa.LudoEngine.Services
                 byte gyroCalib = bytes[3];
                 byte magCalib = bytes[4];
 
-                Debug.Log($"CALIBRATION: ACC:{accCalib}/3, GYRO:{gyroCalib}/3, MAG:{magCalib}/3");
+                if (enableDebugLogging)
+                    Debug.Log($"CALIBRATION: ACC:{accCalib}/3, GYRO:{gyroCalib}/3, MAG:{magCalib}/3");
 
                 bool allCalibrated = (accCalib >= 2 && gyroCalib >= 2 && magCalib >= 2);
 
@@ -563,6 +750,9 @@ namespace LoGa.LudoEngine.Services
             {
                 if (bytes.Length >= 18)
                 {
+                    // Update data received timestamp
+                    lastDataReceivedTime = Time.time;
+
                     float w = System.BitConverter.ToSingle(bytes, 2);
                     float x = System.BitConverter.ToSingle(bytes, 6);
                     float y = System.BitConverter.ToSingle(bytes, 10);
@@ -594,10 +784,18 @@ namespace LoGa.LudoEngine.Services
                         Debug.Log($"HEADING: {currentHeading:F1}° | Pitch={eulerAngles.x:F1}°, Yaw={eulerAngles.y:F1}°, Roll={eulerAngles.z:F1}°");
                     }
 
+                    // Transition to streaming state and start keep-alive
                     if (currentState != ConnectionState.Streaming)
                     {
-                        SetState(ConnectionState.Streaming, 10f);
+                        SetState(ConnectionState.Streaming, 0f);
                         StatusMessage?.Invoke("QUATERNION streaming active!");
+                        
+                        // Start keep-alive heartbeat
+                        if (keepAliveCoroutine != null)
+                        {
+                            StopCoroutine(keepAliveCoroutine);
+                        }
+                        keepAliveCoroutine = StartCoroutine(KeepAliveHeartbeat());
                     }
                 }
                 else
@@ -611,12 +809,13 @@ namespace LoGa.LudoEngine.Services
             }
         }
 
-        // Helper Methods (same as original)
+        // Helper Methods
         private void SendCommand(byte[] command, string description)
         {
             if (!IsConnected)
             {
-                Debug.LogWarning($"Cannot send {description} - not connected");
+                if (enableDebugLogging)
+                    Debug.LogWarning($"Cannot send {description} - not connected");
                 return;
             }
 
@@ -667,11 +866,19 @@ namespace LoGa.LudoEngine.Services
         public void TestConnection()
         {
             StatusMessage?.Invoke($"Test - State: {currentState}, Connected: {IsConnected}");
+            Debug.Log($"=== MMRL Connection Test ===");
+            Debug.Log($"State: {currentState}");
+            Debug.Log($"Connected: {IsConnected}");
+            Debug.Log($"Device Address: {deviceAddress ?? "None"}");
+            Debug.Log($"Auto-Reconnect Attempts: {autoReconnectAttempts}/{maxAutoReconnectAttempts}");
+            Debug.Log($"Last Data Received: {Time.time - lastDataReceivedTime:F1}s ago");
         }
 
         public void ForceReconnect()
         {
             DisconnectDevice();
+            autoReconnectAttempts = 0;  // Reset counter
+            deviceAddress = null;       // Force new scan
             SetState(ConnectionState.Scanning, 1f);
             StatusMessage?.Invoke("Force reconnect initiated");
         }

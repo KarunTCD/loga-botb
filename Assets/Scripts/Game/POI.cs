@@ -78,13 +78,16 @@ namespace LoGa.LudoEngine.Game
         private float lastTriggerValue = 0f; // for Command Instrument detection
         private int maxNavigationCues;
         private int currentNavigationCueIndex = 0;
-
         public bool IsCompleted => isCompleted;
         public bool ShouldBeRemoved => shouldBeRemoved;
 
         private float proximityRadius;
         private float dialogueRadius;
         public bool isInProximity { get; private set; }
+
+        private float maxZoneReached = 0f;  // Track highest Zone value during proximity
+        private bool isMarkerCompletionPending = false;  // Prevent walk-away during marker delay
+        private const float NARRATION_ENGAGEMENT_THRESHOLD = 1.4f;  // Zone threshold for completion
         private bool isAudioPlaying = false;
         private bool hasBeenTriggered = false;
 
@@ -103,7 +106,6 @@ namespace LoGa.LudoEngine.Game
         private bool isInitialized;
         private bool isDiscovered;
         private bool wasPlayingBeforeSilence = false;
-        private bool dialogueStarted = false;
 
         public bool IsDiscovered => isDiscovered;
         public bool IsPortal => portalType != PortalType.None;
@@ -118,6 +120,7 @@ namespace LoGa.LudoEngine.Game
                 return audioService;
             }
         }
+        private TextMeshProUGUI directionDebugText;
 
         /// <summary>
         /// Initialize POI from JSON data
@@ -242,13 +245,37 @@ namespace LoGa.LudoEngine.Game
         [AOT.MonoPInvokeCallback(typeof(EVENT_CALLBACK))]
         static FMOD.RESULT NarrationCompleteCallback(EVENT_CALLBACK_TYPE type, IntPtr instancePtr, IntPtr parameterPtr)
         {
+            Debug.LogError($" MARKER HIT - Instance: {instancePtr}, In activeInstances: {activeInstances.ContainsKey(instancePtr)}");
+
             if (type == EVENT_CALLBACK_TYPE.TIMELINE_MARKER)
             {
                 if (activeInstances.TryGetValue(instancePtr, out POI poi))
                 {
-                    Debug.Log($"NARRATION COMPLETE: {poi.characterName}!");
-                    narrationJustCompleted = true;
-                    completedInstanceHandle = instancePtr;
+                    Debug.Log($"NARRATION MARKER HIT: {poi.characterName} - scheduling delayed completion");
+                    
+                    // Set pending flag to block walk-away completion
+                    poi.isMarkerCompletionPending = true;
+
+                    // Get delay from config
+                    float delay = 2.0f;
+                    var gameDataService = ServiceLocator.GetService<IGameDataService>();
+                    if (gameDataService?.GameConfig != null)
+                    {
+                        delay = gameDataService.GameConfig.narrationCompleteDelay;
+                    }
+                    
+                    // Use POIManager to run coroutine
+                    if (POIManager.Instance != null)
+                    {
+                        POIManager.Instance.ScheduleDelayedCompletion(poi, delay);
+                    }
+                    else
+                    {
+                        Debug.LogError("POIManager.Instance is null - completing immediately as fallback");
+                        poi.isMarkerCompletionPending = false; // Clear flag
+                        narrationJustCompleted = true;
+                        completedInstanceHandle = poi.characterAudioInstance.handle;
+                    }
                 }
             }
 
@@ -302,29 +329,74 @@ namespace LoGa.LudoEngine.Game
 
             if (isInProximity && !wasInProximity)
             {
+                // Don't reset tracking if marker delay is pending
+                // (Player walked away then came back during 2-second delay)
+                if (!isMarkerCompletionPending)
+                {
+                    maxZoneReached = 0f;
+                    Debug.Log($"Entered proximity - started audio for {characterName}");
+                }
+                else
+                {
+                    Debug.Log($"[RE-ENTRY] {characterName} - marker delay still pending, preserving maxZone: {maxZoneReached:F2}");
+                }
                 AudioService.PlayAudio(characterAudioInstance, data.audioPosition);
                 isAudioPlaying = true;
-                dialogueStarted = true;
-                Debug.Log($"Entered proximity - started audio for {characterName}");
             }
             else if (!isInProximity && wasInProximity)
             {
-                if (dialogueStarted && !isCompleted)
+                bool playerEngagedWithNarration = maxZoneReached >= NARRATION_ENGAGEMENT_THRESHOLD;
+                bool markerDelayPending = isMarkerCompletionPending;
+
+                Debug.Log($"[WALK-AWAY] {characterName} - maxZoneReached: {maxZoneReached:F2}, " +
+                  $"threshold: {NARRATION_ENGAGEMENT_THRESHOLD:F2}, " +
+                  $"playerEngaged: {playerEngagedWithNarration}");
+                
+                // Only complete if:
+                // 1. Player engaged with narration (Zone ≥ 1.4)
+                // 2. No marker completion pending (prevents double-completion)
+                if (!isCompleted && playerEngagedWithNarration && !markerDelayPending)
                 {
-                    Debug.Log($"Player walked away from {characterName} - triggering completion");
+                    Debug.Log($"Player walked away from {characterName} after hearing narration - triggering completion (IMMEDIATE, NO DELAY)");
                     narrationJustCompleted = true;
                     completedInstanceHandle = characterAudioInstance.handle;
+                }
+                else if (markerDelayPending)
+                {
+                    Debug.Log($"[WALK-AWAY-BLOCKED] Marker completion pending for {characterName} - walk-away completion skipped");
+                }
+                else if (!playerEngagedWithNarration)
+                {
+                    Debug.Log($"Player walked away from {characterName} without hearing narration (maxZone: {maxZoneReached:F2}) - NO COMPLETION");
                 }
 
                 AudioService.StopAudio(characterAudioInstance, true);
                 isAudioPlaying = false;
                 hasBeenTriggered = false;
-                dialogueStarted = false;
+                // Don't reset maxZone or flag if marker delay pending
+                if (!isMarkerCompletionPending)
+                {
+                    maxZoneReached = 0f;
+                }
                 Debug.Log($"Left proximity - stopped audio for {characterName}");
             }
 
             if (isInProximity)
             {
+                // WHILE IN PROXIMITY - Track max Zone reached
+                if (zoneValue > maxZoneReached)
+                {
+                    float previousMax = maxZoneReached;  
+                    maxZoneReached = zoneValue;
+                    
+                    // Log when CROSSING threshold upward
+                    if (zoneValue >= NARRATION_ENGAGEMENT_THRESHOLD && 
+                        previousMax < NARRATION_ENGAGEMENT_THRESHOLD)
+                    {
+                        Debug.Log($"[ZONE-THRESHOLD] {characterName} crossed narration threshold - maxZone: {maxZoneReached:F2}");
+                    }
+                }
+
                 AudioService.Update3DAttributes(characterAudioInstance, data.audioPosition);
                 AudioService.SetParameter(characterAudioInstance, ZONE_PARAMETER, zoneValue);
             }
@@ -356,6 +428,17 @@ namespace LoGa.LudoEngine.Game
 
             float distance = Vector3.Distance(Vector3.zero, position);
             float normalizedDistance = distance / config.maxDistance;
+
+            if (directionDebugText != null)
+            {
+                string[] directionNames = { "North", "Northeast", "East", "Southeast", "South", "Southwest", "West", "Northwest" };
+                directionDebugText.text = $" {characterName}\n" +
+                                         $"Angle: {angle:F1}°\n" +
+                                         $"Direction: {direction} ({directionNames[direction]})\n" +
+                                         $"Distance: {distance:F1}m\n" +
+                                         $"3D Pos: X={position.x:F1}, Z={position.z:F1}\n" +
+                                         $"Cue Index: {config.cueIndex}";
+            }
 
             // Use updated AudioService method (encapsulates all FMOD calls)
             AudioService.PlayNavigationCue(navigationCueInstance, position, config.cueIndex, direction, normalizedDistance);
@@ -554,7 +637,7 @@ namespace LoGa.LudoEngine.Game
                 return;
             }
 
-            Debug.Log($"🌀 Portal {characterName} activation triggered");
+            Debug.Log($" Portal {characterName} activation triggered");
 
             // Run portal logic without marking as completed
             CheckPortalActivation();
@@ -596,6 +679,25 @@ namespace LoGa.LudoEngine.Game
             }
         }
 
+        public void SetDirectionDebugText(TextMeshProUGUI debugText)
+        {
+            directionDebugText = debugText;
+        }
+
+        public void ClearDirectionDebug()
+        {
+            if (directionDebugText != null)
+            {
+                directionDebugText.text = "";
+            }
+        }
+        public void ClearMarkerPendingFlag()
+        {
+            isMarkerCompletionPending = false;
+            maxZoneReached = 0f;  // Safe to reset now - delay complete
+            Debug.Log($"[MARKER-FLAG] Cleared pending flag for {characterName}");
+        }
+
         public void Cleanup()
         {
             if (!isInitialized) return;
@@ -626,6 +728,8 @@ namespace LoGa.LudoEngine.Game
             hasBeenTriggered = false;
             waitingForCueCompletion = false;
             isInitialized = false;
+            maxZoneReached = 0f;
+            isMarkerCompletionPending = false;
 
             Debug.Log($"POI cleanup complete: {characterName}");
         }

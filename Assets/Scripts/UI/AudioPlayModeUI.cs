@@ -29,11 +29,6 @@ namespace LoGa.LudoEngine.UI
         [SerializeField] private Button pauseButton;
         [SerializeField] private TextMeshProUGUI pauseButtonText;
 
-        [Header("Session Info (Optional)")]
-        [SerializeField] private TextMeshProUGUI sessionIdText;
-        [SerializeField] private Button shareButton;
-        [SerializeField] private GameObject sessionInfoContainer;
-
         [Header("Witty Messages")]
         [SerializeField]
         private string[] cheekyMessages = new string[]
@@ -63,8 +58,13 @@ namespace LoGa.LudoEngine.UI
         private void Start()
         {
             headTrackingService = ServiceLocator.GetService<IHeadTrackingService>();
-            SetupUI();
             SetupButtons();
+        }
+        
+        private void OnEnable()
+        {
+            // Called when panel is activated
+            SetupUI();
             StartSoundWaveAnimation();
         }
 
@@ -83,22 +83,21 @@ namespace LoGa.LudoEngine.UI
             if (subtitleText != null)
                 subtitleText.text = subtitles[messageIndex];
 
-            // Hide session info by default (can show on demand)
-            if (sessionInfoContainer != null)
-                sessionInfoContainer.SetActive(false);
-
             // Setup pause button
             if (pauseButtonText != null)
                 pauseButtonText.text = "| |";
+
+            // Ensure pause button is visible initially
+            if (pauseButton != null)
+            {
+                pauseButton.gameObject.SetActive(true);
+            }
         }
 
         private void SetupButtons()
         {
             if (pauseButton != null)
                 pauseButton.onClick.AddListener(OnPausePressed);
-
-            if (shareButton != null)
-                shareButton.onClick.AddListener(OnSharePressed);
         }
 
         private void Update()
@@ -115,7 +114,6 @@ namespace LoGa.LudoEngine.UI
                 Debug.LogWarning("AudioPlayModeUI: No sound waves assigned for animation");
                 return;
             }
-
             waveAnimationCoroutine = StartCoroutine(AnimateSoundWaves());
         }
 
@@ -132,12 +130,17 @@ namespace LoGa.LudoEngine.UI
 
                     // Add CanvasGroup if missing
                     if (soundWaves[i].GetComponent<CanvasGroup>() == null)
+                    {
                         soundWaves[i].gameObject.AddComponent<CanvasGroup>();
+                    }
                 }
             }
 
+            int cycleCount = 0;
             while (true)
             {
+                cycleCount++;
+                
                 // Animate each wave with staggered start
                 for (int i = 0; i < soundWaves.Length; i++)
                 {
@@ -155,8 +158,13 @@ namespace LoGa.LudoEngine.UI
         private IEnumerator AnimateSingleWave(RectTransform wave, float startDelay)
         {
             yield return new WaitForSeconds(startDelay);
-
+            
             CanvasGroup canvasGroup = wave.GetComponent<CanvasGroup>();
+            if (canvasGroup == null)
+            {
+                yield break;
+            }
+            
             float animationDuration = 1.5f;
             float elapsed = 0f;
 
@@ -215,11 +223,21 @@ namespace LoGa.LudoEngine.UI
             // Rotate marker to point outward
             playerMarker.localRotation = Quaternion.Euler(0, 0, heading);
 
-            // Update provider text
+            // Update provider text to show device type
             if (providerText != null)
             {
-                string provider = headTrackingService.ActiveProviderName ?? "None";
-                providerText.text = $"Tracking: {provider}";
+                string provider = headTrackingService.ActiveProviderName ?? "Phone Sensor";
+                
+                // Map provider names to user-friendly device names
+                string deviceName = provider switch
+                {
+                    "AirPodsHeadTrackingProvider" => "AirPods",
+                    "MMRLHeadTrackingProvider" => "MMRL Device",
+                    "PhoneOrientationProvider" => "Phone Sensor",
+                    _ => provider
+                };
+                
+                providerText.text = $"Tracking: {deviceName}";
             }
         }
 
@@ -227,67 +245,55 @@ namespace LoGa.LudoEngine.UI
 
         #region Button Handlers
 
+        /// <summary>
+        /// ROBUST PAUSE: Direct call to UIManager.PauseGame()
+        /// No timers, no debouncing - UIManager handles all validation
+        /// </summary>
         private void OnPausePressed()
         {
             Debug.Log("AudioPlayModeUI: Pause button pressed");
 
-            if (uiManager != null)
+            if (uiManager == null)
             {
-                uiManager.ShowPauseMenu();
+                Debug.LogError("AudioPlayModeUI: UIManager not set");
+                return;
             }
-            else
-            {
-                Debug.LogError("AudioPlayModeUI: UIManager reference not set");
-            }
-        }
 
-        private void OnSharePressed()
-        {
-            if (sessionIdText != null && !string.IsNullOrEmpty(sessionIdText.text))
-            {
-                // Copy session ID to clipboard
-                string sessionId = sessionIdText.text.Replace("Session: ", "");
-                GUIUtility.systemCopyBuffer = sessionId;
+            // Simple direct call - UIManager handles all state validation
+            uiManager.PauseGame();
 
-                Debug.Log($"AudioPlayModeUI: Session ID copied: {sessionId}");
-
-                // Show brief feedback
-                StartCoroutine(ShowShareFeedback());
-            }
-        }
-
-        private IEnumerator ShowShareFeedback()
-        {
-            if (shareButton != null)
-            {
-                var buttonText = shareButton.GetComponentInChildren<TextMeshProUGUI>();
-                if (buttonText != null)
-                {
-                    string originalText = buttonText.text;
-                    buttonText.text = "Copied!";
-                    yield return new WaitForSeconds(1.5f);
-                    buttonText.text = originalText;
-                }
-            }
+            // Note: Pause button will be hidden by OnGamePaused() callback
         }
 
         #endregion
 
         #region Public Interface
 
-        public void UpdateSessionId(string sessionId)
+        /// <summary>
+        /// Called by UIManager when game is paused
+        /// ROBUST: Hide pause button so it can't be clicked while paused
+        /// </summary>
+        public void OnGamePaused()
         {
-            if (sessionIdText != null)
+            Debug.Log("AudioPlayModeUI: Game paused - hiding pause button");
+
+            if (pauseButton != null)
             {
-                sessionIdText.text = $"Session: {sessionId}";
+                pauseButton.gameObject.SetActive(false);
             }
         }
 
-        public void ShowSessionInfo(bool show)
+        /// <summary>
+        /// Called by UIManager when game is resumed
+        /// ROBUST: Show pause button again
+        /// </summary>
+        public void OnGameResumed()
         {
-            if (sessionInfoContainer != null)
+            Debug.Log("AudioPlayModeUI: Game resumed - showing pause button");
+
+            if (pauseButton != null)
             {
-                sessionInfoContainer.SetActive(show);
+                pauseButton.gameObject.SetActive(true);
             }
         }
 
@@ -299,9 +305,6 @@ namespace LoGa.LudoEngine.UI
         {
             if (pauseButton != null)
                 pauseButton.onClick.RemoveListener(OnPausePressed);
-
-            if (shareButton != null)
-                shareButton.onClick.RemoveListener(OnSharePressed);
 
             if (waveAnimationCoroutine != null)
                 StopCoroutine(waveAnimationCoroutine);

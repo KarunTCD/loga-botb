@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Collections.Generic;
 using FMODUnity;
 using FMOD.Studio;
 using LoGa.LudoEngine.Core;
@@ -9,8 +8,9 @@ using System;
 namespace LoGa.LudoEngine.Game
 {
     /// <summary>
-    /// Master Tutorial Controller - Controls all tutorial flow
-    /// POIManager, CombatManager, etc are servants that report to this
+    /// Tutorial Manager - FULLY CALLBACK-DRIVEN
+    /// NO Update() loop - all transitions via FMOD timeline marker callbacks
+    /// Reuses: POIManager (navigation), GameManager (combat + berry)
     /// </summary>
     public class TutorialManager : MonoBehaviour
     {
@@ -18,16 +18,22 @@ namespace LoGa.LudoEngine.Game
 
         public enum TutorialPhase
         {
-            Inactive,              // Tutorial not running
-            Introduction,          // Welcome message
-            NavigationStart,       // "Listen for the sound..."
-            TargetLocking,         // Waiting for player to lock target
-            TargetLocked,          // Player locked target successfully
-            Approaching,           // Player walking toward target (with progress tracking)
-            ProximityReached,      // Player entered 20m music zone
-            CharacterFound,        // Player entered 5m dialogue zone
-            ListeningToDialogue,   // Character speaking
-            Complete               // Tutorial finished
+            Inactive,
+            Introduction,
+            NavigationStart,
+            TargetLocking,
+            TargetLocked,
+            Approaching,
+            ProximityReached,
+            CharacterFound,
+            ListeningToDialogue,
+            InteractionComplete,
+            RewardExplanation,       // LONG tutorial only
+            CombatIntroduction,      // LONG tutorial only
+            CombatInProgress,        // LONG tutorial only
+            CombatComplete,          // LONG tutorial only
+            BerryRecovery,           // LONG tutorial only
+            Complete
         }
 
         #endregion
@@ -36,6 +42,10 @@ namespace LoGa.LudoEngine.Game
 
         [Header("Tutorial Configuration")]
         [SerializeField] private bool enableDebugLogs = true;
+
+        [Header("Manager References")]
+        [SerializeField] private POIManager poiManager;
+        [SerializeField] private GameManager gameManager;
 
         [Header("Phase Timing")]
         [SerializeField] private float introductionDelay = 1.0f;
@@ -48,36 +58,40 @@ namespace LoGa.LudoEngine.Game
 
         private TutorialPhase currentPhase = TutorialPhase.Inactive;
         private bool isActive = false;
+
+        // Navigation tracking
         private bool hasLockedOnce = false;
         private bool hasLostLock = false;
-        private bool waitingForInteractionComplete = false;
-        private bool waitingForFinalComplete = false;
+        
+        // Combat tracking
+        private int attacksCompleted = 0;
+        private int consecutiveDefensesAchieved = 0;
+        private bool hasPlayedFirstSuccessDialogue = false;
 
-        // Track distance for progress detection
-        private float distanceWhenLocked = 0f;
-        private const float PROGRESS_THRESHOLD = 15f;
+        // Marker callback flags - what to do when current dialogue finishes
+        private bool shouldPlayRewardNext = false;
+        private bool shouldStartCombatNext = false;
+        private bool shouldStartBerryPhaseNext = false;
+        private bool shouldPlayFinalMessageNext = false;
+        private bool shouldCompleteTutorialNext = false;
 
         #endregion
 
         #region References
 
-        [Header("Manager References")]
-        [SerializeField] private POIManager poiManager;
-        [SerializeField] private GameManager gameManager;
-
         private IAudioService audioService;
-
-        // Tutorial POI reference
         private POI tutorialPOI;
 
-        // FMOD narrator instance
+        // FMOD narrator
         private EventInstance narratorInstance;
-
-        // Dialogue management
         private int currentDialogueID = -1;
 
-        // NEW: Pending invoke for preDelay handling
+        // Pending dialogue (for preDelay)
         private string pendingInvokeMethod = null;
+        private GameDataService.TutorialDialogueConfig pendingDialogueConfig;
+
+        // Static reference for marker callback
+        private static TutorialManager instance;
 
         #endregion
 
@@ -85,6 +99,8 @@ namespace LoGa.LudoEngine.Game
 
         private void Awake()
         {
+            instance = this;
+
             if (poiManager == null)
             {
                 Debug.LogError("TutorialManager: POIManager reference not assigned!");
@@ -182,7 +198,7 @@ namespace LoGa.LudoEngine.Game
                 }
             }
 
-            // Subscribe to POI events
+            // Subscribe to POIManager events (navigation)
             if (poiManager != null)
             {
                 poiManager.TutorialPOIProximityEntered += OnTutorialProximityEntered;
@@ -196,6 +212,16 @@ namespace LoGa.LudoEngine.Game
                 LogDebug("Subscribed to POIManager tutorial events");
             }
 
+            // Subscribe to GameManager events (combat + berry)
+            if (gameManager != null)
+            {
+                gameManager.TutorialAttackCompleted += OnTutorialAttackCompleted;
+                gameManager.TutorialCombatCompleted += OnTutorialCombatCompleted;
+                gameManager.TutorialBerryCollected += OnTutorialBerryCollected;
+
+                LogDebug("Subscribed to GameManager tutorial events");
+            }
+
             isActive = true;
             currentPhase = TutorialPhase.Inactive;
 
@@ -203,10 +229,18 @@ namespace LoGa.LudoEngine.Game
             hasLockedOnce = false;
             hasLostLock = false;
             currentDialogueID = -1;
-            waitingForInteractionComplete = false;
-            waitingForFinalComplete = false;
+            attacksCompleted = 0;
+            consecutiveDefensesAchieved = 0;
+            hasPlayedFirstSuccessDialogue = false;
+            
+            // Reset callback flags
+            shouldPlayRewardNext = false;
+            shouldStartCombatNext = false;
+            shouldStartBerryPhaseNext = false;
+            shouldPlayFinalMessageNext = false;
+            shouldCompleteTutorialNext = false;
 
-            // Find tutorial POI
+            // Find tutorial POI (spawned by POIManager.EnterTutorialMode())
             tutorialPOI = FindTutorialPOI();
             if (tutorialPOI == null)
             {
@@ -228,7 +262,7 @@ namespace LoGa.LudoEngine.Game
             currentPhase = TutorialPhase.Inactive;
             tutorialPOI = null;
 
-            // Unsubscribe from POI events
+            // Unsubscribe from POIManager events
             if (poiManager != null)
             {
                 poiManager.TutorialPOIProximityEntered -= OnTutorialProximityEntered;
@@ -238,6 +272,14 @@ namespace LoGa.LudoEngine.Game
                 poiManager.TutorialPOITargetLocked -= OnTutorialTargetLocked;
                 poiManager.TutorialPOITargetUnlocked -= OnTutorialTargetUnlocked;
                 poiManager.TutorialPOIProgressMade -= OnTutorialProgressMade;
+            }
+
+            // Unsubscribe from GameManager events
+            if (gameManager != null)
+            {
+                gameManager.TutorialAttackCompleted -= OnTutorialAttackCompleted;
+                gameManager.TutorialCombatCompleted -= OnTutorialCombatCompleted;
+                gameManager.TutorialBerryCollected -= OnTutorialBerryCollected; 
             }
 
             // Stop narrator audio
@@ -251,7 +293,7 @@ namespace LoGa.LudoEngine.Game
 
         #endregion
 
-        #region Phase Progression
+        #region Phase Progression - Navigation
 
         private void StartIntroduction()
         {
@@ -294,13 +336,6 @@ namespace LoGa.LudoEngine.Game
             currentPhase = TutorialPhase.TargetLocked;
             LogDebug("Phase: TargetLocked");
 
-            // Record distance
-            if (tutorialPOI != null && poiManager != null && poiManager.poiDataCache.TryGetValue(tutorialPOI, out POIUpdateData data))
-            {
-                distanceWhenLocked = data.distance;
-                LogDebug($"Distance when locked: {distanceWhenLocked:F1}m");
-            }
-
             if (!hasLockedOnce)
             {
                 hasLockedOnce = true;
@@ -327,16 +362,10 @@ namespace LoGa.LudoEngine.Game
         {
             if (!isActive) return;
 
-            // Transition to Approaching if not already there
             if (currentPhase == TutorialPhase.TargetLocked)
             {
                 LogDebug("Player made significant progress - transitioning to Approaching");
                 StartApproachingPhase();
-            }
-            else if (currentPhase == TutorialPhase.Approaching)
-            {
-                // Already in approaching - just log (dialogue won't repeat due to currentDialogueID check)
-                LogDebug("Player making more progress (already approaching - dialogue won't repeat)");
             }
         }
 
@@ -352,222 +381,243 @@ namespace LoGa.LudoEngine.Game
 
         #endregion
 
-        #region POI Event Handlers
+        #region Phase Progression - Combat
+
+        private void StartRewardPhase()
+        {
+            if (!isActive) return;
+
+            currentPhase = TutorialPhase.RewardExplanation;
+            LogDebug("Phase: RewardExplanation");
+
+            // Set flag for combat introduction (triggered by marker callback)
+            shouldStartCombatNext = true;
+            PlayNarratorDialogue("rewardExplanation");
+        }
+
+        private void StartCombatIntroduction()
+        {
+            if (!isActive) return;
+
+            currentPhase = TutorialPhase.CombatIntroduction;
+            LogDebug("Phase: CombatIntroduction - mercenary warning");
+
+            PlayNarratorDialogue("mercenaryWarning");
+
+            // After warning finishes, start combat
+            Invoke(nameof(TriggerTutorialCombat), 3.0f);
+        }
+
+        private void TriggerTutorialCombat()
+        {
+            if (!isActive) return;
+
+            currentPhase = TutorialPhase.CombatInProgress;
+            LogDebug("Phase: CombatInProgress");
+
+            // Tell GameManager to start tutorial combat
+            if (gameManager != null)
+            {
+                gameManager.StartTutorialCombat();
+            }
+        }
+
+        private void OnTutorialAttackCompleted(int attackNumber, bool wasDefended, int consecutiveDefenses)
+        {
+            if (!isActive || currentPhase != TutorialPhase.CombatInProgress) return;
+
+            attacksCompleted = attackNumber;
+            consecutiveDefensesAchieved = consecutiveDefenses;
+
+            LogDebug($"Attack {attackNumber} complete - defended: {wasDefended}, consecutive: {consecutiveDefenses}");
+
+            // ATTACK 1: Always hits (unavoidable) → afterFirstHit
+            if (attackNumber == 1)
+            {
+                PlayNarratorDialogue("afterFirstHit");
+                return;
+            }
+
+            // ATTACK 2+: Conditional feedback
+            if (wasDefended)
+            {
+                // First successful defense → defenseSuccess1
+                if (consecutiveDefenses == 1 && !hasPlayedFirstSuccessDialogue)
+                {
+                    hasPlayedFirstSuccessDialogue = true;
+                    PlayNarratorDialogue("defenseSuccess1");
+                }
+                // Second consecutive defense → defenseSuccessFinal (combat ends after this)
+                else if (consecutiveDefenses == 2)
+                {
+                    PlayNarratorDialogue("defenseSuccessFinal");
+                }
+            }
+            else
+            {
+                // Failed defense → pick ONE random fail dialogue
+                string[] failOptions = { "defenseFail1", "defenseFail2", "defenseFail3", "defenseFail4" };
+                string randomFail = failOptions[UnityEngine.Random.Range(0, failOptions.Length)];
+                PlayNarratorDialogue(randomFail);
+            }
+        }
+
+        private void OnTutorialCombatCompleted()
+        {
+            if (!isActive) return;
+
+            currentPhase = TutorialPhase.CombatComplete;
+            LogDebug("Phase: CombatComplete");
+
+            // Set flag for berry phase (triggered by marker callback)
+            shouldStartBerryPhaseNext = true;
+            PlayNarratorDialogue("combatComplete");
+        }
+
+        #endregion
+
+        #region Phase Progression - Berry
+
+        private void StartBerryPhase()
+        {
+            if (!isActive) return;
+
+            // Check if player needs healing
+            int playerHealth = gameManager?.PlayerHealth ?? 3;
+            int maxHealth = 3;
+
+            if (playerHealth >= maxHealth)
+            {
+                LogDebug("Player at full health - skipping berry phase, going to completion");
+                shouldPlayFinalMessageNext = true;
+                PlayNarratorDialogue("complete");
+                return;
+            }
+
+            currentPhase = TutorialPhase.BerryRecovery;
+            LogDebug("Phase: BerryRecovery");
+
+            PlayNarratorDialogue("lowHealthBerryIntro");
+
+            // Tell GameManager to spawn berry after dialogue
+            Invoke(nameof(TriggerBerrySpawn), 2.0f);
+        }
+
+        private void TriggerBerrySpawn()
+        {
+            if (!isActive) return;
+
+            LogDebug("Telling GameManager to spawn berry");
+
+            if (gameManager != null)
+            {
+                gameManager.StartTutorialRecovery();
+            }
+        }
+
+        private void OnTutorialBerryCollected()
+        {
+            if (!isActive || currentPhase != TutorialPhase.BerryRecovery) return;
+
+            LogDebug("Tutorial berry collected");
+
+            // Set flag for final message (triggered by marker callback)
+            shouldPlayFinalMessageNext = true;
+            PlayNarratorDialogue("berryCollected");
+        }
+
+        #endregion
+
+        #region POI Event Handlers (Navigation)
 
         private void OnTutorialTargetLocked(POI poi)
         {
-            LogDebug($"OnTutorialTargetLocked - Phase: {currentPhase}");
-
             if (!isActive || currentPhase != TutorialPhase.TargetLocking) return;
-
             OnTargetLocked();
         }
 
         private void OnTutorialTargetUnlocked(POI poi)
         {
-            LogDebug($"OnTutorialTargetUnlocked - Phase: {currentPhase}");
-
             if (!isActive) return;
-
             OnTargetLost();
         }
 
         private void OnTutorialProgressMade(POI poi, float progressDistance)
         {
-            LogDebug($"OnTutorialProgressMade - Phase: {currentPhase}, Progress: {progressDistance:F1}m");
-
-            // Allow in both TargetLocked AND Approaching phases
             if (!isActive) return;
-
-            if (currentPhase != TutorialPhase.TargetLocked && currentPhase != TutorialPhase.Approaching)
-            {
-                LogDebug($"   Ignoring progress - wrong phase: {currentPhase}");
-                return;
-            }
-
+            if (currentPhase != TutorialPhase.TargetLocked && currentPhase != TutorialPhase.Approaching) return;
             OnProgressMade();
         }
 
         private void OnTutorialProximityEntered(POI poi)
         {
-            LogDebug($"OnTutorialProximityEntered - Phase: {currentPhase}");
-
             if (!isActive) return;
 
-            // Transition to proximity phase
             currentPhase = TutorialPhase.ProximityReached;
-            LogDebug("Phase: ProximityReached (20m music zone)");
-
-            // Play narrator dialogue (music starts automatically in POI.UpdateProximity)
             PlayNarratorDialogue("proximityReached");
         }
 
         private void OnTutorialProximityExited(POI poi)
         {
-            LogDebug("OnTutorialProximityExited - player left proximity");
-            // Could handle if needed
+            LogDebug("Player left proximity");
         }
 
         private void OnTutorialInnerZoneEntered(POI poi)
         {
-            Debug.Log($" OnTutorialInnerZoneEntered - Phase: {currentPhase}");
+            if (!isActive || currentPhase != TutorialPhase.ProximityReached) return;
 
-            if (!isActive || currentPhase != TutorialPhase.ProximityReached)
-            {
-                Debug.LogWarning($" BLOCKED - Phase: {currentPhase}, Expected: ProximityReached");
-                return;
-            }
-
-            Debug.Log(" Inner zone entered - transitioning to CharacterFound");
             currentPhase = TutorialPhase.CharacterFound;
-            LogDebug("Phase: CharacterFound (5m dialogue zone)");
-
-            // Play "let's hear what they have to say" narrator message
             PlayNarratorDialogue("characterFound");
 
-            // After characterFound narration finishes, transition to ListeningToDialogue
-            // This happens automatically when the narrator callback resumes gameplay
-            Invoke(nameof(TransitionToListeningToDialogue), 0.1f); // Small delay to let narration start
+            Invoke(nameof(TransitionToListeningToDialogue), 0.1f);
         }
 
         private void TransitionToListeningToDialogue()
         {
-            // Wait for characterFound narration to complete
             if (gameManager != null && gameManager.IsSuspended)
             {
-                // Still playing narration, wait
                 Invoke(nameof(TransitionToListeningToDialogue), 0.1f);
                 return;
             }
 
-            Debug.Log("🎭 Transitioning to ListeningToDialogue phase");
             currentPhase = TutorialPhase.ListeningToDialogue;
-            LogDebug("Phase: ListeningToDialogue - character dialogue should be playing");
         }
 
         private void OnTutorialNarrationComplete(POI poi)
         {
-            Debug.Log($"🎬 OnTutorialNarrationComplete FIRED - POI: {poi?.characterName ?? "NULL"}");
-            Debug.Log($"   isActive: {isActive}");
-            Debug.Log($"   currentPhase: {currentPhase}");
-            Debug.Log($"   Expected phase: {TutorialPhase.ListeningToDialogue}");
-            Debug.Log($"   Phase check passes? {isActive && currentPhase == TutorialPhase.ListeningToDialogue}");
+            if (!isActive || currentPhase != TutorialPhase.ListeningToDialogue) return;
 
-            if (!isActive || currentPhase != TutorialPhase.ListeningToDialogue)
-            {
-                Debug.LogWarning($" BLOCKED - Not in correct phase for completion");
-                return;
-            }
-
-            // Character dialogue finished
             LogDebug("Character dialogue completed");
 
-            // Play completion message
-            Debug.Log(" About to play interactionComplete dialogue");
-            PlayNarratorDialogue("interactionComplete");
-
-            // Transition to next phase based on tutorial type
             var gameDataService = ServiceLocator.GetService<IGameDataService>();
             string tutorialType = gameDataService?.Tutorial?.tutorialType ?? "short";
 
             if (tutorialType == "short")
             {
-                Debug.Log(" Short tutorial - will transition to complete after interactionComplete");
-                waitingForInteractionComplete = true;
+                // SHORT: interactionComplete → complete (triggered by marker callback)
+                shouldPlayFinalMessageNext = true;
+                PlayNarratorDialogue("interactionComplete");
             }
             else
             {
-                Debug.Log(" Long tutorial - will transition to combat/berry phases after interactionComplete");
-                // For long tutorial, transition to combat phase
-                // (This will be implemented when combat tutorial is added)
-                currentPhase = TutorialPhase.Complete; // Placeholder for now
-            }
-        }
-
-        private void CompleteTutorial()
-        {
-            LogDebug("Tutorial completed!");
-
-            PlayerPrefs.SetString("TutorialCompleted", "true");
-            PlayerPrefs.Save();
-
-            if (gameManager != null)
-            {
-                gameManager.CompleteTutorial();
+                // LONG: interactionComplete → rewardExplanation (triggered by marker callback)
+                shouldPlayRewardNext = true;
+                PlayNarratorDialogue("interactionComplete");
             }
         }
 
         #endregion
 
-        #region Update Loop
+        #region Narrator Dialogue System
 
-        private void Update()
-        {
-            if (!isActive || poiManager == null) return;
-
-            // Cache tutorial POI if needed
-            if (tutorialPOI == null)
-            {
-                tutorialPOI = FindTutorialPOI();
-                if (tutorialPOI == null) return;
-            }
-
-            // SHORT TUTORIAL ONLY: Check if we should play final message (after interactionComplete finishes)
-            if (waitingForInteractionComplete)
-            {
-                bool isSuspended = gameManager != null && gameManager.IsSuspended;
-
-                if (Time.frameCount % 60 == 0) // Log once per second
-                {
-                    Debug.Log($" [SHORT TUTORIAL] Waiting for interactionComplete - IsSuspended: {isSuspended}");
-                }
-
-                if (gameManager != null && !gameManager.IsSuspended)
-                {
-                    Debug.Log(" [SHORT TUTORIAL] InteractionComplete finished - playing final message");
-                    waitingForInteractionComplete = false;
-                    waitingForFinalComplete = true;
-                    PlayNarratorDialogue("complete");
-                }
-            }
-
-            // SHORT TUTORIAL ONLY: Check if tutorial is complete (after complete dialogue finishes)
-            if (waitingForFinalComplete)
-            {
-                bool isSuspended = gameManager != null && gameManager.IsSuspended;
-
-                if (Time.frameCount % 60 == 0) // Log once per second
-                {
-                    Debug.Log($"⏳ [SHORT TUTORIAL] Waiting for complete - IsSuspended: {isSuspended}");
-                }
-
-                if (gameManager != null && !gameManager.IsSuspended)
-                {
-                    Debug.Log(" [SHORT TUTORIAL] Final message finished - completing tutorial");
-                    waitingForFinalComplete = false;
-                    CompleteTutorial();
-                }
-            }
-        }
-
-        #endregion
-
-        #region Audio Management
-
-        /// <summary>
-        /// Play narrator dialogue with new config system
-        /// </summary>
         private void PlayNarratorDialogue(string dialogueKey)
         {
-            Debug.Log($" PlayNarratorDialogue CALLED - Key: {dialogueKey}");
-
             if (audioService == null || !audioService.IsInstanceValid(narratorInstance))
             {
                 Debug.LogError("Cannot play narration - audio service or instance invalid");
                 return;
             }
 
-            // Get dialogue config
             GameDataService.TutorialDialogueConfig config = GetDialogueConfig(dialogueKey);
             if (config == null)
             {
@@ -575,35 +625,29 @@ namespace LoGa.LudoEngine.Game
                 return;
             }
 
-            // Check if this is the same dialogue already playing
             if (config.id == currentDialogueID)
             {
                 Debug.Log($"Dialogue {config.id} already playing - ignoring");
                 return;
             }
 
-            // Stop previous narrator dialogue if different
             if (currentDialogueID != -1 && config.id != currentDialogueID)
             {
-                Debug.Log($" Interrupting DialogueID {currentDialogueID} with {config.id}");
+                Debug.Log($"Interrupting DialogueID {currentDialogueID} with {config.id}");
                 audioService.StopAudio(narratorInstance, false);
             }
 
-            // Cancel any pending invoke from previous dialogue
             if (!string.IsNullOrEmpty(pendingInvokeMethod))
             {
                 CancelInvoke(pendingInvokeMethod);
                 pendingInvokeMethod = null;
             }
 
-            // Schedule narration to play after preDelay
             if (config.preDelay > 0f)
             {
-                Debug.Log($" Scheduling narration in {config.preDelay}s (update keeps running)");
+                Debug.Log($"Scheduling narration in {config.preDelay}s");
                 pendingInvokeMethod = nameof(PlayNarrationAudioDelayed);
                 Invoke(pendingInvokeMethod, config.preDelay);
-
-                // Store config for delayed playback
                 pendingDialogueConfig = config;
             }
             else
@@ -611,9 +655,6 @@ namespace LoGa.LudoEngine.Game
                 PlayNarrationAudio(config);
             }
         }
-
-        // NEW: Delayed playback method
-        private GameDataService.TutorialDialogueConfig pendingDialogueConfig;
 
         private void PlayNarrationAudioDelayed()
         {
@@ -625,65 +666,76 @@ namespace LoGa.LudoEngine.Game
             }
         }
 
-        /// <summary>
-        /// Actually play the narration audio (after preDelay)
-        /// </summary>
         private void PlayNarrationAudio(GameDataService.TutorialDialogueConfig config)
         {
-            Debug.Log($" Playing narration - DialogueID: {config.id}, Suspend: {config.suspendGameplay}");
+            Debug.Log($"[TutorialManager] Playing narrator dialogue ID: {config.id}");
 
-            // Suspend gameplay if configured (AFTER preDelay)
             if (config.suspendGameplay && gameManager != null)
             {
-                Debug.Log($" Suspending gameplay for DialogueID {config.id}");
                 gameManager.SuspendGameplay(GameManager.SuspensionReason.Tutorial);
             }
 
             currentDialogueID = config.id;
 
-            // Set callback to detect timeline marker (dialogue completion)
             narratorInstance.setCallback(OnNarratorMarkerCallback, EVENT_CALLBACK_TYPE.TIMELINE_MARKER);
-
-            // Set which dialogue to play
             audioService.SetParameter(narratorInstance, "DialogueID", config.id);
-
-            // Play narrator (on Voice bus - not paused)
             audioService.PlayAudio(narratorInstance, Vector3.zero);
 
             LogDebug($"Playing narrator dialogue ID: {config.id} (suspended: {config.suspendGameplay})");
         }
 
-        /// <summary>
-        /// FMOD callback - fired when narrator dialogue timeline marker is reached
-        /// </summary>
         [AOT.MonoPInvokeCallback(typeof(EVENT_CALLBACK))]
         private static FMOD.RESULT OnNarratorMarkerCallback(EVENT_CALLBACK_TYPE type, IntPtr instancePtr, IntPtr parameterPtr)
         {
-            Debug.Log($" OnNarratorMarkerCallback FIRED - Type: {type}");
-
             if (type == EVENT_CALLBACK_TYPE.TIMELINE_MARKER)
             {
-                Debug.Log($" Timeline marker detected - about to call ResumeGameplay(Tutorial)");
-
-                // Resume gameplay when dialogue finishes
+                // Resume gameplay
                 if (GameManager.Instance != null)
                 {
                     GameManager.Instance.ResumeGameplay(GameManager.SuspensionReason.Tutorial);
                 }
 
-                Debug.Log("TutorialManager: Narrator dialogue finished (timeline marker) - gameplay resumed");
+                // Handle phase transitions via callback flags
+                if (instance != null && instance.isActive)
+                {
+                    if (instance.shouldPlayRewardNext)
+                    {
+                        instance.shouldPlayRewardNext = false;
+                        instance.StartRewardPhase();
+                    }
+                    else if (instance.shouldStartCombatNext)
+                    {
+                        instance.shouldStartCombatNext = false;
+                        instance.StartCombatIntroduction();
+                    }
+                    else if (instance.shouldStartBerryPhaseNext)
+                    {
+                        instance.shouldStartBerryPhaseNext = false;
+                        instance.StartBerryPhase();
+                    }
+                    else if (instance.shouldPlayFinalMessageNext)
+                    {
+                        instance.shouldPlayFinalMessageNext = false;
+                        instance.PlayNarratorDialogue("complete");
+                        
+                        // Completion will be triggered by the NEXT marker callback
+                        // Set a flag so the next marker knows to complete tutorial
+                        instance.shouldCompleteTutorialNext = true;
+                    }
+                    else if (instance.shouldCompleteTutorialNext)
+                    {
+                        // FINAL DIALOGUE FINISHED - Complete tutorial
+                        instance.shouldCompleteTutorialNext = false;
+                        instance.CompleteTutorial();
+                    }
+                }
 
-                // NEW: Trigger postDelay action if pending
-                // We can't access instance variables from static callback, so use a workaround
-                // The Update() loop will check for postDelay actions
+                Debug.Log("TutorialManager: Narrator dialogue finished (timeline marker) - gameplay resumed");
             }
 
             return FMOD.RESULT.OK;
         }
 
-        /// <summary>
-        /// Get dialogue configuration from JSON
-        /// </summary>
         private GameDataService.TutorialDialogueConfig GetDialogueConfig(string dialogueKey)
         {
             var gameDataService = ServiceLocator.GetService<IGameDataService>();
@@ -708,8 +760,86 @@ namespace LoGa.LudoEngine.Game
                 "characterFound" => dialogues.characterFound,
                 "interactionComplete" => dialogues.interactionComplete,
                 "complete" => dialogues.complete,
+                "rewardExplanation" => dialogues.rewardExplanation,
+                "mercenaryWarning" => dialogues.mercenaryWarning,
+                "afterFirstHit" => dialogues.afterFirstHit,
+                "attackIncoming2" => dialogues.attackIncoming2,
+                "defenseSuccess1" => dialogues.defenseSuccess1,
+                "defenseFail1" => dialogues.defenseFail1,
+                "attackIncoming3" => dialogues.attackIncoming3,
+                "defenseSuccessFinal" => dialogues.defenseSuccessFinal,
+                "defenseFail2" => dialogues.defenseFail2,
+                "defenseFail3" => dialogues.defenseFail3,
+                "defenseFail4" => dialogues.defenseFail4,
+                "combatComplete" => dialogues.combatComplete,
+                "lowHealthBerryIntro" => dialogues.lowHealthBerryIntro,
+                "berryCollected" => dialogues.berryCollected,
                 _ => null
             };
+        }
+
+        #endregion
+
+        #region Tutorial Completion
+
+        private void CompleteTutorial()
+        {
+            LogDebug("Tutorial completed!");
+
+            PlayerPrefs.SetString("TutorialCompleted", "true");
+            PlayerPrefs.Save();
+
+            if (gameManager != null)
+            {
+                gameManager.CompleteTutorial();
+            }
+        }
+
+        #endregion
+
+        #region Cleanup
+
+        public void Reset()
+        {
+            LogDebug("Resetting tutorial manager");
+
+            if (isActive)
+            {
+                StopTutorial();
+            }
+
+            if (audioService != null && narratorInstance.handle != IntPtr.Zero)
+            {
+                audioService.StopAudio(narratorInstance, false);
+                audioService.ReleaseAudio(narratorInstance);
+                narratorInstance = default(EventInstance);
+            }
+
+            currentDialogueID = -1;
+            tutorialPOI = null;
+            pendingDialogueConfig = null;
+            pendingInvokeMethod = null;
+            
+            shouldPlayRewardNext = false;
+            shouldStartCombatNext = false;
+            shouldStartBerryPhaseNext = false;
+            shouldPlayFinalMessageNext = false;
+            shouldCompleteTutorialNext = false;
+        }
+
+        private void OnDestroy()
+        {
+            StopTutorial();
+
+            if (audioService != null && narratorInstance.handle != IntPtr.Zero)
+            {
+                audioService.ReleaseAudio(narratorInstance);
+            }
+
+            if (instance == this)
+            {
+                instance = null;
+            }
         }
 
         #endregion
@@ -742,42 +872,6 @@ namespace LoGa.LudoEngine.Game
 
         public TutorialPhase CurrentPhase => currentPhase;
         public bool IsActive => isActive;
-
-        #endregion
-
-        #region Cleanup
-
-        public void Reset()
-        {
-            LogDebug("Resetting tutorial manager");
-
-            if (isActive)
-            {
-                StopTutorial();
-            }
-
-            if (audioService != null && narratorInstance.handle != IntPtr.Zero)
-            {
-                audioService.StopAudio(narratorInstance, false);
-                audioService.ReleaseAudio(narratorInstance);
-                narratorInstance = default(EventInstance);
-            }
-
-            currentDialogueID = -1;
-            tutorialPOI = null;
-            pendingDialogueConfig = null;
-            pendingInvokeMethod = null;
-        }
-
-        private void OnDestroy()
-        {
-            StopTutorial();
-
-            if (audioService != null && narratorInstance.handle != IntPtr.Zero)
-            {
-                audioService.ReleaseAudio(narratorInstance);
-            }
-        }
 
         #endregion
     }
