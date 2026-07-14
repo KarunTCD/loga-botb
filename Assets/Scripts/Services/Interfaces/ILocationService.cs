@@ -13,5 +13,9 @@ namespace LoGa.LudoEngine.Services
         void StartLocationUpdates();
         void StopLocationUpdates();
         Vector2 GetCurrentLocation();
+
+        // Spectator mode — inject player's position instead of real GPS
+        void InjectLocation(Vector2 location);
+        void ClearInjection();
     }
 }

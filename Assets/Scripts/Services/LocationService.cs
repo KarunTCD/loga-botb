@@ -12,7 +12,6 @@ namespace LoGa.LudoEngine.Services
         // ONLY for actual location changes - not for game logic updates
         public event Action<Vector2> LocationChanged;
         public event Action<bool> LocationAvailabilityChanged;
-
         public bool IsInitialized { get; private set; }
         public bool IsRunning { get; private set; }
 
@@ -24,10 +23,10 @@ namespace LoGa.LudoEngine.Services
         [SerializeField] private float poorAccuracyThreshold = 25f;
 
         [Header("GPS Update Settings - ONLY affects GPS accuracy")]
-        [SerializeField] private float gpsUpdateInterval = 0.5f;      // GPS polling rate
-        [SerializeField] private float significantMoveThreshold = 1.0f; // Meters - when to trigger LocationChanged event
+        [SerializeField] private float gpsUpdateInterval = 0.5f;
+        [SerializeField] private float significantMoveThreshold = 1.0f;
 
-        // PUBLIC PROPERTIES 
+        // PUBLIC PROPERTIES
         public Vector2 CurrentLocation { get; private set; }
         public float CurrentLatitude => CurrentLocation.x;
         public float CurrentLongitude => CurrentLocation.y;
@@ -43,6 +42,10 @@ namespace LoGa.LudoEngine.Services
         private SimpleKalmanFilter latFilter;
         private SimpleKalmanFilter lonFilter;
         private bool filtersInitialized = false;
+
+        // Spectator injection
+        private bool isInjectionActive = false;
+        private Vector2 injectedLocation;
 
         private IPermissionService PermissionService => ServiceLocator.GetService<IPermissionService>();
 
@@ -179,7 +182,7 @@ namespace LoGa.LudoEngine.Services
             IsRunning = false;
         }
 
-        // PUBLIC ACCESS METHODS - Like HeadTrackingService
+        // PUBLIC ACCESS METHODS
         public Vector2 GetCurrentLocation()
         {
             return CurrentLocation;
@@ -195,14 +198,40 @@ namespace LoGa.LudoEngine.Services
             return PositionAccuracy;
         }
 
-        // REMOVED DEPENDENCY - This is now ONLY for GPS accuracy, not game timing
+        #region Spectator Injection
+
+        /// <summary>
+        /// SpectatorManager calls this every frame to override GPS with the player's position.
+        /// POIManager polls GetCurrentLocation() and gets the injected value transparently.
+        /// </summary>
+        public void InjectLocation(Vector2 location)
+        {
+            injectedLocation = location;
+            if (!isInjectionActive)
+            {
+                isInjectionActive = true;
+                Debug.Log("LocationService: Injection mode activated.");
+            }
+            // Override CurrentLocation so all consumers (POIManager etc.) see player position
+            CurrentLocation = injectedLocation;
+        }
+
+        public void ClearInjection()
+        {
+            isInjectionActive = false;
+            Debug.Log("LocationService: Injection cleared.");
+        }
+
+        #endregion
+
+        // ONLY for GPS accuracy, not game timing
         private IEnumerator UpdateLocationRoutine()
         {
             while (true)
             {
-                UpdateGPSLocation(); // Only updates GPS data
+                UpdateGPSLocation();
                 CheckForThreeFingerTap();
-                yield return new WaitForSeconds(gpsUpdateInterval); // ONLY affects GPS polling
+                yield return new WaitForSeconds(gpsUpdateInterval);
             }
         }
 
@@ -228,9 +257,11 @@ namespace LoGa.LudoEngine.Services
             }
         }
 
-        // CORE FIX - Only updates internal location data, rarely triggers events
         private void UpdateGPSLocation()
         {
+            // Spectator mode — do not overwrite injected location with real GPS
+            if (isInjectionActive) return;
+
             if (Input.location.status != LocationServiceStatus.Running)
             {
                 return;
@@ -251,7 +282,7 @@ namespace LoGa.LudoEngine.Services
                 float newLon = lonFilter.Update(rawGpsPosition.y, dynamicNoise, deltaTime);
                 newLocation = new Vector2(newLat, newLon);
 
-                if (Time.frameCount % 300 == 0) // Reduced logging frequency
+                if (Time.frameCount % 300 == 0)
                 {
                     Debug.Log($"Kalman GPS Update: {newLocation.x:F8}, {newLocation.y:F8}, Accuracy: {rawAccuracy:F1}m");
                 }
@@ -272,8 +303,7 @@ namespace LoGa.LudoEngine.Services
             if (distanceMoved >= significantMoveThreshold)
             {
                 lastSignificantLocation = newLocation;
-                LocationChanged?.Invoke(newLocation); // RARE event for significant movement only
-                //Debug.Log($"Significant movement detected: {distanceMoved:F1}m");
+                LocationChanged?.Invoke(newLocation);
             }
         }
 
@@ -334,6 +364,7 @@ namespace LoGa.LudoEngine.Services
             IsInitialized = false;
             IsLocationAvailable = false;
             filtersInitialized = false;
+            isInjectionActive = false;
         }
 
         private void OnDisable()
@@ -367,7 +398,7 @@ namespace LoGa.LudoEngine.Services
                 latFilter = new SimpleKalmanFilter(CurrentLocation.x, processNoise, measurementNoise);
                 lonFilter = new SimpleKalmanFilter(CurrentLocation.y, processNoise, measurementNoise);
                 filtersInitialized = true;
-                Debug.Log("🔧 Kalman filters re-initialized");
+                Debug.Log("Kalman filters re-initialized");
             }
         }
 
@@ -381,6 +412,7 @@ namespace LoGa.LudoEngine.Services
             Debug.Log($"Current Location: {CurrentLocation.x:F8}, {CurrentLocation.y:F8}");
             Debug.Log($"Accuracy: {PositionAccuracy:F1}m");
             Debug.Log($"Kalman Filter: {(useKalmanFilter ? "ON" : "OFF")}");
+            Debug.Log($"Injection Active: {isInjectionActive}");
             Debug.Log($"GPS Update Interval: {gpsUpdateInterval:F1}s (ONLY affects GPS accuracy)");
         }
     }

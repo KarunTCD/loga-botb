@@ -12,6 +12,7 @@ namespace LoGa.LudoEngine.Core
         public string name;            // "Battle of the Boyne"
         public string description;     // "Historical battle site 1690"
         public string folderName;      // "BattleOfBoyne"
+        public string contentFolderName; // optional: use folder name if empty
         public LocationData centerLocation;
         public float activationRadius;
         public bool isDebug;

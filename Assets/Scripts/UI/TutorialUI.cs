@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using LoGa.LudoEngine.Core;
+using LoGa.LudoEngine.Services;
 
 namespace LoGa.LudoEngine.UI
 {
@@ -14,16 +15,25 @@ namespace LoGa.LudoEngine.UI
         [Header("UI Elements")]
         [SerializeField] private TextMeshProUGUI titleText;
         [SerializeField] private TextMeshProUGUI statusText;
+        [SerializeField] private TextMeshProUGUI providerText;
         [SerializeField] private Button backButton;
 
         private UIManager uiManager;
+        private IHeadTrackingService headTrackingService;
 
         private void Start()
         {
+            headTrackingService = ServiceLocator.GetService<IHeadTrackingService>();
+            
             if (backButton != null)
             {
                 backButton.onClick.AddListener(OnBackButtonPressed);
             }
+        }
+
+        private void Update()
+        {
+            UpdateProviderDisplay();
         }
 
         public void SetUIManager(UIManager manager)
@@ -53,6 +63,23 @@ namespace LoGa.LudoEngine.UI
             {
                 backButton.gameObject.SetActive(true);
             }
+        }
+
+        private void UpdateProviderDisplay()
+        {
+            if (providerText == null || headTrackingService == null) return;
+
+            string provider = headTrackingService.ActiveProviderName ?? "Phone Sensor";
+
+            string deviceName = provider switch
+            {
+                "AirPodsHeadTrackingProvider" => "AirPods",
+                "MMRLHeadTrackingProvider"    => "MMRL Device",
+                "PhoneOrientationProvider"    => "Phone Sensor",
+                _                             => provider
+            };
+
+            providerText.text = $"Tracking: {deviceName}";
         }
 
         /// <summary>

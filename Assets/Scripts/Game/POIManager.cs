@@ -81,22 +81,20 @@ namespace LoGa.LudoEngine.Game
         // Tutorial event reporting
         public event Action<POI> TutorialPOIProximityEntered;
         public event Action<POI> TutorialPOIProximityExited;
-        public event Action<POI> TutorialPOIInnerZoneEntered;  // 5m dialogue zone
+        public event Action<POI> TutorialPOIInnerZoneEntered;
         public event Action<POI> TutorialPOINarrationComplete;
-        public event Action<POI> TutorialPOITargetLocked;    
-        public event Action<POI> TutorialPOITargetUnlocked;    
-        public event Action<POI, float> TutorialPOIProgressMade; // includes distance progressed
+        public event Action<POI> TutorialPOITargetLocked;
+        public event Action<POI> TutorialPOITargetUnlocked;
+        public event Action<POI, float> TutorialPOIProgressMade;
 
         private IGameDataService gameDataService;
 
         private TimeLayer currentLayer;
-        // Made public for TutorialManager access
         public List<POI> activePOIs = new List<POI>();
         public Dictionary<POI, POIUpdateData> poiDataCache = new Dictionary<POI, POIUpdateData>();
 
         private List<POI> activeCuePOIs = new List<POI>();
-        private bool isCycleLocked = false; // the poi cues cycle during wander mode is locked, so that the eligible pois list updations happen at the end of the cycle
-        // Made public for TutorialManager access
+        private bool isCycleLocked = false;
         public TargetingState targetingState = new TargetingState { mode = TargetingMode.None };
 
         private EventReference welcomeGreetingEvent;
@@ -136,9 +134,12 @@ namespace LoGa.LudoEngine.Game
         // Tutorial mode state
         private bool isTutorialMode = false;
         private POI tutorialPOI = null;
-        private float tutorialPOIDistanceWhenLocked = 0f; 
+        private float tutorialPOIDistanceWhenLocked = 0f;
         private const float TUTORIAL_PROGRESS_THRESHOLD = 15f;
         private bool tutorialInnerZoneTriggered = false;
+
+        private bool isNavigationSoundsEnabled = false;
+        private const string NAVIGATION_SOUNDS_KEY = "Setting_TargetingSounds";
 
         private IStorageService StorageService
         {
@@ -227,10 +228,8 @@ namespace LoGa.LudoEngine.Game
 
                 Debug.Log("POIManager: GameDataService obtained");
 
-                // Load default progression values
                 LoadProgressionData();
 
-                // Subscribe to site loading event
                 if (SiteManager.Instance != null)
                 {
                     SiteManager.Instance.OnSiteLoaded += OnSiteLoaded;
@@ -255,7 +254,6 @@ namespace LoGa.LudoEngine.Game
             {
                 Debug.Log($"POIManager: Site '{site.name}' loaded, now initializing audio...");
 
-                // Wait for AudioService to be ready
                 audioService = await ServiceLocator.GetInitializedService<IAudioService>();
                 if (audioService == null)
                 {
@@ -263,7 +261,6 @@ namespace LoGa.LudoEngine.Game
                     return;
                 }
 
-                // CRITICAL: Wrap audio initialization in try-catch, let no exceptions loose in event handlers, will cause event accummulation
                 bool audioInitialized = false;
                 try
                 {
@@ -272,7 +269,7 @@ namespace LoGa.LudoEngine.Game
                 catch (Exception audioEx)
                 {
                     Debug.LogError($"POIManager: Audio initialization failed: {audioEx.Message} - continuing without audio");
-                    audioInitialized = false; // Continue anyway
+                    audioInitialized = false;
                 }
 
                 if (!audioInitialized)
@@ -280,11 +277,9 @@ namespace LoGa.LudoEngine.Game
                     Debug.LogWarning("POIManager: Audio components failed to initialize - POIs will load without audio");
                 }
 
-                // Subscribe to time layer events
                 TimeLayerManager.Instance.TimeLayerChanging += OnTimeLayerChanging;
                 TimeLayerManager.Instance.TimeLayerChanged += OnTimeLayerChanged;
 
-                // Load current layer (now that JSON data is loaded)
                 OnTimeLayerChanged(TimeLayerManager.Instance.CurrentLayer);
 
                 isInitialized = true;
@@ -296,6 +291,7 @@ namespace LoGa.LudoEngine.Game
                 Debug.LogError($"POIManager Stack trace: {e.StackTrace}");
             }
         }
+
         private void ApplyJSONConfiguration()
         {
             if (gameDataService?.GameConfig == null)
@@ -340,6 +336,9 @@ namespace LoGa.LudoEngine.Game
             totalCompletedPOIs = StorageService.Load<int>("TotalCompletedPOIs", 0);
             currentMaxActiveCues = StorageService.Load<int>("CurrentMaxActiveCues", baseMaxActiveCues);
 
+            isNavigationSoundsEnabled = StorageService.Load<bool>(NAVIGATION_SOUNDS_KEY, false);
+            Debug.Log($"POIManager: Targeting sounds enabled: {isNavigationSoundsEnabled}");
+
             Debug.Log($"Loaded progression: {totalCompletedPOIs} completed POIs, max cues: {currentMaxActiveCues}");
         }
 
@@ -356,15 +355,13 @@ namespace LoGa.LudoEngine.Game
                 return false;
             }
 
-            // LOAD from JSON instead of inspector
             var config = gameDataService?.GameConfig;
             if (config == null)
             {
                 Debug.LogWarning("POIManager: No JSON config available - skipping audio initialization");
-                return true; // Don't fail, just skip
+                return true;
             }
 
-            // Load reward announcement event (optional)
             if (!string.IsNullOrEmpty(config.rewardAnnouncementEvent))
             {
                 rewardAnnouncementEvent = gameDataService.GetAudioEventReference(config.rewardAnnouncementEvent);
@@ -372,13 +369,9 @@ namespace LoGa.LudoEngine.Game
                 {
                     rewardInstance = AudioService.CreateAudioInstance(rewardAnnouncementEvent);
                     if (rewardInstance.handle == IntPtr.Zero)
-                    {
                         Debug.LogWarning("Failed to create reward instance - continuing without reward audio");
-                    }
                     else
-                    {
                         Debug.Log("Reward instance created from JSON");
-                    }
                 }
             }
             else
@@ -386,7 +379,6 @@ namespace LoGa.LudoEngine.Game
                 Debug.Log("POIManager: No reward announcement event in JSON - skipping");
             }
 
-            // Load welcome greeting event (optional)
             if (!string.IsNullOrEmpty(config.welcomeGreetingEvent))
             {
                 welcomeGreetingEvent = gameDataService.GetAudioEventReference(config.welcomeGreetingEvent);
@@ -394,13 +386,9 @@ namespace LoGa.LudoEngine.Game
                 {
                     welcomeInstance = AudioService.CreateAudioInstance(welcomeGreetingEvent);
                     if (welcomeInstance.handle == IntPtr.Zero)
-                    {
                         Debug.LogWarning("Failed to create welcome instance - continuing without welcome audio");
-                    }
                     else
-                    {
                         Debug.Log("Welcome instance created from JSON");
-                    }
                 }
             }
             else
@@ -408,7 +396,6 @@ namespace LoGa.LudoEngine.Game
                 Debug.Log("POIManager: No welcome greeting event in JSON - skipping");
             }
 
-            // Load targeting feedback event
             if (!string.IsNullOrEmpty(config.targetingFeedbackSound))
             {
                 targetingFeedbackEvent = gameDataService.GetAudioEventReference(config.targetingFeedbackSound);
@@ -416,13 +403,9 @@ namespace LoGa.LudoEngine.Game
                 {
                     targetingFeedbackInstance = AudioService.CreateAudioInstance(targetingFeedbackEvent);
                     if (targetingFeedbackInstance.handle == IntPtr.Zero)
-                    {
                         Debug.LogWarning("Failed to create targeting feedback instance - continuing without targeting audio");
-                    }
                     else
-                    {
                         Debug.Log("POIManager: Targeting feedback instance created from JSON");
-                    }
                 }
                 else
                 {
@@ -436,6 +419,40 @@ namespace LoGa.LudoEngine.Game
 
             return true;
         }
+
+        // ── CHANGE 4: Targeting feedback queue ───────────────────────────────
+
+        /// <summary>
+        /// Play targeting feedback sound. If the event is already playing,
+        /// waits for it to finish before applying the new parameter and playing.
+        /// Prevents mid-track parameter jumps when lock/unlock fire in quick succession.
+        /// </summary>
+        private void PlayTargetingFeedback(float lockState)
+        {
+            if (!isNavigationSoundsEnabled) return;
+            if (AudioService == null || !AudioService.IsInstanceValid(targetingFeedbackInstance)) return;
+
+            // If already playing, skip — do not queue, do not wait
+            // A skipped duplicate is less harmful than coroutine interference
+            targetingFeedbackInstance.getPlaybackState(out PLAYBACK_STATE state);
+            if (state == PLAYBACK_STATE.PLAYING || state == PLAYBACK_STATE.STARTING) return;
+
+            AudioService.SetParameter(targetingFeedbackInstance, "LockState", lockState);
+            AudioService.PlayAudio(targetingFeedbackInstance, Vector3.zero);
+            Debug.Log($"Targeting feedback: {(lockState >= 1f ? "LOCK" : "UNLOCK")}");
+        }
+
+        /// <summary>
+        /// Called by SettingsUI when the targeting sounds toggle changes.
+        /// </summary>
+        public void SetNavigationSoundsEnabled(bool enabled)
+        {
+            isNavigationSoundsEnabled = enabled;
+            StorageService?.Save(NAVIGATION_SOUNDS_KEY, enabled);
+            Debug.Log($"POIManager: Targeting sounds {(enabled ? "enabled" : "disabled")}");
+        }
+
+        // ─────────────────────────────────────────────────────────────────────
 
         public void PlayWelcomeGreeting()
         {
@@ -459,6 +476,7 @@ namespace LoGa.LudoEngine.Game
             if (type == EVENT_CALLBACK_TYPE.STOPPED)
             {
                 GameManager.Instance?.ResumeGameplay(GameManager.SuspensionReason.Loading);
+                POIManager.Instance?.ClearAllNavigationState();
                 Debug.Log("Oak greeting finished - navigation resumed");
             }
             return FMOD.RESULT.OK;
@@ -476,13 +494,9 @@ namespace LoGa.LudoEngine.Game
                 foreach (var poi in activePOIs)
                 {
                     if (poiDataCache.TryGetValue(poi, out POIUpdateData data))
-                    {
                         Debug.Log($"  POI '{poi.characterName}' - Distance: {data.distance:F1}m, InProximity: {poi.isInProximity}, Bearing: {data.bearing:F1}°");
-                    }
                     else
-                    {
                         Debug.Log($"  POI '{poi.characterName}' - NO DATA IN CACHE");
-                    }
                 }
             }
 
@@ -495,16 +509,12 @@ namespace LoGa.LudoEngine.Game
         {
             if (!isInitialized) return;
 
-            // CHECK GAMEMANAGER STATE - Stop all updates when suspended
             if (GameManager.Instance == null || GameManager.Instance.CurrentGameState != GameManager.GameState.Running)
-            {
                 return;
-            }
 
             if (TimeLayerManager.Instance.IsTransitioning)
                 return;
 
-            // Allow updates in both Player mode AND Tutorial mode
             var currentMode = GameManager.Instance?.CurrentMode;
             if (currentMode != GameManager.GameMode.Player &&
                 currentMode != GameManager.GameMode.Tutorial)
@@ -520,40 +530,24 @@ namespace LoGa.LudoEngine.Game
             UpdatePOIDataCache(currentLocation.x, currentLocation.y);
             UpdatePOIProximity();
 
-            // Allow navigation/targeting in Wander mode OR Tutorial mode (when not in proximity)
             bool shouldUpdateNavigation = GameManager.Instance.CurrentGameplayState == GameManager.GameplayState.Wander;
 
             if (isTutorialMode)
-            {
-                // In tutorial, allow navigation unless tutorial POI is in proximity
                 shouldUpdateNavigation = tutorialPOI == null || !tutorialPOI.isInProximity;
-            }
 
             if (shouldUpdateNavigation)
-            {
                 UpdateNavigationAndTargeting(currentLocation.x, currentLocation.y);
-            }
 
             CheckNarrationCompletions();
 
             if (!activePOIs.Any(poi => poi.isInProximity))
-            {
                 RemoveCompletedPOIs();
-            }
 
             if (updateFrameCounter % 60 == 0)
             {
-                //DebugPOIStatus();
                 UpdateDiscoveryLogic();
-
-                // Check tutorial progress
                 CheckTutorialProgress();
             }
-
-            //if (updateFrameCounter % 12 == 0)
-            //{
-            //    UpdateDebugDisplay(currentLocation);
-            //}
         }
 
         public void SilenceAllPOIAudio()
@@ -561,9 +555,7 @@ namespace LoGa.LudoEngine.Game
             foreach (var poi in activePOIs)
             {
                 if (poi.isInProximity)
-                {
                     poi.SilenceAudio();
-                }
             }
         }
 
@@ -572,32 +564,23 @@ namespace LoGa.LudoEngine.Game
             foreach (var poi in activePOIs)
             {
                 if (poi.isInProximity && poiDataCache.TryGetValue(poi, out POIUpdateData data))
-                {
                     poi.ResumeAudio(data.audioPosition);
-                }
             }
         }
 
         public void ClearAllNavigationState()
         {
-            ClearStandardNavigation(forcePause: false); 
-            ClearTargeting(false); // No sound (clearing for other reasons)
-            // Clear debug text for all POIs
+            ClearStandardNavigation(forcePause: false);
+            ClearTargeting(false);
             foreach (var poi in activePOIs)
-            {
                 poi.ClearDirectionDebug();
-            }
         }
 
         private void UpdatePOIDataCache(float currentLat, float currentLon)
         {
-            if (HeadTrackingService == null)
-            {
-                return;
-            }
+            if (HeadTrackingService == null) return;
 
             float headingAngle = HeadTrackingService.CurrentHeading;
-            
             poiDataCache.Clear();
 
             foreach (var poi in activePOIs)
@@ -623,11 +606,8 @@ namespace LoGa.LudoEngine.Game
 
             foreach (var poi in activePOIs)
             {
-                // During tutorial, only update tutorial POI proximity
                 if (isTutorialMode && poi != tutorialPOI)
-                {
-                    continue;  // Skip non-tutorial POIs
-                }
+                    continue;
 
                 if (poiDataCache.TryGetValue(poi, out POIUpdateData data))
                 {
@@ -636,7 +616,6 @@ namespace LoGa.LudoEngine.Game
 
                     poi.UpdateProximity(data, zoneValue);
 
-                    // Fire tutorial events when tutorial POI proximity changes
                     if (isTutorialMode && poi == tutorialPOI)
                     {
                         if (poi.isInProximity && !wasInProximity)
@@ -650,8 +629,6 @@ namespace LoGa.LudoEngine.Game
                             TutorialPOIProximityExited?.Invoke(poi);
                         }
 
-                        // FIRE INNER ZONE when Zone crosses 1.0 (dialogue starts)
-                        // Zone 0-1 = music only, Zone 1-2 = music + dialogue
                         if (poi.isInProximity && !tutorialInnerZoneTriggered && zoneValue >= 1.0f)
                         {
                             Debug.Log($"POIManager: Tutorial POI inner zone entered (Zone: {zoneValue:F2}) - firing event");
@@ -679,36 +656,26 @@ namespace LoGa.LudoEngine.Game
             }
 
             if (!foundProximityPOI && zoneText != null)
-            {
                 zoneText.text = "Zone: 0 (No proximity)";
-            }
         }
 
         private void UpdateNavigationAndTargeting(float currentLat, float currentLon)
         {
             if (activePOIs.Count == 0) return;
-
-            if (isRewardAudioPlaying)
-            {
-                return;
-            }
+            if (isRewardAudioPlaying) return;
 
             POI proximityPOI = null;
-    
+
             if (isTutorialMode)
             {
-                // Only check tutorial POI for proximity
                 if (tutorialPOI != null && poiDataCache.ContainsKey(tutorialPOI))
                 {
                     if (poiDataCache[tutorialPOI].distance <= proximityRadius)
-                    {
                         proximityPOI = tutorialPOI;
-                    }
                 }
             }
             else
             {
-                // Regular mode: check all POIs
                 proximityPOI = poiDataCache
                     .Where(p => p.Value.distance <= proximityRadius)
                     .OrderBy(p => p.Value.distance)
@@ -716,31 +683,23 @@ namespace LoGa.LudoEngine.Game
                     .FirstOrDefault();
             }
 
-            // Only clear on TRANSITION, not every frame
             if (proximityPOI != null)
             {
-                // Only clear if this is a NEW proximity POI (transition)
                 if (proximityPOI != lastProximityPOI)
                 {
                     if (isTutorialMode && Time.frameCount % 60 == 0)
-                    {
                         Debug.Log($"[NAV-CLEAR] Proximity POI detected (NEW): {proximityPOI.characterName}, clearing nav state");
-                    }
-                    
+
                     ClearAllNavigationState();
-                    lastProximityPOI = proximityPOI; // Track current
+                    lastProximityPOI = proximityPOI;
                 }
-                
                 return;
             }
 
-            // Clear tracking when exiting proximity
             if (lastProximityPOI != null && proximityPOI == null)
             {
                 if (isTutorialMode && Time.frameCount % 60 == 0)
-                {
                     Debug.Log($"[NAV-CLEAR] Exited proximity from {lastProximityPOI.characterName}");
-                }
                 lastProximityPOI = null;
             }
 
@@ -749,10 +708,8 @@ namespace LoGa.LudoEngine.Game
             if (eligiblePOIs.Count == 0)
             {
                 if (isTutorialMode && Time.frameCount % 60 == 0)
-                {
                     Debug.LogWarning($"[NAV-CLEAR] No eligible POIs! Cache count: {poiDataCache.Count}");
-                }
-                
+
                 ClearAllNavigationState();
                 return;
             }
@@ -760,13 +717,9 @@ namespace LoGa.LudoEngine.Game
             UpdateTargetingLogic(eligiblePOIs);
 
             if (targetingState.mode == TargetingMode.Locked)
-            {
                 HandleTargetedNavigation();
-            }
             else
-            {
                 HandleStandardNavigation(eligiblePOIs);
-            }
         }
 
         private List<POI> GetEligibleNavigationPOIs()
@@ -774,12 +727,8 @@ namespace LoGa.LudoEngine.Game
             var eligible = poiDataCache
                 .Where(p => p.Value.distance > proximityRadius && p.Value.distance <= maxCueRadius);
 
-            // During tutorial mode, ONLY allow tutorial POI
             if (isTutorialMode)
-            {
                 eligible = eligible.Where(p => p.Key == tutorialPOI);
-                //Debug.Log($"Tutorial mode: Filtering to only tutorial POI");
-            }
 
             return eligible
                 .OrderBy(p => p.Value.distance)
@@ -795,11 +744,9 @@ namespace LoGa.LudoEngine.Game
                 case TargetingMode.None:
                     CheckForPotentialTarget(eligiblePOIs);
                     break;
-
                 case TargetingMode.Potential:
                     UpdatePotentialTargeting();
                     break;
-
                 case TargetingMode.Locked:
                     UpdateLockedTargeting(eligiblePOIs);
                     break;
@@ -831,17 +778,14 @@ namespace LoGa.LudoEngine.Game
             {
                 targetingState.timer += Time.deltaTime;
                 targetingState.angleDifference = data.angleDifference;
-
                 UpdateTargetingUI();
 
                 if (targetingState.timer >= targetLockTime)
-                {
                     LockTarget();
-                }
             }
             else
             {
-                ClearTargeting(false); // No unlock sound (was just potential, not locked)
+                ClearTargeting(false);
             }
         }
 
@@ -849,73 +793,52 @@ namespace LoGa.LudoEngine.Game
         {
             if (!eligiblePOIs.Contains(targetingState.targetPOI))
             {
-                ClearTargeting(true); // true = breaking lock (play unlock sound)
+                ClearTargeting(true);
                 return;
             }
 
             if (poiDataCache.TryGetValue(targetingState.targetPOI, out POIUpdateData currentTargetData))
             {
-                // Check for break condition (angle > break angle)
                 if (currentTargetData.angleDifference > targetBreakAngle)
                 {
-                    ClearTargeting(true); // true = breaking lock (play unlock sound)
+                    ClearTargeting(true);
                     return;
                 }
 
-                // Check for auto-switch to closer POI
                 CheckForAutoSwitch(eligiblePOIs, currentTargetData);
-
-                // Update angle tracking
                 targetingState.angleDifference = currentTargetData.angleDifference;
             }
         }
 
-        /// <summary>
-        /// Check if a closer POI is within lock angle and auto-switch to it
-        /// </summary>
         private void CheckForAutoSwitch(List<POI> eligiblePOIs, POIUpdateData currentTargetData)
         {
             foreach (var poi in eligiblePOIs)
             {
-                // Skip if this is the current target
                 if (poi == targetingState.targetPOI) continue;
 
                 if (poiDataCache.TryGetValue(poi, out POIUpdateData poiData))
                 {
-                    // Check if this POI is:
-                    // 1. Closer than current target
-                    // 2. Within lock angle
                     if (poiData.distance < currentTargetData.distance &&
                         poiData.angleDifference <= targetLockAngle)
                     {
                         Debug.Log($"Auto-switching from {targetingState.targetPOI.characterName} ({currentTargetData.distance:F1}m) to {poi.characterName} ({poiData.distance:F1}m)");
 
-                        // Reset old target's cue index
                         targetingState.targetPOI.UpdateTargetingState(false);
                         targetingState.targetPOI.ResetNavigationCueIndex();
                         targetingState.targetPOI.StopNavigationCue();
 
-                        // Switch to new target
                         targetingState.targetPOI = poi;
                         targetingState.angleDifference = poiData.angleDifference;
-
-                        // Update visual state
                         poi.UpdateTargetingState(true);
 
-                        // Play lock sound (player remains in locked state)
-                        if (AudioService != null && AudioService.IsInstanceValid(targetingFeedbackInstance))
-                        {
-                            AudioService.SetParameter(targetingFeedbackInstance, "LockState", 1.0f); // 1.0 = lock
-                            AudioService.PlayAudio(targetingFeedbackInstance, Vector3.zero);
-                            Debug.Log("Targeting feedback: LOCK (auto-switch)");
-                        }
+                        // ── replaced with queued play ─────────────────────────
+                        PlayTargetingFeedback(1.0f);
 
                         if (targetingText != null)
                             targetingText.text = $"Switched to {poi.characterName}";
 
                         AnalyticsService?.TrackEvent($"character_auto_switched_{poi.characterId}");
-
-                        return; // Only switch once per frame
+                        return;
                     }
                 }
             }
@@ -926,13 +849,9 @@ namespace LoGa.LudoEngine.Game
             var targetPOI = targetingState.targetPOI;
             if (!poiDataCache.TryGetValue(targetPOI, out POIUpdateData data)) return;
 
-            //Debug.Log($" Targeted: Waiting={targetPOI.IsWaitingForCueCompletion()}, Completed={targetPOI.CheckNavigationCueCompletion()}, DelayActive={waitingForNextCue}");
-            
-            // Handle initial delay after locking (uses cyclePauseDelay)
             if (justLockedTarget && waitingForNextCue)
             {
                 cueTimer += Time.deltaTime;
-                
                 if (cueTimer >= cyclePauseDelay)
                 {
                     Debug.Log($"Initial lock delay complete ({cyclePauseDelay}s) - ready for first cue");
@@ -943,26 +862,22 @@ namespace LoGa.LudoEngine.Game
                 return;
             }
 
-            // Check if previous targeted cue completed
             if (targetPOI.CheckNavigationCueCompletion())
             {
-                Debug.Log($" Targeted cue completed via command instrument - starting {targetedCueStagingDelay}s delay");
+                Debug.Log($"Targeted cue completed via command instrument - starting {targetedCueStagingDelay}s delay");
                 cueTimer = 0f;
                 waitingForNextCue = true;
                 return;
             }
 
-            // Handle delay phase after command instrument completion
             if (waitingForNextCue)
             {
                 cueTimer += Time.deltaTime;
-
                 if (cueTimer >= targetedCueStagingDelay)
                 {
-                    Debug.Log($" Targeted delay complete - executing next cue");
+                    Debug.Log($"Targeted delay complete - executing next cue");
 
                     int sequentialCueIndex = targetPOI.GetNextNavigationCueIndex();
-
                     var config = new NavigationCueConfig
                     {
                         cueType = NavigationCueType.Sequential,
@@ -972,21 +887,18 @@ namespace LoGa.LudoEngine.Game
                     };
 
                     targetPOI.ExecuteNavigationCue(data.audioPosition, config);
-
                     cueTimer = 0f;
                     waitingForNextCue = false;
-                    Debug.Log($" TARGETED SEQUENTIAL cue executed: index {sequentialCueIndex}");
+                    Debug.Log($"TARGETED SEQUENTIAL cue executed: index {sequentialCueIndex}");
                 }
                 return;
             }
 
-            // If no cue is playing and no delay active, start first targeted cue
             if (!targetPOI.IsWaitingForCueCompletion() && !waitingForNextCue)
             {
-                Debug.Log($" Starting first targeted cue");
+                Debug.Log($"Starting first targeted cue");
 
                 int sequentialCueIndex = targetPOI.GetNextNavigationCueIndex();
-
                 var config = new NavigationCueConfig
                 {
                     cueType = NavigationCueType.Sequential,
@@ -996,22 +908,20 @@ namespace LoGa.LudoEngine.Game
                 };
 
                 targetPOI.ExecuteNavigationCue(data.audioPosition, config);
-                Debug.Log($" TARGETED SEQUENTIAL cue started: index {sequentialCueIndex}");
+                Debug.Log($"TARGETED SEQUENTIAL cue started: index {sequentialCueIndex}");
             }
         }
 
         private void HandleStandardNavigation(List<POI> eligiblePOIs)
         {
-            // Only update activeCuePOIs when NOT in an active cycle
             if (!isCycleLocked || activeCuePOIs.Count == 0)
             {
-                // Check if the list actually changed before locking
-                bool listChanged = activeCuePOIs.Count != eligiblePOIs.Count || 
-                                !activeCuePOIs.SequenceEqual(eligiblePOIs);
-                
+                bool listChanged = activeCuePOIs.Count != eligiblePOIs.Count ||
+                                   !activeCuePOIs.SequenceEqual(eligiblePOIs);
+
                 if (listChanged && eligiblePOIs.Count > 0)
                 {
-                    activeCuePOIs = new List<POI>(eligiblePOIs); // Copy the list
+                    activeCuePOIs = new List<POI>(eligiblePOIs);
                     isCycleLocked = true;
                     Debug.Log($"Navigation cycle LOCKED with {activeCuePOIs.Count} POIs: {string.Join(", ", activeCuePOIs.Select(p => p.characterName))}");
                 }
@@ -1021,45 +931,42 @@ namespace LoGa.LudoEngine.Game
                     isCycleLocked = false;
                 }
             }
-            
+
             if (activeCuePOIs.Count == 0) return;
 
-            // Check if any POI's cue completed
-            bool anyCompleted = false;
-            foreach (var poi in activeCuePOIs)
+            if (!isInCyclePause)
             {
-                if (poi.CheckNavigationCueCompletion())
+                bool anyCompleted = false;
+                foreach (var poi in activeCuePOIs)
                 {
-                    // Check if this was the last cue in the cycle
-                    if (currentCueIndex >= activeCuePOIs.Count)
+                    if (poi.CheckNavigationCueCompletion())
                     {
-                        // Last cue completed - UNLOCK for next cycle
-                        isInCyclePause = true;
-                        cyclePauseTimer = 0f;
-                        currentCueIndex = 0;
-                        waitingForNextCue = false;
-                        isCycleLocked = false;  
-                        Debug.Log($"Navigation cycle complete - UNLOCKED - entering {cyclePauseDelay}s pause");
+                        if (currentCueIndex >= activeCuePOIs.Count)
+                        {
+                            isInCyclePause = true;
+                            cyclePauseTimer = 0f;
+                            currentCueIndex = 0;
+                            waitingForNextCue = false;
+                            isCycleLocked = false;
+                            Debug.Log($"Navigation cycle complete - UNLOCKED - entering {cyclePauseDelay}s pause");
+                        }
+                        else
+                        {
+                            cueTimer = 0f;
+                            waitingForNextCue = true;
+                            Debug.Log($"Standard cue completed via command instrument for {poi.characterName} - starting {cueStagingDelay}s delay");
+                        }
+                        anyCompleted = true;
+                        break;
                     }
-                    else
-                    {
-                        // Not last cue - start gap delay
-                        cueTimer = 0f;
-                        waitingForNextCue = true;
-                        Debug.Log($"Standard cue completed via command instrument for {poi.characterName} - starting {cueStagingDelay}s delay");
-                    }
-                    anyCompleted = true;
-                    break;
                 }
+
+                if (anyCompleted) return;
             }
 
-            if (anyCompleted) return;
-
-            // Handle delay phase AFTER cue completion (this is the GAP)
             if (waitingForNextCue)
             {
                 cueTimer += Time.deltaTime;
-
                 if (cueTimer >= cueStagingDelay)
                 {
                     waitingForNextCue = false;
@@ -1069,28 +976,24 @@ namespace LoGa.LudoEngine.Game
                 return;
             }
 
-            // Handle cycle pause (pause BETWEEN cycles)
             if (isInCyclePause)
             {
                 cyclePauseTimer += Time.deltaTime;
-
                 if (cyclePauseTimer >= cyclePauseDelay)
                 {
                     isInCyclePause = false;
                     cyclePauseTimer = 0f;
                     currentCueIndex = 0;
                     cueTimer = 0f;
-                    isCycleLocked = false; 
+                    isCycleLocked = false;
                     Debug.Log("Exiting cycle pause - list will refresh next frame");
                 }
                 return;
             }
 
-            // Execute next cue (from LOCKED list)
             if (currentCueIndex < activeCuePOIs.Count && !waitingForNextCue)
             {
                 var poi = activeCuePOIs[currentCueIndex];
-
                 if (poiDataCache.TryGetValue(poi, out POIUpdateData data))
                 {
                     var config = new NavigationCueConfig
@@ -1109,10 +1012,6 @@ namespace LoGa.LudoEngine.Game
             }
         }
 
-        /// <summary>
-        /// Schedule delayed narration completion for a POI
-        /// Called from POI's static FMOD callback
-        /// </summary>
         public void ScheduleDelayedCompletion(POI poi, float delay)
         {
             StartCoroutine(DelayedCompletionCoroutine(poi, delay));
@@ -1120,17 +1019,12 @@ namespace LoGa.LudoEngine.Game
 
         private IEnumerator DelayedCompletionCoroutine(POI poi, float delay)
         {
-            // Check player's current Zone value
             float currentZone = 0f;
-            
             if (poiDataCache.TryGetValue(poi, out POIUpdateData data))
-            {
                 currentZone = CalculateZoneFromDistance(data.distance);
-            }
 
             Debug.Log($"[POIManager] Marker hit for {poi.characterName} - Zone: {currentZone:F2}");
 
-            // Only apply delay if player is in dialogue zone (Zone ≥ 1.0) player is actively listening to dialogue
             if (currentZone >= 1.0f)
             {
                 yield return new WaitForSeconds(delay);
@@ -1139,9 +1033,8 @@ namespace LoGa.LudoEngine.Game
             else
             {
                 Debug.Log($"[POIManager] Player in music-only zone (Zone < 1.0) - NO DELAY, completing immediately");
-                // No delay - complete immediately
             }
-            
+
             poi.ClearMarkerPendingFlag();
             POI.narrationJustCompleted = true;
             POI.completedInstanceHandle = poi.characterAudioInstance.handle;
@@ -1150,13 +1043,10 @@ namespace LoGa.LudoEngine.Game
         private void CheckNarrationCompletions()
         {
             var poisToCheck = activePOIs.ToList();
-
             foreach (var poi in poisToCheck)
             {
                 if (poi.CheckNarrationCompletion())
-                {
                     OnPOINarrationComplete(poi);
-                }
             }
         }
 
@@ -1166,53 +1056,32 @@ namespace LoGa.LudoEngine.Game
 
             AddCharacterToInventory(poi);
 
-            // PORTAL HANDLING: Allow activation but don't complete/remove
             if (poi.IsPortal)
             {
                 Debug.Log($"Portal {poi.characterName} activated - triggering time travel");
-
-                // Trigger portal functionality WITHOUT marking as completed
                 poi.TriggerPortalActivation();
-
-                // Remove portal POI immediately after activation
                 Debug.Log($"POIManager: Removing portal POI {poi.characterName} after activation");
                 poi.Cleanup();
                 activePOIs.Remove(poi);
-                if (poiDataCache.ContainsKey(poi)) 
-                {
-                    poiDataCache.Remove(poi);
-                }
-
-                // Track portal usage
+                if (poiDataCache.ContainsKey(poi)) poiDataCache.Remove(poi);
                 AnalyticsService?.TrackEvent($"portal_used_{poi.characterId}");
-
-                return; // Don't run normal completion logic
+                return;
             }
 
-            // TUTORIAL HANDLING: Allow completion but don't remove
             if (isTutorialMode && poi == tutorialPOI)
             {
                 Debug.Log($"Tutorial POI {poi.characterName} narration complete - keeping active");
-
-                // Fire tutorial event for TutorialManager
                 TutorialPOINarrationComplete?.Invoke(poi);
 
-                // Handle reward if present (for long tutorial version)
                 if (poi.hasReward && poi.rewardId > 0)
-                {
                     HandlePOIReward(poi);
-                }
 
                 Debug.Log($"POIManager: Removing tutorial POI {poi.characterName}");
                 poi.Cleanup();
                 activePOIs.Remove(poi);
-                if (poiDataCache.ContainsKey(poi)) 
-                {
-                    poiDataCache.Remove(poi);
-                }
+                if (poiDataCache.ContainsKey(poi)) poiDataCache.Remove(poi);
                 tutorialPOI = null;
-
-                return; // Don't mark completed or remove - tutorial controls lifecycle
+                return;
             }
 
             poi.MarkAsCompleted();
@@ -1224,17 +1093,13 @@ namespace LoGa.LudoEngine.Game
             {
                 string unlockKey = $"Character_{poi.characterId}_Unlocked";
                 StorageService.Save(unlockKey, true);
-
                 CheckGameCompletion();
             }
 
             if (poi.hasReward && poi.rewardId > 0)
-            {
                 HandlePOIReward(poi);
-            }
 
             RemoveCompletedPOI(poi);
-
             Debug.Log("POIManager: POI completion finished");
         }
 
@@ -1250,10 +1115,6 @@ namespace LoGa.LudoEngine.Game
             }
         }
 
-        /// <summary>
-        /// Add character to inventory
-        /// Uses characterId hash as unique ID
-        /// </summary>
         private void AddCharacterToInventory(POI poi)
         {
             if (InventoryManager.Instance == null)
@@ -1262,14 +1123,8 @@ namespace LoGa.LudoEngine.Game
                 return;
             }
 
-            // Generate unique ID from characterId string (hash)
             int characterItemId = poi.characterId.GetHashCode();
-            
-            // Ensure positive ID
-            if (characterItemId < 0)
-            {
-                characterItemId = -characterItemId;
-            }
+            if (characterItemId < 0) characterItemId = -characterItemId;
 
             var characterItem = new InventoryItem
             {
@@ -1293,7 +1148,7 @@ namespace LoGa.LudoEngine.Game
 
             if (StorageService != null)
             {
-                string unlockKey = $"reward_{poi.rewardId}_collected"; 
+                string unlockKey = $"reward_{poi.rewardId}_collected";
                 StorageService.Save(unlockKey, true);
                 Debug.Log($"Unlocked reward: {unlockKey}");
 
@@ -1326,9 +1181,6 @@ namespace LoGa.LudoEngine.Game
             PlayRewardAnnouncement(poi.rewardId);
         }
 
-        /// <summary>
-        /// Generate unique character item ID from character ID string
-        /// </summary>
         private int GetCharacterItemId(string characterId)
         {
             return characterId.GetHashCode();
@@ -1339,10 +1191,8 @@ namespace LoGa.LudoEngine.Game
             if (StorageService == null || gameDataService == null) return;
 
             int totalNonPortalPOIs = GetTotalPOICountFromJSON();
-
             if (totalNonPortalPOIs <= 0) return;
 
-            // Get all character IDs and count unlocked ones
             var allTimeLayerData = gameDataService.GetAllTimeLayerData();
             int unlockedCount = 0;
 
@@ -1350,12 +1200,9 @@ namespace LoGa.LudoEngine.Game
             {
                 foreach (var poi in layer.pois)
                 {
-                    // Skip portals from completion check
                     bool isPortal = !string.IsNullOrEmpty(poi.portalType) && poi.portalType != "None";
                     if (!isPortal && StorageService.Load<bool>($"Character_{poi.characterId}_Unlocked"))
-                    {
                         unlockedCount++;
-                    }
                 }
             }
 
@@ -1376,20 +1223,14 @@ namespace LoGa.LudoEngine.Game
             {
                 int totalCount = 0;
                 var allTimeLayerData = gameDataService.GetAllTimeLayerData();
-
                 foreach (var layer in allTimeLayerData)
                 {
-                    // Count only non-portal characters for completion
                     foreach (var poi in layer.pois)
                     {
                         bool isPortal = !string.IsNullOrEmpty(poi.portalType) && poi.portalType != "None";
-                        if (!isPortal)
-                        {
-                            totalCount++;
-                        }
+                        if (!isPortal) totalCount++;
                     }
                 }
-
                 return totalCount;
             }
             catch (Exception e)
@@ -1410,7 +1251,6 @@ namespace LoGa.LudoEngine.Game
                     {
                         var characters = inventory.GetItemsByType(ItemType.Character);
                         var artifacts = inventory.GetItemsByType(ItemType.Artifact);
-
                         AnalyticsService?.TrackEvent($"session_end_inventory_characters_{characters.Count}_artifacts_{artifacts.Count}");
                     }
                 }
@@ -1439,11 +1279,8 @@ namespace LoGa.LudoEngine.Game
         private void UpdateMaxActiveCues()
         {
             int newMax = baseMaxActiveCues;
-
             if (totalCompletedPOIs >= completionsToIncrease)
-            {
                 newMax = maxMaxActiveCues;
-            }
 
             if (newMax != currentMaxActiveCues)
             {
@@ -1471,16 +1308,14 @@ namespace LoGa.LudoEngine.Game
 
             if (!AudioService.IsInstanceValid(rewardInstance))
             {
-                Debug.LogError("Reward instance is invalid! Check rewardAnnouncementEvent assignment in inspector");
+                Debug.LogError("Reward instance is invalid!");
                 return;
             }
 
             isRewardAudioPlaying = true;
             rewardInstance.setCallback(OnRewardAudioComplete, EVENT_CALLBACK_TYPE.TIMELINE_MARKER | EVENT_CALLBACK_TYPE.STOPPED);
-
             AudioService.SetParameter(rewardInstance, "RewardID", rewardId);
             AudioService.PlayAudio(rewardInstance, Vector3.zero);
-
             Debug.Log($"Reward Announcement: ID {rewardId} - navigation cues paused");
         }
 
@@ -1507,19 +1342,12 @@ namespace LoGa.LudoEngine.Game
                 {
                     poi.Cleanup();
                     activePOIs.Remove(poi);
-
-                    if (currentLayer?.pois != null)
-                    {
-                        currentLayer.pois.Remove(poi);
-                    }
+                    if (currentLayer?.pois != null) currentLayer.pois.Remove(poi);
                 }
 
                 foreach (var poi in poisToRemove)
                 {
-                    if (poiDataCache.ContainsKey(poi))
-                    {
-                        poiDataCache.Remove(poi);
-                    }
+                    if (poiDataCache.ContainsKey(poi)) poiDataCache.Remove(poi);
                 }
             }
         }
@@ -1543,9 +1371,7 @@ namespace LoGa.LudoEngine.Game
                         AnalyticsService?.TrackEvent($"character_discovered_{poi.characterId}");
 
                         if (StorageService != null)
-                        {
                             StorageService.Save($"Character_{poi.characterId}_Discovered", true);
-                        }
                     }
 
                     FirebaseService.SaveDiscoveredPOI(GameManager.Instance.CurrentSessionId, poi.characterId);
@@ -1575,7 +1401,6 @@ namespace LoGa.LudoEngine.Game
             targetingState.mode = TargetingMode.Locked;
             targetingState.targetPOI.UpdateTargetingState(true);
 
-            // Record distance when tutorial POI is locked
             if (isTutorialMode && targetingState.targetPOI == tutorialPOI)
             {
                 if (poiDataCache.TryGetValue(tutorialPOI, out POIUpdateData data))
@@ -1585,7 +1410,6 @@ namespace LoGa.LudoEngine.Game
                 }
             }
 
-            // Clear standard navigation state when locking target
             ClearStandardNavigation(forcePause: false);
 
             if (targetingIndicator != null)
@@ -1594,23 +1418,16 @@ namespace LoGa.LudoEngine.Game
             if (targetingText != null)
                 targetingText.text = $"Locked onto {targetingState.targetPOI.characterName}";
 
-            // Play lock sound
-            if (AudioService != null && AudioService.IsInstanceValid(targetingFeedbackInstance))
-            {
-                AudioService.SetParameter(targetingFeedbackInstance, "LockState", 1.0f); // 1.0 = lock
-                AudioService.PlayAudio(targetingFeedbackInstance, Vector3.zero);
-                Debug.Log("Targeting feedback: LOCK");
-            }
+            // ── replaced with queued play ─────────────────────────────────────
+            PlayTargetingFeedback(1.0f);
 
             justLockedTarget = true;
             cueTimer = 0f;
             waitingForNextCue = true;
 
             AnalyticsService?.TrackEvent($"character_targeted_{targetingState.targetPOI.characterId}");
+            Debug.Log($"Successfully locked onto {targetingState.targetPOI.characterName}");
 
-            Debug.Log($"Successfully locked onto {targetingState.targetPOI.characterName} - cleared standard navigation state");
-
-            // Fire tutorial event if tutorial POI was locked
             if (isTutorialMode && targetingState.targetPOI == tutorialPOI)
             {
                 Debug.Log("POIManager: Tutorial POI locked - firing event");
@@ -1618,35 +1435,21 @@ namespace LoGa.LudoEngine.Game
             }
         }
 
-        /// <summary>
-        /// Clear targeting state
-        /// </summary>
-        /// <param name="playUnlockSound">True if breaking lock (play unlock sound), false if auto-switching or clearing for other reasons</param>
         private void ClearTargeting(bool playUnlockSound = false)
         {
             if (targetingState.mode == TargetingMode.Locked && targetingState.targetPOI != null)
             {
-                // Store POI reference before clearing
                 POI previousTarget = targetingState.targetPOI;
 
                 targetingState.targetPOI.UpdateTargetingState(false);
                 targetingState.targetPOI.ResetNavigationCueIndex();
-
-                // Stop the targeted POI's navigation cue
                 targetingState.targetPOI.StopNavigationCue();
 
-                // Play unlock sound only if breaking lock (not auto-switching)
-                if (playUnlockSound && AudioService != null && AudioService.IsInstanceValid(targetingFeedbackInstance))
-                {
-                    AudioService.SetParameter(targetingFeedbackInstance, "LockState", 0.0f); // 0.0 = unlock
-                    AudioService.PlayAudio(targetingFeedbackInstance, Vector3.zero);
-                    Debug.Log("Targeting feedback: UNLOCK");
-                }
+                if (playUnlockSound)
+                    PlayTargetingFeedback(0.0f); 
 
-                // Clear standard navigation with forced pause when returning from locked mode
                 ClearStandardNavigation(forcePause: true);
 
-                // Fire tutorial event if tutorial POI was unlocked
                 if (playUnlockSound && isTutorialMode && previousTarget == tutorialPOI)
                 {
                     Debug.Log("POIManager: Tutorial POI unlocked - firing event");
@@ -1657,7 +1460,7 @@ namespace LoGa.LudoEngine.Game
             Debug.Log($"Clearing targeting: {targetingState.targetPOI?.characterName ?? "None"} (playUnlockSound: {playUnlockSound})");
 
             targetingState = new TargetingState { mode = TargetingMode.None };
-            justLockedTarget = false; // reset flag
+            justLockedTarget = false;
 
             if (targetingIndicator != null)
                 targetingIndicator.SetActive(false);
@@ -1666,42 +1469,28 @@ namespace LoGa.LudoEngine.Game
                 targetingText.text = "";
         }
 
-        /// <summary>
-        /// Clear all standard navigation state and stop all navigation cue audio
-        /// </summary>
-        /// <param name="forcePause">If true, force a cycle pause delay before resuming</param>
-        // Clear standard navigation state when locking target
         private void ClearStandardNavigation(bool forcePause = false)
         {
-            //Debug.Log($"ClearStandardNavigation called (forcePause: {forcePause})");
-
-            // Stop all navigation cues
             foreach (var poi in activeCuePOIs)
-            {
                 poi.StopNavigationCue();
-            }
 
-            // Clear all standard navigation state
             activeCuePOIs.Clear();
             currentCueIndex = 0;
             waitingForNextCue = false;
             cueTimer = 0f;
-            isCycleLocked = false;  // UNLOCK cycle lock when leaving wander
+            isCycleLocked = false;
 
-            // Force pause if requested (used when returning from targeted mode)
             if (forcePause)
             {
                 isInCyclePause = true;
                 cyclePauseTimer = 0f;
-                Debug.Log($" Forcing {cyclePauseDelay}s pause before standard navigation resumes");
+                Debug.Log($"Forcing {cyclePauseDelay}s pause before standard navigation resumes");
             }
             else
             {
                 isInCyclePause = false;
                 cyclePauseTimer = 0f;
             }
-
-            //Debug.Log("✓ Standard navigation state cleared and UNLOCKED");
         }
 
         private void UpdateTargetingUI()
@@ -1710,9 +1499,9 @@ namespace LoGa.LudoEngine.Game
             {
                 float progress = (targetingState.timer / targetLockTime) * 100f;
                 targetingText.text = $"Targeting {targetingState.targetPOI.characterName}\n" +
-                                   $"Progress: {progress:F0}%\n" +
-                                   $"Time: {targetingState.timer:F2}s / {targetLockTime:F1}s\n" +
-                                   $"Angle: {targetingState.angleDifference:F1}°";
+                                     $"Progress: {progress:F0}%\n" +
+                                     $"Time: {targetingState.timer:F2}s / {targetLockTime:F1}s\n" +
+                                     $"Angle: {targetingState.angleDifference:F1}°";
             }
         }
 
@@ -1726,41 +1515,39 @@ namespace LoGa.LudoEngine.Game
             {
                 var data = poiDataCache[targetingState.targetPOI];
                 debugText.text = $"Layer: {currentLayer.layerName}\n" +
-                               $"Target: {targetingState.targetPOI.characterName}\n" +
-                               $"Dist: {data.distance:F0}m | Angle: {data.angleDifference:F1}°\n" +
-                               $"MaxCues: {currentMaxActiveCues} (Completed: {totalCompletedPOIs})\n" +
-                               $"Head: {HeadTrackingService.CurrentHeading:F0}°\n";
+                                 $"Target: {targetingState.targetPOI.characterName}\n" +
+                                 $"Dist: {data.distance:F0}m | Angle: {data.angleDifference:F1}°\n" +
+                                 $"MaxCues: {currentMaxActiveCues} (Completed: {totalCompletedPOIs})\n" +
+                                 $"Head: {HeadTrackingService.CurrentHeading:F0}°\n";
             }
             else if (targetingState.mode == TargetingMode.Potential)
             {
                 float progress = (targetingState.timer / targetLockTime) * 100f;
                 debugText.text = $"Layer: {currentLayer.layerName}\n" +
-                               $"Targeting: {targetingState.targetPOI.characterName}\n" +
-                               $"Progress: {progress:F1}%\n" +
-                               $"MaxCues: {currentMaxActiveCues} (Completed: {totalCompletedPOIs})\n" +
-                               $"Head: {HeadTrackingService.CurrentHeading:F0}°\n";
+                                 $"Targeting: {targetingState.targetPOI.characterName}\n" +
+                                 $"Progress: {progress:F1}%\n" +
+                                 $"MaxCues: {currentMaxActiveCues} (Completed: {totalCompletedPOIs})\n" +
+                                 $"Head: {HeadTrackingService.CurrentHeading:F0}°\n";
             }
             {
-                // TUTORIAL MODE: Show distance to tutorial POI
                 if (isTutorialMode && tutorialPOI != null && poiDataCache.TryGetValue(tutorialPOI, out POIUpdateData tutData))
                 {
                     tutorialDebugText.text = $"TUTORIAL MODE\n" +
-                                   $"Distance to Tutorial POI: {tutData.distance:F1}m\n" +
-                                   $"Proximity Radius: {proximityRadius:F1}m\n" +
-                                   $"Zone: {CalculateZoneFromDistance(tutData.distance):F2}\n" +
-                                   $"In Proximity: {tutorialPOI.isInProximity}\n" +
-                                   $"Player: ({location.x:F6}, {location.y:F6})\n" +
-                                   $"POI: ({tutorialPOI.latitude:F6}, {tutorialPOI.longitude:F6})\n" +
-                                   $"Head: {HeadTrackingService.CurrentHeading:F0}°";
+                                             $"Distance to Tutorial POI: {tutData.distance:F1}m\n" +
+                                             $"Proximity Radius: {proximityRadius:F1}m\n" +
+                                             $"Zone: {CalculateZoneFromDistance(tutData.distance):F2}\n" +
+                                             $"In Proximity: {tutorialPOI.isInProximity}\n" +
+                                             $"Player: ({location.x:F6}, {location.y:F6})\n" +
+                                             $"POI: ({tutorialPOI.latitude:F6}, {tutorialPOI.longitude:F6})\n" +
+                                             $"Head: {HeadTrackingService.CurrentHeading:F0}°";
                 }
                 else
                 {
-                    // Normal mode display
                     debugText.text = $"Layer: {currentLayer.layerName}\n" +
-                                   $"POIs: {activePOIs.Count}\n" +
-                                   $"MaxCues: {currentMaxActiveCues} (Completed: {totalCompletedPOIs})\n" +
-                                   $"Head: {HeadTrackingService.CurrentHeading:F0}°\n" +
-                                   $"Location: {location.x:F6}, {location.y:F6}\n";
+                                     $"POIs: {activePOIs.Count}\n" +
+                                     $"MaxCues: {currentMaxActiveCues} (Completed: {totalCompletedPOIs})\n" +
+                                     $"Head: {HeadTrackingService.CurrentHeading:F0}°\n" +
+                                     $"Location: {location.x:F6}, {location.y:F6}\n";
                 }
             }
         }
@@ -1768,9 +1555,7 @@ namespace LoGa.LudoEngine.Game
         private float CalculateZoneFromDistance(float distance)
         {
             if (distance > proximityRadius)
-            {
                 return 0.0f;
-            }
             else if (distance > dialogueRadius)
             {
                 float t = 1.0f - ((distance - dialogueRadius) / (proximityRadius - dialogueRadius));
@@ -1799,9 +1584,7 @@ namespace LoGa.LudoEngine.Game
             CleanupCurrentLayerPOIs();
 
             if (debugText != null)
-            {
                 debugText.text = $"Transitioning: {from.layerName} → {to.layerName}";
-            }
         }
 
         private void OnTimeLayerChanged(TimeLayer newLayer)
@@ -1809,7 +1592,6 @@ namespace LoGa.LudoEngine.Game
             Debug.Log($"POIManager: Loading {newLayer.layerName} layer");
 
             currentLayer = newLayer;
-
             discoveredThisSession.Clear();
             proximityReachedThisSession.Clear();
 
@@ -1818,24 +1600,18 @@ namespace LoGa.LudoEngine.Game
             AnalyticsService?.TrackEvent($"time_layer_loaded_{newLayer.layerName.Replace(" ", "_").ToLower()}");
 
             if (StorageService != null)
-            {
-                string travelKey = $"TimeLayer_{newLayer.layerIndex}_Visited";
-                StorageService.Save(travelKey, true);
-            }
+                StorageService.Save($"TimeLayer_{newLayer.layerIndex}_Visited", true);
 
             TimeLayerManager.Instance?.OnPOILayerLoadComplete();
 
             if (debugText != null)
-            {
                 debugText.text = $"Layer: {newLayer.layerName}\nPOIs: {activePOIs.Count}";
-            }
         }
 
         private void LoadLayerPOIs(TimeLayer layer)
         {
             activePOIs.Clear();
 
-            // Wait for JSON data to be loaded
             if (gameDataService == null || !gameDataService.IsDataLoaded)
             {
                 Debug.LogWarning($"POIManager: JSON data not loaded yet for {layer.layerName} - waiting...");
@@ -1844,16 +1620,13 @@ namespace LoGa.LudoEngine.Game
 
             Debug.Log($"POIManager: Loading POIs from JSON for {layer.layerName}");
 
-            // Apply JSON configuration on first load
             if (gameDataService != null && gameDataService.IsDataLoaded)
             {
                 Debug.Log("POIManager: Applying JSON configuration");
                 ApplyJSONConfiguration();
             }
 
-            // Load POIs from JSON
             LoadPOIsFromJSON(layer);
-
             InitializePOIs();
             Debug.Log($"POIManager: Loaded {activePOIs.Count} POIs for {layer.layerName}");
         }
@@ -1866,17 +1639,14 @@ namespace LoGa.LudoEngine.Game
                 return;
             }
 
-            // Use layer index to get the correct JSON time layer
             var allTimeLayerData = gameDataService.GetAllTimeLayerData();
 
             if (layer.layerIndex >= 0 && layer.layerIndex < allTimeLayerData.Count)
             {
                 var jsonTimeLayer = allTimeLayerData[layer.layerIndex];
-
                 Debug.Log($"POIManager: Loading POIs for layer '{layer.layerName}' (Index: {layer.layerIndex}, JSON ID: {jsonTimeLayer.id})");
 
-                var poiDataList = jsonTimeLayer.pois; // Get POIs directly from the time layer
-
+                var poiDataList = jsonTimeLayer.pois;
                 Debug.Log($"POIManager: Found {poiDataList.Count} POIs in JSON for layer index {layer.layerIndex}");
 
                 int skippedCount = 0;
@@ -1922,8 +1692,6 @@ namespace LoGa.LudoEngine.Game
                 poi.characterId = poiData.characterId;
                 poi.latitude = poiData.latitude;
                 poi.longitude = poiData.longitude;
-
-                // Character audio event name stored as string (loaded from bank)
                 poi.characterAudioEvent = poiData.characterAudioEvent;
                 poi.navigationCueEvent = poiData.navigationCueEvent;
 
@@ -1935,7 +1703,6 @@ namespace LoGa.LudoEngine.Game
                 };
                 poi.portalJumpDistance = poiData.portalJumpDistance;
 
-                // Only load portal audio if actually a portal
                 if (poi.portalType != PortalType.None &&
                     !string.IsNullOrEmpty(poiData.portalActivationAudio) &&
                     gameDataService != null)
@@ -1944,7 +1711,6 @@ namespace LoGa.LudoEngine.Game
                     Debug.Log($"POIManager: Loaded portal audio for {poi.characterName}");
                 }
 
-                // Explicit handling of reward data
                 poi.hasReward = poiData.hasReward;
                 if (poi.hasReward && poiData.reward != null)
                 {
@@ -1961,14 +1727,11 @@ namespace LoGa.LudoEngine.Game
                 poi.hasMultipleVariants = poiData.hasMultipleVariants;
                 poi.narrationVariantCount = poiData.narrationVariantCount;
 
-                // Initialize POI from JSON data (includes maxNavigationCues)
                 poi.InitializeFromData(poiData, poiObject);
 
                 RectTransform markerTransform = poiObject.GetComponentInChildren<RectTransform>();
                 if (markerTransform != null)
-                {
                     poi.marker = markerTransform;
-                }
 
                 Debug.Log($"POIManager: Successfully created JSON POI - {poiData.characterName} (ID: {poiData.characterId}, Reward: {poiData.reward?.id ?? 0})");
                 return poi;
@@ -2022,7 +1785,6 @@ namespace LoGa.LudoEngine.Game
                         Vector2 poiPosition = mapManager.GetScreenPosition(poi.latitude, poi.longitude);
                         poi.marker.anchoredPosition = poiPosition;
                     }
-                    //poi.SetDirectionDebugText(directionDebugText); 
                     successfullyInitialized.Add(poi);
                 }
             }
@@ -2034,9 +1796,7 @@ namespace LoGa.LudoEngine.Game
         private void CleanupCurrentLayerPOIs()
         {
             foreach (var poi in activePOIs)
-            {
                 poi.Cleanup();
-            }
 
             activePOIs.Clear();
             poiDataCache.Clear();
@@ -2059,10 +1819,7 @@ namespace LoGa.LudoEngine.Game
                 return false;
             }
 
-            string characterUnlockKey = $"Character_{characterId}_Unlocked";
-            bool isUnlocked = StorageService.Load<bool>(characterUnlockKey);
-
-            return isUnlocked;
+            return StorageService.Load<bool>($"Character_{characterId}_Unlocked");
         }
 
         public bool HasPOIInProximity()
@@ -2092,8 +1849,8 @@ namespace LoGa.LudoEngine.Game
             float latDiff = (lat2 - lat1) * Mathf.Deg2Rad;
             float lonDiff = (lon2 - lon1) * Mathf.Deg2Rad;
             float a = Mathf.Sin(latDiff / 2) * Mathf.Sin(latDiff / 2) +
-                     Mathf.Cos(lat1Rad) * Mathf.Cos(lat2Rad) *
-                     Mathf.Sin(lonDiff / 2) * Mathf.Sin(lonDiff / 2);
+                      Mathf.Cos(lat1Rad) * Mathf.Cos(lat2Rad) *
+                      Mathf.Sin(lonDiff / 2) * Mathf.Sin(lonDiff / 2);
             float c = 2 * Mathf.Atan2(Mathf.Sqrt(a), Mathf.Sqrt(1 - a));
             return earthRadius * c;
         }
@@ -2168,9 +1925,7 @@ namespace LoGa.LudoEngine.Game
             {
                 Debug.Log("Active POI Details:");
                 foreach (var poi in activePOIs.Take(5))
-                {
                     Debug.Log($"  - {poi.characterName} (ID: {poi.characterId}) Reward: {poi.rewardId}");
-                }
             }
         }
 
@@ -2178,28 +1933,18 @@ namespace LoGa.LudoEngine.Game
         {
             Debug.Log("POIManager: COMPLETE RESET - destroying all state");
 
-            // Stop all audio
             StopAllAudio();
-
-            // Clear all collections
             CleanupCurrentLayerPOIs();
             ClearAllNavigationState();
 
-            // Reset all flags
             isInitialized = false;
-
-            // Clear progression (site-specific)
             totalCompletedPOIs = 0;
             currentMaxActiveCues = baseMaxActiveCues;
-
-            // Reset proximity tracking
             lastProximityPOI = null;
 
-            // Clear session tracking
             discoveredThisSession.Clear();
             proximityReachedThisSession.Clear();
 
-            // Unsubscribe from events (will resubscribe when site loads)
             if (TimeLayerManager.Instance != null)
             {
                 TimeLayerManager.Instance.TimeLayerChanging -= OnTimeLayerChanging;
@@ -2209,23 +1954,18 @@ namespace LoGa.LudoEngine.Game
             Debug.Log("POIManager: Complete reset finished");
         }
 
-        /// <summary>
-        /// Stop all POI audio - called when exiting gameplay
-        /// </summary>
         public void StopAllAudio()
         {
             Debug.Log("POIManager: Stopping all POI audio");
 
-            // Stop all individual POI audio
             foreach (var poi in activePOIs)
             {
                 if (poi.characterAudioInstance.handle != IntPtr.Zero && AudioService != null)
                 {
-                    AudioService.StopAudio(poi.characterAudioInstance, false); // Immediate stop
+                    AudioService.StopAudio(poi.characterAudioInstance, false);
                     Debug.Log($"POIManager: Stopped character audio for {poi.characterName}");
                 }
 
-                // NEW: Stop individual navigation cue instances
                 if (AudioService != null && AudioService.IsInstanceValid(poi.navigationCueInstance))
                 {
                     AudioService.StopAudio(poi.navigationCueInstance, false);
@@ -2233,18 +1973,13 @@ namespace LoGa.LudoEngine.Game
                 }
             }
 
-            // Stop reward and welcome audio
             if (AudioService != null)
             {
                 if (AudioService.IsInstanceValid(rewardInstance))
-                {
                     AudioService.StopAudio(rewardInstance, false);
-                }
 
                 if (AudioService.IsInstanceValid(welcomeInstance))
-                {
                     AudioService.StopAudio(welcomeInstance, false);
-                }
             }
 
             Debug.Log("POIManager: All POI audio stopped");
@@ -2252,39 +1987,28 @@ namespace LoGa.LudoEngine.Game
 
         #region Tutorial Mode
 
-        // Tutorial command methods for TutorialManager to use
         public void TutorialPlayCharacterMusic(POI poi)
         {
             if (!isTutorialMode || poi != tutorialPOI) return;
-
             Debug.Log("POIManager: Tutorial commanded to play character music");
-            // Music already starts automatically when entering proximity
-            // This method exists for explicit control if needed in future
         }
 
         public void TutorialPlayCharacterDialogue(POI poi)
         {
             if (!isTutorialMode || poi != tutorialPOI) return;
-
             Debug.Log("POIManager: Tutorial commanded to play character dialogue");
-            // Dialogue already playing - this is just for explicit restart if needed
-            // In current implementation, dialogue auto-plays when in proximity
         }
 
         public void TutorialStopCharacterAudio(POI poi)
         {
             if (!isTutorialMode || poi != tutorialPOI) return;
-
             Debug.Log("POIManager: Tutorial commanded to stop character audio");
             poi.SilenceAudio();
         }
 
-        // Check if player made progress toward tutorial POI
         private void CheckTutorialProgress()
         {
             if (!isTutorialMode || tutorialPOI == null) return;
-
-            // Only check progress when locked
             if (targetingState.mode != TargetingMode.Locked || targetingState.targetPOI != tutorialPOI) return;
 
             if (poiDataCache.TryGetValue(tutorialPOI, out POIUpdateData data))
@@ -2295,60 +2019,37 @@ namespace LoGa.LudoEngine.Game
                 {
                     Debug.Log($"POIManager: Tutorial progress detected - {progressMade:F1}m closer - firing event");
                     TutorialPOIProgressMade?.Invoke(tutorialPOI, progressMade);
-
-                    // Reset distance so we don't fire multiple times
                     tutorialPOIDistanceWhenLocked = data.distance;
                 }
             }
         }
 
-        /// <summary>
-        /// Enter tutorial mode - spawn only tutorial POI
-        /// </summary>
         public void EnterTutorialMode()
         {
             Debug.Log("POIManager: Entering tutorial mode");
-
             isTutorialMode = true;
             tutorialInnerZoneTriggered = false;
-            // Spawn tutorial POI (layer POIs remain in activePOIs)
             SpawnTutorialPOI();
-
             Debug.Log($"POIManager: Tutorial mode active - {activePOIs.Count} total POIs (including tutorial POI)");
         }
 
-        /// <summary>
-        /// Exit tutorial mode - cleanup tutorial POI
-        /// </summary>
         public void ExitTutorialMode()
         {
             Debug.Log("POIManager: Exiting tutorial mode");
-
             isTutorialMode = false;
 
-            // Cleanup tutorial POI (layer POIs remain untouched)
             if (tutorialPOI != null)
             {
                 tutorialPOI.Cleanup();
                 activePOIs.Remove(tutorialPOI);
-
-                if (poiDataCache.ContainsKey(tutorialPOI))
-                {
-                    poiDataCache.Remove(tutorialPOI);
-                }
-
+                if (poiDataCache.ContainsKey(tutorialPOI)) poiDataCache.Remove(tutorialPOI);
                 tutorialPOI = null;
             }
 
-            // Reset proximity tracking
             lastProximityPOI = null;
-
             Debug.Log($"POIManager: Tutorial mode exited - {activePOIs.Count} layer POIs remain active");
         }
 
-        /// <summary>
-        /// Spawn tutorial POI from JSON configuration
-        /// </summary>
         private void SpawnTutorialPOI()
         {
             if (gameDataService?.Tutorial == null)
@@ -2365,9 +2066,7 @@ namespace LoGa.LudoEngine.Game
                 return;
             }
 
-            // SELECT SPAWN POSITION BASED ON PLAYER LOCATION
             var spawnPosition = SelectTutorialSpawnPosition(tutorialData);
-
             if (spawnPosition == null)
             {
                 Debug.LogError("POIManager: Failed to select tutorial spawn position!");
@@ -2378,7 +2077,6 @@ namespace LoGa.LudoEngine.Game
 
             try
             {
-                // Create tutorial POI using selected position
                 tutorialPOI = CreateTutorialPOI(tutorialData, spawnPosition);
 
                 if (tutorialPOI != null)
@@ -2392,7 +2090,6 @@ namespace LoGa.LudoEngine.Game
                             Vector2 poiPosition = mapManager.GetScreenPosition(tutorialPOI.latitude, tutorialPOI.longitude);
                             tutorialPOI.marker.anchoredPosition = poiPosition;
                         }
-
                         Debug.Log($"POIManager: Tutorial POI spawned successfully at {spawnPosition.name}");
                     }
                     else
@@ -2409,7 +2106,6 @@ namespace LoGa.LudoEngine.Game
             }
         }
 
-        // Select spawn position based on player location
         private GameDataService.TutorialSpawnPosition SelectTutorialSpawnPosition(GameDataService.TutorialData tutorialData)
         {
             if (tutorialData.spawnPositions == null || tutorialData.spawnPositions.Count < 2)
@@ -2418,7 +2114,6 @@ namespace LoGa.LudoEngine.Game
                 return null;
             }
 
-            // Get player's current location
             if (LocationService == null)
             {
                 Debug.LogError("POIManager: LocationService not available!");
@@ -2426,7 +2121,6 @@ namespace LoGa.LudoEngine.Game
             }
 
             Vector2 playerLocation = LocationService.GetCurrentLocation();
-
             if (playerLocation == Vector2.zero)
             {
                 Debug.LogError("POIManager: Player location not available!");
@@ -2435,21 +2129,18 @@ namespace LoGa.LudoEngine.Game
 
             Debug.Log($"POIManager: Player location: ({playerLocation.x:F6}, {playerLocation.y:F6})");
 
-            // Check distance to each spawn position
             foreach (var spawnPos in tutorialData.spawnPositions)
             {
                 float distance = CalculateDistance(playerLocation.x, playerLocation.y, spawnPos.latitude, spawnPos.longitude);
                 Debug.Log($"POIManager: Distance to {spawnPos.name}: {distance:F1}m");
 
-                // If this position is far enough from player, use it
-                if (distance >= proximityRadius + 10f) // 10m buffer for safety
+                if (distance >= proximityRadius + 10f)
                 {
                     Debug.Log($"POIManager: Selected {spawnPos.name} (distance: {distance:F1}m)");
                     return spawnPos;
                 }
             }
 
-            // Fallback: Use the position farthest from player
             var farthestPosition = tutorialData.spawnPositions
                 .OrderByDescending(pos => CalculateDistance(playerLocation.x, playerLocation.y, pos.latitude, pos.longitude))
                 .First();
@@ -2460,9 +2151,6 @@ namespace LoGa.LudoEngine.Game
             return farthestPosition;
         }
 
-        /// <summary>
-        /// Create POI object from tutorial data
-        /// </summary>
         private POI CreateTutorialPOI(GameDataService.TutorialData tutorialData, GameDataService.TutorialSpawnPosition spawnPosition)
         {
             try
@@ -2475,11 +2163,8 @@ namespace LoGa.LudoEngine.Game
 
                 poi.characterName = tutorialData.characterName;
                 poi.characterId = tutorialData.characterId;
-
-                // USE SELECTED SPAWN POSITION
                 poi.latitude = spawnPosition.latitude;
                 poi.longitude = spawnPosition.longitude;
-
                 poi.navigationCueEvent = tutorialData.navigationCueEvent;
                 poi.characterAudioEvent = tutorialData.characterAudioEvent;
 
@@ -2494,8 +2179,8 @@ namespace LoGa.LudoEngine.Game
                 {
                     characterId = tutorialData.characterId,
                     characterName = tutorialData.characterName,
-                    latitude = spawnPosition.latitude,  
-                    longitude = spawnPosition.longitude, 
+                    latitude = spawnPosition.latitude,
+                    longitude = spawnPosition.longitude,
                     navigationCueEvent = tutorialData.navigationCueEvent,
                     characterAudioEvent = tutorialData.characterAudioEvent,
                     navigationCueCount = tutorialData.maxNavigationCues,
@@ -2512,9 +2197,7 @@ namespace LoGa.LudoEngine.Game
 
                 RectTransform markerTransform = poiObject.GetComponentInChildren<RectTransform>();
                 if (markerTransform != null)
-                {
                     poi.marker = markerTransform;
-                }
 
                 Debug.Log($"POIManager: Created tutorial POI at {spawnPosition.name}");
                 return poi;
@@ -2526,33 +2209,16 @@ namespace LoGa.LudoEngine.Game
             }
         }
 
-        /// <summary>
-        /// Check if currently in tutorial mode
-        /// </summary>
-        public bool IsTutorialMode()
-        {
-            return isTutorialMode;
-        }
-
-        /// <summary>
-        /// Get the tutorial POI reference
-        /// </summary>
-        public POI GetTutorialPOI()
-        {
-            return tutorialPOI;
-        }
+        public bool IsTutorialMode() => isTutorialMode;
+        public POI GetTutorialPOI() => tutorialPOI;
 
         #endregion
 
         private void OnDestroy()
         {
-            // Unsubscribe from SiteManager
             if (SiteManager.Instance != null)
-            {
                 SiteManager.Instance.OnSiteLoaded -= OnSiteLoaded;
-            }
 
-            // Existing cleanup
             if (TimeLayerManager.Instance != null)
             {
                 TimeLayerManager.Instance.TimeLayerChanging -= OnTimeLayerChanging;

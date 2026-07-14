@@ -168,20 +168,25 @@ namespace LoGa.LudoEngine.Services
                 return;
             }
 
-            // Set 3D position
             Update3DAttributes(instance, position);
 
-            // Set the 4 core parameters for binaural navigation
             instance.setParameterByName("CueIndex", cueIndex);
             instance.setParameterByName("Direction", direction);
             instance.setParameterByName("NormalizedDistance", normalizedDistance);
 
-            // Start the instance
+            // Defensive stop — POIManager's waitingForNextCue loop should prevent
+            // this ever being needed, but guard against edge cases during state transitions
+            instance.getPlaybackState(out PLAYBACK_STATE state);
+            if (state == PLAYBACK_STATE.PLAYING || state == PLAYBACK_STATE.STARTING)
+            {
+                Debug.LogWarning("AudioService: PlayNavigationCue called on already-playing instance — stopping first");
+                instance.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
+            }
+
             FMOD.RESULT result = instance.start();
+            instance.setParameterByName("Trigger", 1.0f);
 
-            instance.setParameterByName("Trigger", 1.0f); // set trigger after start so the behaviour is not affected by race conditions(set back using command instrument)
-
-            Debug.Log($" Navigation cue started: Cue={cueIndex}, Dir={direction}, Dist={normalizedDistance:F3}, Result={result}");
+            Debug.Log($"Navigation cue started: Cue={cueIndex}, Dir={direction}, Dist={normalizedDistance:F3}, Result={result}");
         }
 
         // Play regular audio

@@ -5,6 +5,7 @@
       "name": "Battle of the Boyne",
       "description": "Historical battle site 1690",
       "folderName": "BattleOfBoyne",
+      "contentFolderName": "",
       "centerLocation": {
         "latitude": 53.722277,
         "longitude": -6.420376
@@ -17,6 +18,7 @@
       "name": "Hill Of Tara",
       "description": "Historical journey through the Hill of Tara",
       "folderName": "HillOfTara",
+      "contentFolderName": "",
       "centerLocation": {
         "latitude": 53.579667,
         "longitude": -6.611418
@@ -27,11 +29,38 @@
     {
       "id": "piano_flowers",
       "name": "Piano Flowers",
-      "description": "Mythical journey in the botanic garden.",
+      "description": "Musical journey in the National Botanic Garden, Dublin.",
       "folderName": "Flowers",
+      "contentFolderName": "",
       "centerLocation": {
         "latitude": 53.372114,
         "longitude": -6.271395
+      },
+      "activationRadius": 2000,
+      "isDebug": false
+    },
+    {
+      "id": "piano_flowers_sf",
+      "name": "Piano Flowers San Francisco",
+      "description": "Musical journey in the San Francisco Botanic Garden.",
+      "folderName": "FlowersSF",
+      "contentFolderName": "Flowers",
+      "centerLocation": {
+        "latitude": 37.7675,
+        "longitude": -122.46963
+      },
+      "activationRadius": 2000,
+      "isDebug": false
+    },
+    {
+      "id": "piano_flowers_copenhagen",
+      "name": "Piano Flowers Copenhagen",
+      "description": "Musical journey in the Copenhagen Botanic Garden.",
+      "folderName": "FlowersCopenhagen",
+      "contentFolderName": "Flowers",
+      "centerLocation": {
+        "latitude": 55.68654,
+        "longitude": 12.57422
       },
       "activationRadius": 2000,
       "isDebug": false
@@ -41,6 +70,7 @@
       "name": "Debug Test Site",
       "description": "Local testing site",
       "folderName": "Debug",
+      "contentFolderName": "",
       "centerLocation": {
         "latitude": 53.349030,
         "longitude": -6.249124

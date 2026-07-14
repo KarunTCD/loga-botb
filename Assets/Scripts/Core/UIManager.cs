@@ -107,10 +107,10 @@ namespace LoGa.LudoEngine.Core
         /// <summary>
         /// Initialize UIManager with GameManager reference
         /// </summary>
-        public void Initialize(GameManager manager, HardwareManager hwManager)  
+        public void Initialize(GameManager manager, HardwareManager hwManager)
         {
             gameManager = manager;
-            hardwareManager = hwManager;  
+            hardwareManager = hwManager;
             Debug.Log("[UIManager] Initialized with GameManager and HardwareManager references");
         }
 
@@ -200,13 +200,13 @@ namespace LoGa.LudoEngine.Core
 
             if (pauseMenuUI != null)
                 pauseMenuUI.SetUIManager(this);
-            
+
             if (inventoryUI != null)
                 inventoryUI.SetUIManager(this);
 
             if (settingsUI != null)
                 settingsUI.SetUIManager(this);
-            
+
             if (shareUI != null)
                 shareUI.SetUIManager(this);
 
@@ -220,10 +220,8 @@ namespace LoGa.LudoEngine.Core
         {
             currentState = AppState.MainMenu;
 
-            // Directly activate main menu panel
             SetPanelActive(mainMenuPanel, true);
 
-            // Reset initialization flags
             hardwareSetupCompleted = false;
             tutorialCompleted = false;
 
@@ -241,7 +239,6 @@ namespace LoGa.LudoEngine.Core
                 return;
             }
 
-            // Validate transition
             if (!IsValidTransition(currentState, newState))
             {
                 Debug.LogError($"Invalid state transition: {currentState} → {newState}");
@@ -261,9 +258,9 @@ namespace LoGa.LudoEngine.Core
             {
                 // Forward progression
                 (AppState.MainMenu, AppState.HardwareSetup) => true,
-                (AppState.HardwareSetup, AppState.SiteSelection) => true, 
-                (AppState.SiteSelection, AppState.Tutorial) => true,  
-                (AppState.SiteSelection, AppState.ModeSelection) => true, 
+                (AppState.HardwareSetup, AppState.SiteSelection) => true,
+                (AppState.SiteSelection, AppState.Tutorial) => true,
+                (AppState.SiteSelection, AppState.ModeSelection) => true,
                 (AppState.HardwareSetup, AppState.Tutorial) => true,
                 (AppState.HardwareSetup, AppState.ModeSelection) => true,
                 (AppState.Tutorial, AppState.ModeSelection) => true,
@@ -272,9 +269,9 @@ namespace LoGa.LudoEngine.Core
 
                 // Backward navigation
                 (AppState.HardwareSetup, AppState.MainMenu) => true,
-                (AppState.SiteSelection, AppState.HardwareSetup) => true, 
-                (AppState.Tutorial, AppState.SiteSelection) => true,  
-                (AppState.ModeSelection, AppState.SiteSelection) => true,  
+                (AppState.SiteSelection, AppState.HardwareSetup) => true,
+                (AppState.Tutorial, AppState.SiteSelection) => true,
+                (AppState.ModeSelection, AppState.SiteSelection) => true,
                 (AppState.Tutorial, AppState.HardwareSetup) => true,
                 (AppState.ModeSelection, AppState.HardwareSetup) => true,
                 (AppState.ModeSelection, AppState.Tutorial) => true,
@@ -288,7 +285,6 @@ namespace LoGa.LudoEngine.Core
                 // Same state (for resets)
                 _ when from == to => true,
 
-                // All other transitions are invalid
                 _ => false
             };
         }
@@ -301,10 +297,10 @@ namespace LoGa.LudoEngine.Core
             string validTransitions = fromState switch
             {
                 AppState.MainMenu => "HardwareSetup, Feedback",
-                AppState.HardwareSetup => "MainMenu, SiteSelection",  
-                AppState.SiteSelection => "HardwareSetup, Tutorial, ModeSelection", 
-                AppState.Tutorial => "SiteSelection, ModeSelection",  
-                AppState.ModeSelection => "SiteSelection, Tutorial, PlayMode, SpectatorMode",  
+                AppState.HardwareSetup => "MainMenu, SiteSelection",
+                AppState.SiteSelection => "HardwareSetup, Tutorial, ModeSelection",
+                AppState.Tutorial => "SiteSelection, ModeSelection",
+                AppState.ModeSelection => "SiteSelection, Tutorial, PlayMode, SpectatorMode",
                 AppState.PlayMode => "MainMenu",
                 AppState.SpectatorMode => "MainMenu",
                 AppState.Feedback => "MainMenu",
@@ -323,22 +319,17 @@ namespace LoGa.LudoEngine.Core
 
             LogDebug($"State transition: {oldState} → {newState}");
 
-            // Store previous state for feedback navigation
             if (newState == AppState.Feedback)
             {
                 previousState = oldState;
             }
 
-            // Exit current state
             ExitState(oldState);
 
-            // Wait for transition delay
             yield return new WaitForSeconds(transitionDelay);
 
-            // Update current state
             currentState = newState;
 
-            // Enter new state
             yield return StartCoroutine(EnterState(newState));
 
             isTransitioning = false;
@@ -362,7 +353,7 @@ namespace LoGa.LudoEngine.Core
                     SetPanelActive(hardwareSetupPanel, false);
                     break;
 
-                case AppState.SiteSelection:  
+                case AppState.SiteSelection:
                     SetPanelActive(siteSelectionPanel, false);
                     break;
 
@@ -411,7 +402,7 @@ namespace LoGa.LudoEngine.Core
                     yield return StartCoroutine(EnterHardwareSetup());
                     break;
 
-                case AppState.SiteSelection: 
+                case AppState.SiteSelection:
                     yield return StartCoroutine(EnterSiteSelection());
                     break;
 
@@ -445,7 +436,6 @@ namespace LoGa.LudoEngine.Core
         {
             SetPanelActive(mainMenuPanel, true);
 
-            // Reset initialization flags when returning to main menu
             hardwareSetupCompleted = false;
             tutorialCompleted = false;
 
@@ -460,7 +450,6 @@ namespace LoGa.LudoEngine.Core
 
             yield return null;
 
-            // Start hardware setup process (services already initialized)
             if (hardwareSetupUI != null)
             {
                 hardwareSetupUI.StartHardwareSetup();
@@ -478,7 +467,6 @@ namespace LoGa.LudoEngine.Core
 
             yield return null;
 
-            // Initialize site selection UI
             if (siteSelectionUI != null)
             {
                 siteSelectionUI.InitializeSiteList();
@@ -495,7 +483,6 @@ namespace LoGa.LudoEngine.Core
 
             yield return null;
 
-            // Show minimal tutorial UI (just status text)
             if (tutorialUI != null)
             {
                 tutorialUI.ShowTutorialInProgress();
@@ -505,7 +492,6 @@ namespace LoGa.LudoEngine.Core
                 Debug.LogWarning("TutorialUI not assigned - continuing without UI");
             }
 
-            // Start gameplay tutorial via GameManager
             if (gameManager != null)
             {
                 gameManager.StartGameplayTutorial();
@@ -521,7 +507,6 @@ namespace LoGa.LudoEngine.Core
         {
             SetPanelActive(modeSelectionPanel, true);
 
-            // Reset mode selection UI
             if (modeSelectionUI != null)
             {
                 modeSelectionUI.ResetUI();
@@ -533,13 +518,16 @@ namespace LoGa.LudoEngine.Core
         private IEnumerator EnterPlayMode()
         {
             SetPanelActive(audioPlayModePanel, true);
-            SetPanelActive(debugPanel, false); // Hidden by default in audio mode
-            SetPanelActive(mapPanel, false);   // No map in audio-focused mode
+            SetPanelActive(debugPanel, false);
+            SetPanelActive(mapPanel, false);
 
-            // Start service health monitoring
             StartCoroutine(MonitorServiceHealth());
 
             yield return null;
+             // signal GameManager that UI is ready — POIManager can start
+            GameManager.Instance?.ReadyToPlay();
+
+            Debug.Log("[UIManager] PlayMode UI ready - gameplay activated");
         }
 
         private IEnumerator EnterSpectatorMode()
@@ -548,13 +536,6 @@ namespace LoGa.LudoEngine.Core
             SetPanelActive(debugPanel, true);
             SetPanelActive(mapPanel, true);
 
-            // Update spectator UI
-            if (spectatorModeUI_Script != null && gameManager != null)
-            {
-                spectatorModeUI_Script.UpdateSessionDisplay(gameManager.CurrentSessionId);
-            }
-
-            // Start service health monitoring
             StartCoroutine(MonitorServiceHealth());
 
             yield return null;
@@ -564,7 +545,6 @@ namespace LoGa.LudoEngine.Core
         {
             SetPanelActive(feedbackPanel, true);
 
-            // Show the feedback code
             if (feedbackUI != null)
             {
                 feedbackUI.ShowFeedbackCode();
@@ -586,27 +566,19 @@ namespace LoGa.LudoEngine.Core
             LogDebug("Play button pressed - starting hardware setup");
 
             if (gameManager != null)
-            {
                 gameManager.StartHardwareSetup();
-            }
             else
-            {
                 TransitionToState(AppState.HardwareSetup);
-            }
         }
 
         public void OnSettingsButtonPressed()
         {
             Debug.Log("[UIManager] Settings button pressed");
-            
+
             if (settingsUI != null)
-            {
                 settingsUI.Show();
-            }
             else
-            {
                 Debug.LogError("[UIManager] SettingsUI not assigned!");
-            }
         }
 
         public void OnFeedbackButtonPressed()
@@ -624,21 +596,17 @@ namespace LoGa.LudoEngine.Core
         public void OnSettingsClose()
         {
             Debug.Log("[UIManager] Settings closed");
-            
+
             if (settingsUI != null)
-            {
                 settingsUI.Hide();
-            }
         }
 
         public void OnShareClose()
         {
             Debug.Log("[UIManager] Share panel closed");
-            
+
             if (shareUI != null)
-            {
                 shareUI.Hide();
-            }
         }
 
         public void OnExitToMainMenu()
@@ -650,7 +618,6 @@ namespace LoGa.LudoEngine.Core
         public void ShowError(string message)
         {
             Debug.LogError($"[UIManager] Error: {message}");
-            // TODO: Implement proper error display UI
         }
 
         public void OnHardwareSetupComplete()
@@ -659,9 +626,7 @@ namespace LoGa.LudoEngine.Core
             hardwareSetupCompleted = true;
 
             if (gameManager != null)
-            {
                 gameManager.CompleteHardwareSetup();
-            }
             else
             {
                 bool hasCompletedTutorial = PlayerPrefs.HasKey("TutorialCompleted");
@@ -675,12 +640,9 @@ namespace LoGa.LudoEngine.Core
             LogDebug("Site selected - transitioning to next phase");
 
             if (gameManager != null)
-            {
                 gameManager.CompleteSiteSelection();
-            }
             else
             {
-                // Fallback
                 bool hasCompletedTutorial = PlayerPrefs.HasKey("TutorialCompleted");
                 AppState nextState = hasCompletedTutorial ? AppState.ModeSelection : AppState.Tutorial;
                 TransitionToState(nextState);
@@ -693,13 +655,9 @@ namespace LoGa.LudoEngine.Core
             tutorialCompleted = true;
 
             if (gameManager != null)
-            {
                 gameManager.CompleteTutorial();
-            }
             else
-            {
                 TransitionToState(AppState.ModeSelection);
-            }
         }
 
         public void OnRunTutorialAgain()
@@ -707,13 +665,9 @@ namespace LoGa.LudoEngine.Core
             LogDebug("Run tutorial again requested");
 
             if (gameManager != null)
-            {
                 gameManager.StartTutorial();
-            }
             else
-            {
                 TransitionToState(AppState.Tutorial);
-            }
         }
 
         public async void OnPlayerModeSelected()
@@ -785,33 +739,23 @@ namespace LoGa.LudoEngine.Core
             switch (currentState)
             {
                 case AppState.HardwareSetup:
-                    // CRITICAL: Tell GameManager to reset its phase FIRST
                     if (gameManager != null)
-                    {
                         gameManager.TransitionToPhase(GameManager.ApplicationPhase.MainMenu);
-                    }
                     else
-                    {
                         TransitionToState(AppState.MainMenu);
-                    }
                     break;
 
-                case AppState.SiteSelection:  
+                case AppState.SiteSelection:
                     if (gameManager != null)
-                    {
                         gameManager.TransitionToPhase(GameManager.ApplicationPhase.HardwareSetup);
-                    }
                     else
-                    {
                         TransitionToState(AppState.HardwareSetup);
-                    }
                     break;
 
                 case AppState.Tutorial:
-                    // Exit tutorial and go to mode selection
                     if (gameManager != null)
                     {
-                        gameManager.ExitTutorial();  // Cleanup tutorial state
+                        gameManager.ExitTutorial();
                         gameManager.TransitionToPhase(GameManager.ApplicationPhase.ModeSelection);
                     }
                     else
@@ -824,37 +768,25 @@ namespace LoGa.LudoEngine.Core
                     if (tutorialCompleted)
                     {
                         if (gameManager != null)
-                        {
                             gameManager.TransitionToPhase(GameManager.ApplicationPhase.Tutorial);
-                        }
                         else
-                        {
                             TransitionToState(AppState.Tutorial);
-                        }
                     }
                     else
                     {
                         if (gameManager != null)
-                        {
-                            gameManager.TransitionToPhase(GameManager.ApplicationPhase.SiteSelection);  
-                        }
+                            gameManager.TransitionToPhase(GameManager.ApplicationPhase.SiteSelection);
                         else
-                        {
-                            TransitionToState(AppState.SiteSelection);  
-                        }
+                            TransitionToState(AppState.SiteSelection);
                     }
                     break;
 
                 case AppState.PlayMode:
                 case AppState.SpectatorMode:
                     if (gameManager != null)
-                    {
                         gameManager.TransitionToPhase(GameManager.ApplicationPhase.MainMenu);
-                    }
                     else
-                    {
                         TransitionToState(AppState.MainMenu);
-                    }
                     break;
 
                 case AppState.Feedback:
@@ -875,21 +807,14 @@ namespace LoGa.LudoEngine.Core
             TransitionToState(AppState.ModeSelection);
         }
 
-        /// <summary>
-        /// Start tutorial again (from "Run Tutorial Again" button)
-        /// </summary>
         public void StartTutorialAgain()
         {
             LogDebug("Starting tutorial again from mode selection");
 
             if (gameManager != null)
-            {
                 gameManager.TransitionToPhase(GameManager.ApplicationPhase.Tutorial);
-            }
             else
-            {
                 TransitionToState(AppState.Tutorial);
-            }
         }
 
         public void HandleServiceError(string serviceName, string error)
@@ -960,16 +885,15 @@ namespace LoGa.LudoEngine.Core
         }
 
         // ===============================================
-        // ROBUST PAUSE MENU METHODS - NO TIMERS, ATOMIC OPERATIONS
+        // ROBUST PAUSE MENU METHODS
         // ===============================================
 
         /// <summary>
-        /// Pause the game - NOT a toggle, explicit pause operation
-        /// ROBUST: Menu must show successfully before game pauses
+        /// Pause the game - NOT a toggle, explicit pause operation.
+        /// Menu must show successfully before game pauses.
         /// </summary>
         public void PauseGame()
         {
-            // Validate we can pause
             if (isGamePaused)
             {
                 Debug.LogWarning("UIManager: Game already paused - ignoring");
@@ -990,7 +914,6 @@ namespace LoGa.LudoEngine.Core
 
             Debug.Log("UIManager: Pausing game");
 
-            // ATOMIC OPERATION: Menu MUST show successfully before we pause
             bool menuShown = pauseMenuUI.Show();
 
             if (!menuShown)
@@ -999,26 +922,20 @@ namespace LoGa.LudoEngine.Core
                 return;
             }
 
-            // Menu shown successfully - now pause the game
             gameManager.Pause();
             isGamePaused = true;
 
-            // Hide pause button from play mode UI
             if (audioPlayModeUI != null)
-            {
                 audioPlayModeUI.OnGamePaused();
-            }
 
             Debug.Log("UIManager: Game paused successfully");
         }
 
         /// <summary>
-        /// Resume the game - NOT a toggle, explicit resume operation
-        /// ROBUST: Always safe to call, validates state before resuming
+        /// Resume the game - NOT a toggle, explicit resume operation.
         /// </summary>
         public void ResumeGame()
         {
-            // Validate we can resume
             if (!isGamePaused)
             {
                 Debug.LogWarning("UIManager: Game not paused - ignoring resume");
@@ -1033,27 +950,20 @@ namespace LoGa.LudoEngine.Core
 
             Debug.Log("UIManager: Resuming game");
 
-            // Hide pause menu
             if (pauseMenuUI != null)
-            {
                 pauseMenuUI.Hide();
-            }
 
-            // Resume game
             gameManager.Resume();
             isGamePaused = false;
 
-            // Show pause button in play mode UI
             if (audioPlayModeUI != null)
-            {
                 audioPlayModeUI.OnGameResumed();
-            }
 
             Debug.Log("UIManager: Game resumed successfully");
         }
 
         /// <summary>
-        /// Called by Resume button in pause menu
+        /// Called by Resume button in pause menu.
         /// </summary>
         public void OnPauseResume()
         {
@@ -1062,56 +972,45 @@ namespace LoGa.LudoEngine.Core
         }
 
         /// <summary>
-        /// Called by Share button in pause menu
+        /// Called by Share button in pause menu.
         /// </summary>
         public void OnPauseShare()
         {
             Debug.Log("[UIManager] Share button pressed from pause menu");
-            
-            // Get current session ID from GameManager
+
             if (GameManager.Instance == null || string.IsNullOrEmpty(GameManager.Instance.CurrentSessionId))
             {
                 Debug.LogWarning("[UIManager] No active session to share");
-                // Could show an error message to user here
                 return;
             }
-            
+
             string sessionId = GameManager.Instance.CurrentSessionId;
 
             if (shareUI != null)
-            {
                 shareUI.Show(sessionId);
-            }
             else
-            {
                 Debug.LogError("[UIManager] ShareUI not assigned!");
-            }
         }
 
         /// <summary>
-        /// Called by Settings button in pause menu
+        /// Called by Settings button in pause menu.
         /// </summary>
         public void OnPauseSettings()
         {
             Debug.Log("[UIManager] Settings button pressed from pause menu");
-
-            OnSettingsButtonPressed(); // Reuse same settings panel
+            OnSettingsButtonPressed();
         }
 
         /// <summary>
-        /// Called by Exit button in pause menu
+        /// Called by Exit button in pause menu.
         /// </summary>
         public void OnPauseExit()
         {
             Debug.Log("UIManager: Exit to main menu from pause menu");
 
-            // Resume game first to clean up state
             if (isGamePaused)
-            {
                 ResumeGame();
-            }
 
-            // Stop all gameplay audio
             if (gameManager != null)
             {
                 gameManager.StopAllGameplayAudio();
@@ -1123,8 +1022,7 @@ namespace LoGa.LudoEngine.Core
             }
         }
 
-        // DEPRECATED - These old methods should not be used anymore
-        // Kept for backward compatibility but log warnings
+        // Deprecated — kept for backward compatibility
         public void ShowPauseMenu()
         {
             Debug.LogWarning("UIManager: ShowPauseMenu() is deprecated - use PauseGame() instead");
@@ -1140,26 +1038,21 @@ namespace LoGa.LudoEngine.Core
         // ===============================================
         // Inventory Methods
         // ===============================================
+
         public void OnInventoryButtonPressed()
-    {
-        Debug.Log("[UIManager] Inventory button pressed - opening inventory");
-        
-        // Show inventory
-        if (inventoryUI != null)
         {
-            inventoryUI.Show();
+            Debug.Log("[UIManager] Inventory button pressed - opening inventory");
+
+            if (inventoryUI != null)
+                inventoryUI.Show();
         }
-    }
 
         public void OnInventoryClose()
         {
             Debug.Log("[UIManager] Inventory closed");
-            
-            // Hide inventory
+
             if (inventoryUI != null)
-            {
                 inventoryUI.Hide();
-            }
         }
 
         // ===============================================
@@ -1183,18 +1076,16 @@ namespace LoGa.LudoEngine.Core
         public void UpdateLocationDisplay(float latitude, float longitude)
         {
             Vector2 position = GetScreenPosition(latitude, longitude);
+
             if (playerMarker != null)
                 playerMarker.anchoredPosition = position;
 
             if (locationText != null)
-            {
                 locationText.text = $"Lat: {latitude:F6}\nLon: {longitude:F6}";
-            }
 
+            // Notify spectator UI that live data is arriving
             if (currentState == AppState.SpectatorMode && spectatorModeUI_Script != null)
-            {
                 spectatorModeUI_Script.UpdateLocationDisplay(latitude, longitude);
-            }
         }
 
         public void ShowConnectionError()
@@ -1243,9 +1134,7 @@ namespace LoGa.LudoEngine.Core
         private void LogDebug(string message)
         {
             if (enableDebugLogging)
-            {
                 Debug.Log($"[UIManager] {message}");
-            }
         }
     }
 }

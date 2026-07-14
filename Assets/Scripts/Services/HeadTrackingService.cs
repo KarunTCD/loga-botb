@@ -29,7 +29,7 @@ namespace LoGa.LudoEngine.Services
         public event Action<float> HeadingUpdated;
         public event Action<string> ActiveProviderChanged;
 
-        public float CurrentHeading => activeProvider?.CurrentHeading ?? 0f;
+        public float CurrentHeading => isInjectionActive ? injectedHeading : (activeProvider?.CurrentHeading ?? 0f);
         public string ActiveProviderName => activeProvider?.ProviderName ?? "None";
         public IReadOnlyList<string> AvailableProviderNames =>
             availableProviders.Select(p => p.ProviderName).ToList().AsReadOnly();
@@ -48,6 +48,10 @@ namespace LoGa.LudoEngine.Services
         // Resource management tracking
         private bool isCompassInUse = false;
         private IHeadTrackingProvider compassOwner = null;
+
+        // Spectator injection
+        private bool isInjectionActive = false;
+        private float injectedHeading = 0f;
 
         public async Task<bool> InitializeAsync()
         {
@@ -77,7 +81,7 @@ namespace LoGa.LudoEngine.Services
             {
                 Debug.LogError("HeadTrackingService: Cannot start tracking - no active provider!");
                 SelectBestProvider();
-                
+
                 if (activeProvider == null)
                 {
                     Debug.LogError("HeadTrackingService: No providers available!");
@@ -87,7 +91,7 @@ namespace LoGa.LudoEngine.Services
 
             // ALWAYS acquire resources (enables compass if needed)
             AcquireSharedResources(activeProvider);
-            
+
             // Ensure provider GameObject is active and enabled
             if (activeProvider is MonoBehaviour providerMono)
             {
@@ -97,7 +101,7 @@ namespace LoGa.LudoEngine.Services
                     if (enableDebugLogging)
                         Debug.Log($"HeadTrackingService: Activated provider GameObject: {activeProvider.ProviderName}");
                 }
-                
+
                 if (!providerMono.enabled)
                 {
                     providerMono.enabled = true;
@@ -105,10 +109,10 @@ namespace LoGa.LudoEngine.Services
                         Debug.Log($"HeadTrackingService: Enabled provider component: {activeProvider.ProviderName}");
                 }
             }
-            
+
             // Start tracking
             activeProvider.StartTracking();
-            
+
             if (enableDebugLogging)
             {
                 Debug.Log($"HeadTrackingService: Started tracking with {activeProvider.ProviderName}");
@@ -127,7 +131,27 @@ namespace LoGa.LudoEngine.Services
             }
         }
 
-        // Enhanced provider discovery (same as before)
+        #region Spectator Injection
+
+        /// <summary>
+        /// Override CurrentHeading with the player's heading for spectator mode.
+        /// All consumers (POIManager etc.) read CurrentHeading and get injected value transparently.
+        /// </summary>
+        public void InjectHeading(float heading)
+        {
+            injectedHeading = heading;
+            isInjectionActive = true;
+        }
+
+        public void ClearInjection()
+        {
+            isInjectionActive = false;
+            Debug.Log("HeadTrackingService: Injection cleared.");
+        }
+
+        #endregion
+
+        // Enhanced provider discovery
         private async Task DiscoverAndInitializeProviders()
         {
             Debug.Log($"Discovering providers from {providerPrefabs.Count} prefabs...");
@@ -211,7 +235,7 @@ namespace LoGa.LudoEngine.Services
             }
         }
 
-        // ORIGINAL: Resource-aware provider selection
+        // Resource-aware provider selection
         private void SelectBestProvider()
         {
             // Store last working provider for fallback
@@ -246,8 +270,6 @@ namespace LoGa.LudoEngine.Services
                 if (activeProvider != null)
                 {
                     activeProvider.StopTracking();
-
-                    // Release shared resources only
                     ReleaseSharedResources(activeProvider);
 
                     if (enableDebugLogging)
@@ -271,12 +293,12 @@ namespace LoGa.LudoEngine.Services
 
                 if (activeProvider != null)
                 {
-                    // Acquire shared resources for the new active provider
                     AcquireSharedResources(activeProvider);
-
                     activeProvider.StartTracking();
+
                     if (enableDebugLogging)
                         Debug.Log($"Provider switch: {previousProvider} -> {activeProvider.ProviderName}");
+
                     ActiveProviderChanged?.Invoke(activeProvider.ProviderName);
                 }
                 else
@@ -289,8 +311,10 @@ namespace LoGa.LudoEngine.Services
                         activeProvider = lastWorkingProvider;
                         AcquireSharedResources(activeProvider);
                         activeProvider.StartTracking();
+
                         if (enableDebugLogging)
                             Debug.Log($"Falling back to {activeProvider.ProviderName}");
+
                         ActiveProviderChanged?.Invoke(activeProvider.ProviderName);
                     }
                     else
@@ -311,7 +335,6 @@ namespace LoGa.LudoEngine.Services
                     if (enableDebugLogging)
                         Debug.Log($"Acquiring compass for {provider.ProviderName}");
 
-                    // Enable compass for this provider
                     Input.compass.enabled = true;
                     isCompassInUse = true;
                     compassOwner = provider;
@@ -341,7 +364,6 @@ namespace LoGa.LudoEngine.Services
 
         private bool UsesCompass(IHeadTrackingProvider provider)
         {
-            // Check if provider uses compass (Phone and AirPods providers do)
             return provider.ProviderName.Contains("Phone") ||
                    provider.ProviderName.Contains("AirPods");
         }
@@ -353,7 +375,6 @@ namespace LoGa.LudoEngine.Services
 
             Debug.Log($"Provider connection changed: {isConnected}");
 
-            // Update reliability for the active provider if we can identify connection changes
             if (enableProviderReliabilityTracking && activeProvider != null)
             {
                 UpdateProviderReliability(activeProvider, isConnected);
@@ -388,7 +409,7 @@ namespace LoGa.LudoEngine.Services
                 }
             }
 
-            // Simply pass through the heading
+            // Pass through heading (injection takes precedence via CurrentHeading property)
             HeadingUpdated?.Invoke(heading);
         }
 
@@ -499,14 +520,13 @@ namespace LoGa.LudoEngine.Services
         {
             Debug.Log("HeadTrackingService: Reset called");
 
-            // Stop tracking if active
             if (activeProvider != null && activeProvider.IsConnected)
             {
                 StopTracking();
-                ReleaseSharedResources(activeProvider); // release hardware resources
+                ReleaseSharedResources(activeProvider);
             }
 
-            // Reset initialization flag
+            isInjectionActive = false;
             IsInitialized = false;
         }
 
@@ -547,6 +567,7 @@ namespace LoGa.LudoEngine.Services
             Debug.Log($"Active Provider: {ActiveProviderName}");
             Debug.Log($"Available Providers: {availableProviders.Count}");
             Debug.Log($"Compass In Use: {isCompassInUse} (Owner: {compassOwner?.ProviderName ?? "None"})");
+            Debug.Log($"Injection Active: {isInjectionActive}");
 
             foreach (var provider in availableProviders)
             {

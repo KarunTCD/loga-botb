@@ -51,7 +51,10 @@ namespace LoGa.LudoEngine.UI
         private void Start()
         {
             SetupButtonListeners();
-            
+
+            if (InventoryManager.Instance != null)
+              InventoryManager.Instance.OnInventoryReset += OnInventoryReset;
+
             // Start on Characters tab
             SwitchTab(ItemType.Character);
         }
@@ -72,6 +75,13 @@ namespace LoGa.LudoEngine.UI
             
             if (exitButton != null)
                 exitButton.onClick.AddListener(OnExit);
+        }
+
+        private void OnInventoryReset()
+        {
+            StopAllPlayingAudio();
+            SwitchTab(ItemType.Character); // Reset to characters tab and refresh
+            Debug.Log("InventoryUI: Refreshed after inventory reset");
         }
 
         /// <summary>
@@ -469,6 +479,10 @@ namespace LoGa.LudoEngine.UI
         {
             // Stop all audio on destroy
             StopAllPlayingAudio();
+            
+            //Unsubscribe to event
+            if (InventoryManager.Instance != null)
+                InventoryManager.Instance.OnInventoryReset -= OnInventoryReset;
 
             // Remove button listeners
             if (charactersTabButton != null)

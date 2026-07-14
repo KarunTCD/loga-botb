@@ -388,14 +388,7 @@ namespace LoGa.LudoEngine.UI
 
             if (tutorialPromptText != null)
             {
-                if (hasCompletedTutorial)
-                {
-                    tutorialPromptText.text = "Want to review the tutorial again?";
-                }
-                else
-                {
-                    tutorialPromptText.text = "The tutorial was shown before this step.";
-                }
+                tutorialPromptText.text = "Want to play the tutorial again?";
             }
 
             if (runTutorialButton != null)
@@ -408,7 +401,7 @@ namespace LoGa.LudoEngine.UI
 
                 if (buttonText != null)
                 {
-                    buttonText.text = hasCompletedTutorial ? "Run Tutorial Again" : "Review Tutorial";
+                    buttonText.text = "Run Tutorial";
                 }
             }
         }

@@ -481,6 +481,16 @@ namespace LoGa.LudoEngine.Game
                 return false;
             }
 
+            // If the instance is stopped, the Trigger value below 0.1 is stale
+            // from the previous cue — not a genuine Command Instrument completion.
+            // Clear the flag and return false so the cycle requests a fresh cue.
+            navigationCueInstance.getPlaybackState(out PLAYBACK_STATE playbackState);
+            if (playbackState == PLAYBACK_STATE.STOPPED || playbackState == PLAYBACK_STATE.STOPPING)
+            {
+                waitingForCueCompletion = false;
+                return false;
+            }
+
             float explicitValue, finalValue;
             FMOD.RESULT result = navigationCueInstance.getParameterByName("Trigger", out explicitValue, out finalValue);
 
@@ -545,13 +555,6 @@ namespace LoGa.LudoEngine.Game
             Debug.Log($" CheckPortalActivation called for {characterName}");
             Debug.Log($"   GameplayState: {GameManager.Instance?.CurrentGameplayState}");
             Debug.Log($"   PortalType: {portalType}");
-
-            if (GameManager.Instance?.CurrentGameplayState != GameManager.GameplayState.Interact)
-            {
-                Debug.LogWarning($"Portal activation blocked for {characterName} - not in interact mode");
-                Debug.LogWarning($"   Current state: {GameManager.Instance?.CurrentGameplayState}");
-                return;
-            }
 
             TimeLayer targetLayer = CalculateTargetLayer();
             Debug.Log($"   TargetLayer: {targetLayer?.layerName ?? "None"}");

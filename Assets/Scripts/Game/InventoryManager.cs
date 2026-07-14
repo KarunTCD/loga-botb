@@ -9,7 +9,7 @@ namespace LoGa.LudoEngine.Game
     public class InventoryManager : MonoBehaviour
     {
         public static InventoryManager Instance { get; private set; }
-
+        public event System.Action OnInventoryReset;
         private Inventory inventory;
 
         private IStorageService StorageService => ServiceLocator.GetService<IStorageService>();
@@ -81,6 +81,7 @@ namespace LoGa.LudoEngine.Game
             inventory = new Inventory();
             SaveInventory();
             Debug.Log("InventoryManager: Inventory reset to empty");
+            OnInventoryReset?.Invoke();
         }
     }
 }

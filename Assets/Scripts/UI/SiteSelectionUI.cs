@@ -249,7 +249,7 @@ namespace LoGa.LudoEngine.UI
                 proximityIndicator = "\n<size=20>• NEARBY •</size>";
             }
             
-            buttonText.text = $"<b>{site.name}</b>{proximityIndicator}\n<size=16>{site.description}</size>";
+            buttonText.text = $"<b>{site.name}</b>{proximityIndicator}\n<size=20>{site.description}</size>";
             
             // Apply scale highlighting for "YOU ARE HERE"
             if (isNearest && isWithinRadius)

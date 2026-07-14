@@ -7,554 +7,248 @@ using LoGa.LudoEngine.Core;
 namespace LoGa.LudoEngine.UI
 {
     /// <summary>
-    /// Spectator Mode UI Component - displays watched player's session info
-    /// Shows connection status and player location data
+    /// Spectator Mode UI — mirrors AudioPlayModeUI in philosophy.
+    /// Phone-away, audio-first experience driven by the player's
+    /// location and heading received from Firebase via SpectatorManager.
+    /// No pause, no health, no combat, no orientation marker — pure audio observation.
     /// </summary>
     public class SpectatorModeUI : MonoBehaviour
     {
-        [Header("Session Information")]
-        [SerializeField] private TextMeshProUGUI sessionIdText;
+        [Header("Main Message")]
+        [SerializeField] private TextMeshProUGUI mainMessageText;
+        [SerializeField] private TextMeshProUGUI subtitleText;
+
+        [Header("Headphone Graphic")]
+        [SerializeField] private Image headphoneImage;
+        [SerializeField] private RectTransform[] soundWaves;
+        [SerializeField] private float wavePulseScale = 1.3f;
+
+        [Header("Connection Status")]
         [SerializeField] private TextMeshProUGUI connectionStatusText;
-        [SerializeField] private Image connectionStatusIndicator;
-
-        [Header("Player Information")]
-        [SerializeField] private TextMeshProUGUI playerLocationText;
-        [SerializeField] private TextMeshProUGUI playerHealthText;
-        [SerializeField] private TextMeshProUGUI playerStatusText;
-        [SerializeField] private Slider playerHealthBar;
-
-        [Header("Connection Controls")]
-        [SerializeField] private Button disconnectButton;
-        [SerializeField] private Button returnToMenuButton;
-        [SerializeField] private Button reconnectButton;
-
-        [Header("Status Colors")]
+        [SerializeField] private Image connectionStatusDot;
         [SerializeField] private Color connectedColor = Color.green;
+        [SerializeField] private Color waitingColor = Color.yellow;
         [SerializeField] private Color disconnectedColor = Color.red;
-        [SerializeField] private Color connectingColor = Color.yellow;
 
-        [Header("Instructions")]
-        [SerializeField] private TextMeshProUGUI instructionsText;
-        [SerializeField] private CanvasGroup instructionsGroup;
-        [SerializeField] private Button hideInstructionsButton;
-        [SerializeField] private Button showInstructionsButton;
+        [Header("Controls")]
+        [SerializeField] private Button disconnectButton;
 
-        #region State Management
-
-        public enum ConnectionState
+        [Header("Spectator Messages")]
+        [SerializeField]
+        private string[] spectatorMessages = new string[]
         {
-            Connecting,
-            Connected,
-            Disconnected,
-            Reconnecting,
-            Error
-        }
+            "You're listening in on history",
+            "Follow their journey through sound",
+            "The battlefield is alive in their ears",
+            "Experience the past through their steps",
+            "Hear what they hear, feel what they feel"
+        };
+
+        [SerializeField]
+        private string[] subtitles = new string[]
+        {
+            "their footsteps echo through time...",
+            "spatial audio connects you both",
+            "put your phone away and just listen",
+            "the sounds will tell the story",
+            "close your eyes and be there with them"
+        };
 
         private UIManager uiManager;
-        private string currentSessionId = "";
-        private ConnectionState currentConnectionState = ConnectionState.Connecting;
-        private bool instructionsVisible = true;
-        private float lastDataReceiveTime;
+        private Coroutine waveAnimationCoroutine;
+        private bool isConnected = false;
+
+        // Connection monitoring
+        private float lastDataTime = 0f;
+        private const float CONNECTION_TIMEOUT = 10f;
+        private const float CONNECTION_WARNING = 5f;
+
+        #region Unity Lifecycle
+
+        private void OnEnable()
+        {
+            SetupUI();
+            StartSoundWaveAnimation();
+            SetConnectionState(false);
+        }
+
+        private void Update()
+        {
+            MonitorConnection();
+        }
+
+        private void OnDestroy()
+        {
+            if (disconnectButton != null)
+                disconnectButton.onClick.RemoveListener(OnDisconnectPressed);
+
+            if (waveAnimationCoroutine != null)
+                StopCoroutine(waveAnimationCoroutine);
+        }
 
         #endregion
 
         #region Initialization
 
-        private void Start()
+        public void SetUIManager(UIManager manager)
         {
-            InitializeUI();
-            SetupButtonListeners();
-        }
+            uiManager = manager;
 
-        public void SetUIManager(UIManager uiManager)
-        {
-            this.uiManager = uiManager;
-            Debug.Log("SpectatorModeUI: UIManager reference set");
-        }
-
-        private void InitializeUI()
-        {
-            SetupInstructions();
-            UpdateConnectionStatus(ConnectionState.Connecting);
-
-            if (playerLocationText != null)
-                playerLocationText.text = "Player Location: Waiting for data...";
-
-            if (playerHealthText != null)
-                playerHealthText.text = "Player Health: Unknown";
-
-            if (playerStatusText != null)
-                playerStatusText.text = "Player Status: Connecting...";
-        }
-
-        private void SetupButtonListeners()
-        {
             if (disconnectButton != null)
-                disconnectButton.onClick.AddListener(OnDisconnectButtonPressed);
-            if (returnToMenuButton != null)
-                returnToMenuButton.onClick.AddListener(OnReturnToMenuButtonPressed);
-            if (reconnectButton != null)
-                reconnectButton.onClick.AddListener(OnReconnectButtonPressed);
-            if (hideInstructionsButton != null)
-                hideInstructionsButton.onClick.AddListener(OnHideInstructionsPressed);
-            if (showInstructionsButton != null)
-                showInstructionsButton.onClick.AddListener(OnShowInstructionsPressed);
+                disconnectButton.onClick.AddListener(OnDisconnectPressed);
         }
 
-        private void SetupInstructions()
+        private void SetupUI()
         {
-            if (instructionsText != null)
-            {
-                instructionsText.text = "SPECTATOR MODE:\n\n" +
-                                      "👁️ WATCHING:\n" +
-                                      "• You are watching another player's journey\n" +
-                                      "• See their location and health in real-time\n" +
-                                      "• Experience their audio as they do\n\n" +
-                                      "🎧 AUDIO:\n" +
-                                      "• Wear headphones for best experience\n" +
-                                      "• You'll hear what the player hears\n" +
-                                      "• Turn your head to explore the audio space\n\n" +
-                                      "📍 LOCATION:\n" +
-                                      "• Player position shown on map\n" +
-                                      "• Location updates in real-time\n" +
-                                      "• Connection status displayed above\n\n" +
-                                      "🔗 CONNECTION:\n" +
-                                      "• Stay connected to see live updates\n" +
-                                      "• Reconnect if connection is lost\n" +
-                                      "• Disconnect to choose a different session";
-            }
+            int index = Random.Range(0, spectatorMessages.Length);
 
-            ShowInstructions(true);
+            if (mainMessageText != null)
+                mainMessageText.text = spectatorMessages[index];
+
+            if (subtitleText != null)
+                subtitleText.text = subtitles[index];
         }
+
         #endregion
 
-        #region Public Interface
+        #region Sound Wave Animation
 
-        public void UpdateSessionDisplay(string sessionId)
+        private void StartSoundWaveAnimation()
         {
-            currentSessionId = sessionId;
-
-            if (sessionIdText != null)
+            if (soundWaves == null || soundWaves.Length == 0)
             {
-                sessionIdText.text = $"Watching Session: {sessionId}";
+                Debug.LogWarning("SpectatorModeUI: No sound waves assigned for animation");
+                return;
             }
 
-            UpdateConnectionStatus(ConnectionState.Connecting);
-            lastDataReceiveTime = Time.time;
-
-            Debug.Log($"SpectatorModeUI: Now watching session {sessionId}");
+            waveAnimationCoroutine = StartCoroutine(AnimateSoundWaves());
         }
 
+        private IEnumerator AnimateSoundWaves()
+        {
+            float delayBetweenWaves = 0.3f;
+
+            for (int i = 0; i < soundWaves.Length; i++)
+            {
+                if (soundWaves[i] != null)
+                {
+                    soundWaves[i].localScale = Vector3.zero;
+
+                    if (soundWaves[i].GetComponent<CanvasGroup>() == null)
+                        soundWaves[i].gameObject.AddComponent<CanvasGroup>();
+                }
+            }
+
+            while (true)
+            {
+                for (int i = 0; i < soundWaves.Length; i++)
+                {
+                    if (soundWaves[i] != null)
+                        StartCoroutine(AnimateSingleWave(soundWaves[i], i * delayBetweenWaves));
+                }
+
+                yield return new WaitForSeconds(2f);
+            }
+        }
+
+        private IEnumerator AnimateSingleWave(RectTransform wave, float startDelay)
+        {
+            yield return new WaitForSeconds(startDelay);
+
+            CanvasGroup canvasGroup = wave.GetComponent<CanvasGroup>();
+            if (canvasGroup == null) yield break;
+
+            float animationDuration = 1.5f;
+            float elapsed = 0f;
+
+            Vector3 startScale = Vector3.one * 0.5f;
+            Vector3 endScale = Vector3.one * wavePulseScale;
+
+            while (elapsed < animationDuration)
+            {
+                elapsed += Time.deltaTime;
+                float progress = elapsed / animationDuration;
+
+                wave.localScale = Vector3.Lerp(startScale, endScale, progress);
+
+                if (progress < 0.3f)
+                    canvasGroup.alpha = Mathf.Lerp(0f, 0.8f, progress / 0.3f);
+                else
+                    canvasGroup.alpha = Mathf.Lerp(0.8f, 0f, (progress - 0.3f) / 0.7f);
+
+                yield return null;
+            }
+
+            wave.localScale = Vector3.zero;
+            canvasGroup.alpha = 0f;
+        }
+
+        #endregion
+
+        #region Connection Status
+
+        /// <summary>
+        /// Called by UIManager.UpdateLocationDisplay when Firebase data arrives.
+        /// </summary>
         public void UpdateLocationDisplay(float latitude, float longitude)
         {
-            if (playerLocationText != null)
-            {
-                playerLocationText.text = $"Player Location:\nLat: {latitude:F6}\nLon: {longitude:F6}";
-            }
+            lastDataTime = Time.time;
 
-            // Update connection status to connected when receiving data
-            if (currentConnectionState != ConnectionState.Connected)
-            {
-                UpdateConnectionStatus(ConnectionState.Connected);
-            }
-
-            lastDataReceiveTime = Time.time;
+            if (!isConnected)
+                SetConnectionState(true);
         }
 
-        public void UpdatePlayerHealth(int currentHealth, int maxHealth)
+        private void SetConnectionState(bool connected)
         {
-            if (playerHealthText != null)
-            {
-                playerHealthText.text = $"Player Health: {currentHealth}/{maxHealth}";
-
-                // Color code health
-                float healthPercentage = (float)currentHealth / maxHealth;
-                if (healthPercentage > 0.6f)
-                    playerHealthText.color = Color.green;
-                else if (healthPercentage > 0.3f)
-                    playerHealthText.color = Color.yellow;
-                else
-                    playerHealthText.color = Color.red;
-            }
-
-            if (playerHealthBar != null)
-            {
-                playerHealthBar.maxValue = maxHealth;
-                playerHealthBar.value = currentHealth;
-
-                // Update health bar color
-                var fillImage = playerHealthBar.fillRect.GetComponent<Image>();
-                if (fillImage != null)
-                {
-                    float healthPercentage = (float)currentHealth / maxHealth;
-                    fillImage.color = Color.Lerp(Color.red, Color.green, healthPercentage);
-                }
-            }
-
-            lastDataReceiveTime = Time.time;
-        }
-
-        public void UpdatePlayerStatus(string status)
-        {
-            if (playerStatusText != null)
-            {
-                playerStatusText.text = $"Player Status: {status}";
-            }
-
-            lastDataReceiveTime = Time.time;
-        }
-
-        public void UpdatePlayerStatus(GameManager.GameplayState gameplayState)
-        {
-            string statusMessage = gameplayState switch
-            {
-                GameManager.GameplayState.Wander => "Exploring battlefield",
-                GameManager.GameplayState.Interact => "At Point of Interest",
-                GameManager.GameplayState.Combat => "In Combat",
-                GameManager.GameplayState.Recovery => "Collecting berries",
-                _ => "Active"
-            };
-
-            UpdatePlayerStatus(statusMessage);
-        }
-
-        public void UpdateConnectionStatus(ConnectionState newState)
-        {
-            currentConnectionState = newState;
-
-            string statusText = "";
-            Color indicatorColor = connectingColor;
-
-            switch (newState)
-            {
-                case ConnectionState.Connecting:
-                    statusText = "Connecting...";
-                    indicatorColor = connectingColor;
-                    break;
-                case ConnectionState.Connected:
-                    statusText = "Connected";
-                    indicatorColor = connectedColor;
-                    break;
-                case ConnectionState.Disconnected:
-                    statusText = "Disconnected";
-                    indicatorColor = disconnectedColor;
-                    break;
-                case ConnectionState.Reconnecting:
-                    statusText = "Reconnecting...";
-                    indicatorColor = connectingColor;
-                    break;
-                case ConnectionState.Error:
-                    statusText = "Connection Error";
-                    indicatorColor = disconnectedColor;
-                    break;
-            }
+            isConnected = connected;
 
             if (connectionStatusText != null)
-            {
-                connectionStatusText.text = statusText;
-                connectionStatusText.color = indicatorColor;
-            }
+                connectionStatusText.text = connected ? "Connected" : "Waiting for signal...";
 
-            if (connectionStatusIndicator != null)
-            {
-                connectionStatusIndicator.color = indicatorColor;
-            }
-
-            UpdateButtonVisibility();
-            Debug.Log($"SpectatorModeUI: Connection status updated to {newState}");
+            if (connectionStatusDot != null)
+                connectionStatusDot.color = connected ? connectedColor : waitingColor;
         }
 
-        public void OnConnectionLost(string reason)
+        private void MonitorConnection()
         {
-            Debug.LogWarning($"SpectatorModeUI: Connection lost - {reason}");
+            if (!isConnected) return;
 
-            UpdateConnectionStatus(ConnectionState.Disconnected);
+            float timeSinceData = Time.time - lastDataTime;
 
-            if (playerStatusText != null)
+            if (timeSinceData > CONNECTION_TIMEOUT)
             {
-                playerStatusText.text = $"Connection lost: {reason}";
-                playerStatusText.color = disconnectedColor;
+                isConnected = false;
+
+                if (connectionStatusText != null)
+                    connectionStatusText.text = "Connection lost";
+
+                if (connectionStatusDot != null)
+                    connectionStatusDot.color = disconnectedColor;
+
+                Debug.LogWarning("SpectatorModeUI: Connection lost — no data received");
+            }
+            else if (timeSinceData > CONNECTION_WARNING)
+            {
+                if (connectionStatusText != null)
+                    connectionStatusText.text = "Signal weak...";
+
+                if (connectionStatusDot != null)
+                    connectionStatusDot.color = waitingColor;
             }
         }
 
         #endregion
 
-        #region Button Event Handlers
+        #region Button Handlers
 
-        private void OnDisconnectButtonPressed()
+        private void OnDisconnectPressed()
         {
-            Debug.Log("SpectatorModeUI: Disconnect button pressed");
+            Debug.Log("SpectatorModeUI: Disconnect pressed");
 
-            StartCoroutine(AnimateButtonPress(disconnectButton));
-
-            // Update UI immediately
-            UpdateConnectionStatus(ConnectionState.Disconnected);
-
-            // Report to UIManager to handle actual disconnection
             if (uiManager != null)
-            {
-                uiManager.OnBackButtonPressed(); // This will take us back to mode selection
-            }
+                uiManager.OnBackButtonPressed();
             else
-            {
-                Debug.LogError("SpectatorModeUI: UIManager reference not set");
-            }
-        }
-
-        private void OnReturnToMenuButtonPressed()
-        {
-            Debug.Log("SpectatorModeUI: Return to menu button pressed");
-
-            StartCoroutine(AnimateButtonPress(returnToMenuButton));
-
-            // Report to UIManager
-            if (uiManager != null)
-            {
-                uiManager.OnExitToMainMenu();
-            }
-            else
-            {
-                Debug.LogError("SpectatorModeUI: UIManager reference not set");
-            }
-        }
-
-        private void OnReconnectButtonPressed()
-        {
-            Debug.Log("SpectatorModeUI: Reconnect button pressed");
-
-            StartCoroutine(AnimateButtonPress(reconnectButton));
-
-            if (string.IsNullOrEmpty(currentSessionId))
-            {
-                Debug.LogError("SpectatorModeUI: No session ID to reconnect to");
-                return;
-            }
-
-            UpdateConnectionStatus(ConnectionState.Reconnecting);
-
-            // Report reconnection request to UIManager
-            if (uiManager != null)
-            {
-                uiManager.OnSpectatorModeSelected(currentSessionId);
-            }
-            else
-            {
-                Debug.LogError("SpectatorModeUI: UIManager reference not set");
-            }
-        }
-
-        private void OnHideInstructionsPressed()
-        {
-            Debug.Log("SpectatorModeUI: Hide instructions pressed");
-            ShowInstructions(false);
-        }
-
-        private void OnShowInstructionsPressed()
-        {
-            Debug.Log("SpectatorModeUI: Show instructions pressed");
-            ShowInstructions(true);
-        }
-
-        #endregion
-
-        #region Instructions Management
-
-        private void ShowInstructions(bool show)
-        {
-            instructionsVisible = show;
-
-            if (instructionsGroup != null)
-            {
-                StartCoroutine(AnimateInstructions(show));
-            }
-
-            if (hideInstructionsButton != null)
-                hideInstructionsButton.gameObject.SetActive(show);
-            if (showInstructionsButton != null)
-                showInstructionsButton.gameObject.SetActive(!show);
-        }
-
-        private IEnumerator AnimateInstructions(bool show)
-        {
-            float duration = 0.3f;
-            float startAlpha = instructionsGroup.alpha;
-            float targetAlpha = show ? 1f : 0f;
-
-            instructionsGroup.interactable = show;
-            instructionsGroup.blocksRaycasts = show;
-
-            float elapsed = 0f;
-            while (elapsed < duration)
-            {
-                elapsed += Time.deltaTime;
-                instructionsGroup.alpha = Mathf.Lerp(startAlpha, targetAlpha, elapsed / duration);
-                yield return null;
-            }
-
-            instructionsGroup.alpha = targetAlpha;
-        }
-
-        #endregion
-
-        #region UI State Management
-
-        private void UpdateButtonVisibility()
-        {
-            bool isConnected = (currentConnectionState == ConnectionState.Connected);
-            bool isDisconnected = (currentConnectionState == ConnectionState.Disconnected ||
-                                  currentConnectionState == ConnectionState.Error);
-            bool isConnecting = (currentConnectionState == ConnectionState.Connecting ||
-                               currentConnectionState == ConnectionState.Reconnecting);
-
-            if (disconnectButton != null)
-                disconnectButton.interactable = isConnected;
-
-            if (reconnectButton != null)
-            {
-                reconnectButton.gameObject.SetActive(isDisconnected);
-                reconnectButton.interactable = !string.IsNullOrEmpty(currentSessionId);
-            }
-
-            if (returnToMenuButton != null)
-                returnToMenuButton.interactable = !isConnecting;
-        }
-
-        #endregion
-
-        #region Visual Feedback
-
-        private IEnumerator AnimateButtonPress(Button button)
-        {
-            if (button == null) yield break;
-
-            Transform buttonTransform = button.transform;
-            Vector3 originalScale = buttonTransform.localScale;
-            Vector3 pressedScale = originalScale * 0.95f;
-
-            // Scale down
-            float duration = 0.1f;
-            float elapsed = 0f;
-
-            while (elapsed < duration)
-            {
-                elapsed += Time.deltaTime;
-                buttonTransform.localScale = Vector3.Lerp(originalScale, pressedScale, elapsed / duration);
-                yield return null;
-            }
-
-            // Scale back up
-            elapsed = 0f;
-            while (elapsed < duration)
-            {
-                elapsed += Time.deltaTime;
-                buttonTransform.localScale = Vector3.Lerp(pressedScale, originalScale, elapsed / duration);
-                yield return null;
-            }
-
-            buttonTransform.localScale = originalScale;
-        }
-
-        #endregion
-
-        #region Connection Monitoring
-
-        private void Update()
-        {
-            // Monitor connection health based on data receive time
-            if (currentConnectionState == ConnectionState.Connected)
-            {
-                float timeSinceLastData = Time.time - lastDataReceiveTime;
-
-                // If no data for 10 seconds, consider connection lost
-                if (timeSinceLastData > 10f)
-                {
-                    OnConnectionLost("No data received");
-                }
-                // Warning if no data for 5 seconds
-                else if (timeSinceLastData > 5f && connectionStatusText != null)
-                {
-                    connectionStatusText.text = "Connection unstable...";
-                    connectionStatusText.color = connectingColor;
-                }
-            }
-
-            // Update displays with GameManager data if available
-            UpdateDisplaysFromGameManager();
-        }
-
-        private void UpdateDisplaysFromGameManager()
-        {
-            if (GameManager.Instance == null || !GameManager.Instance.IsSpectatorMode)
-                return;
-
-            // Update spectator location display
-            var location = GameManager.Instance.SpectatorLocation;
-            var heading = GameManager.Instance.SpectatorHeading;
-            var isReceiving = GameManager.Instance.IsReceivingSpectatorData;
-
-            if (isReceiving && (location.x != 0 || location.y != 0))
-            {
-                UpdateLocationDisplay(location.x, location.y);
-            }
-        }
-
-        #endregion
-
-        #region Data Reception Feedback
-
-        public void OnDataReceived()
-        {
-            lastDataReceiveTime = Time.time;
-
-            if (currentConnectionState != ConnectionState.Connected)
-            {
-                UpdateConnectionStatus(ConnectionState.Connected);
-            }
-        }
-
-        public void OnPlayerPOIsUpdated(System.Collections.Generic.List<string> poiIds)
-        {
-            // Update UI to show player's discovered POIs
-            Debug.Log($"SpectatorModeUI: Player has {poiIds.Count} unlocked POIs");
-            lastDataReceiveTime = Time.time;
-        }
-
-        #endregion
-
-        #region Error Handling
-
-        public void ShowConnectionError(string errorMessage)
-        {
-            Debug.LogError($"SpectatorModeUI: Connection error - {errorMessage}");
-
-            UpdateConnectionStatus(ConnectionState.Error);
-
-            if (playerStatusText != null)
-            {
-                playerStatusText.text = $"Error: {errorMessage}";
-                playerStatusText.color = disconnectedColor;
-            }
-        }
-
-        #endregion
-
-        #region Cleanup
-
-        private void OnDestroy()
-        {
-            // Remove button listeners
-            if (disconnectButton != null)
-                disconnectButton.onClick.RemoveListener(OnDisconnectButtonPressed);
-            if (returnToMenuButton != null)
-                returnToMenuButton.onClick.RemoveListener(OnReturnToMenuButtonPressed);
-            if (reconnectButton != null)
-                reconnectButton.onClick.RemoveListener(OnReconnectButtonPressed);
-            if (hideInstructionsButton != null)
-                hideInstructionsButton.onClick.RemoveListener(OnHideInstructionsPressed);
-            if (showInstructionsButton != null)
-                showInstructionsButton.onClick.RemoveListener(OnShowInstructionsPressed);
-
-            Debug.Log("SpectatorModeUI: Cleanup completed");
+                Debug.LogError("SpectatorModeUI: UIManager not set");
         }
 
         #endregion

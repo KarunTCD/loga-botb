@@ -122,11 +122,8 @@ namespace LoGa.LudoEngine.Core
         /// </summary>
         public async Task<bool> LoadSite(string siteId)
         {
-            Debug.Log($"========================================");
             Debug.Log($"SiteManager: Loading site: {siteId}");
-            Debug.Log($"========================================");
 
-            // Find site in metadata
             Site site = availableSites.Find(s => s.id == siteId);
             if (site == null)
             {
@@ -134,50 +131,44 @@ namespace LoGa.LudoEngine.Core
                 return false;
             }
 
-            // 1. Unload previous site if any
             if (currentSite != null)
-            {
                 UnloadCurrentSite();
-            }
 
-            // 2. Load FMOD banks
-            Debug.Log($"SiteManager: Step 1/2 - Loading FMOD banks...");
-            if (audioService == null || !audioService.LoadBanksForSite(site.folderName))
+            // Banks load from contentFolderName if set, otherwise from folderName
+            string contentFolder = string.IsNullOrEmpty(site.contentFolderName)
+                ? site.folderName
+                : site.contentFolderName;
+
+            Debug.Log($"SiteManager: Loading banks from: {contentFolder}");
+            if (audioService == null || !audioService.LoadBanksForSite(contentFolder))
             {
-                Debug.LogError($"SiteManager: Failed to load audio banks");
+                Debug.LogError($"SiteManager: Failed to load audio banks from {contentFolder}");
                 return false;
             }
-            Debug.Log($"SiteManager: ✓ Banks loaded");
+            Debug.Log($"SiteManager: Banks loaded from {contentFolder}");
 
-            // 3. Load site data into GameDataService (await async call)
-            Debug.Log($"SiteManager: Step 2/2 - Loading site data...");
+            // Game data always loads from site's own folder
+            Debug.Log($"SiteManager: Loading game data from: {site.folderName}");
             bool dataLoaded = await gameDataService.LoadSiteData(site.folderName);
-
             if (!dataLoaded)
             {
-                Debug.LogError($"SiteManager: Failed to load site data");
+                Debug.LogError($"SiteManager: Failed to load site data from {site.folderName}");
                 audioService?.UnloadAllBanks();
                 return false;
             }
-            Debug.Log($"SiteManager: ✓ Site data loaded");
+            Debug.Log($"SiteManager: Game data loaded from {site.folderName}");
 
-            // 4. Set current site
             currentSite = site;
 
-            // 5. Notify TimeLayerManager to reload (if it exists)
             if (TimeLayerManager.Instance != null)
             {
                 Debug.Log("SiteManager: Notifying TimeLayerManager to reload");
                 TimeLayerManager.Instance.ReloadCurrentLayer();
             }
 
-            // 6. Fire event
             OnSiteLoaded?.Invoke(site);
 
-            Debug.Log($"========================================");
-            Debug.Log($"SiteManager: Site '{site.name}' loaded successfully!");
-            Debug.Log($"========================================");
-
+            Debug.Log($"SiteManager: Site '{site.name}' loaded successfully (banks: {contentFolder}, data: {site.folderName})");
             return true;
         }
 

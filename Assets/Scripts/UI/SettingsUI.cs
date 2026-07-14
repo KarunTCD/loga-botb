@@ -3,32 +3,37 @@ using UnityEngine.UI;
 using TMPro;
 using LoGa.LudoEngine.Core;
 using LoGa.LudoEngine.Services;
+using LoGa.LudoEngine.Game;
 
 namespace LoGa.LudoEngine.UI
 {
     /// <summary>
-    /// Settings UI - Volume control panel
-    /// Displays over Main Menu or Pause Menu
-    /// Controls Master, SFX, and Ambience volume via FMOD buses
+    /// Settings UI - Volume control and gameplay preferences.
+    /// Controls Master, SFX, and Ambience volume via FMOD buses.
+    /// Controls targeting sounds (lock/unlock feedback) preference.
     /// </summary>
     public class SettingsUI : MonoBehaviour
     {
         [Header("UI Panel")]
         [SerializeField] private GameObject settingsPanel;
-        
+
         [Header("Volume Sliders")]
         [SerializeField] private Slider masterVolumeSlider;
         [SerializeField] private Slider sfxVolumeSlider;
         [SerializeField] private Slider ambienceVolumeSlider;
-        
+
         [Header("Volume Labels")]
         [SerializeField] private TextMeshProUGUI masterVolumeText;
         [SerializeField] private TextMeshProUGUI sfxVolumeText;
         [SerializeField] private TextMeshProUGUI ambienceVolumeText;
-        
+
+        [Header("Targeting Sounds Toggle")]
+        [SerializeField] private Toggle targetingSoundsToggle;
+        [SerializeField] private TextMeshProUGUI targetingSoundsLabel;
+
         [Header("Close Button")]
         [SerializeField] private Button closeButton;
-        
+
         [Header("Volume Settings")]
         [SerializeField] private float defaultVolume = 0.8f;
         [SerializeField] private float minVolume = 0f;
@@ -36,25 +41,24 @@ namespace LoGa.LudoEngine.UI
 
         private UIManager uiManager;
         private IAudioService audioService;
-        
-        // Storage keys for persistent volume
-        private const string MASTER_VOLUME_KEY = "Volume_Master";
-        private const string SFX_VOLUME_KEY = "Volume_SFX";
-        private const string AMBIENCE_VOLUME_KEY = "Volume_Ambience";
+
+        // Storage keys
+        private const string MASTER_VOLUME_KEY   = "Volume_Master";
+        private const string SFX_VOLUME_KEY      = "Volume_SFX";
+        private const string AMBIENCE_VOLUME_KEY  = "Volume_Ambience";
+        private const string TARGETING_SOUNDS_KEY = "Setting_TargetingSounds";
 
         private void Start()
         {
             audioService = ServiceLocator.GetService<IAudioService>();
-            
+
             SetupSliders();
+            SetupToggle();
             SetupButtonListeners();
-            LoadVolumeSettings();
-            
-            // Hide panel initially
+            LoadAllSettings();
+
             if (settingsPanel != null)
-            {
                 settingsPanel.SetActive(false);
-            }
         }
 
         public void SetUIManager(UIManager manager)
@@ -65,23 +69,20 @@ namespace LoGa.LudoEngine.UI
 
         private void SetupSliders()
         {
-            // Master volume slider
             if (masterVolumeSlider != null)
             {
                 masterVolumeSlider.minValue = minVolume;
                 masterVolumeSlider.maxValue = maxVolume;
                 masterVolumeSlider.onValueChanged.AddListener(OnMasterVolumeChanged);
             }
-            
-            // SFX volume slider
+
             if (sfxVolumeSlider != null)
             {
                 sfxVolumeSlider.minValue = minVolume;
                 sfxVolumeSlider.maxValue = maxVolume;
                 sfxVolumeSlider.onValueChanged.AddListener(OnSFXVolumeChanged);
             }
-            
-            // Ambience volume slider
+
             if (ambienceVolumeSlider != null)
             {
                 ambienceVolumeSlider.minValue = minVolume;
@@ -90,48 +91,55 @@ namespace LoGa.LudoEngine.UI
             }
         }
 
+        private void SetupToggle()
+        {
+            if (targetingSoundsToggle != null)
+                targetingSoundsToggle.onValueChanged.AddListener(OnTargetingSoundsToggleChanged);
+
+            if (targetingSoundsLabel != null)
+                targetingSoundsLabel.text = "Targeting Sounds";
+        }
+
         private void SetupButtonListeners()
         {
             if (closeButton != null)
-            {
                 closeButton.onClick.AddListener(OnClose);
-            }
         }
 
-        private void LoadVolumeSettings()
+        private void LoadAllSettings()
         {
             var storageService = ServiceLocator.GetService<IStorageService>();
-            
+
             if (storageService != null)
             {
-                // Load saved volumes or use defaults
-                float masterVolume = storageService.Load<float>(MASTER_VOLUME_KEY, defaultVolume);
-                float sfxVolume = storageService.Load<float>(SFX_VOLUME_KEY, defaultVolume);
+                float masterVolume   = storageService.Load<float>(MASTER_VOLUME_KEY,   defaultVolume);
+                float sfxVolume      = storageService.Load<float>(SFX_VOLUME_KEY,      defaultVolume);
                 float ambienceVolume = storageService.Load<float>(AMBIENCE_VOLUME_KEY, defaultVolume);
-                
-                // Set slider values (will trigger onValueChanged callbacks)
-                if (masterVolumeSlider != null)
-                    masterVolumeSlider.value = masterVolume;
-                
-                if (sfxVolumeSlider != null)
-                    sfxVolumeSlider.value = sfxVolume;
-                
-                if (ambienceVolumeSlider != null)
-                    ambienceVolumeSlider.value = ambienceVolume;
-                
-                Debug.Log($"SettingsUI: Loaded volumes - Master: {masterVolume:F2}, SFX: {sfxVolume:F2}, Ambience: {ambienceVolume:F2}");
+
+                if (masterVolumeSlider != null)   masterVolumeSlider.value   = masterVolume;
+                if (sfxVolumeSlider != null)      sfxVolumeSlider.value      = sfxVolume;
+                if (ambienceVolumeSlider != null) ambienceVolumeSlider.value = ambienceVolume;
+
+                // Targeting sounds — default on
+                // Suppress callback during initial load to avoid POIManager call before game is ready
+                bool targetingSoundsEnabled = storageService.Load<bool>(TARGETING_SOUNDS_KEY, false);
+                if (targetingSoundsToggle != null)
+                {
+                    targetingSoundsToggle.onValueChanged.RemoveListener(OnTargetingSoundsToggleChanged);
+                    targetingSoundsToggle.isOn = targetingSoundsEnabled;
+                    targetingSoundsToggle.onValueChanged.AddListener(OnTargetingSoundsToggleChanged);
+                }
+
+                Debug.Log($"SettingsUI: Loaded — Master:{masterVolume:F2} SFX:{sfxVolume:F2} Ambience:{ambienceVolume:F2} TargetingSounds:{targetingSoundsEnabled}");
             }
             else
             {
-                Debug.LogWarning("SettingsUI: StorageService not available - using default volumes");
-                
-                // Set defaults
-                if (masterVolumeSlider != null)
-                    masterVolumeSlider.value = defaultVolume;
-                if (sfxVolumeSlider != null)
-                    sfxVolumeSlider.value = defaultVolume;
-                if (ambienceVolumeSlider != null)
-                    ambienceVolumeSlider.value = defaultVolume;
+                Debug.LogWarning("SettingsUI: StorageService not available - using defaults");
+
+                if (masterVolumeSlider != null)    masterVolumeSlider.value    = defaultVolume;
+                if (sfxVolumeSlider != null)       sfxVolumeSlider.value       = defaultVolume;
+                if (ambienceVolumeSlider != null)  ambienceVolumeSlider.value  = defaultVolume;
+                if (targetingSoundsToggle != null) targetingSoundsToggle.isOn  = false;
             }
         }
 
@@ -154,101 +162,79 @@ namespace LoGa.LudoEngine.UI
             }
         }
 
+        // ── Volume Handlers ──────────────────────────────────────────────────
+
         private void OnMasterVolumeChanged(float value)
         {
-            // Update FMOD master bus volume
-            if (audioService != null)
-            {
-                audioService.SetBusVolume("bus:/", value);
-            }
-            
-            // Update label
+            audioService?.SetBusVolume("bus:/", value);
+
             if (masterVolumeText != null)
-            {
                 masterVolumeText.text = $"{Mathf.RoundToInt(value * 100)}%";
-            }
-            
-            // Save to storage
-            SaveVolume(MASTER_VOLUME_KEY, value);
-            
-            Debug.Log($"SettingsUI: Master volume set to {value:F2}");
+
+            SaveValue(MASTER_VOLUME_KEY, value);
+            Debug.Log($"SettingsUI: Master volume → {value:F2}");
         }
 
         private void OnSFXVolumeChanged(float value)
         {
-            // Update FMOD SFX bus volume
-            if (audioService != null)
-            {
-                audioService.SetBusVolume("bus:/SFX", value);
-            }
-            
-            // Update label
+            audioService?.SetBusVolume("bus:/SFX", value);
+
             if (sfxVolumeText != null)
-            {
                 sfxVolumeText.text = $"{Mathf.RoundToInt(value * 100)}%";
-            }
-            
-            // Save to storage
-            SaveVolume(SFX_VOLUME_KEY, value);
-            
-            Debug.Log($"SettingsUI: SFX volume set to {value:F2}");
+
+            SaveValue(SFX_VOLUME_KEY, value);
+            Debug.Log($"SettingsUI: SFX volume → {value:F2}");
         }
 
         private void OnAmbienceVolumeChanged(float value)
         {
-            // Update FMOD Ambience bus volume
-            if (audioService != null)
-            {
-                audioService.SetBusVolume("bus:/Ambient", value);
-            }
-            
-            // Update label
+            audioService?.SetBusVolume("bus:/Ambient", value);
+
             if (ambienceVolumeText != null)
-            {
                 ambienceVolumeText.text = $"{Mathf.RoundToInt(value * 100)}%";
-            }
-            
-            // Save to storage
-            SaveVolume(AMBIENCE_VOLUME_KEY, value);
-            
-            Debug.Log($"SettingsUI: Ambience volume set to {value:F2}");
+
+            SaveValue(AMBIENCE_VOLUME_KEY, value);
+            Debug.Log($"SettingsUI: Ambience volume → {value:F2}");
         }
 
-        private void SaveVolume(string key, float value)
+        // ── Targeting Sounds Handler ─────────────────────────────────────────
+
+        private void OnTargetingSoundsToggleChanged(bool enabled)
         {
-            var storageService = ServiceLocator.GetService<IStorageService>();
-            if (storageService != null)
-            {
-                storageService.Save(key, value);
-            }
+            SaveValue(TARGETING_SOUNDS_KEY, enabled);
+
+            if (POIManager.Instance != null)
+                POIManager.Instance.SetNavigationSoundsEnabled(enabled);
+
+            Debug.Log($"SettingsUI: Targeting sounds → {(enabled ? "enabled" : "disabled")}");
+        }
+
+        // ── Shared Helpers ───────────────────────────────────────────────────
+
+        private void SaveValue(string key, object value)
+        {
+            ServiceLocator.GetService<IStorageService>()?.Save(key, value);
         }
 
         private void OnClose()
         {
             Debug.Log("SettingsUI: Close button pressed");
-            
-            if (uiManager != null)
-            {
-                uiManager.OnSettingsClose();
-            }
+            uiManager?.OnSettingsClose();
         }
 
         private void OnDestroy()
         {
-            // Remove slider listeners
             if (masterVolumeSlider != null)
                 masterVolumeSlider.onValueChanged.RemoveListener(OnMasterVolumeChanged);
-            
             if (sfxVolumeSlider != null)
                 sfxVolumeSlider.onValueChanged.RemoveListener(OnSFXVolumeChanged);
-            
             if (ambienceVolumeSlider != null)
                 ambienceVolumeSlider.onValueChanged.RemoveListener(OnAmbienceVolumeChanged);
-            
-            // Remove button listener
+            if (targetingSoundsToggle != null)
+                targetingSoundsToggle.onValueChanged.RemoveListener(OnTargetingSoundsToggleChanged);
             if (closeButton != null)
                 closeButton.onClick.RemoveListener(OnClose);
-            
+
             Debug.Log("SettingsUI: Destroyed and cleaned up");
         }
     }
